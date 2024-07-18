@@ -1,0 +1,89 @@
+<% let G_PAGE = JSON.parse(--CONS.SETTING--) %>
+<%- include('../wedgets/header/index', {title}) %>
+<main class="container-md" style="display: none;">
+  <div class="modal fade" id="<%= G_PAGE.ID.MODAL_ORIGIN_PASSWORD %>" tabindex="-1" aria-labelledby="<%= G_PAGE.ID.MODAL_ORIGIN_PASSWORD %>" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">請先驗證原密碼</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="input-box">
+            <label class="form-label">原密碼
+              <input type="password" class="form-control" name="<%= G_PAGE.NAME.ORIGIN_PASSWORD %>" data-retry='yes' autocomplete="off">
+              <div></div>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="button" id="checkOrginPassword" class="btn btn-primary">確定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-8 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <h3>修改個人資訊</h3>
+        </div>
+        <div class="card-body">
+          <form id="setting">
+            <div class="input-box">
+              <label class="form-label">信箱
+                <input type="text" class="form-control" name="email" aria-describedby="email_help" autocomplete="off" placeholder="<%= currentUser.email %>">
+                <div></div>
+              </label>
+            </div>
+
+            <div class="input-box">
+              <label class="form-label">新密碼
+                <input type="password" class="form-control" name="password" data-retry='yes' autocomplete="off">
+                <div></div>
+              </label>
+            </div>
+            <div class="input-box">
+              <label class="form-label">密碼確認
+                <input type="password" class="form-control" name="password_again" data-retry='yes' autocomplete="off" disabled>
+                <div></div>
+              </label>
+            </div>
+            <div class="input-box">
+              <label class="form-label">暱稱
+                <input type="text" class="form-control" name="nickname" autocomplete="off" placeholder="<%= currentUser.nickname ? currentUser.nickname : '' %>">
+                <div></div>
+              </label>
+            </div>
+            <div class="input-box">
+              <label class="form-label">年齡
+                <input type="number" class="form-control" name="age" min="0" max="120" placeholder="<%= currentUser.age ? currentUser.age : '' %>">
+                <div></div>
+              </label>
+            </div>
+            <div class="input-box">
+              <span class="p-1">頭像</span>
+              <div class="avatar-box">
+                <div class="ratio ratio-1x1">
+                  <img id="avatar-img" src="<%= currentUser.avatar ? currentUser.avatar : G_PAGE.AVATAR.URL %>" alt="">
+                </div>
+              </div>
+              <label class="form-label mt-1">
+                <input type="file" id="avatar" class="form-control" name="avatar" autocomplete="off">
+                <div></div>
+              </label>
+            </div>
+            <button type="submit" name="submit" class="btn btn-primary mt-3">送出</button>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<%- include('../wedgets/footer/index') %>
+</body>
+
+</html>

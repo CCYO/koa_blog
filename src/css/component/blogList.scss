@@ -1,0 +1,76 @@
+/* blogList */
+
+@keyframes pageloading {
+  0% {
+    content: "LOADING";
+  }
+  25% {
+    content: "LOADING.";
+  }
+  50% {
+    content: "LOADING..";
+  }
+  75% {
+    content: "LOADING...";
+  }
+  100% {
+    content: "LOADING...";
+  }
+}
+
+.blogList {
+  margin-bottom: 0.5rem;
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  h5 {
+    margin: 0;
+  }
+  & > ul {
+    position: relative;
+  }
+  li {
+    list-style: none;
+  }
+
+  .list-group-item > div:not(:first-child) {
+    text-align: center;
+  }
+  [data-blog-id] {
+    & > div:not(:first-child) {
+      font-size: 0.8rem;
+    }
+  }
+  .filler {
+    + div {
+      visibility: hidden;
+    }
+    &::after {
+      content: "\00A0";
+    }
+  }
+  .pageLoading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 300;
+    background: rgba(255, 255, 255, 0.5);
+    > h1 {
+      width: 100%;
+      margin: 0;
+      &::before {
+        display: block;
+        text-align: center;
+        content: "loading";
+        animation: pageloading 1.5s infinite step-end;
+      }
+    }
+  }
+}

@@ -1,0 +1,101 @@
+/* register&login.css */
+@import "./common/basic";
+@import "./component/blogList";
+
+h5 {
+  margin-bottom: 0;
+}
+
+img {
+  border-radius: 50% 50%;
+  //  user img overwrite
+  /* //  user img overwrite */
+  border-color: rgba(0, 0, 0, 0.1);
+  border-width: 1px;
+  border-style: solid;
+  font-size: 999;
+}
+
+#user-info,
+#blog-info,
+#follow-info {
+  margin-bottom: 1rem;
+}
+
+/* user info */
+.avatar-box {
+  padding: 1rem;
+}
+.list-group-item > div:nth-child(3) {
+  text-align: right !important;
+  min-width: 100px;
+}
+[data-blog-id] {
+  & > div:first-child {
+    flex-shrink: 1;
+  }
+  & > div:nth-child(3) {
+    z-index: 200;
+  }
+}
+
+/* follow info */
+#follow-info {
+  .card {
+    margin-bottom: 1rem;
+    .card-body {
+      // padding: 1rem;
+      &:hover {
+        background-color: rgba(219, 159, 159, 0.2);
+      }
+      .betterscroll-outer {
+        padding: 0;
+        overflow: hidden;
+        background-color: rgba(255, 255, 255, 0.3);
+
+        > ul {
+          display: inline-flex;
+          li {
+            width: 6rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            flex-shrink: 0;
+            margin-right: 0.25rem;
+            padding: 0.25rem;
+            text-align: center;
+            //  解決：betterscroll初始化完成後，在第一次click事件以前，會限制wraper內部元素pointer-events: none
+            pointer-events: auto !important;
+            &:hover {
+              background-color: rgba(219, 159, 159, 0.5);
+            }
+            &:last-child {
+              margin-right: 0;
+            }
+            a {
+              text-decoration: none;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 575.9px) {
+  #user-info {
+    .avatar-box {
+      flex-grow: 0;
+      flex-shrink: 0;
+      flex-basis: auto;
+      max-width: 12rem;
+      margin: 0 auto;
+    }
+    .card-title,
+    hr {
+      display: none;
+    }
+    .card-body {
+      text-align: center;
+    }
+  }
+}

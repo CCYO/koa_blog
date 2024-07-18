@@ -1,0 +1,107 @@
+{
+  "SQUARE": {
+    "PAGINATION": {
+      "BLOG_COUNT": 5,
+      "PAGE_COUNT": 2
+    }
+  },
+  "ALBUM_LIST": {
+    "PAGINATION": {
+      "BLOG_COUNT": 5,
+      "PAGE_COUNT": 2
+    }
+  },
+  "NEWS": {
+    "FRONT_END_STATUS": {
+      "//FIRST": "初次請求",
+      "FIRST": 1,
+      "//AGAIN": "已知仍有news條目未拉取",
+      "AGAIN": 2,
+      "//CHECK": "已知news條目皆已拉取",
+      "CHECK": 3
+    },
+    "TIME_FORMAT": "YYYY/MM/DD HH:mm:ss"
+  },
+  "COMMENT": {
+    "TIME_FORMAT": "YYYY/MM/DD HH:mm:ss"
+  },
+  "BLOG": {
+    "TIME_FORMAT": "YYYY/MM/DD HH:mm:ss",
+    "PAGINATION": {
+      "BLOG_COUNT": 5,
+      "PAGE_COUNT": 2
+    },
+    "STATUS": {
+      "PUBLIC": "public",
+      "PRIVATE": "private"
+    },
+    "EDITOR": {
+      "TITLE_MIN_LENGTH": 1,
+      "TITLE_MAX_LENGTH": 20,
+      "HTML_MIN_LENGTH": 1,
+      "HTML_MAX_LENGTH": 65535,
+      "//IMG_MAX_SIZE": "10MB",
+      "IMG_MAX_SIZE": 10485760,
+      "IMG_EXT": ["JPG", "PNG"],
+      "IMG_ALT_MIN_LENGTH": 1,
+      "IMG_ALT_MAX_LENGTH": 20,
+      "IMG_ALT_PATTERN": "^[\\u4e00-\\u9fa5a-zA-Z\\d\\-_]+$"
+    }
+  },
+  "USER": {
+    "EMAIL": {
+      "MIN_LENGTH": 1
+    },
+    "AVATAR": {
+      "URL": "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+      "HASH": "6f6bbb16aec97391aefe120ec5a4e6a2",
+      "EXT": ["JPG", "PNG"],
+      "//MAX_SIZE": "1MB",
+      "MAX_SIZE": 1048576
+    },
+    "AGE": {
+      "MINIMUM": 6,
+      "MAXIMUM": 120
+    },
+    "PASSWORD": {
+      "MIN_LENGTH": 6,
+      "MAX_LENGTH": 32
+    },
+    "NICKNAME": {
+      "MIN_LENGTH": 2,
+      "MAX_LENGTH": 20
+    }
+  },
+  "QUERY_NEWS": {
+    "LIMIT": 2,
+    "TYPE": {
+      "IDOL_FANS": 1,
+      "ARTICLE_READER": 2,
+      "MSG_RECEIVER": 3
+    }
+  },
+  "CACHE": {
+    "TYPE": {
+      "NEWS": "newNews",
+      "PAGE": {
+        "USER": "userPage",
+        "BLOG": "blogPage"
+      }
+    },
+    "STATUS": {
+      "HAS_FRESH_CACHE": 0,
+      "NO_CACHE": 1,
+      "//NO_IF_NONE_MATCH": "請求未攜帶 if-none-match",
+      "NO_IF_NONE_MATCH": 2,
+      "//IF_NONE_MATCH_IS_NO_FRESH": "請求 if-none-match 已過期",
+      "IF_NONE_MATCH_IS_NO_FRESH": 3
+    }
+  },
+  "GFB": {
+    "BLOG_REF": "blogImg",
+    "AVATAR_REF": "avatar"
+  },
+  "UTILS": {
+    "REDIR_FROM": "from"
+  }
+}

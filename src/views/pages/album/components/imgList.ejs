@@ -1,0 +1,17 @@
+<% let G_PAGE = JSON.parse(--CONS.ALBUM--) %>
+<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
+  <% for( let alt_id in imgs ){  %>
+  <% let _url = `${imgs[alt_id].img.url}?blogImgAlt=${alt_id}` %>
+  <div>
+    <div class="card border-dark" <%= `data-${G_PAGE.DATASET.KEY.ALT_ID}=${alt_id}` %>>
+      <div class="ratio ratio-1x1" style="background-image: url('<%- _url %>');">
+        <div style="background-image: url('<%- _url %>');"></div>
+      </div>
+      <div class="card-body">
+        <p class="text-truncate"><%= imgs[alt_id].alt %></p>
+        <button type="button" class="btn btn-outline-primary btn-sm text-truncate">修改名稱</button>
+      </div>
+    </div>
+  </div>
+  <% } %>
+</div>

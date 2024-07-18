@@ -1,0 +1,14 @@
+{
+  "CREATE": {
+      "ERR": {
+          "errno": 10400,
+          "msg": "IMG 創建失敗"
+      }
+  },
+  "READ": {
+      "NO_DATA": {
+          "errno": 40401,
+          "msg": "沒有相符的 IMG"
+      }
+  }
+}

@@ -1,0 +1,90 @@
+@import "./common/basic.scss";
+@import "@wangeditor/editor/dist/css/style.css";
+
+.card {
+  background-color: rgb(250, 240, 240);
+}
+// 修改標題
+.title-box {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 0.25rem;
+  justify-content: space-between;
+  & > button {
+    margin-right: 0.25rem;
+  }
+  & > input {
+    //  若使用 width:auto + flex-grow，
+    //  因為input依據browser有默認的一定長度(測試約262px)，
+    //  當window resize擠壓到input auto長度時，便會導致換行，因此才使用winth:0
+    width: 0;
+    flex-grow: 1;
+  }
+  & > div {
+    width: 100%;
+  }
+}
+#toolbar-container {
+  border: 1px solid rgba(200, 200, 200, 0.8);
+}
+// 文章內容編輯
+#editor-container {
+  border: 1px solid rgba(200, 200, 200, 0.8);
+  height: 400px;
+  min-height: 300px;
+  img {
+    width: 100%;
+    max-width: 600px;
+  }
+}
+
+.w-e-text-container:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.w-e-textarea-video-container {
+  max-width: 630px;
+  width: 80%;
+  height: 0;
+  padding-bottom: 48%;
+  position: relative;
+  margin: 0.25rem auto;
+  > iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+  }
+}
+
+div.w-e-modal > span.btn-close {
+  background: none;
+}
+
+.card-footer {
+  & > p {
+    color: rgb(0, 150, 255);
+    margin: 0;
+  }
+  label,
+  input {
+    cursor: pointer;
+    margin-bottom: 1rem;
+  }
+  .form-check {
+    display: inline-block;
+    color: rgb(0, 150, 255);
+  }
+  input:not(:checked) ~ label::before {
+    content: "隱藏";
+  }
+  input:checked ~ label::before {
+    content: "公開";
+  }
+}
+button[data-menu-key="editVideoSize"] {
+  display: none;
+  pointer-events: none;
+}

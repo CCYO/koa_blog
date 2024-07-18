@@ -1,0 +1,6 @@
+{
+  "//X_IMG_PARSE_TO_IMG": "flag_g",
+  "X_IMG_PARSE_TO_IMG": "<x-img.+?data-alt-id='(?<alt_id>\\w+?)'.+?(data-style='(?<style>.*?)')?.*?\\/>",
+  "//IMG_PARSE_TO_X_IMG": "flag_g",
+  "IMG_PARSE_TO_X_IMG": "<img\\ssrc=\"[^=]+?alt_id=(?<alt_id>\\d+?)\"(.+?style=\"(?<style>.*?)\")?(.*?)\\/?>"
+}

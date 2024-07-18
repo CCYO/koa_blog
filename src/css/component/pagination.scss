@@ -1,0 +1,35 @@
+/* pagination */
+.pagination {
+  margin: 0;
+  justify-content: center;
+}
+
+ul[data-pagination] {
+  .page-link {
+    border-radius: 0 !important;
+  }
+}
+
+.page-link.pe-none {
+  opacity: 0.5;
+}
+
+.pane-loading {
+  position: relative;
+  cursor: none;
+  pointer-events: none;
+  &::after {
+    position: absolute;
+    content: "loading";
+    display: inline-block;
+    line-height: 3rem;
+    font-size: 3rem;
+    text-align: center;
+    top: calc(50% - 1.5rem);
+    right: 0;
+    left: 0;
+  }
+  > ul {
+    opacity: 0.6;
+  }
+}

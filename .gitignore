@@ -1,0 +1,4 @@
+node_modules/
+server/_config
+server/assets
+src/_views

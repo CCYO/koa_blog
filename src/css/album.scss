@@ -1,0 +1,38 @@
+/* album CSS */
+@import "./common/basic.scss";
+
+.breadcrumb {
+  margin: 0;
+  a {
+    pointer-events: auto;
+  }
+}
+.ratio {
+  padding: 0.25rem;
+  background-position: center;
+  background-clip: content-box;
+  & > div {
+    padding: 0.25rem;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-clip: content-box;
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+}
+#modal_album input + div {
+  display: block;
+}
+.modal-body > input + div::before {
+  display: inline-block;
+  content: " ";
+}
+
+[data-alt_id] {
+  .card-body {
+    text-align: center;
+  }
+  button {
+    width: 100%;
+  }
+}

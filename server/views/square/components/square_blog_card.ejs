@@ -1,0 +1,52 @@
+<% let G_PAGE = JSON.parse('{"API":{"GET_PAGINATION":"/api/square/list"},"SELECTOR":{"PAGE_NUM_LINK":".pagination .pagination .page-link"},"DATASET":{"KEY":{"BLOG_ID":"blog-id","PAGINATION_NUM":"pagination","PAGE_NUM":"page","PAGE_TURN":"turn","BLOG_STATUS":"status"},"VALUE":{"PREVIOUS_PAGE":"previous-page","NEXT_PAGE":"next-page","PREVIOUS_PAGINATION":"previous-pagination","NEXT_PAGINATION":"next-pagination","BLOG_STATUS_PUBLIC":"public"}},"PAGINATION":{"BLOG_COUNT":5,"PAGE_COUNT":2}}') %>
+<% let { blogs, count } = blog.public %>
+<div class="blogList card" <%= `data-${G_PAGE.DATASET.KEY.BLOG_STATUS}=${G_PAGE.DATASET.VALUE.BLOG_STATUS_PUBLIC}` %>>
+  <% if(count){ %>
+  <ul class="list-group">
+    <%- ejs_render.square.blogList({ blogs, page: 1, pagination }) %>
+    <div class="pageLoading" style="display: none;">
+      <h1></h1>
+    </div>
+  </ul>
+  <% if (count / pagination.BLOG_COUNT > 1) { %>
+  <nav aria-label="...">
+    <ul class="pagination">
+      <li class="page-item">
+        <a class="page-link pe-none" href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${G_PAGE.DATASET.VALUE.PREVIOUS_PAGINATION}` %>>
+          &#8810;
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link pe-none" href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${G_PAGE.DATASET.VALUE.PREVIOUS_PAGE}`%>>&#60;</a>
+      </li>
+      <% var _totalPage=Math.ceil(count / pagination.BLOG_COUNT) %>
+      <% for(let _page_num=1; _totalPage>= _page_num; _page_num++){ %>
+      <% if((_page_num % pagination.PAGE_COUNT)===1){ %>
+      <!-- 除5若無餘數，要有ul li -->
+      <ul class="pagination" <%= `data-${G_PAGE.DATASET.KEY.PAGINATION_NUM}=${Math.ceil(_page_num / pagination.PAGE_COUNT)}` %> <% if(Math.ceil(_page_num / pagination.PAGE_COUNT) > 1){ %> style="display: none;" <% } %>>
+        <% } %>
+        <!-- 除5無論有無餘數，都要li -->
+        <li class="page-item <%= _page_num === 1 ? 'active' : '' %>">
+          <a class="page-link" href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${_page_num}` %>>
+            <%= _page_num %>
+          </a>
+        </li>
+        <% if( !(_page_num % pagination.PAGE_COUNT) || _page_num===_totalPage ){ %>
+      </ul>
+      <% } %>
+      <% } %>
+      <li class="page-item">
+        <a href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${G_PAGE.DATASET.VALUE.NEXT_PAGE}` %> class="page-link <%= _totalPage < 2 ? "pe-none" : '' %>">&#62;</a>
+      </li>
+      <li class="page-item">
+        <a href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${G_PAGE.DATASET.VALUE.NEXT_PAGINATION}` %> class="page-link <%= _totalPage <= 2 ? "pe-none" : '' %>">&#8811;</a>
+      </li>
+    </ul>
+  </nav>
+  <% } %>
+
+  <% } else { %>
+  <p class="p-3">沒有文章<%= count %>
+  </p>
+  <% } %>
+</div>

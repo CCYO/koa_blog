@@ -1,0 +1,38 @@
+<% let G_PAGE = JSON.parse(--CONS.REGISTER_LOGIN--) %>
+<%- include('../wedgets/header/index', {title}) %>
+<main style="display: none;">
+  <!-- 註冊/登入 互動卡片-->
+  <div class="card w-75 mx-auto">
+    <!-- 卡片頭部 -->
+    <div class="card-header">
+      <!-- 頭部導行列-->
+      <ul class="card-header-tabs nav nav-tabs">
+        <!-- 頭部導行項-->
+        <% for( let type in G_PAGE.ID ){ %>
+        <% let form_id = G_PAGE.ID[type] %>
+        <% let tab_txt = form_id === G_PAGE.ID.REGISTER_FORM ? "註冊" : "登入" %>
+        <li class="nav-item">
+          <a class="nav-link <%= active === form_id ? `active` : `` %>" href="#" data-bs-toggle='tab' data-bs-target='#<%= form_id %>-card' role="tab" aria-controls=<%= form_id %> aria-selected="true"><%= tab_txt %></a>
+        </li>
+        <% } %>
+      </ul>
+    </div>
+    <!-- 卡片主體 -->
+    <div class="card-body tab-content">
+      <!-- REGISTER PANE -->
+
+      <% for( let type in G_PAGE.ID ){ %>
+      <% let form_id = G_PAGE.ID[type] %>
+      <% if(form_id === G_PAGE.ID.REGISTER_FORM ){ %>
+      <%- include('./components/pane-register', {form_id}) %>
+      <% } else if (form_id === G_PAGE.ID.LOGIN_FORM ){ %>
+      <%- include('./components/pane-login', {form_id}) %>
+      <% } %>
+      <% } %>
+    </div>
+  </div>
+</main>
+<%- include('../wedgets/footer/index') %>
+</body>
+
+</html>

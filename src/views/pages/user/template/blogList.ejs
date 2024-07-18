@@ -1,0 +1,54 @@
+<% let G_PAGE = JSON.parse(--CONS.USER--) %>
+<li data-<%= G_PAGE.DATASET.KEY.PAGE_NUM %>="<%= page %>" <%= page !== 1 ? `style='display: none;'` : '' %>>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item list-group-item-action list-group-item-info d-flex align-items-center justify-content-between">
+      <div class="col-8 col-sm-5">
+        <span>標題</span>
+      </div>
+      <div class="text-truncate  d-none d-sm-block <%= isSelf ? 'col-sm-4' : 'col-sm-7' %>">
+        <span><%= isPublic ? '發布時間' : '最近一次編輯' %></span>
+      </div>
+      <% if(isSelf){ %>
+      <div class="col-4 col-sm-3">
+        <% if(isSelf) { %>
+        <button type="button" class="btn btn-sm btn-outline-danger" <%= `data-${G_PAGE.DATASET.KEY.REMOVE_BLOG}=${G_PAGE.DATASET.VALUE.REMOVE_BLOG_LIST}` %>>全部刪除</button>
+        <% } %>
+      </div>
+      <% } %>
+    </li>
+    <% blogs.forEach( ( {id, author_id, title, time } ) => { %>
+    <li data-<%= G_PAGE.DATASET.KEY.BLOG_ID %>="<%= id %>" class="list-group-item list-group-item-action list-group-item-info d-flex align-items-center justify-content-between">
+      <div class="text-truncate col-8 col-sm-5">
+        <a class="stretched-link" href="/blog/<%= isPublic ? id : `preview/${id}` %>">
+          <%= title %>
+        </a>
+      </div>
+      <div class="text-truncate d-none d-sm-block <%= isSelf ? 'col-sm-4' : 'col-sm-7' %>">
+        <span class="timestamp"><%= time %></span>
+      </div>
+      <% if(isSelf){ %>
+      <div class="flex-shrink-0 col-4 col-sm-3">
+        <a class='btn btn-outline-primary btn-sm' href="/blog/edit/<%= id %>">編輯</a>
+        <a class='btn btn-outline-primary btn-sm' data-<%= G_PAGE.DATASET.KEY.REMOVE_BLOG %>=<%= G_PAGE.DATASET.VALUE.REMOVE_BLOG_ITEM %>>刪除</a>
+      </div>
+      <% } %>
+    </li>
+    <% }) %>
+
+    <!-- 填補START -->
+    <% if(blogs.length < pagination.BLOG_COUNT) {%>
+    <% for(let i=pagination.BLOG_COUNT - blogs.length; i> 0; i-- ){ %>
+    <li class="list-group-item list-group-item-info d-flex align-items-center justify-content-between">
+      <div class="filler me-3"></div>
+      <% if(isSelf){ %>
+      <div class="flex-shrink-0">
+        <a class='btn btn-outline-primary btn-sm'>編輯</a>
+        <a class='btn btn-outline-primary btn-sm'>刪除</a>
+      </div>
+      <% } %>
+    </li>
+    <% } %>
+    <% } %>
+    <!-- 填補END -->
+  </ul>
+</li>

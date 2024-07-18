@@ -1,0 +1,52 @@
+/* loadingBackdrop.css */
+@keyframes loadingBackdrop {
+  0% {
+    content: "LOADING";
+  }
+  25% {
+    content: "LOADING.";
+  }
+  50% {
+    content: "LOADING..";
+  }
+  75% {
+    content: "LOADING...";
+  }
+  100% {
+    content: "LOADING...";
+  }
+}
+
+#loadingBackdrop {
+  width: 100vw;
+  height: 100vh;
+  background: rgb(219, 159, 159);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  div {
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  h1 {
+    // 頁面讀取到 user.css時，h1內的文字以 h1::after 為主
+    font-size: 0 !important;
+    &::before {
+      content: "LOADING";
+      display: block;
+      font-size: calc(1.375rem + 1.5vw);
+      text-align: center;
+      color: #000;
+      animation: loadingBackdrop 1.5s infinite step-end;
+    }
+  }
+}
+
+.noClick {
+  pointer-events: none;
+}

@@ -1,0 +1,62 @@
+<% let G_PAGE = JSON.parse(--CONS.USER--) %>
+<% for(let _status in blogs){ %>
+<% let _isPublic = _status === G_PAGE.DATASET.VALUE.BLOG_STATUS_PUBLIC %>
+<% if(!isSelf && !_isPublic){ continue }%>
+<% let _blogData = blogs[_status] %>
+
+<div class="blogList card bg-light" <%= `data-${G_PAGE.DATASET.KEY.BLOG_STATUS}=${_status}` %>>
+  <div class="card-header">
+    <h5><%= _isPublic ? '公開的BLOG' : '編輯中的BLOG' %></h5>
+  </div>
+  <% if(_blogData.count){ %>
+  <ul class="list-group">
+    <% let blogs = _blogData.blogs %>
+    <%- ejs_render.user.blogList({ blogs, page: 1, isSelf, isPublic: _isPublic, pagination: G_PAGE.PAGINATION }) %>
+    <div class="pageLoading" style="display: none;">
+      <h1></h1>
+    </div>
+  </ul>
+  <% if (_blogData.count / pagination.BLOG_COUNT > 1) { %>
+  <nav aria-label="...">
+    <ul class="pagination">
+      <li class="page-item">
+        <a class="page-link pe-none" href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${G_PAGE.DATASET.VALUE.PREVIOUS_PAGINATION}` %>>
+          &#8810;
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link pe-none" href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${G_PAGE.DATASET.VALUE.PREVIOUS_PAGE}`%>>&#60;</a>
+      </li>
+      <% var _totalPage=Math.ceil(_blogData.count / pagination.BLOG_COUNT) %>
+      <% for(let _page_num=1; _totalPage>= _page_num; _page_num++){ %>
+      <% if((_page_num % pagination.PAGE_COUNT)===1){ %>
+      <!-- 除5若無餘數，要有ul li -->
+      <ul class="pagination" <%= `data-${G_PAGE.DATASET.KEY.PAGINATION_NUM}=${Math.ceil(_page_num / pagination.PAGE_COUNT)}` %> <% if(Math.ceil(_page_num / pagination.PAGE_COUNT) > 1){ %> style="display: none;" <% } %>>
+        <% } %>
+        <!-- 除5無論有無餘數，都要li -->
+        <li class="page-item <%= _page_num === 1 ? 'active' : '' %>">
+          <a class="page-link" href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${_page_num}` %>>
+            <%= _page_num %>
+          </a>
+        </li>
+        <% if( !(_page_num % pagination.PAGE_COUNT) || _page_num === _totalPage ){ %>
+      </ul>
+      <% } %>
+      <% } %>
+      <li class="page-item">
+        <a href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${G_PAGE.DATASET.VALUE.NEXT_PAGE}` %> class="page-link <%= _totalPage < 2 ? "pe-none" : '' %>">&#62;</a>
+      </li>
+      <li class="page-item">
+        <a href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${G_PAGE.DATASET.VALUE.NEXT_PAGINATION}` %> class="page-link <%= _totalPage <= 2 ? "pe-none" : '' %>">&#8811;</a>
+      </li>
+    </ul>
+  </nav>
+  <% } %>
+
+  <% } else { %>
+  <p class="p-3">沒有<%= _isPublic ? '公開' : '編輯中' %>的BLOG
+  </p>
+  <% } %>
+</div>
+
+<% } %>

@@ -1,0 +1,10 @@
+<head><link rel="icon" href="/public/imgs/favicon/favicon.png"></head><%- include('../wedgets/header/index', {title:  locals.title ? title : errModel.msg }) %>
+<main class="container-md" style="display: none;">
+<h1><%= errModel.errno %></h1>
+<div>
+<%= errModel.msg %>
+</div>
+</main>
+<%- include('../wedgets/footer/index') %>
+<script defer src="/public/js/page404.9e26c.js"></script></body>
+</html>

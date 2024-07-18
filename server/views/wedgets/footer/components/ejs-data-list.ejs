@@ -1,0 +1,19 @@
+<div style="display: none;">
+  <%
+      let whiteList = Object.values({
+        user: ['currentUser', "relationShip", 'blogs'],
+        blog: ['blog'],
+        square: ['blog'],
+        album: ['blog', 'imgs'],
+        setting: ['currentUser'],
+        errPage: ['errModel', 'from', 'serverError']
+      }).flat()
+  %>
+  <% for(let type in locals){ %>
+  <% if( whiteList.some(item => item === type)){ %>
+  <div data-my-data="<%= type %>">
+    <%- JSON.stringify(locals[type]) %>
+  </div>
+  <% } %>
+  <% } %>
+</div>

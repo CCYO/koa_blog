@@ -1,0 +1,43 @@
+<% let G_PAGE = JSON.parse(--CONS.SQUARE--) %>
+<li <%= `data-${G_PAGE.DATASET.KEY.PAGE_NUM}=${page}` %> style="<%= page !== 1 ? 'display: none' : ''%>">
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item list-group-item-info d-flex align-items-center justify-content-between">
+      <div class="col-8 col-sm-5">
+        <span>標題</span>
+      </div>
+      <div class="col-4 col-sm-3">
+        <span>作者</span>
+      </div>
+      <div class="d-none d-sm-block col-sm-4">
+        <span>發布時間</span>
+      </div>
+    </li>
+    <% blogs.forEach( ( {id, author, title, time } ) => { %>
+    <li <%= `data-${G_PAGE.DATASET.KEY.BLOG_ID}=${id}` %> class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
+      <div class="text-truncate col-8 col-sm-5">
+        <a class="stretched-link" href="/blog/<%= id %>">
+          <%= title %>
+        </a>
+      </div>
+      <div class="text-truncate col-4 col-sm-3">
+        <a class="stretched-link" href="/other/<%= author.id %>">
+          <%= author.nickname %>
+        </a>
+      </div>
+      <div class="text-truncate d-none d-sm-block col-sm-4">
+        <span class="timestamp"><%= time %></span>
+      </div>
+    </li>
+    <% }) %>
+
+    <!-- 填補START -->
+    <% if(blogs.length < pagination.BLOG_COUNT) {%>
+    <% for(let i=pagination.BLOG_COUNT - blogs.length; i> 0; i-- ){ %>
+    <li class="list-group-item d-flex align-items-center justify-content-between">
+      <div class="filler me-3"></div>
+    </li>
+    <% } %>
+    <% } %>
+    <!-- 填補END -->
+  </ul>
+</li>

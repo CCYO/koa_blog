@@ -1,0 +1,92 @@
+@import "bootstrap/scss/mixins/text-truncate";
+/* navbar.css */
+.navbar-brand {
+  color: #12345678;
+}
+
+#offcanvasNavbar {
+  max-width: 50%;
+}
+nav {
+  box-shadow: 0px 0rem 0.2rem #aaa;
+  .nav {
+    flex-wrap: nowrap;
+  }
+  .nav-link {
+    color: rgba(0, 0, 0, 0.55);
+    white-space: nowrap;
+  }
+  .nav-link:hover {
+    background: rgba(200, 200, 200, 0.5);
+    color: #0d6efd !important;
+    border-bottom: 1.5px solid;
+    margin-bottom: -1.5px;
+  }
+  .nav-link.active {
+    border-bottom: 1.5px solid;
+    color: rgba(0, 0, 0, 0.9);
+  }
+  .nav-item {
+    padding: 0 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+}
+
+#newsList {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+#noNews {
+  pointer-events: none;
+}
+
+.new-news-count,
+.news-count {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: all 1s ease-out;
+  opacity: 1;
+  z-index: 1030;
+}
+
+.news-item {
+  padding: 0;
+  background-color: rgba(200, 200, 200, 0.2);
+  &:hover {
+    background-color: rgb(120 180 255);
+  }
+  a {
+    display: block;
+    padding: 0.25rem 1rem 0rem 1rem;
+  }
+  p {
+    color: #666;
+    text-align: right;
+    font-size: 0.8rem;
+    margin: 0;
+    padding: 0rem 1rem 0.25rem 1rem;
+  }
+}
+
+.transition-bg {
+  transition: background-color 3s ease-in-out;
+}
+
+#confirm-news-title + .news-item .news-item-content,
+[data-my-hr="confirm-news-hr"] + .news-item .news-item-content {
+  color: #666;
+}
+
+.dropdown-menu {
+  width: 45vw;
+  scroll-behavior: smooth;
+}
+
+@media (max-width: 575.9px) {
+  .dropdown-menu {
+    width: 60vw;
+    scroll-behavior: smooth;
+  }
+}

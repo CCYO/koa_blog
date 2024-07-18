@@ -1,0 +1,13 @@
+/* square.css */
+@import "./common/basic.scss";
+@import "./component/blogList";
+
+li[data-blog-id].list-group-item > .text-truncate {
+  &:nth-child(2) {
+    position: relative;
+
+    &:hover {
+      background-color: var(--bs-info-border-subtle);
+    }
+  }
+}
