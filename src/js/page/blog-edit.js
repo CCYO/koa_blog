@@ -19,8 +19,8 @@ import {
   _xss,
   formFeedback,
   dev_log,
+  localeTw,
 } from "../utils";
-import twResources from "../locale/tw";
 /* runtime ---------------------------------------------------------------------------------- */
 try {
   const $$ajv = new _Ajv(G.utils.axios);
@@ -94,7 +94,7 @@ async function initMain() {
     //  紀錄插入youtube影片的網址
     let hash;
     //  editor 的 繁中設定
-    i18nAddResources("tw", twResources);
+    i18nAddResources("tw", localeTw);
     i18nChangeLanguage("tw");
     const { debounce: handle_debounce_change } = new Debounce(
       handle_editorChange,
@@ -180,8 +180,7 @@ async function initMain() {
       const $modal = $(modalOrPanel.$elem).first();
       const $containerList = $modal.find("div > label.babel-container");
       const isImgModel =
-        $containerList.first().children("span").text() ===
-        twResources.image.src;
+        $containerList.first().children("span").text() === localeTw.image.src;
       //  若匹配，代表是 Image modal
       if (!isImgModel) {
         return;

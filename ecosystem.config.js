@@ -1,9 +1,10 @@
+// PM2 config
 module.exports = {
   apps: [
     {
-      name: "app",
+      name: "koa_blog",
       script: "./server/bin/www",
-      env_production: {
+      env: {
         NODE_ENV: "production",
       },
     },

@@ -1,3 +1,4 @@
+import localeTw from "./_wangeditor/locale-tw";
 import errorHandle from "./errorHandle";
 import _Ajv from "./_Ajv";
 import Debounce from "./Debounce";
@@ -14,6 +15,7 @@ import initPagination from "./pagination";
 import render from "./render";
 
 export {
+  localeTw,
   errorHandle,
   Loop,
   _Ajv,

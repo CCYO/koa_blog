@@ -1,7 +1,7 @@
 {
   "ignore": ["server/views/", "server/utils/render/template/","server/assets/", "src/js/", "src/css/", "src/_views/"],
   "env": {
-    "PORT": 8080
+    "NODE_PORT": 8080
   },
   "events": {
     "crash": "sh -c 'lsof -i :${PORT:-8080} -t | xargs kill'"
