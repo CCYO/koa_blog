@@ -12,10 +12,10 @@ function genDefault(JSON, FRONTEND_CONFIG) {
   JSON.nickname.errorMessage.minLength = `必須介於${SETTING.NICKNAME.MIN_LENGTH}-${SETTING.NICKNAME.MAX_LENGTH}個字符`;
   JSON.nickname.errorMessage.maxLength = `必須介於${SETTING.NICKNAME.MIN_LENGTH}-${SETTING.NICKNAME.MAX_LENGTH}個字符`;
 
-  JSON.password.minLength = SETTING.NICKNAME.MIN_LENGTH;
-  JSON.password.maxLength = SETTING.NICKNAME.MAX_LENGTH;
-  JSON.password.errorMessage.minLength = `必須介於${SETTING.NICKNAME.MIN_LENGTH}-${SETTING.NICKNAME.MAX_LENGTH}個字符`;
-  JSON.password.errorMessage.maxLength = `必須介於${SETTING.NICKNAME.MIN_LENGTH}-${SETTING.NICKNAME.MAX_LENGTH}個字符`;
+  JSON.password.minLength = SETTING.PASSWORD.MIN_LENGTH;
+  JSON.password.maxLength = SETTING.PASSWORD.MAX_LENGTH;
+  JSON.password.errorMessage.minLength = `必須介於${SETTING.PASSWORD.MIN_LENGTH}-${SETTING.PASSWORD.MAX_LENGTH}個字符`;
+  JSON.password.errorMessage.maxLength = `必須介於${SETTING.PASSWORD.MIN_LENGTH}-${SETTING.PASSWORD.MAX_LENGTH}個字符`;
 
   JSON.age.minimum = SETTING.AGE.MINIMUM;
   JSON.age.maximum = SETTING.AGE.MAXIMUM;

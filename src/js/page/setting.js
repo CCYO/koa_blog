@@ -49,8 +49,21 @@ function initMain() {
   el_model.addEventListener(
     "shown.bs.modal",
     //  顯示 modal 時，focus input
-    () => el_origin_password.focus()
+    () => {
+      el_origin_password.focus();
+    }
   );
+  el_model.addEventListener(
+    "hidden.bs.modal",
+    //  隱藏 modal 時，focus input
+    () => {
+      formFeedback.clear(el_origin_password);
+      el_origin_password.value = "";
+    }
+  );
+  el_model.addEventListener("input", (e) => {
+    formFeedback.clear(e.target);
+  });
   $newPasswordList.on("focus", handle_showModel);
   $checkOrginPassword.on("click", handle_originPassword);
   let { debounce: handle_debounce_input } = new Debounce(handle_input, {
