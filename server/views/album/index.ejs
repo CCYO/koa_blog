@@ -1,0 +1,18 @@
+<head><link rel="icon" href="/public/imgs/favicon/favicon.png"></head><%- include('../wedgets/header/index', {title}) %>
+<main class="container-md" style="display: none;">
+<div class="card">
+<div class="card-header">
+<ol class="breadcrumb">
+<li class="breadcrumb-item"><a href="/album/list">文章相簿</a></li>
+<li class="breadcrumb-item active" aria-current="page"><a href="/blog/<%= blog.id %>"><%= blog.title %></a>的照片列表</li>
+</ol>
+</div>
+<div class="card-body">
+<%- include('./components/imgList', {imgs}) %>
+<%- include('./components/modal') %>
+</div>
+</div>
+</main>
+<%- include('../wedgets/footer/index') %>
+<script defer src="/public/js/album.9033e.js"></script></body>
+</html>
