@@ -54,8 +54,8 @@ async function initMain() {
     const jq_card = $(
       `.card[data-${G.constant.DATASET.KEY.ALT_ID}=${alt_id}]`
     ).eq(0);
-    jq_card.find(".card-text").text(alt);
-    jq_card.find("img").attr("alt", alt);
+    jq_card.find(".card-body > p").text(alt);
+    jq_card.find("div:first-child").attr("title", alt);
     ////  重置 modal
     jq_input_alt.val();
     jq_modal.data(G.constant.DATASET.KEY.ALT_ID, "");
@@ -75,7 +75,6 @@ async function initMain() {
     if (!result.invalid) {
       G.utils.lock.setKVpairs(payload);
       formFeedback.validated(el_input_alt, true);
-      // G.utils.lock.check_submit();
     } else {
       let { keyword, message } = result.find(
         ({ field_name }) => field_name === KEY
@@ -84,15 +83,10 @@ async function initMain() {
         throw new Error(JSON.stringify(result));
       } else if (keyword[0] !== "_notRepeat") {
         formFeedback.validated(el_input_alt, false, message);
-        // G.utils.lock.reset();
-        // G.utils.lock.check_submit();
       } else {
         formFeedback.clear(el_input_alt);
-
-        // G.utils.lock.check_submit();
       }
       G.utils.lock.clear();
-      // await lock.validate();
     }
     G.utils.lock.check_submit();
     return;
@@ -118,6 +112,7 @@ async function initMain() {
     const { alt } = G.data.map_imgs.get(alt_id);
     //  使 modal 的 input 呈現當前照片名稱
     jq_input_alt.val(alt);
+    el_input_alt.placeholder = alt;
   }
   //  顯示 modal 的 handle
   function handle_cueModale(e) {
