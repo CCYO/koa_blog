@@ -16,7 +16,7 @@ const TYPE = {
   //	setting
   SETTING: "setting",
   PASSWORD: "password",
-  AVATAR: "avatar",
+  BLOG_IMG: "blog_img",
 };
 //  參考 https://ajv.js.org/api.html#error-parameters
 const ERROR_PARAMS = {

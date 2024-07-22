@@ -28,6 +28,8 @@ try {
   G.constant = FRONTEND.BLOG_EDIT;
   G.utils._xss = _xss;
   G.utils.validate = {
+    img_alt: $$ajv._validate.img_alt,
+    blog_img: $$ajv._validate.blog_img,
     blog: $$ajv._validate.blog,
   };
   await G.main(initMain);
@@ -249,9 +251,19 @@ async function initMain() {
         //  RV會自動被化作警告
         return "不能修改url";
       }
-      if (alt === new_alt) {
-        return undefined;
+      let result = await G.utils.validate.img_alt({
+        _old: {
+          alt,
+        },
+        alt: new_alt,
+      });
+      result = result.filter(({ field_name }) => field_name !== "_old");
+      result.invalid = result.some(({ valid }) => !valid);
+      if (result.invalid) {
+        let { message } = result.find(({ field_name }) => field_name === "alt");
+        return message;
       }
+
       await G.utils.axios.patch(G.constant.API.UPDATE_ALBUM, {
         alt_id,
         blog_id: G.data.blog.id,
@@ -264,19 +276,43 @@ async function initMain() {
     }
     //  自定義上傳圖片方法
     async function customUpload(img, insertFn) {
-      let nameAndExt = _getNameAndExt(img.name);
-      if (!nameAndExt) {
+      //  取得 name ext
+      //  取得 size
+
+      // let nameAndExt = _getNameAndExt(img.name);
+      let _res = G.constant.REG.IMG_NAME_AND_EXT.exec(img.name);
+      let [_ = "", alt = "", ext] = _res;
+      // if (!nameAndExt) {
+      //   return false;
+      // }
+      // if (img.size > FRONTEND.BLOG_EDIT.EDITOR.IMG_MAX_SIZE) {
+      //   alert(
+      //     `片大小必須小於${Math.floor(
+      //       FRONTEND.EDITOR.IMG_MAX_SIZE / (1024 * 1024)
+      //     )}Mb`
+      //   );
+      //   return false;
+      // }
+      let validated_list = await G.utils.validate.blog_img({
+        alt,
+        ext,
+        size: img.size,
+      });
+      let valid = !validated_list.some((item) => !item.valid);
+      if (!valid) {
+        let message = validated_list.reduce((acc, { message }) => {
+          if (message) {
+            if (acc.length) {
+              acc += `,${message}`;
+            } else {
+              acc += `${message}`;
+            }
+          }
+          return acc;
+        }, "");
+        alert(message);
         return false;
       }
-      if (img.size > FRONTEND.BLOG_EDIT.EDITOR.IMG_MAX_SIZE) {
-        alert(
-          `片大小必須小於${Math.floor(
-            FRONTEND.EDITOR.IMG_MAX_SIZE / (1024 * 1024)
-          )}Mb`
-        );
-        return false;
-      }
-      let { name, ext } = nameAndExt;
       //  生成 img 的 hash(hex格式)
       //  取得 img 的 MD5 Hash(hex格式)
       let hash = await _getMD5Hash(img);
@@ -288,8 +324,8 @@ async function initMain() {
       if (!blogImg_id) {
         ////  img為新圖，傳給後端新建一個blogImgAlt
         //  imgName要作為query參數傳送，必須先作百分比編碼
-        name = encodeURIComponent(name);
-        api += `&name=${name}&ext=${ext}`;
+        alt = encodeURIComponent(alt);
+        api += `&name=${alt}&ext=${ext}`;
         formdata.append("blogImg", img);
       } else {
         ////  img為重覆的舊圖，傳給後端新建一個blogImgAlt
@@ -359,9 +395,6 @@ async function initMain() {
       function _getNameAndExt(imgName) {
         let result = true;
         let [_, name, ext] = G.constant.REG.IMG_NAME_AND_EXT.exec(imgName);
-        if (!name || !ext) {
-          result = false;
-        }
         name = _xss.trim(name).toUpperCase();
         ext = _xss.trim(ext).toUpperCase();
         if (ext !== "PNG" && ext !== "JPG") {

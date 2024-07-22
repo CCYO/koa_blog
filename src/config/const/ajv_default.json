@@ -1,7 +1,7 @@
 {
   "avatar_ext": {
       "type": "string",
-      "pattern": "^(PNG)$|^(JPG)$",
+      "pattern": "^(PNG)$|^(JPG)$|^(png)$|^(jpg)$",
       "errorMessage": {
           "type": "必須是字符串",
           "pattern": "必須是jpg或png類型"
@@ -66,8 +66,10 @@
   },
   "avatar_hash": {
       "type": "string",
+      "pattern": "[0-9a-f]{16,16}",
       "errorMessage": {
-          "type": "必須是字符串"
+          "type": "必須是字符串",
+          "pattern": "必須由32個16進制字符組成"
       }
   },
   "title": {

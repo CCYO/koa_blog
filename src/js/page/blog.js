@@ -37,7 +37,7 @@ async function initMain() {
         alt,
         img: { url },
       } = G.data.blog.map_imgs.get(alt_id * 1);
-      let imgEle = `<img src="${url}?alt_id=${alt_id}" alt="${alt}"`;
+      let imgEle = `<img src="${url}?alt_id=${alt_id}" alt="${alt}" title="${alt}"`;
       let replaceStr = style ? `${imgEle} style="${style}"/>` : `${imgEle}/>`;
       //  修改 _html 內對應的 img相關字符
       htmlStr = htmlStr.replace(res[0], replaceStr);

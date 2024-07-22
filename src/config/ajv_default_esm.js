@@ -34,8 +34,8 @@ function genDefault(JSON, FRONTEND_CONFIG) {
 
   JSON.alt.minLength = ALBUM.ALT.MIN_LENGTH;
   JSON.alt.maxLength = ALBUM.ALT.MAX_LENGTH;
-  JSON.alt.errorMessage.minLength = `長度需大於${ALBUM.ALT.MIN_LENGTH}個字`;
-  JSON.alt.errorMessage.maxLength = `長度需小於${ALBUM.ALT.MAX_LENGTH}個字`;
+  JSON.alt.errorMessage.minLength = `名稱需介於${ALBUM.ALT.MIN_LENGTH}-${ALBUM.ALT.MAX_LENGTH}個字`;
+  JSON.alt.errorMessage.maxLength = `名稱需介於${ALBUM.ALT.MIN_LENGTH}-${ALBUM.ALT.MAX_LENGTH}個字`;
 
   return JSON;
 }
