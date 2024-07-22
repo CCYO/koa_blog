@@ -2,6 +2,7 @@
  * @description middleware of upload to GCS by Formidable
  */
 const { formidable } = require("formidable");
+const { firstValues } = require("formidable/src/helpers/firstValues.js");
 const { storage } = require("../db/firebase");
 const { MyErr, SuccModel } = require("../utils/model");
 const { ERR_RES, USER, BLOG, GFB } = require("../config");
@@ -108,10 +109,12 @@ async function _parse(ctx, opts) {
 
   let result = {};
   let formidableIns = formidable(opts);
+
   let [fields, files] = await formidableIns.parse(ctx.req).catch((error) => {
     //  拋出 formidable 解析錯誤
     throw new MyErr({ ...ERR_RES.SERVER.FORMIDABLE.PARSE_ERR, error });
   });
+  fields = firstValues(formidableIns, fields);
   if (gceFile) {
     try {
       //  判斷圖檔上傳GFB的狀況

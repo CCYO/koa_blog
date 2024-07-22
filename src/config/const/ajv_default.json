@@ -1,6 +1,14 @@
 {
   "avatar_ext": {
       "type": "string",
+      "pattern": "^(PNG)$|^(JPG)$",
+      "errorMessage": {
+          "type": "必須是字符串",
+          "pattern": "必須是jpg或png類型"
+      }
+  },
+  "alt": {
+      "type": "string",
       "pattern": "^[\\w\\u4e00-\\u9fa5\\-]+$",
       "errorMessage": {
           "type": "必須是字符串",
@@ -142,14 +150,6 @@
       "errorMessage": {
           "type": "必須是整數",
           "minimum": "必須 > 0"
-      }
-  },
-  "alt": {
-      "type": "string",
-      "pattern": "^(PNG)$|^(JPG)$",
-      "errorMessage": {
-          "type": "必須是字符串",
-          "pattern": "必須是jpg或png類型"
       }
   }
 }
