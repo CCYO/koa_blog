@@ -37,11 +37,11 @@ export default {
           $ref: `${DEFAULT_URL}/password_again`,
         },
         avatar_hash: {
-          $ref: `${DEFAULT_URL}/avatar_hash`,
+          $ref: `${DEFAULT_URL}/hash`,
         },
         avatar_ext: {
           type: "string",
-          $ref: `${DEFAULT_URL}/avatar_ext`,
+          $ref: `${DEFAULT_URL}/img_ext`,
         },
       },
     },

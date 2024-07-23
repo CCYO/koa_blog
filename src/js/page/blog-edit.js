@@ -321,13 +321,14 @@ async function initMain() {
       let blogImg_id = await _findExistBlogImgId(hash);
       let api = `${G.constant.API.CREATE_IMG}?hash=${hash}&blog_id=${G.data.blog.id}`;
       let formdata = new FormData();
-      if (!blogImg_id) {
-        ////  img為新圖，傳給後端新建一個blogImgAlt
-        //  imgName要作為query參數傳送，必須先作百分比編碼
-        alt = encodeURIComponent(alt);
-        api += `&name=${alt}&ext=${ext}`;
-        formdata.append("blogImg", img);
-      } else {
+      // if (!blogImg_id) {
+      ////  img為新圖，傳給後端新建一個blogImgAlt
+      //  imgName要作為query參數傳送，必須先作百分比編碼
+      alt = encodeURIComponent(alt);
+      api += `&name=${alt}&ext=${ext}`;
+      formdata.append("blogImg", img);
+      // } else {
+      if (blogImg_id) {
         ////  img為重覆的舊圖，傳給後端新建一個blogImgAlt
         api += `&blogImg_id=${blogImg_id}`;
       }

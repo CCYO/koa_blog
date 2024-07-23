@@ -23,6 +23,13 @@ module.exports = async (ctx, next) => {
       action = "建立BLOG";
       validate_result = await validator(TYPE.BLOG.CREATE)(ctx.request.body);
       break;
+    case "POST-/img":
+      action = "建立BLOG_IMG_ALT";
+      ctx.request.query.blog_id *= 1;
+      validate_result = await validator(TYPE.BLOG_IMG.CREATE)(
+        ctx.request.query
+      );
+      break;
     case "PATCH-/":
       action = "更新BLOG";
       let opts = {

@@ -22,10 +22,10 @@ module.exports = {
       $ref: `${DEFAULT_URL}/nickname`,
     },
     avatar: {
-      $ref: `${DEFAULT_URL}/avatar`,
+      $ref: `${DEFAULT_URL}/url`,
     },
     avatar_hash: {
-      $ref: `${DEFAULT_URL}/avatar_hash`,
+      $ref: `${DEFAULT_URL}/hash`,
     },
     origin_password: {
       $ref: `${DEFAULT_URL}/password`,

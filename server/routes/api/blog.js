@@ -52,6 +52,7 @@ router.post(
 router.post(
   "/img",
   CHECK.login,
+  VALIDATE.BLOG,
   CACHE.modify,
   FIREBASE.blogImg,
   async (ctx) => {

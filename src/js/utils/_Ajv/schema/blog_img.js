@@ -14,7 +14,7 @@ export default {
     },
     ext: {
       type: "string",
-      $ref: `${DEFAULT_URL}/avatar_ext`,
+      $ref: `${DEFAULT_URL}/img_ext`,
     },
     alt: {
       type: "string",

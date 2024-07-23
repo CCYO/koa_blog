@@ -12,6 +12,9 @@ module.exports = {
       CREATE: "blog_create",
       UPDATE: "blog_update",
     },
+    BLOG_IMG: {
+      CREATE: "blog_img_create",
+    },
     ALT: {
       UPDATE: "alt_update",
     },
