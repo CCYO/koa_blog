@@ -26,6 +26,7 @@ const ERROR_PARAMS = {
   _notEmpty: "_notEmpty",
   _notRepeat: "_notRepeat",
   _noSpace: "noSpace",
+  _keyword: "field",
 };
 
 export default {

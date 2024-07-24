@@ -1,20 +1,25 @@
 import Ajv from "ajv";
 const keyword = "_isEmailExist";
-async function validate(schema, data, parentSchema, dataCtx) {
+async function validate(schema, email, parentSchema, dataCtx) {
   if (!schema) {
     return true;
   }
-  const key = "email";
-  let { errno, msg } = await this.$$axios.post("/api/user/isEmailExist", {
-    [key]: data,
-  });
-  if (!errno) {
+  let response = await this.$$axios.post("/api/user/isEmailExist", { email });
+  if (!response.errno) {
     return true;
   }
-  let errors = [{ keyword }];
-  let params = { errors };
-  let invalid_errors = [{ keyword: "myKeyword", params, message: msg }];
-  throw new Ajv.ValidationError(invalid_errors);
+  let error = {
+    keyword: "myKeyword",
+    message: response.msg,
+    params: {
+      errors: [
+        {
+          keyword,
+        },
+      ],
+    },
+  };
+  throw new Ajv.ValidationError([error]);
 }
 
 export default {
