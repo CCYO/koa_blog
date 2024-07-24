@@ -341,6 +341,8 @@ async function initMain() {
         title: _xss.trim(input.value),
       };
       let validated_list = await G.utils.validate.blog_title(data);
+      // let validated_list = await G.utils.validate.blog_title(123);
+      return;
       let valid = !validated_list.some((item) => !item.valid);
       let msg = "";
       let res = title;

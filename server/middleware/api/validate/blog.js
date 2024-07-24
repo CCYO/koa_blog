@@ -26,6 +26,12 @@ module.exports = async (ctx, next) => {
     case "POST-/img":
       action = "建立BLOG_IMG_ALT";
       ctx.request.query.blog_id *= 1;
+      if (ctx.request.query.blogImg_id) {
+        ctx.request.query.blogImg_id *= 1;
+      }
+      if (ctx.request.query.img_id) {
+        ctx.request.query.img_id *= 1;
+      }
       validate_result = await validator(TYPE.BLOG_IMG.CREATE)(
         ctx.request.query
       );

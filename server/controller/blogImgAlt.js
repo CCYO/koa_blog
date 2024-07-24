@@ -3,8 +3,12 @@ const Opts = require("../utils/seq_options");
 const { MyErr, SuccModel } = require("../utils/model");
 const { CACHE, ENV, ERR_RES } = require("../config");
 
-async function add(blogImg_id) {
-  let data = await BlogImgAlt.create({ blogImg_id });
+async function add(blogImg_id, alt) {
+  let _data = { blogImg_id };
+  if (alt) {
+    _data.alt = alt;
+  }
+  let data = await BlogImgAlt.create(_data);
   return new SuccModel({ data });
 }
 //  查詢 alt 的完整數據，且以author_id 與 blog_id 校驗是否有權利更改

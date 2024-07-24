@@ -316,9 +316,9 @@ async function initMain() {
       //  生成 img 的 hash(hex格式)
       //  取得 img 的 MD5 Hash(hex格式)
       let hash = await _getMD5Hash(img);
-      // let blogImg_id = await _findExistBlogImgId(hash);
+      // let blogImg_id = await _isImgExist(hash);
       // exist = { blogImg_id, url, hash, img_id };
-      let blogImg_id = await _findExistBlogImgId(hash);
+      let exist = await _isImgExist(hash);
       let api = `${G.constant.API.CREATE_IMG}?hash=${hash}&blog_id=${G.data.blog.id}`;
       let formdata = new FormData();
       // if (!blogImg_id) {
@@ -328,9 +328,10 @@ async function initMain() {
       api += `&name=${alt}&ext=${ext}`;
       formdata.append("blogImg", img);
       // } else {
-      if (blogImg_id) {
+      if (exist) {
+        let { img_id, blogImg_id } = exist;
         ////  img為重覆的舊圖，傳給後端新建一個blogImgAlt
-        api += `&blogImg_id=${blogImg_id}`;
+        api += `&blogImg_id=${blogImg_id}&img_id=${img_id}`;
       }
       let res = await G.utils.axios.post(api, formdata);
       //  blogImgAlt { id, alt, blog: { id, author_id }, blogImg: { id, name }, img: { id, url, hash }}
@@ -354,7 +355,7 @@ async function initMain() {
       insertFn(`${alt_data.img.url}?alt_id=${id}`, alt_data.alt);
       return;
       //  取得圖片的 hash
-      async function _findExistBlogImgId(hash) {
+      async function _isImgExist(hash) {
         // let blogImg_id = undefined;
         let res;
         let { map_imgs } = G.data.blog;
@@ -368,7 +369,10 @@ async function initMain() {
             // blogImg_id = target.blogImg_id;
             // let { alt_id, alt, blogImg_id, name, img_id, hash, url } =
             //   target;
-            res = target.blogImg.id;
+            res = {
+              blogImg: target.blogImg.id,
+              img: target.img.id,
+            };
           }
         }
         // return blogImg_id;

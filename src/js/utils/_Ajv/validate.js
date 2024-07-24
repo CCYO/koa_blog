@@ -36,16 +36,24 @@ function _init_errors(invalid_errors) {
 
   let res = invalid_errors.reduce((acc, invalid_error) => {
     let {
+      //  原生狀況：顯示發生錯誤的keyword
+      //  "errorMessage"：代表此校驗錯誤是ajv-errors預先設定的，而原生keyword能在paramsItem找到
+      //  "myKeyword"：自訂義keyword
       keyword,
-      //  "errorMessage": 代表該錯誤訊息是利用ajv-errors在schema預先設定的
-      //  "其他狀況"：代表該錯誤則否(通常是schema最高級的keyword，ex: if/else)
+      //  依據keyword，params有不同內容
+      //  "errorMessage"：代表此校驗錯誤是ajv-errors預先設定的，params內容為原生錯誤
+      //  "myKeyword"：自訂義keyword所設計的params，
+      ////  paramsItem { keyword: 自訂義keyword, params: { 自訂義的params-kvpairs } }
       params,
-      //  若keyword === "errorMessage"，則params即為利用ajv-error設定的錯誤訊息，原生ajv錯誤資訊則存於params.errors
+      //  JSON Pointer：代表被校驗的資料為主體，實際發生錯誤的位置(ex: "/email")
+      //  ""：代表指向的位置，高過於被校驗的資料的級別(ex: schema.if)
+      //  無論是否自訂義keyword，都是自動生成
       instancePath,
-      //  validatedData 發生錯誤的JSON Pointer(ex: "/email")
-      //  若值為""，代表validatedData牴觸的keyword，其指向比validatedData顯示不出來的更高級的JSON Pointer位置(ex: schema.if)
+      //  依據keyword，params有不同內容
+      //  原生狀況：錯誤提醒
+      //  "errorMessage"：ajv-errors預先設定的錯誤提醒
+      //  "myKeyword"：自訂義keyword的校驗函數設定錯誤提醒
       message,
-      //  ajv-errors針對當前錯誤設定錯誤提示，或是原生錯誤提醒
     } = invalid_error;
     //  ↓ 忽略未自定義message的校驗錯誤
     if (keyword !== "errorMessage" && keyword !== "myKeyword") {
