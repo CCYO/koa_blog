@@ -52,15 +52,15 @@ module.exports = async (ctx, next) => {
       break;
   }
   //    validate_result [ { <field_name>, <valid: boolean>, <value>, <message> }, ... ]
-  throwErr(validate_result, errRes, action, to);
+  throwErr(validate_result, method, errRes, action, to);
   return await next();
 };
-function throwErr(validate_result, errRes, action, to) {
+function throwErr(validate_result, method, errRes, action, to) {
   let invalid_list = validate_result.filter(({ valid }) => !valid);
   if (!invalid_list.length) {
     return;
   }
-  let msg = `【${method}】/api/user/${to}\n ${action} 資料校驗錯誤\n data: ${JSON.stringify(
+  let msg = `【${method}】/api/user/${to}\n 資料校驗錯誤\n data: ${JSON.stringify(
     invalid_list
   )}`;
   throw new MyErr({

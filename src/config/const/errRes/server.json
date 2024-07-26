@@ -1,49 +1,48 @@
 {
   "RESPONSE": {
-      "ERR_500": {
-          "errno": 99900,
-          "msg": "伺服器錯誤"
-      },
-      "ERR_404": {
-          "errno": 99901,
-          "msg": "此頁面不存在"
-      },
-      "NO_LOGIN": {
-          "errno": 99902,
-          "msg": "請先登入"
-      }
+    "ERR_500": {
+      "errno": 99900,
+      "msg": "伺服器錯誤"
+    },
+    "ERR_404": {
+      "errno": 99901,
+      "msg": "此頁面不存在"
+    },
+    "NO_LOGIN": {
+      "errno": 99902,
+      "msg": "請先登入"
+    }
   },
   "FORMIDABLE": {
-      "PARSE_ERR": {
-          "errno": 7894,
-          "msg": "formidable parse 發生錯誤"
-      },
-      "NO_PAYLOAD": {
-          "errno": 7897,
-          "msg": "formidable parse 沒有任何 payload"
-      },
-      "GCE_ERR": {
-          "errno": 307,
-          "msg": "formidable parse 進行 GFB 上傳時發生錯誤"
-      }
+    "PARSE_ERR": {
+      "errno": 7894,
+      "msg": "formidable parse 發生錯誤"
+    },
+    "NO_PAYLOAD": {
+      "errno": 7897,
+      "msg": "formidable parse 沒有任何 payload"
+    },
+    "GCE_ERR": {
+      "errno": 307,
+      "msg": "formidable parse 進行 GFB 上傳時發生錯誤"
+    }
   },
   "AJV": {
     "USER_IS_EMAIL_EXIST": {
-        "errno": "80101",
-        "msg": "USER_isEmailExist數據不符校驗"
+      "errno": "80101",
+      "msg": "USER_isEmailExist數據不符校驗"
     },
     "USER_REGISTER": {
-        "errno": "80101",
-        "msg": "USER_isEmailExist數據不符校驗"
+      "errno": "80102",
+      "msg": "USER_register數據不符校驗"
     },
     "USER_LOGIN": {
-        "errno": "80101",
-        "msg": "USER_isEmailExist數據不符校驗"
+      "errno": "80103",
+      "msg": "USER_login數據不符校驗"
     },
     "USER_SETTING": {
-        "errno": "80101",
-        "msg": "USER_isEmailExist數據不符校驗"
+      "errno": "80104",
+      "msg": "USER_setting數據不符校驗"
     }
-    
   }
 }

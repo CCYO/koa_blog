@@ -27,7 +27,4 @@ module.exports = {
     _notRepeat: "_notRepeat",
     _notEmpty: "_notEmpty",
   },
-  FIELD_NAME: {
-    TOP: "all",
-  },
 };

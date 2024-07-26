@@ -15,7 +15,7 @@ module.exports = async (ctx, next) => {
     ctx.app.emit("error", error, ctx);
     let isAPI = /^\/api\//.test(ctx.path);
     if (isAPI) {
-      ctx.body = error;
+      ctx.body = new MyErr(ERR_RES.SERVER.RESPONSE.ERR_500);
     } else {
       ctx.redirect("/serverError");
     }
