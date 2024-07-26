@@ -21,7 +21,10 @@ async function initMain() {
     let noReferrer = !document.referrer;
     let notLoginPage = !/\/login/.test(document.referrer);
     let notSomeOrigin =
-      !noReferrer && !/34\.80\.51\.244:8080/.test(document.referrer);
+      !noReferrer &&
+      !new RegExp(`${process.env.NODE_IP_REG}:${process.env.NODE_PORT}`).test(
+        document.referrer
+      );
     if (noReferrer || notLoginPage || notSomeOrigin) {
       target = "/square";
       alertMsg += ",五秒後將自動跳往廣場頁";

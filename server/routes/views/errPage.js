@@ -36,11 +36,6 @@ router.get("/serverError", async (ctx) => {
   let opts = {
     errModel: new ErrModel(ERR_RES.SERVER.RESPONSE.ERR_500),
   };
-  if (!ENV.isProd && ctx.query.serverError) {
-    let { serverError } = ctx.query;
-    serverError = JSON.parse(decodeURIComponent(serverError));
-    opts.serverError = serverError;
-  }
   await ctx.render("page404", opts);
 });
 

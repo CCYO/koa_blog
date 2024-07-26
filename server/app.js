@@ -53,19 +53,18 @@ app.use(
   })
 );
 app.use(router.routes(), router.allowedMethods());
-//  錯誤列印
+//  列印錯誤
 app.on("error", (error) => {
-  let isMyErr = error instanceof MyErr;
-  console.log(`@ emit app.onerror => \n is MyErr: ${isMyErr}`);
-  if (isMyErr) {
-    console.log("model: \n", error.model);
-    console.log("MyErr stack: \n", error.stack);
+  let serverError = error;
+  if (error instanceof MyErr) {
+    serverError = MyErr.serverError;
+    console.error(
+      "MyErr \n",
+      error.model,
+      error.stack,
+      "+++++++++++ ++++++++++"
+    );
   }
-  if (error.serverError) {
-    console.log("serverError: \n", error.serverError);
-  } else {
-    console.log("error message: \n", error.message);
-    console.log("error stack: \n", error.stack);
-  }
+  console.error("伺服器錯誤 \n", serverError.stack, "---------- ----------");
 });
 module.exports = app;

@@ -10,41 +10,15 @@ module.exports = async (ctx, next) => {
     ctx.redirect(`/permission/${ERR_RES.SERVER.RESPONSE.ERR_404.errno}`);
   } catch (error) {
     ctx.status = 500;
-    ctx.app.emit("error", error, ctx);
-
-    let myErr = undefined;
     if (!(error instanceof MyErr)) {
-      myErr = new MyErr({ ...ERR_RES.SERVER.RESPONSE.ERR_500, error });
-    } else {
-      myErr = error;
+      error = new MyErr({ ...ERR_RES.SERVER.RESPONSE.ERR_500, error });
     }
-
-    if (ENV.isProd) {
-      myErr = myErr.model;
-    } else if (myErr.serverError) {
-      //  error property is enumerable，無法傳給前端，故需處理
-      myErr.serverError = JSON.stringify(
-        myErr.serverError,
-        Object.getOwnPropertyNames(myErr.serverError)
-      );
-    } else {
-      myErr.serverError = JSON.stringify({
-        message: undefined,
-        stack: myErr.stack,
-      });
-    }
-
+    ctx.app.emit("error", error, ctx);
     let isAPI = /^\/api\//.test(ctx.path);
     if (isAPI) {
-      myErr.serverError = JSON.parse(myErr.serverError);
-      ctx.body = myErr;
+      ctx.body = error;
     } else {
-      let url = "/serverError";
-      if (!ENV.isProd) {
-        url += `?serverError=${encodeURIComponent(myErr.serverError)}`;
-      }
-      ctx.redirect(url);
+      ctx.redirect("/serverError");
     }
-    return;
   }
 };

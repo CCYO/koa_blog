@@ -5,49 +5,58 @@ import FRONTEND from "@config/frontend_esm";
 const isProd = process.env.NODE_ENV === "production";
 
 window.onerror = (e) => {
-  dev_log("window.onerror capture error => ", e);
+  dev_log("window.onerror, Error => \n", e, "---------- ----------");
 };
 window.addEventListener("error", (e) => {
-  dev_log("window.addEventListener(error) capture error =>", e);
+  dev_log(
+    "window.addEventListener(error), Error => \n",
+    e,
+    "---------- ----------"
+  );
 });
 window.addEventListener("unhandledrejection", function (event) {
   event.promise.catch((result) => {
-    if (
-      result.hasOwnProperty("errno") &&
-      result.errno === FRONTEND._AXIOS.ERR_RES.NO_LOGIN.errno
-    ) {
-      dev_alert(`handle unhandledrejection ${result.msg}`);
-      redir.check_login();
+    dev_alert("capture unhandleRejected event, look console");
+    let { errno } = result;
+    if (errno === undefined) {
+      event.preventDefault();
+      dev_log(
+        "capture unhandleRejected \n Event: \n ",
+        event,
+        "---------- ----------"
+      );
       return;
     }
-    dev_log("capture unhandleRejected event => ", event);
-    dev_log("capture unhandleRejected event => ", event.reason.stack);
-    dev_alert("capture unhandleRejected event, look console");
-    //  code:回傳錯誤報告到後端...
-    //  阻止冒泡
-    event.preventDefault();
+    dev_log(
+      `handle unhandledrejection \n resModel: \n `,
+      result,
+      "---------- ----------"
+    );
+    if (result.errno === FRONTEND._AXIOS.ERR_RES.NO_LOGIN.errno) {
+      redir.check_login();
+    }
   });
 });
 
 function watchError(error) {
-  let message = `${error.model ? "後端" : "前端"}發生未知錯誤，頁面${
-    isProd ? "是否" : "不會"
-  }重新整裡`;
-  if (isProd && window.confirm(message)) {
-    location.reload();
-  } else if (error.model) {
-    alert(message);
-    let { serverError, model } = error;
-    dev_log("【後端】代碼錯誤-------start-↓↓↓↓");
-    dev_log(`model:\n `, model);
-    dev_log(`serverError:\n ${serverError.stack}`);
-    dev_log("後端代碼錯誤-------end---↑↑↑↑");
-  } else {
-    dev_log("【前端】代碼錯誤-------start-↓↓↓↓");
-    dev_log("error => ", error);
-    dev_log("前端代碼錯誤-------end---↑↑↑↑");
+  switch (error.model === undefined) {
+    case true:
+      // 後端錯誤
+      dev_log(error.model);
+      break;
+    case false:
+      // 前端錯誤
+      dev_log(error);
+    // 需再作回報後端處理
   }
-  return;
+  switch (isProd) {
+    case true:
+      alert("發生未知錯誤,頁面將重新整理");
+      location.reload();
+      break;
+    case false:
+      alert("發生未知錯誤,請確認console");
+  }
 }
 
 export default watchError;
