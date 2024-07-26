@@ -33,8 +33,6 @@ router.get("/self", privateCache, async (ctx) => {
   //  ctx.cache[TYPE.PAGE.USER]
   //  { exist: 提取緩存數據的結果 ,
   //    data: { currentUser, fansList, idolList, blogList } || undefined }
-
-  throw new Error(777777);
   let opts = {
     cache: ctx.cache,
     user_id: ctx.session.user.id,
