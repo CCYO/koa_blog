@@ -1,0 +1,36 @@
+<head><link rel="icon" href="/public/imgs/favicon/favicon.png"></head><% let G_PAGE = JSON.parse('{"NAME":{"EMAIL":"email"},"API":{"REGISTER_SUCCESS":"/login","REGISTER":"/api/user/register","LOGIN_SUCCESS":"/self","LOGIN":"/api/user"},"MESSAGE":{"REGISTER_FAIL":"註冊失敗，請重新嘗試","REGISTER_SUCCESS":"註冊成功，請嘗試登入","LOGIN_SUCCESS":"登入成功","LOGIN_FAIL":"登入失敗，請重新嘗試"},"ID":{"LOGIN_FORM":"login","REGISTER_FORM":"register"}}') %>
+<%- include('../wedgets/header/index', {title}) %>
+<main style="display: none;">
+<!-- 註冊/登入 互動卡片-->
+<div class="card w-75 mx-auto">
+<!-- 卡片頭部 -->
+<div class="card-header">
+<!-- 頭部導行列-->
+<ul class="card-header-tabs nav nav-tabs">
+<!-- 頭部導行項-->
+<% for( let type in G_PAGE.ID ){ %>
+<% let form_id = G_PAGE.ID[type] %>
+<% let tab_txt = form_id === G_PAGE.ID.REGISTER_FORM ? "註冊" : "登入" %>
+<li class="nav-item">
+<a class="nav-link <%= active === form_id ? `active` : `` %>" href="#" data-bs-toggle='tab' data-bs-target='#<%= form_id %>-card' role="tab" aria-controls=<%= form_id %> aria-selected="true"><%= tab_txt %></a>
+</li>
+<% } %>
+</ul>
+</div>
+<!-- 卡片主體 -->
+<div class="card-body tab-content">
+<!-- REGISTER PANE -->
+<% for( let type in G_PAGE.ID ){ %>
+<% let form_id = G_PAGE.ID[type] %>
+<% if(form_id === G_PAGE.ID.REGISTER_FORM ){ %>
+<%- include('./components/pane-register', {form_id}) %>
+<% } else if (form_id === G_PAGE.ID.LOGIN_FORM ){ %>
+<%- include('./components/pane-login', {form_id}) %>
+<% } %>
+<% } %>
+</div>
+</div>
+</main>
+<%- include('../wedgets/footer/index') %>
+<script defer src="/public/js/register%26login.dfecb.js"></script></body>
+</html>

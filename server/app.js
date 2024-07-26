@@ -55,16 +55,10 @@ app.use(
 app.use(router.routes(), router.allowedMethods());
 //  列印錯誤
 app.on("error", (error) => {
-  let serverError = error;
   if (error instanceof MyErr) {
-    serverError = MyErr.serverError;
-    console.error(
-      "MyErr \n",
-      error.model,
-      error.stack,
-      "+++++++++++ ++++++++++"
-    );
+    let { serverError } = error;
+    console.error("+++++ +++++\n MyErr \n", error.model, "\n", error.stack);
+    console.error("伺服器錯誤 \n", serverError.stack, "\n----- -----");
   }
-  console.error("伺服器錯誤 \n", serverError.stack, "---------- ----------");
 });
 module.exports = app;
