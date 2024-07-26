@@ -24,7 +24,7 @@ module.exports = {
     dependentRequired: "missingProperty",
     additionalProperties: "additionalProperty",
     _noSpace: "_noSpace",
-    _notOrigin: "_noOrigin",
+    _notRepeat: "_notRepeat",
     _notEmpty: "_notEmpty",
   },
   FIELD_NAME: {

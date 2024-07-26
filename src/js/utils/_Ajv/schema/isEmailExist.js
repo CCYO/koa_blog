@@ -1,4 +1,6 @@
+import { error } from "jquery";
 import AJV_CONFIG from "../config";
+import _isEmailExist from "../keyword/_isEmailExist";
 
 const { HOST, TYPE } = AJV_CONFIG;
 const DEFAULT_URL = `${HOST}/${TYPE.DEFAULT}.json#/definitions`;

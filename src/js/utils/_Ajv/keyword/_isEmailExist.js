@@ -1,5 +1,7 @@
+import CONFIG from "../config";
 import Ajv from "ajv";
 const keyword = "_isEmailExist";
+const KEY = "email";
 async function validate(schema, email, parentSchema, dataCtx) {
   if (!schema) {
     return true;
@@ -15,10 +17,14 @@ async function validate(schema, email, parentSchema, dataCtx) {
       errors: [
         {
           keyword,
+          params: {
+            [CONFIG.ERROR_PARAMS._noSpace]: dataCtx.parentDataProperty,
+          },
         },
       ],
     },
   };
+  // 依據Ajv文檔，需傳入array
   throw new Ajv.ValidationError([error]);
 }
 

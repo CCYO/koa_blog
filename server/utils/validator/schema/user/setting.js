@@ -6,10 +6,10 @@ module.exports = {
   type: "object",
   minProperties: 2,
   properties: {
-    _origin: {
+    _old: {
       type: "object",
       errorMessage: {
-        type: "_origin需是object",
+        type: "_old需是object",
       },
     },
     email: {
@@ -37,7 +37,7 @@ module.exports = {
       $ref: `${DEFAULT_URL}/password_again`,
     },
   },
-  _notOrigin: ["email", "age", "nickname", "avatar", "avatar_hash"],
+  _notRepeat: ["email", "age", "nickname", "avatar", "avatar_hash"],
   dependentRequired: {
     origin_password: ["password", "password_again"],
     password: ["origin_password", "password_again"],
@@ -54,7 +54,7 @@ module.exports = {
     "avatar",
     "avatar_hash",
   ],
-  required: ["_origin"],
+  required: ["_old"],
   errorMessage: {
     type: "驗證數據必須是 object 格式",
     required: "必填",

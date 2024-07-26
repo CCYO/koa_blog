@@ -146,7 +146,7 @@ function _parseErrorsToForm(invalid_errors, data, ignore_list = []) {
       keyword_and_message = field_error.reduce(
         (acc, { message, keyword }, index) => {
           acc.keyword.push(keyword);
-          if (index) {
+          if (!index) {
             acc.message = message;
             return acc;
           }
