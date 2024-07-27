@@ -5,7 +5,7 @@ const { formidable } = require("formidable");
 const { firstValues } = require("formidable/src/helpers/firstValues.js");
 const { storage } = require("../db/firebase");
 const { MyErr, SuccModel } = require("../utils/model");
-const { ERR_RES, USER, BLOG, GFB } = require("../config");
+const { IMG, USER, BLOG, GFB } = require("../config");
 
 //  處理 blog 內文圖片
 async function addBlogImg(ctx) {
@@ -14,13 +14,13 @@ async function addBlogImg(ctx) {
   if (ext) {
     ext = ext.toUpperCase();
     if (!BLOG.EDITOR.IMG_EXT.some((ext_type) => ext_type === ext)) {
-      throw new MyErr(ERR_RES.FIREBASE.READ.FORMAT_ERR);
+      throw new MyErr(IMG.READ.FORMAT_ERR);
     }
   } else {
-    throw new MyErr(ERR_RES.FIREBASE.READ.NO_EXT);
+    throw new MyErr(IMG.READ.NO_EXT);
   }
   if (!hash) {
-    throw new MyErr(ERR_RES.FIREBASE.READ.NO_HASH);
+    throw new MyErr(IMG.READ.NO_HASH);
   }
   let res = {};
   //  創建GFB的存放路徑
@@ -40,18 +40,18 @@ async function addBlogImg(ctx) {
 async function addUserAvatar(ctx) {
   let { avatar_ext, avatar_hash } = ctx.request.query;
   if (avatar_ext && !avatar_hash) {
-    throw new MyErr(ERR_RES.USER.UPDATE.AVATAR_NO_ARGS_HASH);
+    throw new MyErr(USER.UPDATE.AVATAR_NO_ARGS_HASH);
   } else if (avatar_hash && !avatar_ext) {
-    throw new MyErr(ERR_RES.USER.UPDATE.AVATAR_NO_ARGS_EXT);
+    throw new MyErr(USER.UPDATE.AVATAR_NO_ARGS_EXT);
   } else if (avatar_hash === ctx.session.user.avatar_hash) {
-    throw new MyErr(ERR_RES.USER.UPDATE.SAME_AVATAR_HASH);
+    throw new MyErr(USER.UPDATE.SAME_AVATAR_HASH);
   }
 
   let ref;
   if (avatar_ext && avatar_hash) {
     avatar_ext = avatar_ext.toUpperCase();
     if (!USER.AVATAR.EXT.some((ext) => avatar_ext === ext)) {
-      throw new MyErr(ERR_RES.USER.UPDATE.AVATAR_FORMAT_ERR);
+      throw new MyErr(USER.UPDATE.AVATAR_FORMAT_ERR);
     }
     //  創建GFB的存放路徑
     ref = storage
