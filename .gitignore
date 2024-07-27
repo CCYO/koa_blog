@@ -1,4 +1,5 @@
 node_modules/
 server/_config
 server/assets
+server/views
 src/_views
