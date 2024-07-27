@@ -1,9 +1,7 @@
 /**
  * @description middleware validate
  */
-const {
-  SERVER: { AJV },
-} = require("../../../config/_errRes");
+const { USER } = require("../../../config/_errRes");
 const { TYPE } = require("../../../utils/validator/config");
 const validator = require("../../../utils/validator");
 const { MyErr } = require("../../../utils/model");
@@ -14,7 +12,6 @@ const { MyErr } = require("../../../utils/model");
  * @returns
  */
 module.exports = async (ctx, next) => {
-  let action;
   let validate_result = [];
   let method = ctx.method.toUpperCase();
   let reg = /\/api\/user(?:\/)?(?<to>[^\/\?]*)?.*/;
@@ -24,22 +21,18 @@ module.exports = async (ctx, next) => {
   let errRes;
   switch (condition) {
     case "POST-/isEmailExist":
-      action = "確認信箱是否可用";
       validate_result = await validator(TYPE.USER.EMAIL)(ctx.request.body);
-      errRes = AJV.USER_IS_EMAIL_EXIST;
+      errRes = USER.READ.AJV_IS_EMAIL_EXIST;
       break;
     case "POST-/register":
-      action = "註冊";
       validate_result = await validator(TYPE.USER.REGISTER)(ctx.request.body);
-      errRes = AJV.USER_REGISTER;
+      errRes = USER.CREATE.AJV_REGISTER;
       break;
     case "POST-/":
-      action = "登入";
       validate_result = await validator(TYPE.USER.LOGIN)(ctx.request.body);
-      errRes = AJV.USER_LOGIN;
+      errRes = USER.READ.AJV_LOGIN;
       break;
     case "PATCH-/":
-      action = "更新";
       ctx.request.body._old = { ...ctx.session.user };
       if (ctx.request.body.hasOwnProperty("avatar")) {
         ctx.request.body.avatar_hash = ctx.request.query["avatar_hash"];
@@ -48,14 +41,15 @@ module.exports = async (ctx, next) => {
         ctx.request.body.age = Number.parseInt(ctx.request.body.age);
       }
       validate_result = await validator(TYPE.USER.SETTING)(ctx.request.body);
-      errRes = AJV.USER_SETTING;
+      errRes = USER.UPDATE.AJV_SETTING;
       break;
   }
   //    validate_result [ { <field_name>, <valid: boolean>, <value>, <message> }, ... ]
-  throwErr(validate_result, method, errRes, action, to);
+  throwErr(validate_result, method, errRes, to);
+  delete ctx.request.body._old;
   return await next();
 };
-function throwErr(validate_result, method, errRes, action, to) {
+function throwErr(validate_result, method, errRes, to) {
   let invalid_list = validate_result.filter(({ valid }) => !valid);
   if (!invalid_list.length) {
     return;

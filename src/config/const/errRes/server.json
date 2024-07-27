@@ -26,23 +26,5 @@
       "errno": 80203,
       "msg": "formidable parse 進行 GFB 上傳時發生錯誤"
     }
-  },
-  "AJV": {
-    "USER_IS_EMAIL_EXIST": {
-      "errno": 80101,
-      "msg": "USER_isEmailExist數據不符校驗"
-    },
-    "USER_REGISTER": {
-      "errno": 80102,
-      "msg": "USER_register數據不符校驗"
-    },
-    "USER_LOGIN": {
-      "errno": 80103,
-      "msg": "USER_login數據不符校驗"
-    },
-    "USER_SETTING": {
-      "errno": 80104,
-      "msg": "USER_setting數據不符校驗"
-    }
   }
 }

@@ -57,8 +57,13 @@ app.use(router.routes(), router.allowedMethods());
 app.on("error", (error) => {
   if (error instanceof MyErr) {
     let { serverError } = error;
-    console.error("+++++ +++++\n MyErr \n", error.model, "\n", error.stack);
-    console.error("伺服器錯誤 \n", serverError.stack, "\n----- -----");
+    console.error(
+      "+++++ +++++\nMyErr.model:\n",
+      error.model,
+      "\n",
+      error.stack
+    );
+    console.error("serverError.stack:\n", serverError?.stack, "\n----- -----");
   }
 });
 module.exports = app;
