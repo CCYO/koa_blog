@@ -1,7 +1,10 @@
+const { ENV } = require("./config");
 ////  NODE.JS MODULE
 const { resolve } = require("path");
 //  設定環境變量，以 ~/.env 作為設定檔
-require("dotenv").config({ path: resolve(__dirname, "./_config/.env") });
+require("dotenv").config({
+  path: resolve(__dirname, `./_config/${ENV.isProd ? ".prod" : ".dev"}.env`),
+});
 const Koa = require("koa");
 //  打印request跟response
 const logger = require("koa-logger")();
@@ -52,7 +55,12 @@ app.use(
     maxage: 60 * 60 * 1000,
   })
 );
+// SSL
+app.use(
+  koaMount("/.well-known", koaStatic(resolve(__dirname, "./_config/ssl")))
+);
 app.use(router.routes(), router.allowedMethods());
+
 //  列印錯誤
 app.on("error", (error) => {
   if (error instanceof MyErr) {

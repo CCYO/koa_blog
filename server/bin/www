@@ -3,20 +3,32 @@
  * Module dependencies.
  */
 
-var app = require("../app");
-var http = require("http");
+const app = require("../app");
+const http = require("http");
+const https = require("https");
+const { readFileSync } = require("fs");
 
-/**
- * Get port from environment and store in Express.
- */
+const { ENV } = require("../config");
 
-var port = normalizePort(process.env.NODE_PORT);
+const port = normalizePort(process.env.NODE_PORT);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app.callback());
+let server;
+if (ENV.isProd) {
+  server = https.createServer(
+    {
+      key: readFileSync("/etc/letsencrypt/live/ccyo.work/privkey.pem"),
+      cert: readFileSync("/etc/letsencrypt/live/ccyo.work/cert.pem"),
+      ca: readFileSync("/etc/letsencrypt/live/ccyo.work/chain.pem"),
+    },
+    app.callback()
+  );
+} else {
+  server = http.createServer(app.callback());
+}
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -31,7 +43,7 @@ server.on("listening", onListening);
  */
 
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+  let port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // named pipe
@@ -55,7 +67,7 @@ function onError(error) {
     throw error;
   }
 
-  var bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
+  let bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -77,11 +89,8 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+  let addr = server.address();
+  let bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   console.log(`ENV IS ${process.env.NODE_ENV}`);
   console.log(`LISTEN on ${bind}`);
-  if (process.env.NODE_ENV !== "production") {
-    return;
-  }
 }

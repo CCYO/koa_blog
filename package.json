@@ -8,7 +8,7 @@
     "build": "npm run _clean && webpack --config ./build/webpack.prod.config.js",
     "prod": "npm run build -- --env=prod",
     "start": "pm2 start ecosystem.config.js",
-    "_clean": "rm -rf ./src/_views ./src/js/utils/render/template ./server/views ./server/assets ./server/utils/render/template ",
+    "_clean": "sudo rm -rf ./src/_views ./src/js/utils/render/template ./server/views ./server/assets ./server/utils/render/template ",
     "syncDB": "node ./server/db/mysql/sync"
   },
   "dependencies": {
