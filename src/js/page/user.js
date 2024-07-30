@@ -343,16 +343,6 @@ async function initMain() {
       let { valid, message } = validated_list.find(
         ({ field_name }) => field_name === input.name
       );
-      // let valid = !validated_list.some((item) => !item.valid);
-      // let msg = "";
-      // let res = title;
-      // if (!valid) {
-      //   let error = validated_list.find(({ valid, field_name }) => {
-      //     return !valid && field_name === input.name;
-      //   });
-      //   msg = error.message;
-      //   res = valid;
-      // }
       formFeedback.validated(input, valid, message);
       $btn_new_blog.prop("disabled", !valid);
       return valid ? data.title : false;
