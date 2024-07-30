@@ -18,8 +18,8 @@ store.client
 
 module.exports = session({
   //cookie name前綴
-  key: "koa_blog.sessionId",
+  key: "koa_blog.sid",
   //redis key前綴
-  prefix: "koa_blog.session",
+  prefix: "koa_blog.sid:",
   store,
 });
