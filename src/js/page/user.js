@@ -334,33 +334,28 @@ async function initMain() {
     }
     //  校驗文章標題
     async function check_title() {
-      let title = $input_new_blog_title.val();
       let input = $input_new_blog_title.get(0);
 
       let data = {
         title: _xss.trim(input.value),
       };
       let validated_list = await G.utils.validate.blog_title(data);
-      // let validated_list = await G.utils.validate.blog_title(123);
-      return;
-      let valid = !validated_list.some((item) => !item.valid);
-      let msg = "";
-      let res = title;
-      if (!valid) {
-        let error = validated_list.find(({ valid, field_name }) => {
-          return !valid && field_name === input.name;
-        });
-        if (!error) {
-          throw new Error(
-            `發生預料外的驗證錯誤 => ${JSON.stringify(validated_list)}`
-          );
-        }
-        msg = error.message;
-        res = valid;
-      }
-      formFeedback.validated(input, valid, msg);
+      let { valid, message } = validated_list.find(
+        ({ field_name }) => field_name === input.name
+      );
+      // let valid = !validated_list.some((item) => !item.valid);
+      // let msg = "";
+      // let res = title;
+      // if (!valid) {
+      //   let error = validated_list.find(({ valid, field_name }) => {
+      //     return !valid && field_name === input.name;
+      //   });
+      //   msg = error.message;
+      //   res = valid;
+      // }
+      formFeedback.validated(input, valid, message);
       $btn_new_blog.prop("disabled", !valid);
-      return res;
+      return valid ? data.title : false;
     }
   }
 }
