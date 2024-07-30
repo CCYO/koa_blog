@@ -64,6 +64,13 @@ function initMain() {
   el_model.addEventListener("input", (e) => {
     formFeedback.clear(e.target);
   });
+  el_model.addEventListener("keyup", (e) => {
+    e.preventDefault();
+    if (e.key.toUpperCase() !== "ENTER") {
+      return;
+    }
+    $checkOrginPassword.get(0).click();
+  });
   $newPasswordList.on("focus", handle_showModel);
   $checkOrginPassword.on("click", handle_originPassword);
   let { debounce: handle_debounce_input } = new Debounce(handle_input, {
@@ -91,10 +98,6 @@ function initMain() {
       formData.append(prop, data);
     }
     let { data } = await G.utils.axios.patch(api, formData);
-
-    //  清空avatar數據
-    $avatar.prop("files", undefined);
-    $avatar.prop("value", "");
     el_origin_password.value = "";
     formFeedback.reset(jq_settingForm[0]);
     G.utils.lock.clear();
@@ -138,7 +141,6 @@ function initMain() {
 
     let { valid, message, hash, ext } = await _check_avatar(files);
     if (!valid) {
-      // alert(message);
       //  清除input的數據
       $avatar.prop("files", undefined);
       $avatar.val(null);
@@ -304,17 +306,8 @@ function initMain() {
       let payload = G.utils.lock.getPayload();
       let newData = { ...payload, ...inputEvent_data };
       if (newData.hasOwnProperty("password")) {
-        //  el_password_again value 一併校驗
         newData.password_again = el_password_again.value;
       }
-      // if (
-      //   payload.hasOwnProperty("password") &&
-      //   !el_password_again.validated
-      // ) {
-      //   ////  當前payload已存在有效password 且 password_again 未輸入過
-      //   //  el_password_again value 一併校驗
-      //   newData.password_again = el_password_again.value;
-      // }
       newData._old = G.data.me;
       if (newData.hasOwnProperty("origin_password")) {
         newData._old.password = newData.origin_password;
@@ -333,28 +326,25 @@ function initMain() {
     const KEY = "origin_password";
     let payload = { [KEY]: el_origin_password.value };
     let result = await G.utils.validate.password(payload);
-    let invalid = result.some(({ valid }) => !valid);
-    if (result.length > 1 || (invalid && result[0].keyword.length !== 1)) {
-      throw new Error(JSON.stringify(result));
-    }
-    if (invalid) {
+    let res = result.find(({ field_name }) => field_name === KEY);
+    if (!res.valid) {
       G.utils.lock.delete(KEY);
-      formFeedback.validated(el_origin_password, false, result[0].message);
+      formFeedback.validated(el_origin_password, false, res.message);
       return;
     }
-    //  待修改
+
     let { errno, msg } = await G.utils.axios.post(
       G.constant.API.CHECK_PASSWORD,
       payload
     );
-    if (!errno) {
-      G.utils.lock.setKVpairs(payload);
-      alert("驗證成功，請輸入新密碼");
-      bs5_modal.hide();
-      $newPassword.get(0).focus();
-    } else {
+    if (errno) {
       formFeedback.validated(el_origin_password, false, msg);
+      return;
     }
+    G.utils.lock.setKVpairs(payload);
+    alert("驗證成功，請輸入新密碼");
+    bs5_modal.hide();
+    $newPassword.get(0).focus();
   }
   //  顯示 origin_password 的 model
   function handle_showModel(e) {

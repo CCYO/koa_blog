@@ -38,11 +38,13 @@ function clear(el_input) {
 //  清空form
 function reset(el_form) {
   el_form.reset();
-  let list = ["file", "submit"];
   for (let inp of el_form) {
-    let ignore = list.some((item) => item === inp.type);
-    if (ignore || inp.tagName !== "INPUT") {
+    if (inp.type === "submit" || inp.tagName !== "INPUT") {
       continue;
+    }
+    if (inp.type === "file") {
+      $(inp).prop("files", undefined);
+      $(inp).prop("value", "");
     }
     clear(inp);
   }

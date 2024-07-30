@@ -41,6 +41,11 @@ module.exports = async (ctx, next) => {
         ctx.request.body.age = Number.parseInt(ctx.request.body.age);
       }
       validate_result = await validator(TYPE.USER.SETTING)(ctx.request.body);
+      ctx.request.body._origin = {
+        user_id: ctx.session.user.id,
+        email: ctx.session.user.email,
+      };
+      delete ctx.request.body.password_again;
       errRes = USER.UPDATE.AJV_SETTING;
       break;
   }

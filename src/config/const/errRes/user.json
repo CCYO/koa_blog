@@ -30,7 +30,7 @@
       "errno": 30104,
       "msg": "avatar圖檔格式錯誤，只接受JPG或PNG"
     },
-    "ORIGIN_PASSWssssORD_ERR": {
+    "ORIGIN_PASSWORD_ERR": {
       "errno": 30105,
       "msg": "原密碼錯誤"
     },

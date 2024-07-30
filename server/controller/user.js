@@ -134,19 +134,17 @@ async function checkOriginPassword({ email, password }) {
   }
   return resModel;
 }
-async function modifyInfo({ _origin, ...newData }) {
-  let { id: user_id } = _origin;
+async function modifyInfo({ _origin, origin_password, ...newData }) {
+  let { user_id, email } = _origin;
   //  測試舊密碼是否正確
   if (newData.hasOwnProperty("password")) {
     let { errno } = await login({
-      email: _origin.email,
-      password: newData.origin_password,
+      email,
+      password: origin_password,
     });
     if (errno) {
       throw new MyErr(ERR_RES.USER.UPDATE.ORIGIN_PASSWORD_ERR);
     }
-    delete newData.origin_password;
-    delete newData.password_again;
   }
   await User.update(Opts.USER.UPDATE.one({ user_id, newData }));
   let { data } = await find(user_id);
