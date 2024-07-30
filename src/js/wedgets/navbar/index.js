@@ -46,6 +46,16 @@ export default async function (axios) {
     } else {
       renderLoginNav();
     }
+    let el_offcanvas = document.querySelector(`.offcanvas`);
+    let bs_offcanvas = new bootstrap.Offcanvas(el_offcanvas);
+    let btn_offcanvas = document.querySelector(".navbar-toggler");
+    btn_offcanvas.addEventListener("click", () => {
+      bs_offcanvas.show();
+    });
+    el_offcanvas.addEventListener("shown.bs.offcanvas", (e) => {
+      el_offcanvas.focus();
+    });
+
     //  根據 path，顯示當前 active NavItem
     activeNavItem();
     return;
