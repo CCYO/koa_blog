@@ -13,7 +13,7 @@ const { GFB } = require("../../config");
  */
 async function blogImg(ctx, next) {
   //  找blogImg_id
-  let { blog_id, hash, blogImg_id, blog_img, name } = ctx.query;
+  let { blog_id, hash, img_id, blogImg_id, blog_img, name } = ctx.query;
   let res = {
     blog_id,
     hash,
