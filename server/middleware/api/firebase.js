@@ -21,7 +21,7 @@ async function blogImg(ctx, next) {
     blogImg_id,
     blog_img,
   };
-  let img_id;
+  // let img_id;
   name = decodeURIComponent(name);
   if (!blogImg_id) {
     //  查找img紀錄

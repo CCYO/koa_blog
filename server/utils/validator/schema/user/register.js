@@ -3,7 +3,6 @@ const DEFAULT_URL = `${HOST}/${TYPE.DEFAULT}.json#/definitions`;
 
 module.exports = {
   $id: `${HOST}/${TYPE.USER.REGISTER}.json`,
-  $async: true,
   type: "object",
   properties: {
     email: {

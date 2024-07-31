@@ -6,10 +6,10 @@ module.exports = {
   type: "object",
   minProperties: 2,
   properties: {
-    _origin: {
+    _old: {
       type: "object",
       errorMessage: {
-        type: "_origin需是object",
+        type: "_old需是object",
       },
     },
     title: {

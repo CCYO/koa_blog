@@ -5,10 +5,10 @@ module.exports = {
   $id: `${HOST}/${TYPE.ALT.UPDATE}.json`,
   type: "object",
   properties: {
-    _origin: {
+    _old: {
       type: "object",
       errorMessage: {
-        type: "_origin需是object",
+        type: "_old需是object",
       },
     },
     blog_id: {
@@ -23,10 +23,8 @@ module.exports = {
   },
   _notOrigin: ["alt"],
   _noSpace: ["alt"],
-  required: ["_origin", "blog_id", "alt", "alt_id"],
-  additionalProperties: false,
+  required: ["_old", "blog_id", "alt", "alt_id"],
   errorMessage: {
     type: "驗證數據必須是 object 格式",
-    additionalProperties: "不允許除了_origin、blog_id、alt_id、alt以外的數據",
   },
 };
