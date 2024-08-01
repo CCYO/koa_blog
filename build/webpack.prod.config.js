@@ -1,6 +1,7 @@
 ////  NODE MODULE
 const { resolve } = require("path");
 ////  NPM MODULE
+const webpack = require("webpack");
 const pm2 = require("pm2");
 const { merge } = require("webpack-merge");
 const OptimizeCss = require("css-minimizer-webpack-plugin");

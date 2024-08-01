@@ -1,4 +1,3 @@
-const { resolve } = require("path");
 ////  NPM MODULE
 const webpack = require("webpack");
 const { merge } = require("webpack-merge");
