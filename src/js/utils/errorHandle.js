@@ -15,48 +15,45 @@ window.addEventListener("error", (e) => {
   );
 });
 window.addEventListener("unhandledrejection", function (event) {
+  event.preventDefault();
   event.promise.catch((result) => {
-    dev_alert("capture unhandleRejected event, look console");
-    let { errno } = result;
-    if (errno === undefined) {
-      event.preventDefault();
-      dev_log(
-        "capture unhandleRejected \n Event: \n ",
-        event,
-        "---------- ----------"
-      );
+    let { errno, _checked } = result;
+    if (_checked) {
+      // watchError主動引發，目的為了阻止後續代碼發生連鎖錯誤
+      dev_log("watchError主動引發 ----------------------");
       return;
-    }
-    dev_log(
-      `handle unhandledrejection \n resModel: \n `,
-      result,
-      "---------- ----------"
-    );
-    if (result.errno === FRONTEND._AXIOS.ERR_RES.NO_LOGIN.errno) {
+    } else if (errno === FRONTEND._AXIOS.ERR_RES.NO_LOGIN.errno) {
+      // 後端響應請求需要登入權限
       redir.check_login();
+    } else {
+      // 前端的unhandledrejection(通常發生在異步事件CB內)
+      let msg = isProd
+        ? "前端代碼錯誤，請確認console"
+        : "發生未知錯誤，頁面將重新整理";
+      alert(msg);
+      !isProd && console.error(result, "---------------------");
+      // 需再作回報後端處理
     }
   });
 });
 
 function watchError(error) {
-  switch (error.model === undefined) {
-    case true:
+  error._checked = true;
+  let msg = "發生未知錯誤，頁面將重新整理";
+  if (!isProd) {
+    if (error.model) {
       // 後端錯誤
-      dev_log(error.model);
-      break;
-    case false:
+      msg = "伺服器錯誤，請確認console";
+    } else {
       // 前端錯誤
-      dev_log(error);
-    // 需再作回報後端處理
+      msg = "前端代碼錯誤，請確認console";
+      console.error(error);
+      // 需再作回報後端處理
+    }
   }
-  switch (isProd) {
-    case true:
-      alert("發生未知錯誤,頁面將重新整理");
-      location.reload();
-      break;
-    case false:
-      alert("發生未知錯誤,請確認console");
-  }
+  alert(msg);
+  isProd && location.reload();
+  throw error;
 }
 
 export default watchError;
