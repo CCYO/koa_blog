@@ -13,6 +13,7 @@ try {
 }
 
 async function initMain() {
+  const IS_PROD = JSON.parse(process.env.IS_PROD);
   G.utils.alert = _alert;
   function _alert() {
     let target;
@@ -21,7 +22,10 @@ async function initMain() {
     let noReferrer = !document.referrer;
     let notLoginPage = !/\/login/.test(document.referrer);
     let notSomeOrigin =
-      !noReferrer && !/104\.199\.147\.100:8080/.test(document.referrer);
+      !noReferrer &&
+      !new RegExp(location.host.replace(/\./g, "\\."), "g").test(
+        document.referrer
+      );
     if (noReferrer || notLoginPage || notSomeOrigin) {
       target = "/square";
       alertMsg += ",五秒後將自動跳往廣場頁";
@@ -30,6 +34,7 @@ async function initMain() {
       alertMsg += ",五秒後將自動回到上一頁";
     }
     alert(alertMsg);
-    location.replace(target);
+
+    IS_PROD && location.replace(target);
   }
 }

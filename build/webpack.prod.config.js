@@ -46,6 +46,9 @@ const plugins = (prod) =>
       filename: `${WEBPACK_CONFIG.BUILD.STYLE}/[name].[contenthash:5].min.css`,
     }),
     new OptimizeCss(),
+    new webpack.DefinePlugin({
+      "process.env.IS_PROD": JSON.stringify(true),
+    }),
     DONE(prod),
   ].filter(Boolean);
 
