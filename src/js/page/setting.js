@@ -17,12 +17,12 @@ try {
     avartar: $$ajv._validate.avatar,
     password: $$ajv._validate.password,
   };
-  await G.main(initMain);
+  await G.main(await initMain);
 } catch (error) {
   errorHandle(error);
 }
 
-function initMain() {
+async function initMain() {
   /* ------------------------- 公用常數 ------------------------- */
 
   /* ------------------------- 公用變量 ------------------------- */
@@ -41,8 +41,11 @@ function initMain() {
   let $checkOrginPassword = $("#checkOrginPassword");
   let jq_settingForm = $("#setting");
 
-  //  公用 BS 原件
-  let bs5_modal = new bootstrap.Modal(el_model);
+  //  生成BS5 Modal
+  let { default: BS_Modal } = await import(
+    /*wwebpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
+  );
+  let bs5_modal = new BS_Modal(el_model);
   //  初始化 頁面各功能
   G.utils.lock = initLock();
   /* ------------------------- handle ------------------------- */
