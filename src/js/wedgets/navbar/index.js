@@ -3,6 +3,7 @@ import "@css/wedgets/navbar.scss";
 /* Utils Module ----------------------------------------------------------------------------- */
 import News from "./news";
 import { render as ejs_render } from "@js/utils";
+
 /* CONSTANT --------------------------------------------------------------------------------- */
 const REG = {
   ACTIVE_PATHNAME: /^\/(?<pathname>\w+)\/?(?<albumList>list\?)?/,
@@ -20,7 +21,7 @@ export default async function (axios) {
   let loginData = await newsClass.getLoginData();
   axios.autoLoadingBackdrop = true;
   let isLogin = !!loginData.me.id;
-  render(isLogin);
+  await render(isLogin);
   if (isLogin) {
     //  初始化News功能
     loginData.news = newsClass.init();
@@ -40,13 +41,21 @@ export default async function (axios) {
     return;
   }
   //  render navbar
-  function render(isLogin) {
+  async function render(isLogin) {
     if (!isLogin) {
       renderLogoutNavBar();
     } else {
       renderLoginNav();
+      // popper不引入，dropdown也正常運作?
+      // await import(/*webpackChunkName:'popper'*/ "@popperjs/core");
+      await import(
+        /*webpackChunkName:'bootstrap-dropdown'*/ "bootstrap/js/dist/dropdown"
+      );
+      let { default: Offcanvas } = await import(
+        /*webpackChunkName:'bootstrap-offcanvas'*/ "bootstrap/js/dist/offcanvas"
+      );
       let el_offcanvas = document.querySelector(`.offcanvas`);
-      let bs_offcanvas = new bootstrap.Offcanvas(el_offcanvas);
+      let bs_offcanvas = new Offcanvas(el_offcanvas);
       let btn_offcanvas = document.querySelector(".navbar-toggler");
       btn_offcanvas.addEventListener("click", () => {
         bs_offcanvas.show();

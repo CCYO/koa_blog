@@ -59,7 +59,7 @@ async function initMain() {
   initPagination(G);
   if ($$isSelf) {
     //  文章創建、編輯、刪除功能
-    init_self_permission();
+    await init_self_permission();
   } else {
     //  追蹤、退追功能
     init_login_permission();
@@ -254,7 +254,10 @@ async function initMain() {
     }
   }
   //  登入者本人頁面功能權限(建立/刪除文章)
-  function init_self_permission() {
+  async function init_self_permission() {
+    await import(
+      /*webpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
+    );
     //  禁用 創建文章鈕
     $btn_new_blog.prop("disabled", true);
     //  debouncer event handle
