@@ -23,12 +23,13 @@ try {
     passwordAndAgain: ajv._validate.password_again,
     isEmailExist: ajv._validate.is_email_exist,
   };
-  await G.main(initMain);
+  await G.main(await initMain);
 } catch (error) {
   errorHandle(error);
 }
 
-function initMain() {
+async function initMain() {
+  await import(/*webpackChunkName:'bootstrap-tab'*/ "bootstrap/js/dist/tab");
   initRegistFn(`#${G.constant.ID.REGISTER_FORM}`);
   //  初始化 Register Form 功能
   initLoginFn(`#${G.constant.ID.LOGIN_FORM}`);
