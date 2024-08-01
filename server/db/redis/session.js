@@ -3,11 +3,10 @@ const redisStore = require("koa-redis");
 const { DB } = require("../../_config");
 const { log } = require("../../utils/log");
 
-const store = redisStore({
-  port: DB.REDIS_CONF.port,
-  host: DB.REDIS_CONF.host,
-  cookie: DB.REDIS_CONF.cookie,
-});
+const store = redisStore(DB.REDIS_CONF);
+// const store = redisStore({
+//   all: { port: 6379, host: "127.0.0.1" },
+// });
 
 store.client
   .on("connect", () => {
@@ -21,5 +20,8 @@ module.exports = session({
   key: "koa_blog.sid",
   //redis key前綴
   prefix: "koa_blog.sid:",
+  // cookie: {
+  //   maxAge: 1000 * 60 * 60 * 24,
+  // },
   store,
 });

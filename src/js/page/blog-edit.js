@@ -167,18 +167,25 @@ async function initMain() {
         G.constant.EDITOR.HTML_MAX_LENGTH - editor.getHtml().length
       }個字`
     );
+    let modalShow = false;
     //  handle 用來隱藏 image modal 的 src & url 編輯功能
     editor.on("modalOrPanelShow", handle_modalShow);
+    // editor.on("modalOrPanelShow", () => console.log(123));
     //  handle 恢復 setImgMode
-    editor.on("modalOrPanelHide", handle_modalHide);
+    // editor.on("modalOrPanelHide", handle_modalHide);
+    editor.on("modalOrPanelHide", () => console.log(456));
     return editor;
     //  handle 恢復 setImgMode
     function handle_modalHide(modalOrPanel) {
+      modalShow = false;
+      console.log("@handle_modalHide-----------------modalShow => ", modalShow);
       setImgMode = 0;
       return;
     }
     //  handle 用來隱藏 image modal 的 src & url 編輯功能
     function handle_modalShow(modalOrPanel) {
+      modalShow = true;
+      console.log("@handle_modalShow-----------------modalShow => ", modalShow);
       const $modal = $(modalOrPanel.$elem).first();
       const $containerList = $modal.find("div > label.babel-container");
       const isImgModel =
@@ -187,12 +194,18 @@ async function initMain() {
       if (!isImgModel) {
         return;
       }
+
       //  關於編輯圖片資訊的model，每次modalOrPanelShow都會重新創建子表格
       //  $containerList [ 圖片位址表格(src), 圖片說明表格(alt), 圖片連結表格(href)]
       if (setImgMode === 0) {
-        $containerList.eq(0).hide();
+        $containerList.hide(0);
+        //  不能省略focus操作，推估modalOrPanel成型條件需要由focus定位，
+        //  否則會導致稍後任何點擊都導致 handle_editorChange，而讓model自動消失
+        $containerList.eq(1).show(0).get(0).focus();
       }
-      $containerList.eq(2).hide();
+
+      // $containerList.eq(2).children("input").prop("disabled", true);
+      // $containerList.eq(1).children("input").get(0).focus();
       return;
     }
     //  插入影片後的CB
@@ -458,6 +471,13 @@ async function initMain() {
         $("[data-menu-key=uploadImage] > .title").on("click", () => {
           setImgMode = 2;
         });
+        return;
+      }
+      console.log(
+        "handle_editorChange----------------------modalShow => ",
+        modalShow
+      );
+      if (modalShow) {
         return;
       }
       let KEY = "html";
