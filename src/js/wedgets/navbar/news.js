@@ -372,7 +372,9 @@ class Render {
       if (!newCount) {
         this.$newsCount.css({ opacity: 0 });
       }
-      this.$new_newsCount.text(num).show(0).css({ top: "7rem", opacity: 0 });
+      if (num) {
+        this.$new_newsCount.text(num).show(0).css({ top: "7rem", opacity: 0 });
+      }
       setTimeout(() => {
         if (!newCount) {
           this.$newsCount.text("").removeAttr("style");
