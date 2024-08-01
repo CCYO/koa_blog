@@ -46,8 +46,6 @@ export default async function (axios) {
       renderLogoutNavBar();
     } else {
       renderLoginNav();
-      // popper不引入，dropdown也正常運作?
-      // await import(/*webpackChunkName:'popper'*/ "@popperjs/core");
       await import(
         /*webpackChunkName:'bootstrap-dropdown'*/ "bootstrap/js/dist/dropdown"
       );
