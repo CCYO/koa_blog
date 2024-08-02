@@ -106,8 +106,5 @@ function init_map_imgs(imgs) {
   for (let alt_id in imgs) {
     map.set(alt_id * 1, imgs[alt_id]);
   }
-  // imgs.forEach((img) => {
-  //   map.set(img.alt_id * 1, { ...img });
-  // });
   return map;
 }
