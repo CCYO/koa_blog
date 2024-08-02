@@ -1,16 +1,8 @@
-const isProd = process.env.NODE_ENV === "production";
-
 function dev_log(...msg) {
-  if (isProd) {
-    return;
-  }
-  console.log("【測試提醒】\n", ...msg);
+  !process.env.isProd && console.log("【測試提醒】\n", ...msg);
 }
 function dev_alert(msg) {
-  if (isProd) {
-    return;
-  }
-  alert(msg);
+  !process.env.isProd && alert(`【測試提醒】\n${msg}`);
 }
 
 export { dev_log, dev_alert };
