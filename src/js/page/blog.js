@@ -124,6 +124,7 @@ async function initMain() {
     }
 
     async function removeComment(btn_remove) {
+      redir.check_login(G.data);
       let $btn_remove = $(btn_remove);
       let $remove_comment_id = $btn_remove.data(
         G.constant.DATASET.KEY.REMOVE_COMMENT
@@ -291,6 +292,7 @@ async function initMain() {
         }
         //  送出創建評論的請求
         async function postComment() {
+          redir.check_login(G.data);
           let article_id = G.data.blog.id;
           let commenter_id = G.data.me.id;
 
