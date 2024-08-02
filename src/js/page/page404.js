@@ -11,7 +11,7 @@ try {
   errorHandle(error);
 }
 
-async function initMain() {
+function initMain() {
   let reg = new RegExp(location.host.replace(/\./g, "\\."), "g");
   let target = document.referrer;
   //  404 || 通知已過期 || 需要登入權限 || 其他
