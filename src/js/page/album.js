@@ -73,9 +73,12 @@ async function initMain() {
     const alt_id = jq_modal.data(G.constant.DATASET.KEY.ALT_ID) * 1;
     const payload = { alt_id, alt, blog_id: G.data.blog.id };
 
-    let result = await validate(payload);
+    let result = await G.utils.validate.img_alt({
+      _old: { alt: G.data.map_imgs.get(alt_id).alt },
+      ...payload,
+    });
 
-    if (!result.invalid) {
+    if (result.valid) {
       G.utils.lock.setKVpairs(payload);
       formFeedback.validated(el_input_alt, true);
     } else {
@@ -122,17 +125,6 @@ async function initMain() {
     //  顯示 modal，並將 此照片容器(.card) 作為 e.relatedTarget 傳給 modal show.bs.modal 的 handle
     bs5_modal.show($(e.target).parents(".card"));
     //  show BS5 Modal，並將$card作為e.relatedTarget傳給modal
-  }
-
-  async function validate(newData) {
-    let result = await G.utils.validate.img_alt({
-      _old: { alt: G.data.map_imgs.get(newData.alt_id).alt },
-      ...newData,
-    });
-    //  過濾掉 _old
-    result = result.filter(({ field_name }) => field_name !== "_old");
-    result.invalid = result.some(({ valid }) => !valid);
-    return result;
   }
 
   function initLock() {
