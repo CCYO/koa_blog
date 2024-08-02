@@ -4,7 +4,14 @@ import "@css/album.scss";
 import FRONTEND from "@config/frontend_esm";
 /* Utils Module ----------------------------------------------------------------------------- */
 import G from "../wedgets";
-import { Debounce, _Ajv, errorHandle, _xss, formFeedback } from "../utils";
+import {
+  Debounce,
+  _Ajv,
+  errorHandle,
+  _xss,
+  formFeedback,
+  redir,
+} from "../utils";
 /* runtime ---------------------------------------------------------------------------------- */
 try {
   const $$ajv = new _Ajv(G.utils.axios);
@@ -49,6 +56,7 @@ async function initMain() {
 
   //  handle 更新 imgAlt
   async function handle_updateImgAlt() {
+    redir.check_login(G.data);
     let payload = G.utils.lock.getPayload();
     await G.utils.axios.patch("/api/album", payload);
     /* 同步頁面數據 */
