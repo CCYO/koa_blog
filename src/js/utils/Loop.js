@@ -30,7 +30,6 @@ export default class {
       dev_log(
         `loop stop ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- cancel`
       );
-      // dev_log(`loop stop --- 從【編號${this.timeSet}】setTimeout 開始暫停`);
       this.timeSet = clearTimeout(this.timeSet);
     }
   }
@@ -39,9 +38,7 @@ export default class {
     dev_log(
       `loop now ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- start`
     );
-    // dev_log(`loop now --- 立即運行一次 callback/${this.callback.name}`);
     let res = await this.callback.call(this, ...arguments);
-    // dev_log(`loop now --- 這次跑完了`);
     dev_log(
       `loop now ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- finish`
     );
@@ -65,13 +62,9 @@ export default class {
         dev_log(
           `loop auto ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- finish`
         );
-        // dev_log(
-        //   `auto 設定的【編號${this.timeSet}】setTimeout 這次跑完了，將自動進行下一次 --- 2`
-        // );
         this.timeSet = undefined;
         this.start(...this.args);
       } catch (e) {
-        // dev_log("捕獲到loop內setTimeout的報錯，並傳入error_handle");
         dev_log(
           `loop auto ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- catch error, and call error_handle`
         );
@@ -80,7 +73,6 @@ export default class {
       }
       return;
     }, this.ms);
-    // dev_log(`auto 已設定【編號${this.timeSet}】setTimeout --- 1`);
     dev_log(
       `loop start ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- ready`
     );
