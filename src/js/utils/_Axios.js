@@ -7,7 +7,7 @@ import { dev_log } from "./dev";
 
 export default class {
   REG = {
-    IGNORE_PATH: /^\/(login)|(register)|(other)|(square)|(blog)|(permission)/,
+    IGNORE_PATH: /^\/(login)|(register)|(other)|(square)|(blog)|(permission)|(serverError)/,
   };
   constructor({ backdrop = undefined }) {
     if (!backdrop) {
