@@ -6,7 +6,7 @@ import FRONTEND from "@config/frontend_esm";
 import SparkMD5 from "spark-md5";
 /* Utils Module ----------------------------------------------------------------------------- */
 import G from "../wedgets";
-import { Debounce, _Ajv, errorHandle, formFeedback } from "../utils";
+import { Debounce, _Ajv, errorHandle, formFeedback, redir } from "../utils";
 /* runtime ---------------------------------------------------------------------------------- */
 try {
   const $$ajv = new _Ajv(G.utils.axios);
@@ -85,6 +85,7 @@ async function initMain() {
   jq_settingForm.on("submit", handle_submit);
   async function handle_submit(e) {
     e.preventDefault();
+    redir.check_login(G.data);
     let api = G.constant.API.SETTING;
     let payload = G.utils.lock.getPayload();
 
@@ -326,6 +327,7 @@ async function initMain() {
   //  驗證原密碼
   async function handle_originPassword(e) {
     e.preventDefault();
+    redir.check_login(G.data);
     const KEY = "origin_password";
     let payload = { [KEY]: el_origin_password.value };
     let result = await G.utils.validate.password(payload);
