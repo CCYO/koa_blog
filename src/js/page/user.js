@@ -187,19 +187,16 @@ async function initMain() {
     /* ------------------------------------------------------------------------------------------ */
     //  追蹤
     async function follow() {
-      redir.check_login(G.data);
       //  檢查登入狀態
-      /* 更新追蹤/退追的瀏覽器數據與頁面渲染 */
+      redir.check_login(G.data);
       await G.utils.axios.post(G.constant.API.FOLLOW, {
         id: G.data.currentUser.id,
       });
-      //  發出 取消/追蹤 請求
-      /* 更新追蹤/退追的瀏覽器數據與頁面渲染 */
       //  同步 fansList 數據
       G.data.relationShip.fansList.unshift(G.data.me);
-
-      let html = render.user.relationshipItem({ user: G.data.me });
       //  在粉絲列表中插入 粉絲htmlStr
+      let html = render.user.relationshipItem({ user: G.data.me });
+
       if (G.data.relationShip.fansList.length === 1) {
         //  如果追蹤者只有當前的你
         $fansList.html(`<ul>${html}</ul>`);
@@ -220,12 +217,9 @@ async function initMain() {
     //  退追
     async function cancelFollow() {
       redir.check_login(G.data);
-      //  檢查登入狀態
-      /* 更新追蹤/退追的瀏覽器數據與頁面渲染 */
       await G.utils.axios.post(G.constant.API.CANCEL_FOLLOW, {
         id: G.data.currentUser.id,
       });
-      /* 更新追蹤/退追的瀏覽器數據與頁面渲染 */
       G.data.relationShip.fansList.splice(
         G.data.relationShip.fansList.indexOf(G.data.me.id),
         1
@@ -253,6 +247,7 @@ async function initMain() {
       return;
     }
   }
+
   //  登入者本人頁面功能權限(建立/刪除文章)
   async function init_self_permission() {
     await import(
@@ -285,7 +280,6 @@ async function initMain() {
         return;
       }
       e.preventDefault();
-      //  確認是否為登入狀態
       redir.check_login(G.data);
       let blogList = [];
       if (action === G.constant.DATASET.VALUE.REMOVE_BLOG_ITEM) {
@@ -331,10 +325,10 @@ async function initMain() {
       });
       window.alert("創建成功，開始編輯文章");
       location.href = `${G.constant.API.EDIT_BLOG}/${blog_id}?owner_id=${G.data.me.id}`;
-
       //  清空表格
       $input_new_blog_title.val("");
     }
+
     //  校驗文章標題
     async function check_title() {
       let input = $input_new_blog_title.get(0);
