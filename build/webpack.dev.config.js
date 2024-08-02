@@ -9,9 +9,6 @@ module.exports = merge(webpackBaseConfig, {
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.DefinePlugin({
-      "process.env.IS_PROD": JSON.stringify(false),
-    }),
   ],
   module: {
     rules: [

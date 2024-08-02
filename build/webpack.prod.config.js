@@ -1,7 +1,6 @@
 ////  NODE MODULE
 const { resolve } = require("path");
 ////  NPM MODULE
-const webpack = require("webpack");
 const pm2 = require("pm2");
 const { merge } = require("webpack-merge");
 const OptimizeCss = require("css-minimizer-webpack-plugin");
@@ -47,9 +46,6 @@ const plugins = (prod) =>
       filename: `${WEBPACK_CONFIG.BUILD.STYLE}/[name].[contenthash:5].min.css`,
     }),
     new OptimizeCss(),
-    new webpack.DefinePlugin({
-      "process.env.IS_PROD": JSON.stringify(true),
-    }),
     DONE(prod),
   ].filter(Boolean);
 

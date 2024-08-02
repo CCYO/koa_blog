@@ -23,6 +23,9 @@ const plugins = [
     $: "jquery",
   }),
   new BundleAnalyzerPlugin(),
+  new webpack.DefinePlugin({
+    "process.env.isProd": JSON.stringify(process.env.NODE_ENV === "production"),
+  }),
 ];
 
 module.exports = {
