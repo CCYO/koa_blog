@@ -23,6 +23,7 @@ export default async function (data, ignore_list = []) {
       throw invalid_errors;
     }
   }
+  ignore_list = [...new Set(ignore_list).add("_old")];
   return _parseErrorsToForm(validated_errors, data, ignore_list);
 }
 //  將校驗錯誤初始化為
@@ -100,7 +101,9 @@ function _init_errors(invalid_errors) {
 function _parseErrorsToForm(invalid_errors, data, ignore_list = []) {
   //  先將傳入的 data properties 皆視為 valid，待會進行過濾
   let valid_list = Object.keys(data);
-  if (Object.getOwnPropertyNames(invalid_errors).length) {
+  let res_list = [];
+  res_list.valid = !Object.getOwnPropertyNames(invalid_errors).length;
+  if (!res_list.valid) {
     for (let error of invalid_errors[TOP_FIELD]) {
       // JSON Pointer 級別高過於被校驗資料的錯誤
       let { keyword, message, list } = error;
@@ -129,7 +132,7 @@ function _parseErrorsToForm(invalid_errors, data, ignore_list = []) {
     valid_list = valid_list.filter((item) => item !== field_name);
     delete invalid_errors[field_name];
   }
-  let res_list = [];
+
   //  從 valid_errors 整理出校驗錯誤的各別結果給 res_list
   for (let field_name in invalid_errors) {
     let field_error = invalid_errors[field_name];
