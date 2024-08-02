@@ -66,12 +66,17 @@ app.on("error", (error) => {
   if (error instanceof MyErr) {
     let { serverError } = error;
     console.error(
-      "+++++ +++++\nMyErr.model:\n",
+      "\n----- -----\nMyErr.model:\n",
       error.model,
-      "\n",
-      error.stack
+      "\n+++++ +++++\nnMyErr.stack:\n",
+      error.stack,
+      "\n+++++ +++++\nMyErr.serverError.stack:\n",
+      serverError?.stack,
+      "\n----- -----"
     );
-    console.error("serverError.stack:\n", serverError?.stack, "\n----- -----");
+  }else{
+  console.error(
+    "\n!!!!! !!!!!\nserverError:\n", error );
   }
 });
 module.exports = app;

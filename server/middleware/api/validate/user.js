@@ -18,19 +18,24 @@ module.exports = async (ctx, next) => {
   let res = reg.exec(ctx.path);
   let to = res.groups.to ? res.groups.to : "";
   let condition = `${method}-/${to}`;
-  let errRes;
   switch (condition) {
     case "POST-/isEmailExist":
       validate_result = await validator(TYPE.USER.EMAIL)(ctx.request.body);
-      errRes = USER.READ.AJV_IS_EMAIL_EXIST;
+      if (!validate_result.valid) {
+        throwErr(validate_result, USER.READ.AJV_IS_EMAIL_EXIST, method, to);
+      }
       break;
     case "POST-/register":
       validate_result = await validator(TYPE.USER.REGISTER)(ctx.request.body);
-      errRes = USER.CREATE.AJV_REGISTER;
+      if (!validate_result.valid) {
+        throwErr(validate_result, USER.CREATE.AJV_REGISTER, method, to);
+      }
       break;
     case "POST-/":
       validate_result = await validator(TYPE.USER.LOGIN)(ctx.request.body);
-      errRes = USER.READ.AJV_LOGIN;
+      if (!validate_result.valid) {
+        throwErr(validate_result, USER.READ.AJV_LOGIN, method, to);
+      }
       break;
     case "PATCH-/":
       ctx.request.body._old = { ...ctx.session.user };
@@ -41,26 +46,23 @@ module.exports = async (ctx, next) => {
         ctx.request.body.age = Number.parseInt(ctx.request.body.age);
       }
       validate_result = await validator(TYPE.USER.SETTING)(ctx.request.body);
-      ctx.request.body._origin = {
-        user_id: ctx.session.user.id,
-        email: ctx.session.user.email,
-      };
-      delete ctx.request.body.password_again;
-      errRes = USER.UPDATE.AJV_SETTING;
+      if (!validate_result.valid) {
+        throwErr(validate_result, USER.UPDATE.AJV_SETTING, method, to);
+      } else {
+        ctx.request.body._origin = {
+          user_id: ctx.session.user.id,
+          email: ctx.session.user.email,
+        };
+        delete ctx.request.body.password_again;
+      }
       break;
   }
-  //    validate_result [ { <field_name>, <valid: boolean>, <value>, <message> }, ... ]
-  throwErr(validate_result, method, errRes, to);
   delete ctx.request.body._old;
   return await next();
 };
-function throwErr(validate_result, method, errRes, to) {
-  let invalid_list = validate_result.filter(({ valid }) => !valid);
-  if (!invalid_list.length) {
-    return;
-  }
+function throwErr(result, errRes, method, to) {
   let msg = `【${method}】/api/user/${to}\n 資料校驗錯誤\n data: ${JSON.stringify(
-    invalid_list
+    result
   )}`;
   throw new MyErr({
     ...errRes,

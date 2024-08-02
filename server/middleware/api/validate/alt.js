@@ -19,7 +19,6 @@ module.exports = async (ctx, next) => {
   let res = reg.exec(ctx.path);
   let to = res.groups.to ? res.groups.to : "";
   let condition = `${method}-/${to}`;
-  let errRes;
   switch (condition) {
     case "PATCH-/":
       ctx.request.body.author_id = ctx.session.user.id;
@@ -28,22 +27,17 @@ module.exports = async (ctx, next) => {
       ctx.request.body._old = { alt: data.alt };
       // ctx.request.body { author_id, blog_id, alt_id, alt, _old }
       validate_result = await validator(TYPE.ALT.UPDATE)(ctx.request.body);
-      errRes = BLOG_IMG_ALT.UPDATE.AJV_UPDATE;
+      if (!validate_result.valid) {
+        throwErr(validate_result, BLOG_IMG_ALT.UPDATE.AJV_UPDATE, method, to);
+      }
       break;
   }
-  //    validate_result [ item, ... ]
-  //    item { <field_name>, <valid>, <value|message> }
-  throwErr(validate_result, method, errRes, to);
   delete ctx.request.body._old;
   return await next();
 };
-function throwErr(validate_result, method, errRes, to) {
-  let invalid_list = validate_result.filter(({ valid }) => !valid);
-  if (!invalid_list.length) {
-    return;
-  }
+function throwErr(result, errRes, method, to) {
   let msg = `【${method}】/api/album/${to}\n 資料校驗錯誤\n data: ${JSON.stringify(
-    invalid_list
+    result
   )}`;
   throw new MyErr({
     ...errRes,

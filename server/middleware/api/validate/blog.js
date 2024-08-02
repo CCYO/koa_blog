@@ -6,6 +6,7 @@ const { TYPE } = require("../../../utils/validator/config");
 const validator = require("../../../utils/validator");
 const C_Blog = require("../../../controller/blog");
 const { MyErr } = require("../../../utils/model");
+
 /** Middleware - 校驗 USER 資料
  * @param {*} ctx
  * @param {function} next
@@ -21,7 +22,9 @@ module.exports = async (ctx, next) => {
   switch (condition) {
     case "POST-/":
       validate_result = await validator(TYPE.BLOG.CREATE)(ctx.request.body);
-      errRes = BLOG.CREATE.AJV_CREATE;
+      if (!validate_result.valid) {
+        throwErr(validate_result, BLOG.CREATE.AJV_CREATE, method, to);
+      }
       break;
     case "POST-/img":
       ctx.request.query.blog_id *= 1;
@@ -34,7 +37,9 @@ module.exports = async (ctx, next) => {
       validate_result = await validator(TYPE.BLOG_IMG.CREATE)(
         ctx.request.query
       );
-      errRes = BLOG_IMG.CREATE.AJV_CREATE;
+      if (!validate_result.valid) {
+        throwErr(validate_result, BLOG_IMG.CREATE.AJV_CREATE, method, to);
+      }
       break;
     case "PATCH-/":
       let opts = {
@@ -46,22 +51,17 @@ module.exports = async (ctx, next) => {
       // data { title, html, show };
       ctx.request.body._old = data;
       validate_result = await validator(TYPE.BLOG.UPDATE)(ctx.request.body);
-      errRes = BLOG.UPDATE.AJV_UPDATE;
+      if (!validate_result.valid) {
+        throwErr(validate_result, BLOG.UPDATE.AJV_UPDATE, method, to);
+      }
       break;
   }
-  //    validate_result [ item, ... ]
-  //    item { <field_name>, <valid>, <value|message> }
-  throwErr(validate_result, method, errRes, to);
   delete ctx.request.body._old;
   return await next();
 };
-function throwErr(validate_result, method, errRes, to) {
-  let invalid_list = validate_result.filter(({ valid }) => !valid);
-  if (!invalid_list.length) {
-    return;
-  }
+function throwErr(result, errRes, method, to) {
   let msg = `【${method}】/api/blog/${to}\n 資料校驗錯誤\n data: ${JSON.stringify(
-    invalid_list
+    result
   )}`;
   throw new MyErr({
     ...errRes,
