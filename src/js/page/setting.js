@@ -17,7 +17,7 @@ try {
     avartar: $$ajv._validate.avatar,
     password: $$ajv._validate.password,
   };
-  await G.main(await initMain);
+  await G.main(initMain);
 } catch (error) {
   errorHandle(error);
 }
@@ -88,13 +88,18 @@ async function initMain() {
     redir.check_login(G.data);
     let api = G.constant.API.SETTING;
     let payload = G.utils.lock.getPayload();
-
     let formData = new FormData();
     if (payload.hasOwnProperty("avatar_hash")) {
       api += `?avatar_hash=${payload.avatar_hash}&avatar_ext=${payload.avatar_ext}`;
       formData.append("avatar", $avatar.prop("files")[0]);
       delete payload.avatar_hash;
       delete payload.avatar_ext;
+    }
+    if (
+      payload.hasOwnProperty("origin_password") &&
+      !payload.hasOwnProperty("password")
+    ) {
+      delete payload.origin_password;
     }
     for (let prop in payload) {
       //  整理要更新的請求數據
@@ -318,10 +323,12 @@ async function initMain() {
       }
 
       let result = await G.utils.validate.setting(newData);
-      return result.filter(({ field_name }) => {
+      let x = result.filter(({ field_name }) => {
         let exclude = ["_old", "avatar_hash", "avatar_ext"];
         return !exclude.some((item) => item === field_name);
       });
+      console.log(x);
+      return x;
     }
   }
   //  驗證原密碼
@@ -394,18 +401,12 @@ async function initMain() {
         return res;
       }
       check_submit() {
-        let disabled = false;
-        let keys = [...this.keys()];
-        if (
-          keys.length < 1 ||
-          (keys.length === 1 && keys[0] === "origin_password")
-        ) {
-          disabled = true;
-        }
+        let keys = new Set(this.keys());
+        let disabled =
+          !keys.size || (keys.size === 1 && keys.has("origin_password"));
         if (!disabled) {
           disabled = this.jq_form.find(".is-invalid").length > 0;
         }
-
         this.jq_submit.prop("disabled", disabled);
       }
     })();
