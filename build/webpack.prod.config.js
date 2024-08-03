@@ -32,7 +32,7 @@ const styleLoaderList = [
   },
 ];
 
-const plugins = (prod) =>
+const plugins = (run) =>
   [
     new HtmlInlineScriptPlugin({
       htmlMatchPattern: [/[.]ejs$/],
@@ -46,10 +46,10 @@ const plugins = (prod) =>
       filename: `${WEBPACK_CONFIG.BUILD.STYLE}/[name].[contenthash:5].min.css`,
     }),
     new OptimizeCss(),
-    DONE(prod),
+    DONE(run),
   ].filter(Boolean);
 
-const prod_config = (env) => ({
+const prod_config = (run) => ({
   module: {
     rules: [
       {
@@ -74,7 +74,7 @@ const prod_config = (env) => ({
       },
     ],
   },
-  plugins: plugins(env),
+  plugins: plugins(run),
 
   optimization: {
     splitChunks: {
@@ -105,8 +105,8 @@ const prod_config = (env) => ({
   mode: "production",
 });
 
-function DONE(prod) {
-  if (!prod) {
+function DONE(run) {
+  if (!run) {
     return false;
   }
   return {
@@ -130,5 +130,5 @@ function DONE(prod) {
 }
 
 module.exports = (env) => {
-  return merge(webpackBaseConfig, prod_config(env.prod));
+  return merge(webpackBaseConfig, prod_config(env.run));
 };

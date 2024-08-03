@@ -5,8 +5,8 @@
   "scripts": {
     "nocache": "npm run _clean && cross-env NODE_ENV=nocache nodemon",
     "dev": "npm run _clean && cross-env NODE_ENV=development nodemon",
-    "build": "npm run _clean && webpack --config ./build/webpack.prod.config.js",
-    "prod": "npm run build -- --env=prod",
+    "build": "npm run _clean && cross-env NODE_ENV=production webpack --config ./build/webpack.prod.config.js",
+    "prod": "npm run build -- --env=run",
     "start": "pm2 start ecosystem.config.js",
     "_clean": "rm -rf ./src/_views ./src/js/utils/render/template ./server/views ./server/assets ./server/utils/render/template ",
     "syncDB": "node ./server/db/mysql/sync"
