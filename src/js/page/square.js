@@ -15,7 +15,7 @@ try {
   errorHandle(error);
 }
 
-async function initMain() {
+function initMain() {
   //  初始化文章列表的分頁功能
   initPagination(G);
 }

@@ -23,6 +23,7 @@ import {
   redir,
 } from "../utils";
 /* runtime ---------------------------------------------------------------------------------- */
+
 try {
   const $$ajv = new _Ajv(G.utils.axios);
   G.page = "blog_edit";
@@ -263,9 +264,7 @@ async function initMain() {
         },
         alt: new_alt,
       });
-      result = result.filter(({ field_name }) => field_name !== "_old");
-      result.invalid = result.some(({ valid }) => !valid);
-      if (result.invalid) {
+      if (!result.valid) {
         let { message } = result.find(({ field_name }) => field_name === "alt");
         return message;
       }
@@ -290,8 +289,7 @@ async function initMain() {
         ext,
         size: img.size,
       });
-      let valid = !validated_list.some((item) => !item.valid);
-      if (!valid) {
+      if (!validated_list.valid) {
         let message = validated_list.reduce((acc, { message }) => {
           if (message) {
             if (acc.length) {
@@ -457,22 +455,22 @@ async function initMain() {
       cache_content = _parseHtmlStr_ImgToXImg(_xss.blog(content));
       let newData = { [KEY]: cache_content };
       //  校證html
-      let result = await validate(newData);
-      let { keyword, message } = result.find(
-        ({ field_name }) => field_name === KEY
-      );
+      let result = await G.utils.validate.blog({
+        ...newData,
+        _old: G.data.blog,
+      });
       let text_count = G.constant.EDITOR.HTML_MAX_LENGTH - cache_content.length;
       let text = `還能輸入${text_count}個字`;
-      if (!result.invalid) {
+      if (result.valid) {
         G.utils.lock.setKVpairs(newData);
         $span_content_count.removeClass("text-danger").text(text);
       } else {
+        let { keyword, message } = result.find(
+          ({ field_name }) => field_name === KEY
+        );
         G.utils.lock.del(KEY);
         let set = new Set(keyword);
-        if (set.size > 2) {
-          //  合理的情況下，最多同時 _notEmpty + _notRepeat
-          throw new Error(JSON.stringify(result));
-        } else if (set.has("_notEmpty")) {
+        if (set.has("_notEmpty")) {
           text = "文章內容不可為空";
           $span_content_count.addClass("text-danger").text(text);
         } else if (set.has("_notRepeat")) {
@@ -567,6 +565,7 @@ async function initMain() {
     alert("已成功刪除此篇文章，現在將跳往個人頁面");
     location.href = "/self";
   }
+
   //  關於 更新文章的相關操作
   async function handle_updateBlog(e) {
     redir.check_login(G.data);
@@ -577,8 +576,8 @@ async function initMain() {
       //  若cancel有值
       payload.cancelImgs = cancelImgs; //  放入payload
     }
-    let result = await validate(payload);
-    if (result.invalid) {
+    let result = await G.utils.validate.blog({ ...payload, _old: G.data.blog });
+    if (!result.valid) {
       throw new Error(JSON.stringify(result));
     }
     payload.blog_id = G.data.blog.id;
@@ -622,8 +621,8 @@ async function initMain() {
   async function handle_pubOrPri(e) {
     let KEY = "show";
     let newData = { [KEY]: e.target.checked };
-    let result = await validate(newData);
-    if (!result.invalid) {
+    let result = await G.utils.validate.blog({ ...newData, _old: G.data.blog });
+    if (result.valid) {
       G.utils.lock.setKVpairs(newData);
     } else {
       G.utils.lock.del(KEY);
@@ -670,10 +669,10 @@ async function initMain() {
     const target = e.target;
     let title = _xss.trim(target.value);
     let newData = { [KEY]: title };
-    let result = await validate(newData);
+    let result = await G.utils.validate.blog({ ...newData, _old: G.data.blog });
     let result_title = result.find(({ field_name }) => field_name === "title");
     formFeedback.validated(target, result_title.valid, result_title.message);
-    if (!result.invalid) {
+    if (result.valid) {
       G.utils.lock.setKVpairs(newData);
     } else {
       G.utils.lock.del(KEY);
@@ -743,16 +742,5 @@ async function initMain() {
       return acc;
     }, []);
     return cancelImgs;
-  }
-  //  校驗blog數據，且決定submit可否點擊
-  async function validate(newData) {
-    let result = await G.utils.validate.blog({
-      ...newData,
-      _old: G.data.blog,
-    });
-    //  過濾掉 _old
-    result = result.filter(({ field_name }) => field_name !== "_old");
-    result.invalid = result.some(({ valid }) => !valid);
-    return result;
   }
 }
