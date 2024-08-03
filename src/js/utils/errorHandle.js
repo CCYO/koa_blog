@@ -14,9 +14,12 @@ window.addEventListener("unhandledrejection", function (event) {
     let msg = "window.addEventListener(unhandledrejection)捕獲錯誤事件\n";
     let { model, _checked } = result;
     if (_checked) {
-      dev_log(
-        `${msg}watchError主動引發，目的為了阻止後續代碼發生連鎖錯誤，故這裡無須再作多餘處理`
-      );
+      // watchError主動引發，目的為了阻止後續代碼發生連鎖錯誤，故這裡無須再作多餘處理
+      if (process.env.isProd) {
+        location.reload();
+      } else {
+        console.error(`${msg}Event.reason:`, event.reason);
+      }
     } else if (model) {
       if (!process.env.isProd) {
         console.error(`error.model:`, model);
