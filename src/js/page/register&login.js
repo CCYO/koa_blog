@@ -2,6 +2,8 @@
 import "@css/register&login.scss";
 /* Const Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
+/* NPM Module ------------------------------------------------------------------------------- */
+import "bootstrap/js/dist/tab";
 /* Utils Module ----------------------------------------------------------------------------- */
 import G from "../wedgets";
 import {
@@ -29,7 +31,6 @@ try {
 }
 
 async function initMain() {
-  await import(/*webpackChunkName:'bootstrap-tab'*/ "bootstrap/js/dist/tab");
   initRegistFn(`#${G.constant.ID.REGISTER_FORM}`);
   //  初始化 Register Form 功能
   initLoginFn(`#${G.constant.ID.LOGIN_FORM}`);

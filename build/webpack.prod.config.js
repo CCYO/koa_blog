@@ -87,6 +87,14 @@ const prod_config = (run) => ({
           chunks: "all",
           priority: 100,
         },
+        async: {
+          // test: /[\\/]node_modules[\\/]/,
+          name: "async",
+          minChunks: 1,
+          //  all 同步、動態加載都要進行處理
+          chunks: "async",
+          priority: 110,
+        },
         common: {
           name: "common",
           //  initial 僅針對同步加載進行處理

@@ -35,6 +35,7 @@ module.exports = {
     path: WEBPACK_CONFIG.BUILD.DIST,
     publicPath: `${WEBPACK_CONFIG.PUBLIC_PATH}/`,
     filename: `${WEBPACK_CONFIG.BUILD.SCRIPT}/[name].[contenthash:5].js`,
+    chunkFilename: `${WEBPACK_CONFIG.BUILD.SCRIPT}/chunk-[name].[contenthash:5].js`,
     clean: true,
   },
   resolve: {

@@ -3,6 +3,7 @@ import "@css/setting.scss";
 /* Const Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
 /* NPM Module ------------------------------------------------------------------------------- */
+import BS_Modal from "bootstrap/js/dist/modal";
 import SparkMD5 from "spark-md5";
 /* Utils Module ----------------------------------------------------------------------------- */
 import G from "../wedgets";
@@ -42,9 +43,6 @@ async function initMain() {
   let jq_settingForm = $("#setting");
 
   //  生成BS5 Modal
-  let { default: BS_Modal } = await import(
-    /*wwebpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
-  );
   let bs5_modal = new BS_Modal(el_model);
   //  初始化 頁面各功能
   G.utils.lock = initLock();

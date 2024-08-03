@@ -2,6 +2,8 @@
 import "@css/album.scss";
 /* Const Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
+/* NPM Module ------------------------------------------------------------------------------- */
+import BS_Modal from "bootstrap/js/dist/modal";
 /* Utils Module ----------------------------------------------------------------------------- */
 import G from "../wedgets";
 import {
@@ -27,9 +29,6 @@ try {
 
 async function initMain() {
   //  生成BS5 Modal
-  let { default: BS_Modal } = await import(
-    /*wwebpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
-  );
   let bs5_modal = new BS_Modal(`#${G.constant.ID.MODAL}`);
   const el_modal = $(`#${G.constant.ID.MODAL}`).get(0);
   const jq_modal = $(`#${G.constant.ID.MODAL}`).eq(0);
