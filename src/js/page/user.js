@@ -337,9 +337,7 @@ async function initMain() {
         title: _xss.trim(input.value),
       };
       let validated_list = await G.utils.validate.blog_title(data);
-      let { valid, message } = validated_list.find(
-        ({ field_name }) => field_name === input.name
-      );
+      let { valid, message } = validated_list[input.name];
       formFeedback.validated(input, valid, message);
       $btn_new_blog.prop("disabled", !valid);
       return valid ? data.title : false;
