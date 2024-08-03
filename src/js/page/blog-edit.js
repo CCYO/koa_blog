@@ -172,8 +172,6 @@ async function initMain() {
     let imgEditModalisShow = false;
     //  handle 用來隱藏 image modal 的 src & url 編輯功能
     editor.on("modalOrPanelShow", handle_modalShow);
-    // editor.on("modalOrPanelShow", () => console.log(123));
-
     editor.on("modalOrPanelHide", handle_modalHide);
     editor.on("modalOrPanelHide", () => console.log(456));
     return editor;
@@ -303,7 +301,6 @@ async function initMain() {
         alert(message);
         return false;
       }
-      //  生成 img 的 hash(hex格式)
       //  取得 img 的 MD5 Hash(hex格式)
       let hash = await _getMD5Hash(img);
       // exist = { blogImg_id, url, hash, img_id };
@@ -340,7 +337,6 @@ async function initMain() {
       return;
       //  取得圖片的 hash
       async function _isImgExist(hash) {
-        // let blogImg_id = undefined;
         let res;
         let { map_imgs } = G.data.blog;
         if (map_imgs.size) {
@@ -350,16 +346,13 @@ async function initMain() {
           //  img { alt_id, alt, blogImg_id, name, img_id, hash, url }
           let target = values.find(({ img }) => img.hash === hash);
           if (target) {
-            // blogImg_id = target.blogImg_id;
-            // let { alt_id, alt, blogImg_id, name, img_id, hash, url } =
-            //   target;
+            // let { alt_id, alt, blogImg_id, name, img_id, hash, url } = target;
             res = {
               blogImg: target.blogImg.id,
               img: target.img.id,
             };
           }
         }
-        // return blogImg_id;
         return res;
       }
 
@@ -380,21 +373,6 @@ async function initMain() {
             return;
           });
         });
-      }
-      function _getNameAndExt(imgName) {
-        let result = true;
-        let [_, name, ext] = G.constant.REG.IMG_NAME_AND_EXT.exec(imgName);
-        name = _xss.trim(name).toUpperCase();
-        ext = _xss.trim(ext).toUpperCase();
-        if (ext !== "PNG" && ext !== "JPG") {
-          result = false;
-        }
-        if (result) {
-          result = { name, ext };
-        } else {
-          alert("圖片格式錯誤，必須是png或jpg圖檔");
-        }
-        return result;
       }
     }
     //  校驗插入網路圖片的網址
