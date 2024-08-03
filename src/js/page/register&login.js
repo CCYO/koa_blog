@@ -59,12 +59,11 @@ async function initMain() {
       e.preventDefault();
 
       let alert_message = G.constant.MESSAGE.LOGIN_FAIL;
-      let validated_list = await G.utils.validate.login(axios_payload);
       //  校驗 payload
-      let valid = !validated_list.some((item) => !item.valid);
+      let validated_list = await G.utils.validate.login(axios_payload);
       //  當前進度是否順利
-      let status = valid;
-      if (valid) {
+      let status = validated_list.valid;
+      if (validated_list.valid) {
         /* 送出請求 */
         let { errno, msg } = await G.utils.axios.post(
           G.constant.API.LOGIN,
@@ -123,10 +122,9 @@ async function initMain() {
       //  校驗 axios_payload
       let validated_list = await G.utils.validate.register(axios_payload);
       //  axios_payload 是否有效
-      let valid = !validated_list.some((item) => !item.valid);
       //  當前進度狀態是否順利
-      let status = valid;
-      if (valid) {
+      let status = validated_list.valid;
+      if (validated_list.valid) {
         ////  校驗成功
         let { errno } = await G.utils.axios.post(
           G.constant.API.REGISTER,
