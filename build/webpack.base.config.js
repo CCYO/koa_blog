@@ -31,15 +31,6 @@ const plugins = [
   new webpack.DefinePlugin({
     "process.env.isProd": JSON.stringify(isProd),
   }),
-  // new webpack.ProgressPlugin({
-  //   activeModules: true,
-  //   entries: true,
-  //   // modules: false,
-  //   modulesCount: 5000,
-  //   profile: false,
-  //   // dependencies: false,
-  //   dependenciesCount: 1000
-  // }),
   new ProgressBarPlugin({
     width: 50, // 默认20，进度格子数量即每个代表进度数，如果是20，那么一格就是5。
     format:
