@@ -3,7 +3,6 @@ import "@css/setting.scss";
 /* Const Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
 /* NPM Module ------------------------------------------------------------------------------- */
-import BS_Modal from "bootstrap/js/dist/modal";
 import SparkMD5 from "spark-md5";
 /* Utils Module ----------------------------------------------------------------------------- */
 import G from "../wedgets";
@@ -42,8 +41,17 @@ async function initMain() {
   let $checkOrginPassword = $("#checkOrginPassword");
   let jq_settingForm = $("#setting");
 
-  //  生成BS5 Modal
-  let bs5_modal = new BS_Modal(el_model);
+  let bs5_modal;
+  $newPassword.on("focus", async (e) => {
+    if (!bs5_modal) {
+      //  生成BS5 Modal
+      let { default: BS_Modal } = await import(
+        /*webpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
+      );
+      bs5_modal = new BS_Modal(el_model);
+      bs5_modal.show();
+    }
+  });
   //  初始化 頁面各功能
   G.utils.lock = initLock();
   /* ------------------------- handle ------------------------- */
@@ -358,6 +366,9 @@ async function initMain() {
   }
   //  顯示 origin_password 的 model
   function handle_showModel(e) {
+    if (!bs5_modal) {
+      return;
+    }
     const KEY = "origin_password";
     e.preventDefault();
     if (G.utils.lock.get(KEY)) {

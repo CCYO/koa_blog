@@ -46,20 +46,40 @@ export default async function (axios) {
       renderLogoutNavBar();
     } else {
       renderLoginNav();
-      await import(
-        /*webpackChunkName:'bootstrap-dropdown'*/ "bootstrap/js/dist/dropdown"
-      );
-      let { default: Offcanvas } = await import(
-        /*webpackChunkName:'bootstrap-offcanvas'*/ "bootstrap/js/dist/offcanvas"
-      );
+
+      // await import(
+      //   /*webpackChunkName:'bootstrap-offcanvas'*/ "bootstrap/js/dist/offcanvas"
+      // );
       let el_offcanvas = document.querySelector(`.offcanvas`);
-      let bs_offcanvas = new Offcanvas(el_offcanvas);
       let btn_offcanvas = document.querySelector(".navbar-toggler");
-      btn_offcanvas.addEventListener("click", () => {
+      let bs_offcanvas;
+      btn_offcanvas.addEventListener("click", async () => {
+        if (!bs_offcanvas) {
+          let { default: Offcanvas } = await import(
+            /*webpackChunkName:'bootstrap-offcanvas'*/ "bootstrap/js/dist/offcanvas"
+          );
+          bs_offcanvas = new Offcanvas(el_offcanvas);
+          console.log("動態引入bs_offcanvas且創建完成");
+        }
         bs_offcanvas.show();
       });
       el_offcanvas.addEventListener("shown.bs.offcanvas", (e) => {
         el_offcanvas.focus();
+      });
+
+      let bs_dropdown;
+      let el_dropdownBtn = document.querySelector("[data-bs-toggle=dropdown]");
+      console.log("el_dropdownBtn=> ", el_dropdownBtn);
+      el_dropdownBtn.addEventListener("click", async () => {
+        if (!bs_dropdown) {
+          let { default: Dropdown } = await import(
+            /*webpackChunkName:'bootstrap-dropdown'*/ "bootstrap/js/dist/dropdown"
+          );
+          bs_dropdown = new Dropdown(el_dropdownBtn);
+          // bs_dropdown = new Dropdown(document.querySelector("#newsList"));
+          console.log("動態載入bs5_dropdown");
+        }
+        bs_dropdown.show();
       });
     }
 

@@ -3,7 +3,7 @@ import "@css/album.scss";
 /* Const Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
 /* NPM Module ------------------------------------------------------------------------------- */
-import BS_Modal from "bootstrap/js/dist/modal";
+
 /* Utils Module ----------------------------------------------------------------------------- */
 import G from "../wedgets";
 import {
@@ -28,8 +28,6 @@ try {
 }
 
 async function initMain() {
-  //  生成BS5 Modal
-  let bs5_modal = new BS_Modal(`#${G.constant.ID.MODAL}`);
   const el_modal = $(`#${G.constant.ID.MODAL}`).get(0);
   const jq_modal = $(`#${G.constant.ID.MODAL}`).eq(0);
   const jq_input_alt = jq_modal.find("input").eq(0);
@@ -127,8 +125,16 @@ async function initMain() {
     jq_input_alt.val(alt);
     el_input_alt.placeholder = alt;
   }
+  let bs5_modal;
   //  顯示 modal 的 handle
-  function handle_cueModale(e) {
+  async function handle_cueModale(e) {
+    if (!bs5_modal) {
+      //  生成BS5 Modal
+      let { default: BS_Modal } = await import(
+        /*webpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
+      );
+      bs5_modal = new BS_Modal(el_modal);
+    }
     //  顯示 modal，並將 此照片容器(.card) 作為 e.relatedTarget 傳給 modal show.bs.modal 的 handle
     bs5_modal.show($(e.target).parents(".card"));
     //  show BS5 Modal，並將$card作為e.relatedTarget傳給modal

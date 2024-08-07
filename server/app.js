@@ -51,11 +51,14 @@ app.use(
 );
 //  靜態檔案
 app.use(
-  koaMount(WEBPACK_CONFIG.PUBLIC_PATH, koaStatic(WEBPACK_CONFIG.BUILD.DIST), {
-    maxage: 60 * 60 * 1000,
-  })
+  koaMount(
+    WEBPACK_CONFIG.PUBLIC_PATH,
+    koaStatic(WEBPACK_CONFIG.BUILD.DIST, {
+      maxage: 60 * 60 * 1000,
+    })
+  )
 );
-// SSL
+// SSL測試
 app.use(
   koaMount("/.well-known", koaStatic(resolve(__dirname, "./_config/ssl")))
 );
@@ -74,9 +77,8 @@ app.on("error", (error) => {
       serverError?.stack,
       "\n----- -----"
     );
-  }else{
-  console.error(
-    "\n!!!!! !!!!!\nserverError:\n", error );
+  } else {
+    console.error("\n!!!!! !!!!!\nserverError:\n", error);
   }
 });
 module.exports = app;

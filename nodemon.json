@@ -7,7 +7,7 @@
     "src/css/",
     "src/_views/"
   ],
-  "verbose": true,
+  "verbose": false,
   "exec": "node server/bin/www",
   "ext": "js,mjs,json,ejs"
 }

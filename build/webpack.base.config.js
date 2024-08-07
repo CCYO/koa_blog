@@ -1,14 +1,19 @@
 ////  NODE MODULE
 const { resolve } = require("path");
+const chalk = require("chalk");
+const os = require("node:os");
 ////  NPM MODULE
 const webpack = require("webpack");
 const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
 const BundleAnalyzerPlugin =
   require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const ProgressBarPlugin = require("progress-bar-webpack-plugin");
 ////  MY MODULE
 const htmlWebpackPlugins = require("./_htmlWebpackPlugins");
 const entry = require("./_entry");
 const WEBPACK_CONFIG = require("./config");
+
+const isProd = process.env.NODE_ENV === "production";
 
 const plugins = [
   ...htmlWebpackPlugins,
@@ -24,7 +29,32 @@ const plugins = [
   }),
   new BundleAnalyzerPlugin(),
   new webpack.DefinePlugin({
-    "process.env.isProd": JSON.stringify(process.env.NODE_ENV === "production"),
+    "process.env.isProd": JSON.stringify(isProd),
+  }),
+  // new webpack.ProgressPlugin({
+  //   activeModules: true,
+  //   entries: true,
+  //   // modules: false,
+  //   modulesCount: 5000,
+  //   profile: false,
+  //   // dependencies: false,
+  //   dependenciesCount: 1000
+  // }),
+  new ProgressBarPlugin({
+    width: 50, // 默认20，进度格子数量即每个代表进度数，如果是20，那么一格就是5。
+    format:
+      chalk.blue.bold("build") +
+      chalk.yellow("[:bar] ") +
+      chalk.green.bold(":percent") +
+      " (:elapsed秒)",
+    stream: process.stderr, // 默认stderr，输出流
+    complete: "#", // 默认“=”，完成字符
+    clear: false, // 默认true，完成时清除栏的选项
+    renderThrottle: "", // 默认16，更新之间的最短时间（以毫秒为单位）
+    callback() {
+      // 进度条完成时调用的可选函数
+      console.log(chalk.red.bold("完成"));
+    },
   }),
 ];
 
@@ -35,7 +65,7 @@ module.exports = {
     path: WEBPACK_CONFIG.BUILD.DIST,
     publicPath: `${WEBPACK_CONFIG.PUBLIC_PATH}/`,
     filename: `${WEBPACK_CONFIG.BUILD.SCRIPT}/[name].[contenthash:5].js`,
-    chunkFilename: `${WEBPACK_CONFIG.BUILD.SCRIPT}/chunk-[name].[contenthash:5].js`,
+    // chunkFilename: `${WEBPACK_CONFIG.BUILD.SCRIPT}/chunk.[name].[contenthash:5].js`,
     clean: true,
   },
   resolve: {
@@ -58,7 +88,23 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        use: ["babel-loader"],
+        use: [
+          {
+            loader: "thread-loader", // 开启多进程
+            options: {
+              workers: os.cpus().length, // 数量
+            },
+          },
+          //	cacheDirectory 緩存
+          //  cacheCompression 緩存壓縮,
+          {
+            loader: "babel-loader",
+            options: {
+              cacheDirectory: !isProd,
+              cacheCompression: false,
+            },
+          },
+        ],
         exclude: /(node_modules|lib|libs)/,
       },
       {

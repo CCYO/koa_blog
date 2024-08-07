@@ -1,6 +1,5 @@
 /* CSS Module ------------------------------------------------------------------------------- */
 import "@css/blog.scss";
-// import "@wangeditor/editor/dist/css/style.css";
 /* Const Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
 /* NPM Module ------------------------------------------------------------------------------- */
@@ -13,7 +12,6 @@ try {
   G.page = "blog";
   G.constant = FRONTEND.BLOG;
   await G.main(initMain);
-  // setTimeout(G.utils.scrollToComment, 2000);
   G.utils.scrollToComment();
 } catch (error) {
   errorHandle(error);
@@ -47,7 +45,6 @@ async function initMain() {
   }
   $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg());
   if (!G.data.blog.showComment) {
-    dev_log("不需要渲染評論");
     return;
   }
   ////  根據使用者身分，顯示/移除刪除紐
@@ -212,14 +209,6 @@ async function initMain() {
           $(`[data-${G.constant.DATASET.KEY.PID}=0]`).prepend(html);
         }
         G.utils.scrollToComment(comment_id);
-        // let $comment = $(`#comment_${comment_id}`);
-        // $comment.css({
-        //   backgroundColor: "rgb(219, 159, 159)",
-        // });
-
-        // setTimeout(() => {
-        //   $comment.removeAttr("style");
-        // }, 4000);
       };
       //  為container綁定判斷登入狀態的handle
       container.addEventListener("click", () => redir.check_login(G.data));
@@ -336,18 +325,9 @@ async function initMain() {
     let commentH_half = Math.floor(Math.floor(commentRect.height) / 2);
     let navH = Math.floor(navHeight);
     let viewpointH_half = Math.floor(Math.floor(viewpointH) / 2);
-    console.log(`scrollY: ${scrollY}`);
-    console.log(`commentY: ${commentY}`);
-    console.log(`navH: ${navH}`);
     let targetY_1 = scrollY + commentY - navH;
-    console.log(`第一階段targetY_1: ${targetY_1}`);
-    console.log(`此時commentY: ${navH}`);
-    console.log(`viewpointH_half: ${viewpointH_half}`);
     let up = viewpointH_half - navH;
-    console.log(`距離viewport中心要往回(上)滾動: ${up}`);
-    console.log(`再往下commentH_half: ${commentH_half}`);
     let targetY = targetY_1 - up + commentH_half;
-    console.log(`目標是${targetY}`);
     document.body.scrollTop = targetY;
 
     $comment.css({ backgroundColor: "rgb(219, 159, 159)" });

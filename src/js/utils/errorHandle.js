@@ -43,7 +43,7 @@ window.addEventListener("unhandledrejection", function (event) {
 });
 
 function watchError(error) {
-  let msg = "發生未知錯誤，頁面將重新整理";
+  let msg = "發生未知錯誤，已回報伺服器，且頁面將重新整理";
   if (!process.env.isProd) {
     if (error.model) {
       // 後端錯誤

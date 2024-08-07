@@ -26,7 +26,7 @@ if (SERVER_CONFIG.ENV.isProd) {
   webpackHMR = koaConvert(
     webpackHotMiddleware(compiler, {
       publicPath,
-      noInfo: true,
+      // noInfo: true,
       reload: true,
     })
   );

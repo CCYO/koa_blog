@@ -47,9 +47,6 @@ async function initMain() {
   let $div_blogList = $(`[data-${G.constant.DATASET.KEY.BLOG_STATUS}]`);
   //  文章列表container
 
-  $("#new_blog_modal").on("focus", () => {
-    $input_new_blog_title.get(0).focus();
-  });
   /* ------------------------------------------------------------------------------------------ */
   /* Public Var in Closure -------------------------------------------------------------------- */
   /* ------------------------------------------------------------------------------------------ */
@@ -250,9 +247,21 @@ async function initMain() {
 
   //  登入者本人頁面功能權限(建立/刪除文章)
   async function init_self_permission() {
-    await import(
-      /*webpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
-    );
+    $("#new_blog_modal").on("focus", async () => {
+      $input_new_blog_title.get(0).focus();
+    });
+
+    let bs5_modal;
+    $(`button[data-bs-target="#new_blog_modal"]`).on("click", async (e) => {
+      if (!bs5_modal) {
+        let { default: BS_Modal } = await import(
+          /*webpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
+        );
+        bs5_modal = new BS_Modal(document.querySelector("#new_blog_modal"));
+        e.target.click();
+      }
+    });
+
     //  禁用 創建文章鈕
     $btn_new_blog.prop("disabled", true);
     //  debouncer event handle

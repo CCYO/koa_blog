@@ -173,7 +173,7 @@ async function initMain() {
     //  handle 用來隱藏 image modal 的 src & url 編輯功能
     editor.on("modalOrPanelShow", handle_modalShow);
     editor.on("modalOrPanelHide", handle_modalHide);
-    editor.on("modalOrPanelHide", () => console.log(456));
+
     return editor;
     //  handle 恢復 setImgMode
     function handle_modalHide(modalOrPanel) {

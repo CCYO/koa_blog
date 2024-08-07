@@ -1,4 +1,5 @@
 ////  NODE MODULE
+const os = require("node:os");
 const { resolve } = require("path");
 ////  NPM MODULE
 const pm2 = require("pm2");
@@ -6,7 +7,8 @@ const { merge } = require("webpack-merge");
 const OptimizeCss = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlInlineScriptPlugin = require("html-inline-script-webpack-plugin");
-
+const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 ////  MY MODULE
 const WEBPACK_CONFIG = require("./config");
 const webpackBaseConfig = require("./webpack.base.config");
@@ -20,6 +22,12 @@ const styleLoaderList = [
     loader: "css-loader",
     options: {
       importLoaders: 2,
+    },
+  },
+  {
+    loader: "thread-loader", // 开启多进程
+    options: {
+      workers: os.cpus().length, // 数量
     },
   },
   {
@@ -41,9 +49,6 @@ const plugins = (run) =>
     }),
     new RemovePlugin({
       after: { include: [resolve(__dirname, "../src/_views")], trash: true },
-    }),
-    new MiniCssExtractPlugin({
-      filename: `${WEBPACK_CONFIG.BUILD.STYLE}/[name].[contenthash:5].min.css`,
     }),
     new OptimizeCss(),
     DONE(run),
@@ -76,42 +81,64 @@ const prod_config = (run) => ({
   },
   plugins: plugins(run),
 
-  optimization: {
-    splitChunks: {
-      cacheGroups: {
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          name: "vendors",
-          minChunks: 1,
-          //  all 同步、動態加載都要進行處理
-          chunks: "all",
-          priority: 100,
-        },
-        async: {
-          // test: /[\\/]node_modules[\\/]/,
-          name: "async",
-          minChunks: 1,
-          //  all 同步、動態加載都要進行處理
-          chunks: "async",
-          priority: 110,
-        },
-        common: {
-          name: "common",
-          //  initial 僅針對同步加載進行處理
-          chunks: "initial",
-          minChunks: 2,
-          minSize: 0,
-        },
-      },
-    },
-    //  紀錄所有chunk彼此的引用關係
-    runtimeChunk: {
-      name: "runtime",
-    },
-  },
+  optimization,
+
   devtool: "cheap-module-source-map",
   mode: "production",
 });
+var optimization = {
+  splitChunks: {
+    cacheGroups: {
+      defaultVendors: {
+        priority: 10,
+        chunks: "async",
+        test: /[\\/]node_modules[\\/]/,
+        minChunks: 1,
+        minSize: 0,
+        reuseExistingChunk: true,
+        name(module, chunks, cacheGroupKey) {
+          return chunks.reduce((acc, chunk) => (acc += `@${chunk.name}`), "");
+        },
+        filename: `${WEBPACK_CONFIG.BUILD.SCRIPT}/dynamic_vendor.[name].[contenthash:5].js`,
+      },
+      vendors_npm: {
+        priority: 0,
+        chunks: "all",
+        test: /[\\/]node_modules[\\/]/,
+        minChunks: 1,
+        name: "vendors_npm",
+      },
+      default: {
+        priority: -10,
+        chunks: "async",
+        minChunks: 2,
+        reuseExistingChunk: true,
+        filename: `${WEBPACK_CONFIG.BUILD.SCRIPT}/dynamic_common.[name].[contenthash:5].js`,
+        name(module, chunks, cacheGroupKey) {
+          return chunks.reduce((acc, chunk) => (acc += `@${chunk.name}`), "");
+        },
+      },
+      common: {
+        priority: -20,
+        chunks: "initial",
+        minChunks: 2,
+        minSize: 0,
+        name: "common",
+      },
+    },
+  },
+  //  紀錄所有chunk彼此的引用關係
+  runtimeChunk: {
+    name: "runtime",
+  },
+  minimize: true,
+  minimizer: [
+    new TerserPlugin({
+      minify: TerserPlugin.esbuildMinify,
+      terserOptions: {},
+    }),
+  ],
+};
 
 function DONE(run) {
   if (!run) {
@@ -138,5 +165,15 @@ function DONE(run) {
 }
 
 module.exports = (env) => {
-  return merge(webpackBaseConfig, prod_config(env.run));
+  let config = new SpeedMeasurePlugin().wrap(
+    merge(webpackBaseConfig, prod_config(env.run))
+  );
+  config.module.rules = [{ oneOf: [...config.module.rules] }];
+  config.plugins.push(
+    new MiniCssExtractPlugin({
+      filename: `${WEBPACK_CONFIG.BUILD.STYLE}/[name].[contenthash:5].min.css`,
+    })
+  );
+
+  return config;
 };
