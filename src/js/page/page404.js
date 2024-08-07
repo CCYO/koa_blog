@@ -7,29 +7,32 @@ import { errorHandle } from "../utils";
 try {
   G.page = "page404";
   await G.main(initMain);
+  G.utils.alert_redir();
 } catch (error) {
   errorHandle(error);
 }
 
 function initMain() {
-  let reg = new RegExp(location.host.replace(/\./g, "\\."), "g");
-  let target = document.referrer;
-  //  404 || 通知已過期 || 需要登入權限 || 其他
-  let alertMsg = G.data.errModel.msg;
+  G.utils.alert_redir = function () {
+    let reg = new RegExp(location.host.replace(/\./g, "\\."), "g");
+    let target = document.referrer;
+    //  404 || 通知已過期 || 需要登入權限 || 其他
+    let alertMsg = G.data.errModel.msg;
 
-  if (
-    target &&
-    reg.test(target) &&
-    !/\/permission/.test(target) &&
-    !/\/serverError/.test(target)
-  ) {
-    // 是否來自同域
-    alertMsg += ",五秒後將自動回到上一頁";
-  } else {
-    target = "/square";
-    alertMsg += ",五秒後將自動跳往廣場頁";
-  }
+    if (
+      target &&
+      reg.test(target) &&
+      !/\/permission/.test(target) &&
+      !/\/serverError/.test(target)
+    ) {
+      // 是否來自同域
+      alertMsg += ",五秒後將自動回到上一頁";
+    } else {
+      target = "/square";
+      alertMsg += ",五秒後將自動跳往廣場頁";
+    }
 
-  alert(alertMsg);
-  process.env.isProd && setTimeout(() => location.replace(target), 5000);
+    alert(alertMsg);
+    process.env.isProd && setTimeout(() => location.replace(target), 5000);
+  };
 }
