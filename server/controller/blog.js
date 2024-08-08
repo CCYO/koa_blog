@@ -166,8 +166,8 @@ async function addImg({ author_id, ...data }) {
     //  固定參數 :  blog_id, hash, url, name, ext, img_id
     //  無blogImg_id ->  加   img開始
     //  有blogImg_id ->  直接加 blogImgAlt
-
-    let { blog_id, img_id, name, blogImg_id, alt } = data;
+    // -------------------------------------------------------------------------------------------------------------------
+    let { blog_id, img_id, name, blogImg_id, alt, url, hash } = data;
     // let map = new Map(Object.entries(data));
     if (blogImg_id) {
       let {
@@ -176,17 +176,17 @@ async function addImg({ author_id, ...data }) {
       return alt_id;
       //  data { blog_id, name, img_id }
       // } else if (map.get("img_id")) {
-    } else {
+    } else if (img_id) {
+      //  data { blog_id, name, img_id }
       let {
         data: { id: blogImg_id },
       } = await C_BlogImg.add({ blog_id, name, img_id });
       return await _getAltId({ blogImg_id });
-      // } else {
-      //   //  data { blog_id, hash, url, name, img_id }
-      //   let {
-      //     data: { id: img_id },
-      //   } = await C_Img.add({ url, hash });
-      //   return await _getAltId({ blog_id, img_id, name });
+    } else {
+      let {
+        data: { id: img_id },
+      } = await C_Img.add({ url, hash });
+      return await _getAltId({ blog_id, img_id, name });
     }
   }
 }

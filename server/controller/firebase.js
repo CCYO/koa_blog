@@ -29,8 +29,10 @@ async function addBlogImg(ctx) {
   if (!exist) {
     ctx._my = { gceFile: { ref } };
     //  建立 formidable Ins
-    let { file } = await _parse(ctx, { maxFileSize: BLOG.EDITOR.IMG_MAX_SIZE });
-    if (!file) {
+    let { files } = await _parse(ctx, {
+      maxFileSize: BLOG.EDITOR.IMG_MAX_SIZE,
+    });
+    if (!files[GFB.BLOG_REF].length) {
       throw new MyErr(ERR_RES.SERVER.FORMIDABLE.NO_PAYLOAD);
     }
     delete ctx._my;
@@ -67,7 +69,7 @@ async function addUserAvatar(ctx) {
       data[GFB.AVATAR_REF] = ref.publicUrl();
     }
   }
-  let { fields, file } = await _parse(ctx, {
+  let { fields, files } = await _parse(ctx, {
     maxFileSize: USER.AVATAR.MAX_SIZE,
   }).catch((e) => {
     throw e;
@@ -78,7 +80,7 @@ async function addUserAvatar(ctx) {
   ) {
     throw new MyErr(ERR_RES.SERVER.FORMIDABLE.NO_PAYLOAD);
   }
-  if (file) {
+  if (files[GFB.AVATAR_REF].length) {
     delete ctx._my;
     data[GFB.AVATAR_REF] = ref.publicUrl();
   }
