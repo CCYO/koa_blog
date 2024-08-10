@@ -3,7 +3,7 @@ import "@css/register&login.scss";
 /* Const Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
 /* NPM Module ------------------------------------------------------------------------------- */
-import "bootstrap/js/dist/tab";
+import Tab from "bootstrap/js/dist/tab";
 /* Utils Module ----------------------------------------------------------------------------- */
 import G from "../wedgets";
 import {
@@ -31,10 +31,12 @@ try {
 }
 
 async function initMain() {
+  initNavTab();
   initRegistFn(`#${G.constant.ID.REGISTER_FORM}`);
   //  初始化 Register Form 功能
   initLoginFn(`#${G.constant.ID.LOGIN_FORM}`);
   //  初始化 Register Form 功能
+
   setTimeout(() => {
     let params = new URL(location.href).searchParams;
     if (params.has(FRONTEND.REDIR.FROM)) {
@@ -45,9 +47,61 @@ async function initMain() {
   /* Init ------------------------------------------------------------------------------------ */
   /* ------------------------------------------------------------------------------------------ */
 
+  function initNavTab() {
+    let selectorList = ["register", "login"];
+    let navTab_login = document.querySelector(`[data-my-tab="#login"]`);
+    let navTab_register = document.querySelector(`[data-my-tab="#register"]`);
+    let $navTab_login = $(navTab_login);
+    let $navTab_register = $(navTab_register);
+    let card_tab_login = document.querySelector(
+      `[data-bs-target="#login-card"]`
+    );
+    let card_tab_register = document.querySelector(
+      `[data-bs-target="#register-card"]`
+    );
+    let bs_tab_login = new Tab(card_tab_login);
+    let bs_tab_register = new Tab(card_tab_register);
+    navTab_register.addEventListener("click", (e) => {
+      bs_tab_register.show();
+    });
+    navTab_login.addEventListener("click", (e) => {
+      bs_tab_login.show();
+    });
+    card_tab_register.addEventListener("show.bs.tab", (e) => {
+      $navTab_register.parent().addClass("active");
+      $navTab_login.parent().removeClass("active");
+    });
+    card_tab_login.addEventListener("show.bs.tab", (e) => {
+      $navTab_login.parent().addClass("active");
+      $navTab_register.parent().removeClass("active");
+    });
+
+    // for (let item of selectorList) {
+    //   let card_tab = document.querySelector(`[data-bs-target="#${item}-card"]`);
+    //   let bs_tab = new Tab(card_tab);
+    //   navTab.addEventListener("click", (e) => {
+    //     bs_tab.show();
+    //     $navTab.addClass("active");
+    //   });
+    //   card_tab.addEventListener("hide.bs.tab", (e) => {
+    //     $navTab.children().removeClass("active");
+    //   });
+    // }
+  }
   /* 初始化 Register Form 功能 */
   function initLoginFn(form_id) {
-    let form = document.querySelector(form_id);
+    const form = document.querySelector(form_id);
+    // let el_tab = document.querySelector(`[data-bs-target="#login-card"]`);
+    // let bs_tab = new Tab(el_tab);
+    // let navTab = document.querySelector(`[data-my-tab="#login"]`);
+    // let $navTab = $(navTab);
+    // navTab.addEventListener("click", (e) => {
+    //   bs_tab.show();
+    //   $navTab.addClass("active");
+    // });
+    // navTab.addEventListener("hide.bs.tab", (e) => {
+    //   $navTab.removeClass("active");
+    // });
     let axios_payload = {};
     //  依據 input 數據，自動判斷 form 可否開放 submit 功能
     let lock = _gen_form_lock(form);

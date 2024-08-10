@@ -67,7 +67,11 @@ export default async function (axios) {
       if (albumList) {
         href += `/${albumList}`;
       }
-      $(`.nav-link[href^="/${href}"]`).addClass("active");
+      let $active = $(`.nav-link[href^="/${href}"]`);
+      if (!$active.length) {
+        $active = $(`[data-my-tab="#${pathname}"]`).parent();
+      }
+      $active.addClass("active");
     }
     //  渲染 登出狀態 navbar template
     function renderLogoutNavBar() {
