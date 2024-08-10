@@ -53,7 +53,6 @@ export default class {
       this.$backdrop.css("opacity", 0);
     }
     this.$backdrop.fadeIn();
-    this.#focusBackdrop(); //  主動將焦點聚到backdrop
     dev_log("backdrop show");
   }
   //  存入this.editors
@@ -84,7 +83,7 @@ export default class {
   }
   //  讓頁面中所有的focus都轉移到backdrop
   #focusBackdrop(e) {
-    e && e.preventDefault();
+    e.preventDefault();
     //  聚焦到 backdrop
     this.el_backdrop.focus();
   }

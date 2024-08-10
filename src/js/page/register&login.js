@@ -113,6 +113,7 @@ async function initMain() {
     async function handle_submit_login(e) {
       e.preventDefault();
       e.target.disabled = true;
+      console.log("進德來嗎?");
       let alert_message = G.constant.MESSAGE.LOGIN_FAIL;
       //  校驗 payload
       let validated_list = await G.utils.validate.login(axios_payload);
@@ -127,19 +128,18 @@ async function initMain() {
         status = !errno;
         alert_message = msg;
       }
-      if (status) {
-        ////  請求成功
-        alert(G.constant.MESSAGE.LOGIN_SUCCESS);
-        redir.from(G.constant.API.LOGIN_SUCCESS);
-      } else {
+      if (!status) {
         ////  校驗失敗or請求失敗
+        alert(alert_message);
         //  重置 payload
         axios_payload = {};
         //  重置 lock
         lock.reset();
-        alert(alert_message);
+        e.target.disabled = false;
       }
-      e.target.disabled = false;
+      ////  請求成功
+      alert(G.constant.MESSAGE.LOGIN_SUCCESS);
+      redir.from(G.constant.API.LOGIN_SUCCESS);
       return;
     }
     /* 登入表單內容表格的 input Event handler */
