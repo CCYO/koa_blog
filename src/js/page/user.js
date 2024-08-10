@@ -251,16 +251,9 @@ async function initMain() {
       $input_new_blog_title.get(0).focus();
     });
 
-    let bs5_modal;
-    $(`button[data-bs-target="#new_blog_modal"]`).on("click", async (e) => {
-      if (!bs5_modal) {
-        let { default: BS_Modal } = await import(
-          /*webpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
-        );
-        bs5_modal = new BS_Modal(document.querySelector("#new_blog_modal"));
-        e.target.click();
-      }
-    });
+    await import(
+      /*webpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
+    );
 
     //  禁用 創建文章鈕
     $btn_new_blog.prop("disabled", true);

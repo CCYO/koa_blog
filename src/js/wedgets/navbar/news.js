@@ -5,7 +5,7 @@ import "dayjs/locale/zh-tw";
 /* Const Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
 /* Utils Module ----------------------------------------------------------------------------- */
-import { render as $render, Loop } from "@js/utils";
+import { render as $render, Loop, dev_log } from "@js/utils";
 /* EXPORT MODULE ---------------------------------------------------------------------------- */
 export default class {
   #API = `/api/news`;
@@ -68,20 +68,22 @@ export default class {
     Object.defineProperty(this, "status", {
       get() {
         if (this.#id_list.total === 0) {
+          dev_log("讀取通知(初次調用)");
           return { status: FRONTEND.NAVBAR.NEWS.STATUS.FIRST };
         } else if (this.#auto) {
-          console.log("auto");
+          dev_log("讀取通知(定時自動調用)");
           return {
             status: FRONTEND.NAVBAR.NEWS.STATUS.CHECK,
             excepts: { ...this.#id_list },
           };
         } else if (this.db.total > this.#id_list.total) {
-          console.log("again");
+          dev_log("讀取通知(主動調用)");
           return {
             status: FRONTEND.NAVBAR.NEWS.STATUS.AGAIN,
             excepts: { ...this.#id_list },
           };
         } else {
+          dev_log("讀取通知(主動調用)");
           return { status: FRONTEND.NAVBAR.NEWS.STATUS.CHECK };
         }
       },
@@ -138,6 +140,7 @@ export default class {
            me: ...
        }
     */
+    // 自動調用前，從前一次與後端取得的資料若已確認後端沒有新通知了，auto設為false
     if (auto) {
       this.#auto =
         this.db.unconfirm -

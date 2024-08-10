@@ -86,13 +86,11 @@ module.exports = {
               workers: os.cpus().length, // 数量
             },
           },
-          //	cacheDirectory 緩存
-          //  cacheCompression 緩存壓縮,
           {
             loader: "babel-loader",
             options: {
-              cacheDirectory: !isProd,
-              cacheCompression: false,
+              cacheDirectory: !isProd, //	cacheDirectory 緩存
+              cacheCompression: false, //  cacheCompression 緩存壓縮,
             },
           },
         ],

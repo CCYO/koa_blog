@@ -6,6 +6,12 @@ const webpackBaseConfig = require("./webpack.base.config");
 const WEBPACK_CONFIG = require("./config");
 
 module.exports = merge(webpackBaseConfig, {
+  cache: {
+    type: "filesystem",
+    buildDependencies: {
+      config: [__filename],
+    },
+  },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
