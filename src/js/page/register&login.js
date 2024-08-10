@@ -112,7 +112,7 @@ async function initMain() {
     /* 登入表單 submit Event handler */
     async function handle_submit_login(e) {
       e.preventDefault();
-
+      e.target.disabled = true;
       let alert_message = G.constant.MESSAGE.LOGIN_FAIL;
       //  校驗 payload
       let validated_list = await G.utils.validate.login(axios_payload);
@@ -139,6 +139,7 @@ async function initMain() {
         lock.reset();
         alert(alert_message);
       }
+      e.target.disabled = false;
       return;
     }
     /* 登入表單內容表格的 input Event handler */

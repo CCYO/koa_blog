@@ -27,6 +27,7 @@ export default class {
     //  使backdrop的focus自動blur
     this.el_backdrop.addEventListener("focus", function (e) {
       e.preventDefault();
+      dev_log("焦點調用到el_backdrop");
       this.blur();
     });
   }
@@ -52,6 +53,7 @@ export default class {
       this.$backdrop.css("opacity", 0);
     }
     this.$backdrop.fadeIn();
+    this.#focusBackdrop(); //  主動將焦點聚到backdrop
     dev_log("backdrop show");
   }
   //  存入this.editors
@@ -82,7 +84,7 @@ export default class {
   }
   //  讓頁面中所有的focus都轉移到backdrop
   #focusBackdrop(e) {
-    e.preventDefault();
+    e && e.preventDefault();
     //  聚焦到 backdrop
     this.el_backdrop.focus();
   }
