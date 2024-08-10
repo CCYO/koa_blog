@@ -64,7 +64,11 @@ export default async function (axios) {
         location.pathname
       ).groups;
       let href = pathname;
-      if (albumList) {
+      if (pathname === "square") {
+        $(`[href="/${pathname}"]`).addClass("active");
+        $(`[data-my-tab="#login"]`).attr("href", "/login");
+        $(`[data-my-tab="#register"]`).attr("href", "/register");
+      } else if (albumList) {
         href += `/${albumList}`;
       }
       let $active = $(`.nav-link[href^="/${href}"]`);
