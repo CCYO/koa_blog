@@ -247,16 +247,20 @@ async function initMain() {
 
   //  登入者本人頁面功能權限(建立/刪除文章)
   async function init_self_permission() {
-    $("#new_blog_modal").on("focus", async () => {
-      $input_new_blog_title.get(0).focus();
-    });
-
+    //  禁用 創建文章鈕
+    $btn_new_blog.prop("disabled", true);
     await import(
       /*webpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
     );
-
-    //  禁用 創建文章鈕
-    $btn_new_blog.prop("disabled", true);
+    $("#new_blog_modal").on("focus", async () => {
+      $input_new_blog_title.get(0).focus();
+    });
+    $("#new_blog_modal").on("keyup", (e) => {
+      e.preventDefault();
+      if (e.key.toUpperCase() === "ENTER") {
+        $btn_new_blog.get(0).click();
+      }
+    });
     //  debouncer event handle
     let { debounce: handle_debounce_check_title } = new Debounce(check_title, {
       loading(e) {
@@ -314,7 +318,7 @@ async function initMain() {
     }
     //  創建文章
     async function handle_createBlog(e) {
-      e.preventDefault();
+      e && e.preventDefault();
       redir.check_login(G.data);
       let title = await check_title();
       if (!title) {
