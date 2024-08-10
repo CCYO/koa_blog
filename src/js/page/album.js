@@ -48,6 +48,12 @@ async function initMain() {
   //  modal 顯示時的 handle
   el_modal.addEventListener("shown.bs.modal", handle_shownModal);
   el_modal.addEventListener("input", handle_debounce_input);
+  el_modal.addEventListener("keyup", (e) => {
+    e.preventDefault();
+    if (e.key.toUpperCase() === "ENTER") {
+      jq_submit.get(0).click();
+    }
+  });
   /* 點擊更新鈕的handle */
   jq_submit.on("click", handle_updateImgAlt);
 
