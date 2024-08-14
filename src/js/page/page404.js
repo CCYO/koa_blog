@@ -6,14 +6,8 @@ import { errorHandle } from "../utils";
 /* runtime ---------------------------------------------------------------------------------- */
 try {
   G.page = "page404";
-  await G.main(initMain);
-  G.utils.alert_redir();
-} catch (error) {
-  errorHandle(error);
-}
-
-function initMain() {
-  G.utils.alert_redir = function () {
+  await G.main();
+  (function () {
     let reg = new RegExp(location.host.replace(/\./g, "\\."), "g");
     let target = document.referrer;
     //  404 || 通知已過期 || 需要登入權限 || 其他
@@ -34,5 +28,7 @@ function initMain() {
 
     alert(alertMsg);
     process.env.isProd && setTimeout(() => location.replace(target), 5000);
-  };
+  })();
+} catch (error) {
+  errorHandle(error);
 }

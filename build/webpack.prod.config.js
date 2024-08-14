@@ -7,6 +7,8 @@ const { merge } = require("webpack-merge");
 const OptimizeCss = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlInlineScriptPlugin = require("html-inline-script-webpack-plugin");
+// 1)必須將MiniCssExtractPlugin額外取出，wrap後再添入
+// 2)會導致HtmlInlineScriptPlugin無作用
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 ////  MY MODULE
@@ -42,6 +44,10 @@ const styleLoaderList = [
 
 const plugins = (run) =>
   [
+    // 針對 SpeedMeasurePlugin 的 hack
+    // new MiniCssExtractPlugin({
+    //   filename: `${WEBPACK_CONFIG.BUILD.STYLE}/[name].[contenthash:5].min.css`,
+    // }),
     new HtmlInlineScriptPlugin({
       htmlMatchPattern: [/[.]ejs$/],
       scriptMatchPattern: [/runtime[.]\w+[.]js$/],
@@ -83,7 +89,7 @@ const prod_config = (run) => ({
 
   optimization,
 
-  devtool: "cheap-module-source-map",
+  // devtool: "cheap-module-source-map",
   mode: "production",
 });
 var optimization = {
@@ -165,15 +171,17 @@ function DONE(run) {
 }
 
 module.exports = (env) => {
+  // 針對 SpeedMeasurePlugin 的 hack
   let config = new SpeedMeasurePlugin().wrap(
     merge(webpackBaseConfig, prod_config(env.run))
   );
-  config.module.rules = [{ oneOf: [...config.module.rules] }];
   config.plugins.push(
     new MiniCssExtractPlugin({
       filename: `${WEBPACK_CONFIG.BUILD.STYLE}/[name].[contenthash:5].min.css`,
     })
   );
-
+  // 正式打包
+  // let config = merge(webpackBaseConfig, prod_config(env.run));
+  // config.module.rules = [{ oneOf: [...config.module.rules] }];
   return config;
 };

@@ -96,7 +96,6 @@
     "nodemon": "^1.19.1",
     "postcss-loader": "^7.3.3",
     "postcss-preset-env": "^9.0.0",
-    "progress-bar-webpack-plugin": "^2.1.0",
     "raw-loader": "^4.0.2",
     "remove-files-webpack-plugin": "^1.5.0",
     "sass": "^1.64.2",
@@ -111,6 +110,7 @@
     "webpack-cli": "^4.10.0",
     "webpack-dev-middleware": "^6.1.1",
     "webpack-merge": "^5.9.0",
+    "webpackbar": "^6.0.1",
     "write-file-webpack-plugin": "^4.5.1"
   }
 }

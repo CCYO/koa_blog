@@ -25,7 +25,14 @@ try {
     passwordAndAgain: ajv._validate.password_again,
     isEmailExist: ajv._validate.is_email_exist,
   };
-  await G.main(await initMain);
+  await G.main(initMain);
+  // 頁面渲染結束後，檢視提醒
+  setTimeout(() => {
+    let params = new URL(location.href).searchParams;
+    if (params.has(FRONTEND.REDIR.FROM)) {
+      alert("需要登入才能使用頁面功能");
+    }
+  }, 0);
 } catch (error) {
   errorHandle(error);
 }
@@ -37,12 +44,6 @@ async function initMain() {
   initLoginFn(`#${G.constant.ID.LOGIN_FORM}`);
   //  初始化 Register Form 功能
 
-  setTimeout(() => {
-    let params = new URL(location.href).searchParams;
-    if (params.has(FRONTEND.REDIR.FROM)) {
-      alert("需要登入才能使用頁面功能");
-    }
-  }, 0);
   /* ------------------------------------------------------------------------------------------ */
   /* Init ------------------------------------------------------------------------------------ */
   /* ------------------------------------------------------------------------------------------ */

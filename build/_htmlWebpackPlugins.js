@@ -118,9 +118,6 @@ module.exports = (function () {
       //   指定打包完成的js，插入body尾部
       inject: "body",
     };
-    if (process.env.NODE_ENV === "production") {
-      opts.chunks.push("vendors");
-    }
     result.push(new HtmlWebpackPlugin(opts));
   });
   return result;
