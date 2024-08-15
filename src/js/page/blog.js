@@ -121,7 +121,10 @@ async function initMain() {
     }
 
     async function removeComment(btn_remove) {
-      redir.check_login(G.data);
+      //  檢查登入狀態
+      if (!redir.check_login()) {
+        return;
+      }
       let $btn_remove = $(btn_remove);
       let $remove_comment_id = $btn_remove.data(
         G.constant.DATASET.KEY.REMOVE_COMMENT
@@ -211,14 +214,22 @@ async function initMain() {
         G.utils.scrollToComment(comment_id);
       };
       //  為container綁定判斷登入狀態的handle
-      container.addEventListener("click", () => redir.check_login(G.data));
+      container.addEventListener("click", () => {
+        //  檢查登入狀態
+        if (!redir.check_login()) {
+          return;
+        }
+      });
       container.addEventListener("keydown", cancelNewLine);
       //  為container綁定送出留言的handle
       container.addEventListener("keyup", sendComment);
       //  為container綁定送出留言的handle
 
       function cancelNewLine(e) {
-        redir.check_login(G.data);
+        //  檢查登入狀態
+        if (!redir.check_login()) {
+          return;
+        }
         //  判斷是否Enter
         let isEnter = e.key === "Enter";
         if ((e.shiftKey && isEnter) || !isEnter) {
@@ -230,7 +241,10 @@ async function initMain() {
       }
 
       async function sendComment(e) {
-        redir.check_login(G.data);
+        //  檢查登入狀態
+        if (!redir.check_login()) {
+          return;
+        }
         //  判斷是否Enter
         let isEnter = e.key === "Enter";
         if ((e.shiftKey && isEnter) || !isEnter) {
@@ -281,7 +295,10 @@ async function initMain() {
         }
         //  送出創建評論的請求
         async function postComment() {
-          redir.check_login(G.data);
+          //  檢查登入狀態
+          if (!redir.check_login()) {
+            return;
+          }
           let article_id = G.data.blog.id;
           let commenter_id = G.data.me.id;
 

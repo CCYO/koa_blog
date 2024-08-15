@@ -92,17 +92,6 @@ async function initMain() {
   /* 初始化 Register Form 功能 */
   function initLoginFn(form_id) {
     const form = document.querySelector(form_id);
-    // let el_tab = document.querySelector(`[data-bs-target="#login-card"]`);
-    // let bs_tab = new Tab(el_tab);
-    // let navTab = document.querySelector(`[data-my-tab="#login"]`);
-    // let $navTab = $(navTab);
-    // navTab.addEventListener("click", (e) => {
-    //   bs_tab.show();
-    //   $navTab.addClass("active");
-    // });
-    // navTab.addEventListener("hide.bs.tab", (e) => {
-    //   $navTab.removeClass("active");
-    // });
     let axios_payload = {};
     //  依據 input 數據，自動判斷 form 可否開放 submit 功能
     let lock = _gen_form_lock(form);
@@ -114,7 +103,6 @@ async function initMain() {
     async function handle_submit_login(e) {
       e.preventDefault();
       e.target.disabled = true;
-      console.log("進德來嗎?");
       let alert_message = G.constant.MESSAGE.LOGIN_FAIL;
       //  校驗 payload
       let validated_list = await G.utils.validate.login(axios_payload);

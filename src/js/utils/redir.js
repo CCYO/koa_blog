@@ -10,18 +10,16 @@ function from(url) {
   location.replace(url);
 }
 
-function check_login(data) {
-  let login = data && data.me && data.me.id;
-  if (login) {
-    return true;
+function check_login() {
+  const loginStatus = window?.G?.data?.me?.id;
+  if (!loginStatus) {
+    /* 若未登入，跳轉到登入頁 */
+    alert(`請先登入`);
+    location.href = `${API_LOGIN}?${FRONTEND.REDIR.FROM}=${encodeURIComponent(
+      location.href
+    )}`;
   }
-  /* 若未登入，跳轉到登入頁 */
-  alert(`請先登入`);
-
-  location.href = `${API_LOGIN}?${FRONTEND.REDIR.FROM}=${encodeURIComponent(
-    location.href
-  )}`;
-  return;
+  return loginStatus;
 }
 
 export default { from, check_login };

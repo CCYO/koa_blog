@@ -244,7 +244,10 @@ async function initMain() {
     }
     //  修改圖片資訊前的檢查函數
     async function checkImage(src, new_alt, url) {
-      redir.check_login(G.data);
+      //  檢查登入狀態
+      if (!redir.check_login()) {
+        return;
+      }
       let res = G.constant.REG.IMG_ALT_ID.exec(src);
       //  取得要修改的alt_id
       let alt_id = (res.groups.alt_id *= 1);
@@ -278,7 +281,10 @@ async function initMain() {
     }
     //  自定義上傳圖片方法
     async function customUpload(img, insertFn) {
-      redir.check_login(G.data);
+      //  檢查登入狀態
+      if (!redir.check_login()) {
+        return;
+      }
       //  取得 name ext
       let _res = G.constant.REG.IMG_NAME_AND_EXT.exec(img.name);
       let [_ = "", alt = "", ext] = _res;
@@ -532,8 +538,8 @@ async function initMain() {
   /* ------------------------------------------------------------------------------------------ */
   //  關於 刪除文章的相關操作
   async function handle_removeBlog(e) {
-    redir.check_login(G.data);
-    if (!confirm("真的要刪掉?")) {
+    //  檢查登入狀態
+    if (!redir.check_login() || !confirm("真的要刪掉?")) {
       return;
     }
     const data = {
@@ -546,7 +552,10 @@ async function initMain() {
 
   //  關於 更新文章的相關操作
   async function handle_updateBlog(e) {
-    redir.check_login(G.data);
+    //  檢查登入狀態
+    if (!redir.check_login()) {
+      return;
+    }
     let payload = G.utils.lock.getPayload();
     //  整理出「預計刪除BLOG→IMG關聯」的數據
     let cancelImgs = getBlogImgIdList_needToRemove();
@@ -611,7 +620,10 @@ async function initMain() {
   //  關於 更新title 的相關操作
   async function handle_updateTitle(e) {
     e.preventDefault();
-    redir.check_login(G.data);
+    //  檢查登入狀態
+    if (!redir.check_login()) {
+      return;
+    }
     const KEY = "title";
     const payload = {
       blog_id: G.data.blog.id,
@@ -662,7 +674,10 @@ async function initMain() {
   /* UTILS ------------------- */
 
   async function initImgData() {
-    redir.check_login(G.data);
+    //  檢查登入狀態
+    if (!redir.check_login()) {
+      return;
+    }
     ////  取出存在pageData.imgs的圖數據，但editor沒有的
     ////  通常是因為先前editor有做updateImg，但沒有存文章，導致後端有數據，但editor的html沒有
     //  整理要與該blog切斷關聯的圖片，格式為[{blogImg_id, blogImgAlt_list}, ...]

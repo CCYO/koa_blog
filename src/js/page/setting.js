@@ -91,7 +91,10 @@ async function initMain() {
   jq_settingForm.on("submit", handle_submit);
   async function handle_submit(e) {
     e.preventDefault();
-    redir.check_login(G.data);
+    //  檢查登入狀態
+    if (!redir.check_login()) {
+      return;
+    }
     let api = G.constant.API.SETTING;
     let payload = G.utils.lock.getPayload();
     let formData = new FormData();
@@ -340,7 +343,10 @@ async function initMain() {
   //  驗證原密碼
   async function handle_originPassword(e) {
     e.preventDefault();
-    redir.check_login(G.data);
+    //  檢查登入狀態
+    if (!redir.check_login()) {
+      return;
+    }
     const KEY = "origin_password";
     let payload = { [KEY]: el_origin_password.value };
     let result = await G.utils.validate.password(payload);

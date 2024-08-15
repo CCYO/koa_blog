@@ -59,7 +59,9 @@ async function initMain() {
 
   //  handle 更新 imgAlt
   async function handle_updateImgAlt() {
-    redir.check_login(G.data);
+    if (!redir.check_login()) {
+      return;
+    }
     let payload = G.utils.lock.getPayload();
     await G.utils.axios.patch("/api/album", payload);
     /* 同步頁面數據 */
