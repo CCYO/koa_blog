@@ -2,6 +2,14 @@ const { ArticleReader } = require("../db/mysql/model");
 const { MyErr } = require("../utils/model");
 const { ERR_RES } = require("../config");
 
+async function create(opts) {
+  try {
+    return await ArticleReader.create(opts);
+  } catch (error) {
+    throw new MyErr({ ...ERR_RES.ARTICLE_READER.CREATE.ERR, error });
+  }
+}
+
 async function restore(opts) {
   // RV ROW
   try {
@@ -32,6 +40,7 @@ async function update(id, newData) {
 }
 
 module.exports = {
+  create,
   restore,
   update,
   destroyList,

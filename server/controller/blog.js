@@ -107,7 +107,7 @@ async function modify({ blog_id, author_id, ...blog_data }) {
     newData.show = map.get("show");
     if (newData.show) {
       newData.showAt = new Date();
-      let { data: list } = await _addReaders(blog_id);
+      let { data: list } = await _addReadersFromFans(blog_id);
       if (cache && list.length) {
         cache[CACHE.TYPE.NEWS] = list;
       }
@@ -358,7 +358,7 @@ async function _destoryReaders(blog_id) {
   let data = { list: readers };
   return new SuccModel({ data });
 }
-async function _addReaders(blog_id) {
+async function _addReadersFromFans(blog_id) {
   let blog = await Blog.read(
     Opts.BLOG.FIND.fansAndDestoryedReaderList(blog_id)
   );

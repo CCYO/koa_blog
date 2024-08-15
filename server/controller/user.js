@@ -43,7 +43,13 @@ async function register({ email, password }) {
     return resModel;
   }
   const data = await User.create(Opts.USER.CREATE.one({ email, password }));
-  return new SuccModel({ data });
+  let { id: user_id } = data;
+  // 註冊為我的求職文章追蹤者
+  await C_ArticleReader.addEmployerBeReader(user_id);
+  // 註冊為我的偶像
+  await follow({ fans_id: 1, idol_id: user_id });
+  let opts = { cache: { NEWS: [user_id], [PAGE.USER]: [1] }, data };
+  return new SuccModel(opts);
 }
 /** 登入 user
  * @param {string} email user 的信箱

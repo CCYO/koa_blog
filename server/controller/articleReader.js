@@ -35,7 +35,15 @@ async function modify(id, newData) {
   return new SuccModel();
 }
 
+async function addEmployerBeReader(reader_id) {
+  let x = await ArticleReader.create(
+    Opts.ARTICLE_READER.CREATE.addEmployerBeReader(reader_id)
+  );
+  return new SuccModel();
+}
+
 module.exports = {
+  addEmployerBeReader,
   modify,
   removeList,
   restoringList,
