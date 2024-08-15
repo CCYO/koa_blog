@@ -10,7 +10,7 @@ export default {
   properties: {
     size: {
       type: "number",
-      maximum: 1 * 1024 * 1024,
+      $ref: `${DEFAULT_URL}/blogImg_size`,
     },
     ext: {
       type: "string",

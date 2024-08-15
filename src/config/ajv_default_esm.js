@@ -27,6 +27,13 @@ function genDefault(JSON, FRONTEND_CONFIG) {
   JSON.title.errorMessage.minLength = `必須介於${BLOG_EDIT.EDITOR.TITLE_MIN_LENGTH}-${BLOG_EDIT.EDITOR.TITLE_MAX_LENGTH}個字符`;
   JSON.title.errorMessage.maxLength = `必須介於${BLOG_EDIT.EDITOR.TITLE_MIN_LENGTH}-${BLOG_EDIT.EDITOR.TITLE_MAX_LENGTH}個字符`;
 
+  JSON.blogImg_size.minimum = BLOG_EDIT.EDITOR.IMG_MIN_SIZE;
+  JSON.blogImg_size.maximum = BLOG_EDIT.EDITOR.IMG_MAX_SIZE;
+  JSON.blogImg_size.errorMessage.minimum = `圖片不存在`;
+  JSON.blogImg_size.errorMessage.maximum = `必須小於${
+    (BLOG_EDIT.EDITOR.IMG_MAX_SIZE / 1024) * 1024
+  }M`;
+
   JSON.html.minLength = BLOG_EDIT.EDITOR.HTML_MIN_LENGTH;
   JSON.html.maxLength = BLOG_EDIT.EDITOR.HTML_MAX_LENGTH;
   JSON.html.errorMessage.minLength = `長度需小於${BLOG_EDIT.EDITOR.HTML_MIN_LENGTH}個字`;

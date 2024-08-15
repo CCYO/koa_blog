@@ -1,4 +1,10 @@
 {
+  "blogImg_size": {
+    "type": "number",
+    "errorMessage": {
+      "type": "必須是number"
+    }
+  },
   "img_ext": {
     "type": "string",
     "pattern": "^(PNG)$|^(JPG)$|^(png)$|^(jpg)$",
