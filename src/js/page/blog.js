@@ -21,9 +21,8 @@ async function initMain() {
   //  若是因為comment通知前來此頁面，可以直接滑動至錨點
   G.utils.scrollToComment = scrollToComment;
 
-  function _parseHtmlStr_XImgToImg() {
+  function _parseHtmlStr_XImgToImg(htmlStr = G.data.blog.html) {
     /* 將 <x-img> 數據轉回 <img> */
-    let htmlStr = G.data.blog.html;
     //  複製一份htmlStr
     let reg = G.constant.REG.X_IMG_PARSE_TO_IMG;
     let res;
@@ -42,6 +41,17 @@ async function initMain() {
       dev_log(`html內blogImgAlt/${alt_id}的tag數據-----parse完成`);
     }
     return htmlStr;
+  }
+  if (new URL(location.href).searchParams.get(G.constant.NO_SAVE_PREVIEW)) {
+    let title = localStorage.getItem("title");
+    title && $(`.card-header > h1`).text(title);
+    let html = localStorage.getItem("html");
+    html &&
+      $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(
+        _parseHtmlStr_XImgToImg(html)
+      );
+    localStorage.clear();
+    return;
   }
   $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg());
   if (!G.data.blog.showComment) {

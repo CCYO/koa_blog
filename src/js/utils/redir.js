@@ -10,8 +10,8 @@ function from(url) {
   location.replace(url);
 }
 
-function check_login() {
-  const loginStatus = window?.G?.data?.me?.id;
+function check_login(G = window?.G) {
+  const loginStatus = G.data?.me?.id;
   if (!loginStatus) {
     /* 若未登入，跳轉到登入頁 */
     alert(`請先登入`);

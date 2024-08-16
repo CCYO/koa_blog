@@ -26,6 +26,7 @@
     "TIME_FORMAT": "YYYY/MM/DD HH:mm:ss"
   },
   "BLOG": {
+    "NO_SAVE_PREVIEW": "noSave",
     "TIME_FORMAT": "YYYY/MM/DD HH:mm:ss",
     "PAGINATION": {
       "BLOG_COUNT": 2,

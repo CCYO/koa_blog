@@ -60,6 +60,24 @@ async function initMain() {
   await initImgData();
   //  focus editor
   G.utils.editor.focus();
+  $("#preview").on("click", async (e) => {
+    localStorage.clear();
+    // 取得當前 title
+    let title = G.utils.lock.get("title");
+    if (!title) {
+      title = G.data.blog.title;
+    }
+    localStorage.setItem("title", title);
+    // 取得當前 html
+    let html = G.utils.lock.get("html");
+    if (!html) {
+      html = G.data.blog.html;
+    }
+    localStorage.setItem("html", html);
+    window.open(
+      `/blog/preview/${G.data.blog.id}?${G.constant.NO_SAVE_PREVIEW}=true`
+    );
+  });
   //  生成 blog title 的 input handle
   let { debounce: handle_debounce_input_for_title } = new Debounce(
     handle_input,
@@ -511,7 +529,8 @@ async function initMain() {
       }
       check_submit() {
         let disabled = true;
-        if (this.size) {
+        // if (this.size) {
+        if (this.html) {
           disabled = $span_content_count.hasClass("text-danger");
         }
         $btn_updateBlog.prop("disabled", disabled);
@@ -675,7 +694,7 @@ async function initMain() {
 
   async function initImgData() {
     //  檢查登入狀態
-    if (!redir.check_login()) {
+    if (!redir.check_login(G)) {
       return;
     }
     ////  取出存在pageData.imgs的圖數據，但editor沒有的
