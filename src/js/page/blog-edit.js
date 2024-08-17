@@ -60,22 +60,31 @@ async function initMain() {
   await initImgData();
   //  focus editor
   G.utils.editor.focus();
+  $("#leave").on("click", async (e) => {
+    if (confirm("真的要放棄編輯?")) {
+      if (G.utils.lock.size && confirm("放棄編輯前是否儲存?")) {
+        await handle_updateBlog();
+      }
+      location.replace("/self");
+    }
+  });
   $("#preview").on("click", async (e) => {
-    localStorage.clear();
     // 取得當前 title
     let title = G.utils.lock.get("title");
     if (!title) {
       title = G.data.blog.title;
     }
-    localStorage.setItem("title", title);
     // 取得當前 html
     let html = G.utils.lock.get("html");
     if (!html) {
       html = G.data.blog.html;
     }
-    localStorage.setItem("html", html);
+    let key = JSON.stringify(location.href);
+    let val = JSON.stringify({ title, html });
+    localStorage.clear();
+    localStorage.setItem(key, val);
     window.open(
-      `/blog/preview/${G.data.blog.id}?${G.constant.NO_SAVE_PREVIEW}=true`
+      `/blog/preview/${G.data.blog.id}?${G.constant.PREVIEW_KEY}=${key}`
     );
   });
   //  生成 blog title 的 input handle
@@ -263,7 +272,7 @@ async function initMain() {
     //  修改圖片資訊前的檢查函數
     async function checkImage(src, new_alt, url) {
       //  檢查登入狀態
-      if (!redir.check_login()) {
+      if (!redir.check_login(G)) {
         return;
       }
       let res = G.constant.REG.IMG_ALT_ID.exec(src);
@@ -300,7 +309,7 @@ async function initMain() {
     //  自定義上傳圖片方法
     async function customUpload(img, insertFn) {
       //  檢查登入狀態
-      if (!redir.check_login()) {
+      if (!redir.check_login(G)) {
         return;
       }
       //  取得 name ext
@@ -558,7 +567,7 @@ async function initMain() {
   //  關於 刪除文章的相關操作
   async function handle_removeBlog(e) {
     //  檢查登入狀態
-    if (!redir.check_login() || !confirm("真的要刪掉?")) {
+    if (!redir.check_login(G) || !confirm("真的要刪掉?")) {
       return;
     }
     const data = {
@@ -572,7 +581,7 @@ async function initMain() {
   //  關於 更新文章的相關操作
   async function handle_updateBlog(e) {
     //  檢查登入狀態
-    if (!redir.check_login()) {
+    if (!redir.check_login(G)) {
       return;
     }
     let payload = G.utils.lock.getPayload();
@@ -640,7 +649,7 @@ async function initMain() {
   async function handle_updateTitle(e) {
     e.preventDefault();
     //  檢查登入狀態
-    if (!redir.check_login()) {
+    if (!redir.check_login(G)) {
       return;
     }
     const KEY = "title";

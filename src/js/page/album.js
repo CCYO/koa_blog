@@ -59,7 +59,7 @@ async function initMain() {
 
   //  handle 更新 imgAlt
   async function handle_updateImgAlt() {
-    if (!redir.check_login()) {
+    if (!redir.check_login(G)) {
       return;
     }
     let payload = G.utils.lock.getPayload();

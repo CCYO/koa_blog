@@ -15,7 +15,7 @@ export default class {
     let ejs_data = initEJSData();
     this.data = { ...ejs_data, me, news };
     if (me.id) {
-      this.utils.checkNewsMore = news.checkNewsMore;
+      this.utils.news = news;
     }
     return this;
   }
@@ -26,7 +26,7 @@ export default class {
     }
     await this.utils.loading_backdrop.hidden();
     if (this.data.me.id) {
-      await this.utils.checkNewsMore();
+      await this.utils.news.checkNewsMore();
     }
     if (process.env.NODE_ENV !== "production") {
       window.G = this;

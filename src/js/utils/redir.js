@@ -10,7 +10,7 @@ function from(url) {
   location.replace(url);
 }
 
-function check_login(G = window?.G) {
+function check_login(G) {
   const loginStatus = G.data?.me?.id;
   if (!loginStatus) {
     /* 若未登入，跳轉到登入頁 */

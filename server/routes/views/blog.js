@@ -11,7 +11,7 @@ const { CACHE } = require("../../middleware/views");
 const privateCache = CACHE.genPrivate(TYPE.PAGE.BLOG);
 const commonCache = CACHE.genCommon(TYPE.PAGE.BLOG);
 const {
-  BLOG: { NO_SAVE_PREVIEW },
+  BLOG: { PREVIEW_KEY },
 } = require("../../config");
 
 //  preview blog page
@@ -29,7 +29,7 @@ router.get("/blog/preview/:id", privateCache, async (ctx) => {
     //  將 data 賦予 ctx.cache，稍後 privateCache 會視情況處理緩存
     ctx.cache.data = data;
     await ctx.render("blog", {
-      title: new URL(ctx.href).searchParams.get(NO_SAVE_PREVIEW)
+      title: new URL(ctx.href).searchParams.get(PREVIEW_KEY)
         ? "文章預覽"
         : data.title,
       blog: { ...data, showComment: false },

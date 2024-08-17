@@ -92,7 +92,7 @@ async function initMain() {
   async function handle_submit(e) {
     e.preventDefault();
     //  檢查登入狀態
-    if (!redir.check_login()) {
+    if (!redir.check_login(G)) {
       return;
     }
     let api = G.constant.API.SETTING;
@@ -344,7 +344,7 @@ async function initMain() {
   async function handle_originPassword(e) {
     e.preventDefault();
     //  檢查登入狀態
-    if (!redir.check_login()) {
+    if (!redir.check_login(G)) {
       return;
     }
     const KEY = "origin_password";

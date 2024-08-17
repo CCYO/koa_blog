@@ -92,6 +92,8 @@ export default class {
   init() {
     let renderClass = new this.Render(this);
     this.checkNewsMore = renderClass.checkNewsMore.bind(renderClass);
+
+    this.loop = renderClass.loop;
     return this;
   }
   update({ list, num, hasNews }) {
@@ -290,7 +292,10 @@ class Render {
     this.getLoginData = newsClass.getLoginData.bind(newsClass);
 
     //  讓readMore自動循環的類
-    let loop = new Loop(this.readMore.bind(this), { ms: this.LOAD_NEWS });
+    let loop = (this.loop = new Loop(this.readMore.bind(this), {
+      ms: this.LOAD_NEWS,
+    }));
+
     //  啟動 readMore 自動循環
     loop.start();
 

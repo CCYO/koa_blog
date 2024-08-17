@@ -13,6 +13,20 @@ try {
   G.constant = FRONTEND.BLOG;
   await G.main(initMain);
   G.utils.scrollToComment();
+  let preview_key = new URL(location.href).searchParams.get(
+    G.constant.PREVIEW_KEY
+  );
+  if (preview_key) {
+    // 取消登入全縣的各個功能
+    G.utils.news.loop.stop();
+    let { title, html } = JSON.parse(localStorage.getItem(preview_key));
+    $(`.card-header > h1`).text(title);
+    $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(
+      G.utils.parseHtmlStr_XImgToImg(html)
+    );
+    localStorage.clear();
+    G.utils.loading_backdrop.show({ blockPage: false });
+  }
 } catch (error) {
   errorHandle(error);
 }
@@ -20,8 +34,8 @@ try {
 async function initMain() {
   //  若是因為comment通知前來此頁面，可以直接滑動至錨點
   G.utils.scrollToComment = scrollToComment;
-
-  function _parseHtmlStr_XImgToImg(htmlStr = G.data.blog.html) {
+  G.utils.parseHtmlStr_XImgToImg = parseHtmlStr_XImgToImg;
+  function parseHtmlStr_XImgToImg(htmlStr = G.data.blog.html) {
     /* 將 <x-img> 數據轉回 <img> */
     //  複製一份htmlStr
     let reg = G.constant.REG.X_IMG_PARSE_TO_IMG;
@@ -42,18 +56,7 @@ async function initMain() {
     }
     return htmlStr;
   }
-  if (new URL(location.href).searchParams.get(G.constant.NO_SAVE_PREVIEW)) {
-    let title = localStorage.getItem("title");
-    title && $(`.card-header > h1`).text(title);
-    let html = localStorage.getItem("html");
-    html &&
-      $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(
-        _parseHtmlStr_XImgToImg(html)
-      );
-    localStorage.clear();
-    return;
-  }
-  $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg());
+  $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(parseHtmlStr_XImgToImg());
   if (!G.data.blog.showComment) {
     return;
   }
@@ -132,7 +135,7 @@ async function initMain() {
 
     async function removeComment(btn_remove) {
       //  檢查登入狀態
-      if (!redir.check_login()) {
+      if (!redir.check_login(G)) {
         return;
       }
       let $btn_remove = $(btn_remove);
@@ -226,7 +229,7 @@ async function initMain() {
       //  為container綁定判斷登入狀態的handle
       container.addEventListener("click", () => {
         //  檢查登入狀態
-        if (!redir.check_login()) {
+        if (!redir.check_login(G)) {
           return;
         }
       });
@@ -237,7 +240,7 @@ async function initMain() {
 
       function cancelNewLine(e) {
         //  檢查登入狀態
-        if (!redir.check_login()) {
+        if (!redir.check_login(G)) {
           return;
         }
         //  判斷是否Enter
@@ -252,7 +255,7 @@ async function initMain() {
 
       async function sendComment(e) {
         //  檢查登入狀態
-        if (!redir.check_login()) {
+        if (!redir.check_login(G)) {
           return;
         }
         //  判斷是否Enter
@@ -306,7 +309,7 @@ async function initMain() {
         //  送出創建評論的請求
         async function postComment() {
           //  檢查登入狀態
-          if (!redir.check_login()) {
+          if (!redir.check_login(G)) {
             return;
           }
           let article_id = G.data.blog.id;
