@@ -539,7 +539,7 @@ async function initMain() {
       check_submit() {
         let disabled = true;
         // if (this.size) {
-        if (this.html) {
+        if (this.size) {
           disabled = $span_content_count.hasClass("text-danger");
         }
         $btn_updateBlog.prop("disabled", disabled);
