@@ -60,14 +60,23 @@ async function initMain() {
   await initImgData();
   //  focus editor
   G.utils.editor.focus();
-  $("#leave").on("click", async (e) => {
+  window.addEventListener("beforeunload", (e) => {
+    e.preventDefault();
+    // 過去有些browser必須給予e.returnValue字符值，才能使beforeunload有效運作
+    e.returnValue = "mark";
+    // 必須具備RV，beforeunload才有效果
+    return "1";
+  });
+  $("#leave").on("click", beforeLeave);
+  async function beforeLeave() {
+    console.log("進入beforeleave");
     if (confirm("真的要放棄編輯?")) {
       if (G.utils.lock.size && confirm("放棄編輯前是否儲存?")) {
         await handle_updateBlog();
       }
       location.replace("/self");
     }
-  });
+  }
   $("#preview").on("click", async (e) => {
     // 取得當前 title
     let title = G.utils.lock.get("title");
