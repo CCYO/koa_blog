@@ -80,7 +80,7 @@ async function addUserAvatar(ctx) {
   ) {
     throw new MyErr(ERR_RES.SERVER.FORMIDABLE.NO_PAYLOAD);
   }
-  if (files[GFB.AVATAR_REF].length) {
+  if (files.hasOwnProperty(GFB.AVATAR_REF)) {
     delete ctx._my;
     data[GFB.AVATAR_REF] = ref.publicUrl();
   }

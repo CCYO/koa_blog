@@ -41,6 +41,27 @@ async function initMain() {
   let $checkOrginPassword = $("#checkOrginPassword");
   let jq_settingForm = $("#setting");
 
+  let noBeforeunload = false;
+  window.addEventListener("beforeunload", (e) => {
+    if (!noBeforeunload && G.utils.lock.check_submit()) {
+      e.preventDefault();
+      // 過去有些browser必須給予e.returnValue字符值，才能使beforeunload有效運作
+      e.returnValue = "mark";
+      // 必須具備RV，beforeunload才有效果
+      return "1";
+    }
+  });
+  $("#leave").on("click", beforeLeave);
+  async function beforeLeave() {
+    if (confirm("真的要放棄編輯?")) {
+      if (G.utils.lock.check_submit() && confirm("放棄編輯前是否儲存?")) {
+        await handle_submit();
+      }
+      noBeforeunload = true;
+      location.replace("/self");
+    }
+    return;
+  }
   let bs5_modal;
   $newPassword.on("focus", async (e) => {
     if (!bs5_modal) {
@@ -90,7 +111,7 @@ async function initMain() {
   $avatar.on("click", handle_resetAvatar);
   jq_settingForm.on("submit", handle_submit);
   async function handle_submit(e) {
-    e.preventDefault();
+    e && e.preventDefault();
     //  檢查登入狀態
     if (!redir.check_login(G)) {
       return;
@@ -423,6 +444,7 @@ async function initMain() {
           disabled = this.jq_form.find(".is-invalid").length > 0;
         }
         this.jq_submit.prop("disabled", disabled);
+        return !disabled;
       }
     })();
   }
