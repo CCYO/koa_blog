@@ -185,7 +185,7 @@ async function initMain() {
     //  追蹤
     async function follow() {
       //  檢查登入狀態
-      if (!redir.check_login()) {
+      if (!redir.check_login(G)) {
         return;
       }
       await G.utils.axios.post(G.constant.API.FOLLOW, {
