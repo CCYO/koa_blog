@@ -64,7 +64,7 @@ export default async function (axios) {
         location.pathname
       ).groups;
       let href = pathname;
-      if (pathname === "square") {
+      if (["square", "other", "blog"].some((page) => page === pathname)) {
         $(`[href="/${pathname}"]`).addClass("active");
         $(`[data-my-tab="#login"]`).attr("href", "/login");
         $(`[data-my-tab="#register"]`).attr("href", "/register");
@@ -87,6 +87,7 @@ export default async function (axios) {
       //  摺疊nav始終盤排前頭（未登入狀態僅會有Home）
       $(".offcanvas").removeClass("order-1 order-md-1").addClass("order-0");
       $(".navbar-toggler, .offcanvas").remove();
+      $();
     }
     //  渲染 登入狀態的 navbar template
     function renderLoginNav() {
