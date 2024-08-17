@@ -61,11 +61,13 @@ async function initMain() {
   //  focus editor
   G.utils.editor.focus();
   window.addEventListener("beforeunload", (e) => {
-    e.preventDefault();
-    // 過去有些browser必須給予e.returnValue字符值，才能使beforeunload有效運作
-    e.returnValue = "mark";
-    // 必須具備RV，beforeunload才有效果
-    return "1";
+    if (G.utils.lock.size) {
+      e.preventDefault();
+      // 過去有些browser必須給予e.returnValue字符值，才能使beforeunload有效運作
+      e.returnValue = "mark";
+      // 必須具備RV，beforeunload才有效果
+      return "1";
+    }
   });
   $("#leave").on("click", beforeLeave);
   async function beforeLeave() {
