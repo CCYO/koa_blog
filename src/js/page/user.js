@@ -321,7 +321,9 @@ async function initMain() {
     //  創建文章
     async function handle_createBlog(e) {
       e && e.preventDefault();
-      redir.check_login(G.data);
+      if (!redir.check_login(G)) {
+        return;
+      }
       let title = await check_title();
       if (!title) {
         return;
