@@ -275,7 +275,8 @@ class Render {
   first = true;
   count = 0;
   //  單位ms, 5 min
-  LOAD_NEWS = 1000 * 60 * 5;
+  // LOAD_NEWS = 1000 * 60 * 5;
+  LOAD_NEWS = 1000 * 5;
   //  更多通知BTN
   $readMore = $("#readMore");
   //  沒有更多通知BTN
@@ -298,7 +299,15 @@ class Render {
 
     //  啟動 readMore 自動循環
     loop.start();
-
+    // 頁面不被使用時，停止自動獲取news數據
+    document.addEventListener("visibilitychange", (e) => {
+      if (document.hidden) {
+        loop.stop();
+      } else {
+        loop.start();
+      }
+      console.log("document.hidden", document.hidden);
+    });
     //  為 BS5 下拉選單元件 註冊 hide.bs.dropdown handler(選單展開時回調)
     this.$newsDropdown[0].addEventListener("show.bs.dropdown", () => {
       ////  暫停 readMore自動循環，使用箭頭函數是因為 loop.stop 內部有 this，必須確保this指向loop

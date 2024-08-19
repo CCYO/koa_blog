@@ -125,10 +125,11 @@ async function initMain() {
         //  重置 lock
         lock.reset();
         e.target.disabled = false;
+      } else {
+        ////  請求成功
+        alert(G.constant.MESSAGE.LOGIN_SUCCESS);
+        redir.from(G.constant.API.LOGIN_SUCCESS);
       }
-      ////  請求成功
-      alert(G.constant.MESSAGE.LOGIN_SUCCESS);
-      redir.from(G.constant.API.LOGIN_SUCCESS);
       return;
     }
     /* 登入表單內容表格的 input Event handler */
