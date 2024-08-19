@@ -60,8 +60,9 @@ async function initMain() {
   await initImgData();
   //  focus editor
   G.utils.editor.focus();
+  let noBeforeunload = false;
   window.addEventListener("beforeunload", (e) => {
-    if (G.utils.lock.size) {
+    if (!noBeforeunload && G.utils.lock.size) {
       e.preventDefault();
       // 過去有些browser必須給予e.returnValue字符值，才能使beforeunload有效運作
       e.returnValue = "mark";
@@ -75,6 +76,7 @@ async function initMain() {
       if (G.utils.lock.size && confirm("放棄編輯前是否儲存?")) {
         await handle_updateBlog();
       }
+      noBeforeunload = true;
       location.replace("/self");
     }
   }
