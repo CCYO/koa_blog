@@ -1,4 +1,3 @@
-import { type } from "jquery";
 import AJV_CONFIG from "../config";
 
 const { HOST, TYPE } = AJV_CONFIG;

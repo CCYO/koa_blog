@@ -1,7 +1,6 @@
 import CONFIG from "../config";
 import Ajv from "ajv";
 const keyword = "_isEmailExist";
-const KEY = "email";
 async function validate(schema, email, parentSchema, dataCtx) {
   if (!schema) {
     return true;

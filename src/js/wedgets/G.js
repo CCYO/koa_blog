@@ -1,5 +1,5 @@
 /* Utils Module ----------------------------------------------------------------------------- */
-import { _Axios, dev_log } from "@js/utils";
+import { _Axios } from "@js/utils";
 import Loading_backdrop from "./LoadingBackdrop";
 import initNavbar from "./navbar";
 import initEJSData from "./initEJSData";
@@ -28,9 +28,9 @@ export default class {
     if (this.data.me.id) {
       await this.utils.news.checkNewsMore();
     }
-    if (process.env.NODE_ENV !== "production") {
+    if (!process.env.isProd) {
       window.G = this;
-      dev_log("page init finish!");
+      console.log("page init finish!");
     }
   }
 }
