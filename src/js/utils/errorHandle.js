@@ -33,7 +33,7 @@ window.addEventListener("unhandledrejection", function (event) {
       } catch (e) {
         error = result;
       }
-      this.alert(error.message);
+      alert(error.message);
       if (process.env.isProd) {
         // 後端響應請求需要登入權限
         redir.check_login();
