@@ -14,6 +14,9 @@ export default class {
     let { news, me } = await initNavbar(axios);
     let ejs_data = initEJSData();
     this.data = { ...ejs_data, me, news };
+    this.event = {
+      initPage: new CustomEvent("initPage"),
+    };
     if (me.id) {
       this.utils.news = news;
     }
@@ -28,9 +31,15 @@ export default class {
     if (this.data.me.id) {
       await this.utils.news.checkNewsMore();
     }
-    if (!process.env.isProd) {
-      window.G = this;
-      console.log("page init finish!");
-    }
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        document.dispatchEvent(this.event.initPage);
+        if (!process.env.isProd) {
+          window.G = this;
+          console.log("initPage Event dispatch");
+        }
+        resolve();
+      }, 0);
+    });
   }
 }

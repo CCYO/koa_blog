@@ -64,7 +64,11 @@ export default async function (axios) {
         location.pathname
       ).groups;
       let href = pathname;
-      if (["square", "other", "blog"].some((page) => page === pathname)) {
+      if (
+        ["square", "other", "blog", "serverError", "permission"].some(
+          (page) => page === pathname
+        )
+      ) {
         $(`[href="/${pathname}"]`).addClass("active");
         $(`[data-my-tab="#login"]`).attr("href", "/login");
         $(`[data-my-tab="#register"]`).attr("href", "/register");

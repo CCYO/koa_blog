@@ -6,8 +6,15 @@ import { errorHandle } from "../utils";
 /* runtime ---------------------------------------------------------------------------------- */
 try {
   G.page = "page404";
-  await G.main();
-  (function () {
+  await G.main(initMain);
+} catch (error) {
+  errorHandle(error);
+}
+
+async function initMain() {
+  document.addEventListener("initPage", redir);
+
+  function redir() {
     let reg = new RegExp(location.host.replace(/\./g, "\\."), "g");
     let target = document.referrer;
     //  404 || 通知已過期 || 需要登入權限 || 其他
@@ -28,7 +35,5 @@ try {
 
     alert(alertMsg);
     process.env.isProd && setTimeout(() => location.replace(target), 5000);
-  })();
-} catch (error) {
-  errorHandle(error);
+  }
 }

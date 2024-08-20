@@ -34,7 +34,11 @@ export default class {
   //  隱藏
   async hidden() {
     this.#turnOnInteraction();
-    await new Promise((resolve) => this.$backdrop.fadeOut(resolve));
+    await new Promise((resolve) => {
+      this.$backdrop.fadeOut(() => {
+        return resolve();
+      });
+    });
     dev_log("backdrop hidden");
   }
   //  顯示
