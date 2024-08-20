@@ -6,10 +6,6 @@ const { ErrModel } = require("../../utils/model");
 router.get("/permission/:errno", async (ctx) => {
   let opts = {};
   switch (ctx.params.errno * 1) {
-    //  此API需要登入權限
-    case ERR_RES.SERVER.RESPONSE.NO_LOGIN.errno:
-      opts.errModel = new ErrModel(ERR_RES.SERVER.RESPONSE.NO_LOGIN);
-      break;
     //  無此頁面
     case ERR_RES.SERVER.RESPONSE.ERR_404.errno:
       opts.errModel = new ErrModel(ERR_RES.SERVER.RESPONSE.ERR_404);
