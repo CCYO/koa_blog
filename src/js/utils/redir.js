@@ -11,7 +11,7 @@ function from(url) {
 }
 
 function check_login(G) {
-  const loginStatus = G.data?.me?.id;
+  const loginStatus = G?.data?.me?.id;
   if (!loginStatus) {
     /* 若未登入，跳轉到登入頁 */
     alert(`請先登入`);

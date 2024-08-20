@@ -455,25 +455,6 @@ class Render {
       this.checkNewsMore(byClick, hasNews);
     }
   }
-
-  async _confirmNews(event) {
-    event.preventDefault();
-    let eventTarget = event.target;
-    let $eventTarget = $(event.target);
-    let tag = eventTarget.tagName.toUpperCase();
-    let api = $eventTarget.attr("href");
-    if (tag !== "A" || !/^\/api/.test(api)) {
-      return false;
-    }
-    let response = await this.newsClass.axios.get(api);
-    let url;
-    if (response.errno) {
-      url = `/permission/${response.errno}`;
-    } else {
-      url = response.data.url;
-    }
-    location.href = url;
-  }
 }
 function _count() {
   return Object.defineProperties(

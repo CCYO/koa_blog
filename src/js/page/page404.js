@@ -15,8 +15,8 @@ async function initMain() {
   document.addEventListener("initPage", redir);
 
   function redir() {
-    let reg = new RegExp(location.host.replace(/\./g, "\\."), "g");
     let target = document.referrer;
+    let reg = new RegExp(location.host.replace(/\./g, "\\."), "g");
     //  404 || 通知已過期 || 需要登入權限 || 其他
     let alertMsg = G.data.errModel.msg;
 

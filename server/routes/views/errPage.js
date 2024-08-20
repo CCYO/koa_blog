@@ -1,5 +1,5 @@
 const router = require("koa-router")();
-const { ENV, ERR_RES } = require("../../config");
+const { ERR_RES } = require("../../config");
 const { ErrModel } = require("../../utils/model");
 
 //  預判過的錯誤
@@ -8,9 +8,7 @@ router.get("/permission/:errno", async (ctx) => {
   switch (ctx.params.errno * 1) {
     //  此API需要登入權限
     case ERR_RES.SERVER.RESPONSE.NO_LOGIN.errno:
-      opts.title = "提醒頁";
       opts.errModel = new ErrModel(ERR_RES.SERVER.RESPONSE.NO_LOGIN);
-      opts.from = ctx.query.from;
       break;
     //  無此頁面
     case ERR_RES.SERVER.RESPONSE.ERR_404.errno:

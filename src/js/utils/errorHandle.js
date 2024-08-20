@@ -1,6 +1,5 @@
 import { dev_log } from "./dev";
 import redir from "./redir";
-import FRONTEND from "@config/frontend_esm";
 
 window.onerror = (e) => {
   dev_log("window.onerror捕獲錯誤\nError:\n", e);
@@ -23,21 +22,24 @@ window.addEventListener("unhandledrejection", function (event) {
     } else if (model) {
       if (!process.env.isProd) {
         console.error(`error.model:`, model);
-      } else if (model.errno === FRONTEND._AXIOS.ERR_RES.NO_LOGIN.errno) {
-        // 後端響應請求需要登入權限
-        redir.check_login();
       } else {
         location.reload();
       }
-    } else if (!process.env.isProd) {
-      // 以下為前端的unhandledrejection(通常發生在異步事件CB內)
-      alert("前端代碼錯誤，請確認console");
-      console.error(`${msg}Event.reason:`, event.reason);
     } else {
-      // 以下為前端的unhandledrejection(通常發生在異步事件CB內)
-      alert("發生未知錯誤，頁面將重新整理");
-      location.reload();
-      // 需再作回報後端處理
+      let error;
+      try {
+        error = JSON.parse(result.message);
+        error.stack = result.stack;
+      } catch (e) {
+        error = result;
+      }
+      this.alert(error.message);
+      if (process.env.isProd) {
+        // 後端響應請求需要登入權限
+        redir.check_login();
+        // 需再作回報後端處理
+      }
+      console.error(error.stack);
     }
   });
 });

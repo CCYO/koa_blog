@@ -10,7 +10,7 @@
     },
     "NO_LOGIN": {
       "errno": 99902,
-      "msg": "請先登入"
+      "msg": "登入已過期"
     }
   },
   "FORMIDABLE": {

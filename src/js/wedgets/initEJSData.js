@@ -25,9 +25,14 @@ export default function () {
     //  該ejs數據元素內，所存放的數據種類名稱
     let kv;
     //  取出元素內的字符，其為ejs data的JSON string 格式
-    let JSON_string = $box.html();
+    let JSON_string = $box.html().trim();
     //  JSON String → JSON Obj
-    let val = JSON.parse(JSON_string);
+    let val;
+    try {
+      val = JSON.parse(JSON_string);
+    } catch (e) {
+      val = "";
+    }
     //  統整ejs data
     if (key === KEYS.BLOG) {
       //  blog 數據

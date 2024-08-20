@@ -7,7 +7,8 @@ import { dev_log } from "./dev";
 
 export default class {
   REG = {
-    IGNORE_PATH: /^\/(login)|(register)|(other)|(square)|(blog)|(permission)|(serverError)/,
+    IGNORE_PATH:
+      /^\/(login)|(register)|(other)|(square)|(blog)|(permission)|(serverError)/,
   };
   constructor({ backdrop = undefined }) {
     if (!backdrop) {
@@ -59,10 +60,7 @@ export default class {
           instance.backdrop.hidden();
         }
         if (!resolve) {
-          return Promise.reject({
-            errno: FRONTEND._AXIOS.ERR_RES.NO_LOGIN.errno,
-            msg,
-          });
+          return Promise.reject(new Error(JSON.stringify(res)));
         }
         return Promise.resolve(res);
       },

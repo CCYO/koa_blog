@@ -215,7 +215,10 @@ async function initMain() {
     }
     //  退追
     async function cancelFollow() {
-      redir.check_login(G.data);
+      //  檢查登入狀態
+      if (!redir.check_login(G)) {
+        return;
+      }
       await G.utils.axios.post(G.constant.API.CANCEL_FOLLOW, {
         id: G.data.currentUser.id,
       });
@@ -288,7 +291,10 @@ async function initMain() {
         return;
       }
       e.preventDefault();
-      redir.check_login(G.data);
+      //  檢查登入狀態
+      if (!redir.check_login(G)) {
+        return;
+      }
       let blogList = [];
       if (action === G.constant.DATASET.VALUE.REMOVE_BLOG_ITEM) {
         blogList.push(
