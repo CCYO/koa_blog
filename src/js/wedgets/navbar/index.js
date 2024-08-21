@@ -64,22 +64,23 @@ export default async function (axios) {
         location.pathname
       ).groups;
       let href = pathname;
-      if (
-        ["square", "other", "blog", "serverError", "permission"].some(
-          (page) => page === pathname
-        )
-      ) {
-        $(`[href="/${pathname}"]`).addClass("active");
-        $(`[data-my-tab="#login"]`).attr("href", "/login");
-        $(`[data-my-tab="#register"]`).attr("href", "/register");
-      } else if (albumList) {
+      // if (
+      //   ["square", "other", "blog", "permission"].some(
+      //     (page) => page === pathname
+      //   )
+      // ) {
+      //   $(`[href="/${pathname}"]`).addClass("active");
+      //   $(`[data-my-tab="#login"]`).attr("href", "/login");
+      //   $(`[data-my-tab="#register"]`).attr("href", "/register");
+      // } else if (albumList) {
+      if (albumList) {
         href += `/${albumList}`;
       }
-      let $active = $(`.nav-link[href^="/${href}"]`);
-      if (!$active.length) {
-        $active = $(`[data-my-tab="#${pathname}"]`).parent();
-      }
-      $active.addClass("active");
+      // let $active = $(`.nav-link[href^="/${href}"]`);
+      // if (!$active.length) {
+      //   $active = $(`[data-my-tab="#${pathname}"]`).parent();
+      // }
+      // $active.addClass("active");
     }
     //  渲染 登出狀態 navbar template
     function renderLogoutNavBar() {
@@ -98,7 +99,7 @@ export default async function (axios) {
       //  #needCollapse-list 之外放入 個人資訊/文章相簿/設置/LOGOUT
       $("#needCollapse-list").html(ejs_render.navbar.collapseList());
       //  #noNeedCollapse-list 內放入 NEWS
-      $("#noNeedCollapse-list").html(ejs_render.navbar.uncollapseList());
+      // $("#noNeedCollapse-list").html(ejs_render.navbar.uncollapseList());
       return true;
     }
   }

@@ -5,16 +5,13 @@
     <a class="navbar-brand" href="/square">KOA-BLOG</a>
     <!-- 廣場頁 + 註冊/登入 -->
     <ul class="nav ms-auto flex-grow-1 justify-content-between" id="noNeedCollapse-list">
-      <li class="nav-item d-none d-sm-block">
-        <a class="nav-link" href="/square">廣場頁</a>
-      </li>
-      <li style="flex-grow: 1;"></li>
-      <li class="nav-item">
-        <a class="nav-link nav-tab" href="#" data-my-tab="#login">登入</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link nav-tab" href="#" data-my-tab="#register">註冊</a>
-      </li>
+      <!-- 登入狀態則替換下方內容 -->
+      <% if (login) { %>
+      <%- include('./component/login_collapseList') %>
+      <% } else { %>
+      <%- include('./component/logout_collapseList') %>
+      <% } %>
+      <!-- 若登入則替換上方內容 -->
     </ul>
     <!-- 收合鈕 -->
     <button class="navbar-toggler" type="button" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">

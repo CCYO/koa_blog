@@ -71,6 +71,8 @@ router.get("/blog/:id", commonCache, async (ctx) => {
     //  將 data 賦予 ctx.cache，稍後 privateCache 會視情況處理緩存
     ctx.cache.data = data;
     await ctx.render("blog", {
+      login: Boolean(ctx.session.user),
+      active: "blog",
       title: data.title,
       ejs_render,
       blog: { ...data, showComment: true },

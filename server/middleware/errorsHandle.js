@@ -17,7 +17,7 @@ module.exports = async (ctx, next) => {
     if (isAPI) {
       ctx.body = new MyErr(ERR_RES.SERVER.RESPONSE.ERR_500);
     } else {
-      ctx.redirect("/serverError");
+      ctx.redirect(`/permission/${ERR_RES.SERVER.RESPONSE.ERR_500.errno}`);
     }
   }
 };

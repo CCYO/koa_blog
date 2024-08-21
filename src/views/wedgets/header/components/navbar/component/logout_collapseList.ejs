@@ -1,0 +1,11 @@
+<% let noRedir = ["login","register"].some( page => page === active) %>
+<li class="nav-item d-none d-sm-block  <%= active === 'square' ? 'active' : '' %>">
+  <a class="nav-link" href="/square">廣場頁</a>
+</li>
+<li style="flex-grow: 1;"></li>
+<li class="nav-item  <%= active === 'login' ? 'active' : '' %>">
+  <a class="nav-link nav-tab" href="<%= noRedir ? '#' : '/login' %>" data-my-tab="#login">登入</a>
+</li>
+<li class="nav-item  <%= active === 'register' ? 'active' : '' %>">
+  <a class="nav-link nav-tab" href="<%= noRedir ? '#' : '/register' %>" data-my-tab="#register">註冊</a>
+</li>

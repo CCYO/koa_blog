@@ -18,6 +18,7 @@ router.get("/register", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
   await ctx.render("register&login", {
     title: "註冊",
     active: "register",
+    login: false,
   });
 });
 //  login page
@@ -25,6 +26,7 @@ router.get("/login", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
   await ctx.render("register&login", {
     title: "登入",
     active: "login",
+    login: false,
   });
 });
 //  個人頁
@@ -48,6 +50,8 @@ router.get("/self", privateCache, async (ctx) => {
     currentUser,
     blogs,
     relationShip,
+    login: true,
+    active: "self",
   });
 });
 //  他人頁
@@ -71,6 +75,8 @@ router.get("/other/:id", CHECK.isSelf, commonCache, async (ctx) => {
   //  非文章作者，所以不傳入未公開的文章
   blogs = { public: blogs.public };
   await ctx.render("user", {
+    login: Boolean(ctx.session.user),
+    active: "other",
     ejs_render,
     pagination: BLOG.PAGINATION,
     isSelf: false,
