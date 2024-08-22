@@ -1,0 +1,14 @@
+<ul class="navbar-nav justify-content-around">
+  <li class="nav-item <%= active === 'self' ? 'active' : '' %>">
+    <a class="nav-link" href="/self">個人頁面</a>
+  </li>
+  <li class="nav-item <%= active === 'albumList' ? 'active' : '' %>">
+    <a class="nav-link" href="/album/list">文章相簿</a>
+  </li>
+  <li class="nav-item <%= active === 'setting' ? 'active' : '' %>">
+    <a class="nav-link" href="/setting">個人設置</a>
+  </li>
+  <li class="nav-item">
+    <a id="logout" class="btn btn-outline-success text-nowrap">登出</a>
+  </li>
+</ul>

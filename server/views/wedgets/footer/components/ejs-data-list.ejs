@@ -1,12 +1,12 @@
 <div style="display: none;">
   <%
       let whiteList = Object.values({
-        user: ['currentUser', "relationShip", 'blogs'],
-        blog: ['blog'],
-        square: ['blog'],
-        album: ['blog', 'imgs'],
-        setting: ['currentUser'],
-        errPage: ['errModel']
+        user: ['currentUser', "relationShip", 'blogs', 'active'],
+        blog: ['blog', 'active'],
+        square: ['blog', 'active'],
+        album: ['blog', 'imgs', 'active'],
+        setting: ['currentUser', 'active'],
+        errPage: ['errModel', 'active']
       }).flat()
   %>
   <% for(let type in locals){ %>

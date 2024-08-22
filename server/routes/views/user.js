@@ -43,6 +43,8 @@ router.get("/self", privateCache, async (ctx) => {
   //  將 DB 數據賦予給 ctx.cache
   let { currentUser, relationShip, blogs } = (ctx.cache.data = data);
   await ctx.render("user", {
+    login: true,
+    active: "self",
     ejs_render,
     pagination: BLOG.PAGINATION,
     isSelf: true,
@@ -50,8 +52,6 @@ router.get("/self", privateCache, async (ctx) => {
     currentUser,
     blogs,
     relationShip,
-    login: true,
-    active: "self",
   });
 });
 //  他人頁
@@ -90,6 +90,8 @@ router.get("/other/:id", CHECK.isSelf, commonCache, async (ctx) => {
 router.get("/setting", CACHE.noCache, CHECK.login, async (ctx, next) => {
   let currentUser = ctx.session.user;
   await ctx.render("setting", {
+    login: true,
+    active: "setting",
     title: `${currentUser.nickname}個人資料設置`,
     currentUser,
   });

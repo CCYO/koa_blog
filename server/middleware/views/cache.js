@@ -56,7 +56,7 @@ let genCommon = (type) =>
       }
       //  將etag傳給前端做緩存
       ctx.set({
-        etag,
+        Etag: etag,
         ["Cache-Control"]: "no-cache",
       });
       log(`${type}/${id} 提供前端 etag 做緩存`);

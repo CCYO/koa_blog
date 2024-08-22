@@ -11,15 +11,15 @@ export default class {
     let loading_backdrop = new Loading_backdrop();
     let axios = new _Axios({ backdrop: loading_backdrop });
     this.utils = { loading_backdrop, axios };
-    let { news, me } = await initNavbar(axios);
     let ejs_data = initEJSData();
-    this.data = { ...ejs_data, me, news };
+    let { news, me } = await initNavbar(ejs_data, axios);
     this.event = {
       initPage: new CustomEvent("initPage"),
     };
     if (me.id) {
       this.utils.news = news;
     }
+    this.data = { ...ejs_data, me, news };
     return this;
   }
   async main(fn) {

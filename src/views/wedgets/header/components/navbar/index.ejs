@@ -5,13 +5,7 @@
     <a class="navbar-brand" href="/square">KOA-BLOG</a>
     <!-- 廣場頁 + 註冊/登入 -->
     <ul class="nav ms-auto flex-grow-1 justify-content-between" id="noNeedCollapse-list">
-      <!-- 登入狀態則替換下方內容 -->
-      <% if (login) { %>
-      <%- include('./component/login_collapseList') %>
-      <% } else { %>
-      <%- include('./component/logout_collapseList') %>
-      <% } %>
-      <!-- 若登入則替換上方內容 -->
+      <!-- 前端 render -->
     </ul>
     <!-- 收合鈕 -->
     <button class="navbar-toggler" type="button" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
@@ -23,10 +17,10 @@
       <div class="offcanvas-header">
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
-
       <!-- 收合內容 表單列 -->
       <div class="offcanvas-body">
         <ul class="navbar-nav w-100" id="needCollapse-list">
+          <!-- 前端 render -->
         </ul>
       </div>
     </div>

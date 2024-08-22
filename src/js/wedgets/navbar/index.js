@@ -5,16 +5,13 @@ import News from "./news";
 import { render as ejs_render } from "@js/utils";
 
 /* CONSTANT --------------------------------------------------------------------------------- */
-const REG = {
-  ACTIVE_PATHNAME: /^\/(?<pathname>\w+)\/?(?<albumList>list\?)?/,
-};
+// const REG = {
+//   ACTIVE_PATHNAME: /^\/(?<pathname>\w+)\/?(?<albumList>list\?)?/,
+// };
 const API_LOGOUT = "/api/user/logout";
 /* EXPORT MODULE ---------------------------------------------------------------------------- */
 /* 初始化 通知列表 功能 */
-export default async function (axios) {
-  if (!axios) {
-    throw new Error("沒提供axios給initNavbar");
-  }
+export default async function (ejs_data, axios) {
   //  頁面初始化期間，loadingBackdrop統一由G管理，故標示axios不需要調用loadingBackdrop
   axios.autoLoadingBackdrop = false;
   let newsClass = new News(axios);
@@ -43,9 +40,9 @@ export default async function (axios) {
   //  render navbar
   async function render(isLogin) {
     if (!isLogin) {
-      renderLogoutNavBar();
+      renderLogoutNavBar(ejs_data.active);
     } else {
-      renderLoginNav();
+      renderLoginNav(ejs_data.active);
       await import(
         /*webpackChunkName:'bootstrap-offcanvas'*/ "bootstrap/js/dist/offcanvas"
       );
@@ -60,10 +57,10 @@ export default async function (axios) {
 
     //  渲染 NavItem Active
     function activeNavItem() {
-      let { pathname, albumList } = REG.ACTIVE_PATHNAME.exec(
-        location.pathname
-      ).groups;
-      let href = pathname;
+      // let { pathname, albumList } = REG.ACTIVE_PATHNAME.exec(
+      //   location.pathname
+      // ).groups;
+      // let href = pathname;
       // if (
       //   ["square", "other", "blog", "permission"].some(
       //     (page) => page === pathname
@@ -73,9 +70,9 @@ export default async function (axios) {
       //   $(`[data-my-tab="#login"]`).attr("href", "/login");
       //   $(`[data-my-tab="#register"]`).attr("href", "/register");
       // } else if (albumList) {
-      if (albumList) {
-        href += `/${albumList}`;
-      }
+      // if (albumList) {
+      //   href += `/${albumList}`;
+      // }
       // let $active = $(`.nav-link[href^="/${href}"]`);
       // if (!$active.length) {
       //   $active = $(`[data-my-tab="#${pathname}"]`).parent();
@@ -83,8 +80,11 @@ export default async function (axios) {
       // $active.addClass("active");
     }
     //  渲染 登出狀態 navbar template
-    function renderLogoutNavBar() {
+    function renderLogoutNavBar(active) {
       //  未登入
+      $("#noNeedCollapse-list").html(
+        ejs_render.navbar.logout_uncollapseList(active)
+      );
       //  navbar始終展開
       $(".navbar").removeClass("navbar-expand-sm").addClass("navbar-expand");
       //  基本nav始終排後面（未登入狀態僅會有 登入/註冊）
@@ -92,14 +92,19 @@ export default async function (axios) {
       //  摺疊nav始終盤排前頭（未登入狀態僅會有Home）
       $(".offcanvas").removeClass("order-1 order-md-1").addClass("order-0");
       $(".navbar-toggler, .offcanvas").remove();
-      $();
     }
     //  渲染 登入狀態的 navbar template
-    function renderLoginNav() {
+    function renderLoginNav(active) {
       //  #needCollapse-list 之外放入 個人資訊/文章相簿/設置/LOGOUT
-      $("#needCollapse-list").html(ejs_render.navbar.collapseList());
+      // $("#needCollapse-list").html(ejs_render.navbar.collapseList());
+      $("#needCollapse-list").html(
+        ejs_render.navbar.login_collapseList(active)
+      );
       //  #noNeedCollapse-list 內放入 NEWS
       // $("#noNeedCollapse-list").html(ejs_render.navbar.uncollapseList());
+      $("#noNeedCollapse-list").html(
+        ejs_render.navbar.login_uncollapseList(active)
+      );
       return true;
     }
   }
