@@ -28,9 +28,9 @@ router.get("/permission/:errno", async (ctx) => {
       opts.errModel = new ErrModel(ERR_RES.BLOG.READ.NO_ALBUM);
   }
   opts = {
-    ...opts,
-    active: "permission",
     login: Boolean(ctx.session.user),
+    active: "permission",
+    ...opts,
   };
   await ctx.render("page404", opts);
 });

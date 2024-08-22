@@ -16,17 +16,17 @@ const commonCache = CACHE.genCommon(TYPE.PAGE.USER);
 //  register page
 router.get("/register", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
   await ctx.render("register&login", {
-    title: "註冊",
-    active: "register",
     login: false,
+    active: "register",
+    title: "註冊",
   });
 });
 //  login page
 router.get("/login", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
   await ctx.render("register&login", {
-    title: "登入",
-    active: "login",
     login: false,
+    active: "login",
+    title: "登入",
   });
 });
 //  個人頁

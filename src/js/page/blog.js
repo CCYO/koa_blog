@@ -17,17 +17,14 @@ try {
 }
 
 async function initMain() {
-  let preview_key = new URL(location.href).searchParams.get(
-    G.constant.PREVIEW_KEY
-  );
-  if (preview_key) {
+  if (G.data.active === "blog-preview") {
     document.addEventListener("initPage", preview);
     return;
-  }
-  $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg());
-  if (G.data.blog.showComment) {
+  } else if (G.data.blog.showComment) {
     initComment();
   }
+  $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg());
+  return;
 
   function initComment() {
     //  若是因為comment通知前來此頁面，可以直接滑動至錨點
@@ -200,7 +197,7 @@ async function initMain() {
           } else {
             $(`[data-${G.constant.DATASET.KEY.PID}=0]`).prepend(html);
           }
-          G.utils.scrollToComment(comment_id);
+          scrollToComment(comment_id);
         };
         //  為container綁定判斷登入狀態的handle
         container.addEventListener("click", () => {
@@ -306,44 +303,12 @@ async function initMain() {
         }
       }
     }
-
-    //  若是因為comment通知前來此頁面，可以直接滑動至錨點
-    function scrollToComment(comment_id) {
-      if (!comment_id) {
-        let res = /#comment_(?<comment_id>\d+)/.exec(location.href);
-        if (!res) {
-          return;
-        }
-        comment_id = res.groups.comment_id;
-      }
-
-      let selector = `#comment_${comment_id}`;
-      let viewpointH = window.innerHeight;
-      let scrollY = window.scrollY;
-      let { height: navHeight } = document
-        .querySelector("nav.navbar")
-        .getBoundingClientRect();
-      let $comment = $(selector).eq(0);
-      let $container = $comment.parent();
-      let commentRect = $container.get(0).getBoundingClientRect();
-
-      let commentY = Math.floor(commentRect.y);
-      let commentH_half = Math.floor(Math.floor(commentRect.height) / 2);
-      let navH = Math.floor(navHeight);
-      let viewpointH_half = Math.floor(Math.floor(viewpointH) / 2);
-      let targetY_1 = scrollY + commentY - navH;
-      let up = viewpointH_half - navH;
-      let targetY = targetY_1 - up + commentH_half;
-      document.body.scrollTop = targetY;
-
-      $comment.css({ backgroundColor: "rgb(219, 159, 159)" });
-      setTimeout(() => {
-        $comment.removeAttr("style");
-      }, 4000);
-    }
   }
 
   function preview() {
+    let preview_key = new URL(location.href).searchParams.get(
+      G.constant.PREVIEW_KEY
+    );
     // 取消登入全縣的各個功能
     G.utils.news.loop.stop();
     let { title, html } = JSON.parse(localStorage.getItem(preview_key));
@@ -352,6 +317,42 @@ async function initMain() {
     localStorage.clear();
     G.utils.loading_backdrop.show({ blockPage: false });
   }
+
+  //  若是因為comment通知前來此頁面，可以直接滑動至錨點
+  function scrollToComment(comment_id) {
+    if (!comment_id || comment_id instanceof Event) {
+      let res = /#comment_(?<comment_id>\d+)/.exec(location.href);
+      if (!res) {
+        return;
+      }
+      comment_id = res.groups.comment_id;
+    }
+
+    let selector = `#comment_${comment_id}`;
+    let viewpointH = window.innerHeight;
+    let scrollY = window.scrollY;
+    let { height: navHeight } = document
+      .querySelector("nav.navbar")
+      .getBoundingClientRect();
+    let $comment = $(selector).eq(0);
+    let $container = $comment.parent();
+    let commentRect = $container.get(0).getBoundingClientRect();
+
+    let commentY = Math.floor(commentRect.y);
+    let commentH_half = Math.floor(Math.floor(commentRect.height) / 2);
+    let navH = Math.floor(navHeight);
+    let viewpointH_half = Math.floor(Math.floor(viewpointH) / 2);
+    let targetY_1 = scrollY + commentY - navH;
+    let up = viewpointH_half - navH;
+    let targetY = targetY_1 - up + commentH_half;
+    document.body.scrollTop = targetY;
+
+    $comment.css({ backgroundColor: "rgb(219, 159, 159)" });
+    setTimeout(() => {
+      $comment.removeAttr("style");
+    }, 4000);
+  }
+
   function _parseHtmlStr_XImgToImg(htmlStr = G.data.blog.html) {
     /* 將 <x-img> 數據轉回 <img> */
     //  複製一份htmlStr

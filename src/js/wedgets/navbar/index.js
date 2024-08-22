@@ -11,21 +11,29 @@ import { render as ejs_render } from "@js/utils";
 const API_LOGOUT = "/api/user/logout";
 /* EXPORT MODULE ---------------------------------------------------------------------------- */
 /* 初始化 通知列表 功能 */
-export default async function (ejs_data, axios) {
+export default async function ({ login, active }, axios) {
   //  頁面初始化期間，loadingBackdrop統一由G管理，故標示axios不需要調用loadingBackdrop
+  if (!login) {
+    _renderLogoutNavBar(active);
+    return;
+  }
   axios.autoLoadingBackdrop = false;
   let newsClass = new News(axios);
-  let loginData = await newsClass.getLoginData();
+  let { me, news } = await newsClass.getLoginData();
   axios.autoLoadingBackdrop = true;
-  let isLogin = !!loginData.me.id;
-  await render(isLogin);
-  if (isLogin) {
-    //  初始化News功能
-    loginData.news = newsClass.init();
-    //  登出功能
-    $("#logout").on("click", logout);
-  }
-  return loginData;
+  _renderLoginNav(active);
+  await import(
+    /*webpackChunkName:'bootstrap-offcanvas'*/ "bootstrap/js/dist/offcanvas"
+  );
+  await import(
+    /*webpackChunkName:'bootstrap-dropdown'*/ "bootstrap/js/dist/dropdown"
+  );
+
+  //  初始化News功能
+  news = newsClass.init();
+  //  登出功能
+  $("#logout").on("click", logout);
+  return { me, news };
 
   async function logout() {
     if (!confirm("真的要登出?")) {
@@ -37,75 +45,30 @@ export default async function (ejs_data, axios) {
     location.href = "/login";
     return;
   }
-  //  render navbar
-  async function render(isLogin) {
-    if (!isLogin) {
-      renderLogoutNavBar(ejs_data.active);
-    } else {
-      renderLoginNav(ejs_data.active);
-      await import(
-        /*webpackChunkName:'bootstrap-offcanvas'*/ "bootstrap/js/dist/offcanvas"
-      );
-      await import(
-        /*webpackChunkName:'bootstrap-dropdown'*/ "bootstrap/js/dist/dropdown"
-      );
-    }
 
-    //  根據 path，顯示當前 active NavItem
-    activeNavItem();
-    return;
+  //  渲染 登出狀態 navbar template
+  function _renderLogoutNavBar(active) {
+    //  未登入
+    $("#noNeedCollapse-list").html(
+      ejs_render.navbar.logout_uncollapseList(active)
+    );
+    //  navbar始終展開
+    $(".navbar").removeClass("navbar-expand-sm").addClass("navbar-expand");
+    //  基本nav始終排後面（未登入狀態僅會有 登入/註冊）
+    $(".nav").removeClass("order-0 order-md-0").addClass("order-1");
+    //  摺疊nav始終盤排前頭（未登入狀態僅會有Home）
+    $(".offcanvas").removeClass("order-1 order-md-1").addClass("order-0");
+    $(".navbar-toggler, .offcanvas").remove();
+  }
 
-    //  渲染 NavItem Active
-    function activeNavItem() {
-      // let { pathname, albumList } = REG.ACTIVE_PATHNAME.exec(
-      //   location.pathname
-      // ).groups;
-      // let href = pathname;
-      // if (
-      //   ["square", "other", "blog", "permission"].some(
-      //     (page) => page === pathname
-      //   )
-      // ) {
-      //   $(`[href="/${pathname}"]`).addClass("active");
-      //   $(`[data-my-tab="#login"]`).attr("href", "/login");
-      //   $(`[data-my-tab="#register"]`).attr("href", "/register");
-      // } else if (albumList) {
-      // if (albumList) {
-      //   href += `/${albumList}`;
-      // }
-      // let $active = $(`.nav-link[href^="/${href}"]`);
-      // if (!$active.length) {
-      //   $active = $(`[data-my-tab="#${pathname}"]`).parent();
-      // }
-      // $active.addClass("active");
-    }
-    //  渲染 登出狀態 navbar template
-    function renderLogoutNavBar(active) {
-      //  未登入
-      $("#noNeedCollapse-list").html(
-        ejs_render.navbar.logout_uncollapseList(active)
-      );
-      //  navbar始終展開
-      $(".navbar").removeClass("navbar-expand-sm").addClass("navbar-expand");
-      //  基本nav始終排後面（未登入狀態僅會有 登入/註冊）
-      $(".nav").removeClass("order-0 order-md-0").addClass("order-1");
-      //  摺疊nav始終盤排前頭（未登入狀態僅會有Home）
-      $(".offcanvas").removeClass("order-1 order-md-1").addClass("order-0");
-      $(".navbar-toggler, .offcanvas").remove();
-    }
-    //  渲染 登入狀態的 navbar template
-    function renderLoginNav(active) {
-      //  #needCollapse-list 之外放入 個人資訊/文章相簿/設置/LOGOUT
-      // $("#needCollapse-list").html(ejs_render.navbar.collapseList());
-      $("#needCollapse-list").html(
-        ejs_render.navbar.login_collapseList(active)
-      );
-      //  #noNeedCollapse-list 內放入 NEWS
-      // $("#noNeedCollapse-list").html(ejs_render.navbar.uncollapseList());
-      $("#noNeedCollapse-list").html(
-        ejs_render.navbar.login_uncollapseList(active)
-      );
-      return true;
-    }
+  //  渲染 登入狀態的 navbar template
+  function _renderLoginNav(active) {
+    //  #needCollapse-list 之外放入 個人資訊/文章相簿/設置/LOGOUT
+    $("#needCollapse-list").html(ejs_render.navbar.login_collapseList(active));
+    //  #noNeedCollapse-list 內放入 NEWS
+    $("#noNeedCollapse-list").html(
+      ejs_render.navbar.login_uncollapseList(active)
+    );
+    return true;
   }
 }

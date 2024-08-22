@@ -8,18 +8,21 @@ export default class {
   utils = {};
   data = {};
   async init() {
-    let loading_backdrop = new Loading_backdrop();
-    let axios = new _Axios({ backdrop: loading_backdrop });
-    this.utils = { loading_backdrop, axios };
-    let ejs_data = initEJSData();
-    let { news, me } = await initNavbar(ejs_data, axios);
     this.event = {
       initPage: new CustomEvent("initPage"),
     };
-    if (me.id) {
-      this.utils.news = news;
+    let loading_backdrop = new Loading_backdrop();
+    let axios = new _Axios({ backdrop: loading_backdrop });
+    this.utils = {
+      loading_backdrop,
+      axios,
+    };
+    let { active, login } = initEJSData();
+    let loginData = await initNavbar({ active, login }, axios);
+    if (loginData) {
+      this.utils.news = loginData.news;
     }
-    this.data = { ...ejs_data, me, news };
+    this.data = { active, login, me: loginData ? loginData.me : {} /* news */ };
     return this;
   }
   async main(fn) {

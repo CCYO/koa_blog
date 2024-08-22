@@ -19,7 +19,7 @@
     <% blogs.forEach( ( {id, author_id, title, time } ) => { %>
     <li data-<%= G_PAGE.DATASET.KEY.BLOG_ID %>="<%= id %>" class="list-group-item list-group-item-action list-group-item-info d-flex align-items-center justify-content-between">
       <div class="text-truncate col-8 col-sm-5">
-        <a class="stretched-link" href="/blog/<%= isPublic ? id : `preview/${id}` %>">
+        <a class="stretched-link" href="/blog/<%= isPublic ? id : `edit/${id}` %>">
           <%= title %>
         </a>
       </div>

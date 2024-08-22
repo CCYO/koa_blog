@@ -71,6 +71,7 @@ async function initMain() {
       `.card[data-${G.constant.DATASET.KEY.ALT_ID}=${alt_id}]`
     ).eq(0);
     jq_card.find(".card-body > p").text(alt);
+    jq_card.find(".card-body > p").attr("title", alt);
     jq_card.find("div:first-child").attr("title", alt);
     ////  重置 modal
     jq_input_alt.val();

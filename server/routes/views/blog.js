@@ -29,6 +29,8 @@ router.get("/blog/preview/:id", privateCache, async (ctx) => {
     //  將 data 賦予 ctx.cache，稍後 privateCache 會視情況處理緩存
     ctx.cache.data = data;
     await ctx.render("blog", {
+      login: true,
+      active: "blog-preview",
       title: new URL(ctx.href).searchParams.get(PREVIEW_KEY)
         ? "文章預覽"
         : data.title,
@@ -51,6 +53,8 @@ router.get("/blog/edit/:id", privateCache, async (ctx, next) => {
     //  將 data 賦予 ctx.cache，稍後 privateCache 會視情況處理緩存
     ctx.cache.data = data;
     await ctx.render("blog-edit", {
+      login: true,
+      active: "blog-edit",
       title: data.title,
       blog: { ...data, showComment: false },
     });
