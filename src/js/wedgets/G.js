@@ -17,12 +17,14 @@ export default class {
       loading_backdrop,
       axios,
     };
-    let { active, login } = initEJSData();
-    let loginData = await initNavbar({ active, login }, axios);
+    this.data = initEJSData();
+    let loginData = await initNavbar(this.data, axios);
     if (loginData) {
-      this.utils.news = loginData.news;
+      let { me, news } = loginData;
+      this.utils.news = news;
+      this.data.me = me;
     }
-    this.data = { active, login, me: loginData ? loginData.me : {} /* news */ };
+
     return this;
   }
   async main(fn) {
@@ -31,7 +33,7 @@ export default class {
       await fn();
     }
     await this.utils.loading_backdrop.hidden();
-    if (this.data.me.id) {
+    if (this.data.login) {
       await this.utils.news.checkNewsMore();
     }
     await new Promise((resolve) => {

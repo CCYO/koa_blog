@@ -2,22 +2,17 @@ import "@css/component/pagination";
 
 /*  初始化文章列表的分頁功能 */
 export default function (G) {
-  let pageName = G.page;
   let pageConst = G.constant;
-  let axios = G.utils.axios;
-  let template = G.utils.render[pageName].blogList;
-  let $$isSelf = false;
   let author_id = undefined;
   let pageData = undefined;
-  switch (pageName) {
+  switch (G.data.page) {
     case "user":
-      $$isSelf = G.data.currentUser.id === G.data.me.id;
-      pageData = G.data.blogs;
       author_id = G.data.currentUser.id;
+      pageData = G.data.blogs;
       break;
     case "albumList":
-      pageData = G.data.album;
       author_id = G.data.me.id;
+      pageData = G.data.album;
       break;
     case "square":
       pageData = G.data.blog;
@@ -103,7 +98,7 @@ export default function (G) {
           data: {
             [$$status]: { blogs },
           },
-        } = await axios.post(pageConst.API.GET_PAGINATION, {
+        } = await G.utils.axios.post(pageConst.API.GET_PAGINATION, {
           author_id,
           limit: pageConst.PAGINATION.BLOG_COUNT,
           //  前端分頁index從1開始，後端分頁index從0開始，所以要-1
@@ -111,12 +106,12 @@ export default function (G) {
           show,
         });
         //  生成html
-        let html = template({
+        let html = G.utils.render[G.page].blogList({
           blogs,
           page: targetPage,
           pagination: pageConst.PAGINATION,
           isPublic: show,
-          isSelf: $$isSelf,
+          isSelf: G.data.active === "self",
         });
         //  將生成的html放入
         $container

@@ -1,13 +1,16 @@
 <div style="display: none;">
   <%
-      let whiteList = Object.values({
-        user: ['currentUser', "relationShip", 'blogs', 'active'],
-        blog: ['blog', 'active'],
-        square: ['blog', 'active'],
-        album: ['blog', 'imgs', 'active'],
-        setting: ['currentUser', 'active'],
-        errPage: ['errModel', 'active']
-      }).flat()
+      let whiteList = ({
+        albumList: ['album'],
+        album: ['blog', 'imgs'],
+        blog: ['blog'],
+        errPage: ['errModel'],
+        square: ['blog'],
+        user: ['currentUser', "relationShip", 'blogs'],
+        register_login: [],
+        setting: ['currentUser'],
+        
+      })[locals.page].concat(['active', 'login', 'page'])
   %>
   <% for(let type in locals){ %>
   <% if( whiteList.some(item => item === type)){ %>

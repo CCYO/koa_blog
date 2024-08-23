@@ -50,11 +50,9 @@ async function initMain() {
   /* ------------------------------------------------------------------------------------------ */
   /* Public Var in Closure -------------------------------------------------------------------- */
   /* ------------------------------------------------------------------------------------------ */
-  const $$isLogin = !!G.data.me.id;
-  const $$isSelf = G.data.currentUser.id === G.data.me.id;
   //  分頁功能
   initPagination(G);
-  if ($$isSelf) {
+  if (G.data.active === "self") {
     //  文章創建、編輯、刪除功能
     await init_self_permission();
   } else {
@@ -167,7 +165,7 @@ async function initMain() {
   //  登入狀態擁有的功能權限(追蹤、退追)
   function init_login_permission() {
     //  判端是否為自己的偶像
-    const isMyIdol = $$isLogin
+    const isMyIdol = G.data.login
       ? G.data.relationShip.fansList.some((fans) => fans.id === G.data.me.id)
       : false;
     //  依據 isMyIdol 顯示 退追紐

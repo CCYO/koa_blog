@@ -15,7 +15,7 @@ export default async function ({ login, active }, axios) {
   //  頁面初始化期間，loadingBackdrop統一由G管理，故標示axios不需要調用loadingBackdrop
   if (!login) {
     _renderLogoutNavBar(active);
-    return;
+    return false;
   }
   axios.autoLoadingBackdrop = false;
   let newsClass = new News(axios);

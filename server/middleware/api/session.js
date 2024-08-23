@@ -61,7 +61,8 @@ async function news(ctx, next) {
   } else if (status === BACKEND.NEWS.FRONT_END_STATUS.CHECK) {
     log(`user/${id} 前端請求，確認後端有無更新news`);
     default_news.hasNews = false;
-    let data = { ...ctx.session.user, news: default_news };
+    let { news, ...me } = ctx.session.user;
+    let data = { me, news: default_news };
     ctx.body = new SuccModel({ data });
     return;
   } else if (
@@ -69,7 +70,8 @@ async function news(ctx, next) {
     ctx.session.user.news.hasNews !== null
   ) {
     log(`user/${id} 直接使用緩存 session.news`);
-    ctx.body = new SuccModel({ data: ctx.session.user });
+    let { news, ...me } = ctx.session.user;
+    ctx.body = new SuccModel({ data: { news, me } });
     return;
   }
   log(`user/${id} 向DB查詢 news數據`);
@@ -99,9 +101,8 @@ async function news(ctx, next) {
   //      unconfirm: [{ type, id, confirm, timestamp, <fans|blogs|comments> }, ...],
   //  }
   //  news.num { confirm, unconfirm, total }
-  let { news, ...user } = ctx.session.user;
-  let responseData = { ...user, news: data.news };
-  ctx.body.data = responseData;
+  let { news, ...me } = ctx.session.user;
+  ctx.body.data = { me, news: data.news };
 }
 module.exports = {
   reset,

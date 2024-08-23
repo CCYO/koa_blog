@@ -150,14 +150,11 @@ export default class {
           this.htmlStr.unRender.unconfirm <=
         0;
     }
-    let res = { me: {}, news: {} };
     let { errno, data } = await this.axios.post(this.#API, this.status);
     if (!errno) {
-      let { news, ...me } = data;
-      this.update(news);
-      res = { me, news };
+      this.update(data.news);
+      return data;
     }
-    return res;
   }
   //  confirm news
   confirmNews = async (event) => {

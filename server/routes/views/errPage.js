@@ -28,6 +28,7 @@ router.get("/permission/:errno", async (ctx) => {
       opts.errModel = new ErrModel(ERR_RES.BLOG.READ.NO_ALBUM);
   }
   opts = {
+    page: "errPage",
     login: Boolean(ctx.session.user),
     active: "permission",
     ...opts,
