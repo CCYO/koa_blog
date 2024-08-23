@@ -62,7 +62,7 @@ async function initMain() {
   G.utils.editor.focus();
   let noBeforeunload = false;
   window.addEventListener("beforeunload", (e) => {
-    if (!noBeforeunload && G.utils.lock.size) {
+    if (!noBeforeunload && G.utils.lock.check_submit()) {
       e.preventDefault();
       // 過去有些browser必須給予e.returnValue字符值，才能使beforeunload有效運作
       e.returnValue = "mark";
@@ -73,7 +73,7 @@ async function initMain() {
   $("#leave").on("click", beforeLeave);
   async function beforeLeave() {
     if (confirm("真的要放棄編輯?")) {
-      if (G.utils.lock.size && confirm("放棄編輯前是否儲存?")) {
+      if (G.utils.lock.check_submit() && confirm("放棄編輯前是否儲存?")) {
         await handle_updateBlog();
       }
       noBeforeunload = true;
@@ -143,6 +143,10 @@ async function initMain() {
       handle_editorChange,
       { loading: loading_editorChange }
     );
+    //  部分的 input 不會觸動 wengeditor editorConfig.onChange，
+    //  導致無法觸發 editorConfig.onChange 其中校驗表單可否更新的功能
+    //  故此處主動綁定
+    $blog_status.on("click", handle_debounce_change);
     //  editor config
     const editorConfig = {
       readOnly: true,
@@ -555,6 +559,7 @@ async function initMain() {
           disabled = $span_content_count.hasClass("text-danger");
         }
         $btn_updateBlog.prop("disabled", disabled);
+        return !disabled;
       }
       //  刪除數據
       del(key) {
@@ -654,8 +659,10 @@ async function initMain() {
     } else {
       G.utils.lock.del(KEY);
     }
+    if (!G.utils._xss.blog(G.utils.editor.getHtml())) {
+      return;
+    }
     G.utils.lock.check_submit();
-    return;
   }
   //  關於 更新title 的相關操作
   async function handle_updateTitle(e) {
