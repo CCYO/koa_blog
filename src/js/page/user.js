@@ -1,22 +1,26 @@
 /* CSS Module ------------------------------------------------------------------------------- */
 import "@css/user.scss";
-/* Const Module ----------------------------------------------------------------------------- */
+
+/* Config Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
+
 /* NPM Module ------------------------------------------------------------------------------- */
 import BetterScroll from "better-scroll";
+
 /* Utils Module ----------------------------------------------------------------------------- */
-import G from "../wedgets";
+import G from "../common";
+import initPagination from "../component/pagination";
 import {
-  Debounce,
   _Ajv,
-  errorHandle,
+  Debounce,
+  render,
   _xss,
   formFeedback,
   redir,
-  render,
-  initPagination,
+  errorHandle,
 } from "../utils";
-/* runtime ---------------------------------------------------------------------------------- */
+
+/* Runtime ---------------------------------------------------------------------------------- */
 try {
   const $$ajv = new _Ajv(G.utils.axios);
   G.page = "user";

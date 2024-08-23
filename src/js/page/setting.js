@@ -1,13 +1,24 @@
 /* CSS Module ------------------------------------------------------------------------------- */
 import "@css/setting.scss";
-/* Const Module ----------------------------------------------------------------------------- */
+
+/* Config Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
+
 /* NPM Module ------------------------------------------------------------------------------- */
 import SparkMD5 from "spark-md5";
+
 /* Utils Module ----------------------------------------------------------------------------- */
-import G from "../wedgets";
-import { Debounce, _Ajv, errorHandle, formFeedback, redir } from "../utils";
-/* runtime ---------------------------------------------------------------------------------- */
+import G from "../common";
+import {
+  _Ajv,
+  Debounce,
+  _xss,
+  formFeedback,
+  redir,
+  errorHandle,
+} from "../utils";
+
+/* Runtime ---------------------------------------------------------------------------------- */
 try {
   const $$ajv = new _Ajv(G.utils.axios);
   G.page = "setting";

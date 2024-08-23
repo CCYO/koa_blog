@@ -1,5 +1,5 @@
 /* Utils Module ----------------------------------------------------------------------------- */
-import { _Axios } from "@js/utils";
+import _Axios from "./_axios";
 import Loading_backdrop from "./LoadingBackdrop";
 import initNavbar from "./navbar";
 import initEJSData from "./initEJSData";
@@ -11,13 +11,15 @@ export default class {
     this.event = {
       initPage: new CustomEvent("initPage"),
     };
+    this.data = initEJSData();
+
     let loading_backdrop = new Loading_backdrop();
-    let axios = new _Axios({ backdrop: loading_backdrop });
+    let axios = new _Axios({ backdrop: loading_backdrop, G: this });
     this.utils = {
       loading_backdrop,
       axios,
     };
-    this.data = initEJSData();
+
     let loginData = await initNavbar(this.data, axios);
     if (loginData) {
       let { me, news } = loginData;

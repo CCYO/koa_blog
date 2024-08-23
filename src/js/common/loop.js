@@ -1,5 +1,5 @@
-import errorHandle from "./errorHandle";
-import { dev_log } from "./dev";
+import errorHandle from "../utils/errorHandle";
+
 export default class {
   ms = 5 * 1000 * 60;
   timeSet = undefined;
@@ -27,21 +27,24 @@ export default class {
 
   stop() {
     if (this.timeSet) {
-      dev_log(
-        `loop stop ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- cancel`
-      );
+      !process.env.isProd &&
+        console.log(
+          `loop stop ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- cancel`
+        );
       this.timeSet = clearTimeout(this.timeSet);
     }
   }
   async now() {
     this.stop();
-    dev_log(
-      `loop now ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- start`
-    );
+    !process.env.isProd &&
+      console.log(
+        `loop now ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- start`
+      );
     let res = await this.callback.call(this, ...arguments);
-    dev_log(
-      `loop now ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- finish`
-    );
+    !process.env.isProd &&
+      console.log(
+        `loop now ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- finish`
+      );
     return res;
   }
   //  setTimeout 標記
@@ -59,22 +62,25 @@ export default class {
       try {
         await this.callback(...this.args);
         //  清除timeSet，讓下一次loading順利調用
-        dev_log(
-          `loop auto ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- finish`
-        );
+        !process.env.isProd &&
+          console.log(
+            `loop auto ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- finish`
+          );
         this.timeSet = undefined;
         this.start(...this.args);
       } catch (e) {
-        dev_log(
-          `loop auto ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- catch error, and call error_handle`
-        );
+        !process.env.isProd &&
+          console.log(
+            `loop auto ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- catch error, and call error_handle`
+          );
         this.stop();
         this.error_handle(e);
       }
       return;
     }, this.ms);
-    dev_log(
-      `loop start ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- ready`
-    );
+    !process.env.isProd &&
+      console.log(
+        `loop start ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- ready`
+      );
   }
 }

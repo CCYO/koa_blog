@@ -1,7 +1,10 @@
 /* CSS Module ------------------------------------------------------------------------------- */
 import "@css/blog-edit.scss";
-/* Const Module ----------------------------------------------------------------------------- */
+
+/* Config Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
+import localeTw from "@config/const/wangeditor_locale_tw.json";
+
 /* NPM Module ------------------------------------------------------------------------------- */
 import SparkMD5 from "spark-md5";
 import {
@@ -10,20 +13,19 @@ import {
   createToolbar,
   createEditor,
 } from "@wangeditor/editor";
+
 /* Utils Module ----------------------------------------------------------------------------- */
-import G from "../wedgets";
+import G from "../common";
 import {
-  Debounce,
   _Ajv,
-  errorHandle,
+  Debounce,
   _xss,
   formFeedback,
-  dev_log,
-  localeTw,
   redir,
+  errorHandle,
 } from "../utils";
-/* runtime ---------------------------------------------------------------------------------- */
 
+/* Runtime ---------------------------------------------------------------------------------- */
 try {
   const $$ajv = new _Ajv(G.utils.axios);
   G.page = "blog_edit";
@@ -454,7 +456,8 @@ async function initMain() {
         let replaceStr = style ? `${imgEle} style="${style}"/>` : `${imgEle}/>`;
         //  修改 _html 內對應的 img相關字符
         htmlStr = htmlStr.replace(res[0], replaceStr);
-        dev_log(`html內blogImgAlt/${alt_id}的tag數據-----parse完成`);
+        !process.env.isProd &&
+          console.log(`html內blogImgAlt/${alt_id}的tag數據-----parse完成`);
       }
       return htmlStr;
     }
@@ -743,7 +746,11 @@ async function initMain() {
         G.data.blog.map_imgs.delete(alt_id);
       });
     });
-    dev_log("初始化頁面數據時重整圖片數據，已完成前/後端移除 => ", cancelImgs);
+    !process.env.isProd &&
+      console.log(
+        "初始化頁面數據時重整圖片數據，已完成前/後端移除 => ",
+        cancelImgs
+      );
   }
   /*  取出要移除的 blogImgAlt_id  */
   ////  移除上一次編輯時，有上傳的圖片卻沒有儲存文章，導致這次編輯時，

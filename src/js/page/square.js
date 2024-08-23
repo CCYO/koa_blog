@@ -1,11 +1,15 @@
 /* CSS Module ------------------------------------------------------------------------------- */
 import "@css/square.scss";
-/* Const Module ----------------------------------------------------------------------------- */
+
+/* Config Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
+
 /* Utils Module ----------------------------------------------------------------------------- */
-import G from "../wedgets";
-import { errorHandle, render, initPagination } from "../utils";
-/* runtime ---------------------------------------------------------------------------------- */
+import G from "../common";
+import initPagination from "../component/pagination";
+import { render, errorHandle } from "../utils";
+
+/* Runtime ---------------------------------------------------------------------------------- */
 try {
   G.page = "square";
   G.constant = FRONTEND.SQUARE;

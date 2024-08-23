@@ -1,11 +1,11 @@
-import { dev_log } from "./dev";
 import redir from "./redir";
 
 window.onerror = (e) => {
-  dev_log("window.onerror捕獲錯誤\nError:\n", e);
+  !process.env.isProd && console.log("window.onerror捕獲錯誤\nError:\n", e);
 };
 window.addEventListener("error", (e) => {
-  dev_log("window.addEventListener(error)捕獲錯誤\nError:\n", e);
+  !process.env.isProd &&
+    console.log("window.addEventListener(error)捕獲錯誤\nError:\n", e);
 });
 window.addEventListener("unhandledrejection", function (event) {
   event.preventDefault();

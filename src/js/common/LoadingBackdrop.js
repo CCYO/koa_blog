@@ -1,7 +1,5 @@
 /* CSS Module ------------------------------------------------------------------------------- */
 import "@css/wedgets/loadingBackdrop";
-/* Utils Module ----------------------------------------------------------------------------- */
-import { dev_log } from "../utils";
 /* EXPORT MODULE ---------------------------------------------------------------------------- */
 export default class {
   ID = "loadingBackdrop";
@@ -27,7 +25,7 @@ export default class {
     //  使backdrop的focus自動blur
     this.el_backdrop.addEventListener("focus", function (e) {
       e.preventDefault();
-      dev_log("焦點調用到el_backdrop");
+      !process.env.isProd && console.log("focus ---> el_backdrop");
       this.blur();
     });
   }
@@ -39,7 +37,7 @@ export default class {
         return resolve();
       });
     });
-    dev_log("backdrop hidden");
+    !process.env.isProd && console.log("loadingBackdrop hidden");
   }
   //  顯示
   show(config) {
@@ -57,7 +55,7 @@ export default class {
       this.$backdrop.css("opacity", 0);
     }
     this.$backdrop.fadeIn();
-    dev_log("backdrop show");
+    !process.env.isProd && console.log("LoadingBackdrop show");
   }
   //  存入this.editors
   insertEditors(editors) {

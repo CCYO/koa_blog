@@ -5,7 +5,8 @@ import "dayjs/locale/zh-tw";
 /* Const Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
 /* Utils Module ----------------------------------------------------------------------------- */
-import { render as $render, Loop, dev_log } from "@js/utils";
+import Loop from "./loop";
+import { render } from "@js/utils";
 /* EXPORT MODULE ---------------------------------------------------------------------------- */
 export default class {
   #API = `/api/news`;
@@ -68,22 +69,22 @@ export default class {
     Object.defineProperty(this, "status", {
       get() {
         if (this.#id_list.total === 0) {
-          dev_log("讀取通知(初次調用)");
+          !process.env.isProd && console.log("讀取通知(初次調用)");
           return { status: FRONTEND.NAVBAR.NEWS.STATUS.FIRST };
         } else if (this.#auto) {
-          dev_log("讀取通知(定時自動調用)");
+          !process.env.isProd && console.log("讀取通知(定時自動調用)");
           return {
             status: FRONTEND.NAVBAR.NEWS.STATUS.CHECK,
             excepts: { ...this.#id_list },
           };
         } else if (this.db.total > this.#id_list.total) {
-          dev_log("讀取通知(主動調用)");
+          !process.env.isProd && console.log("讀取通知(主動調用)");
           return {
             status: FRONTEND.NAVBAR.NEWS.STATUS.AGAIN,
             excepts: { ...this.#id_list },
           };
         } else {
-          dev_log("讀取通知(主動調用)");
+          !process.env.isProd && console.log("讀取通知(主動調用)");
           return { status: FRONTEND.NAVBAR.NEWS.STATUS.CHECK };
         }
       },
@@ -251,13 +252,13 @@ class HtmlStr {
       ).fromNow();
       switch (type) {
         case 1:
-          htmlStr += $render.navbar.fansIdol(item);
+          htmlStr += render.navbar.fansIdol(item);
           break;
         case 2:
-          htmlStr += $render.navbar.articleReader(item);
+          htmlStr += render.navbar.articleReader(item);
           break;
         case 3:
-          htmlStr += $render.navbar.msgReceiver(item);
+          htmlStr += render.navbar.msgReceiver(item);
       }
       let hr = confirm
         ? `<li data-my-hr="confirm-news-hr">`

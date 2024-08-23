@@ -5,11 +5,10 @@ import News from "./news";
 import { render as ejs_render } from "@js/utils";
 
 /* CONSTANT --------------------------------------------------------------------------------- */
-// const REG = {
-//   ACTIVE_PATHNAME: /^\/(?<pathname>\w+)\/?(?<albumList>list\?)?/,
-// };
 const API_LOGOUT = "/api/user/logout";
-/* EXPORT MODULE ---------------------------------------------------------------------------- */
+
+/* MODULE ---------------------------------------------------------------------------- */
+
 /* 初始化 通知列表 功能 */
 export default async function ({ login, active }, axios) {
   //  頁面初始化期間，loadingBackdrop統一由G管理，故標示axios不需要調用loadingBackdrop

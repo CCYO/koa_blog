@@ -1,20 +1,24 @@
 /* CSS Module ------------------------------------------------------------------------------- */
 import "@css/register&login.scss";
-/* Const Module ----------------------------------------------------------------------------- */
+
+/* Config Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
+
 /* NPM Module ------------------------------------------------------------------------------- */
 import Tab from "bootstrap/js/dist/tab";
+
 /* Utils Module ----------------------------------------------------------------------------- */
-import G from "../wedgets";
+import G from "../common";
 import {
-  Debounce,
   _Ajv,
-  errorHandle,
+  Debounce,
   _xss,
   formFeedback,
   redir,
+  errorHandle,
 } from "../utils";
-/* runtime ---------------------------------------------------------------------------------- */
+
+/* Runtime ---------------------------------------------------------------------------------- */
 try {
   const ajv = new _Ajv(G.utils.axios);
   G.page = "register&login";

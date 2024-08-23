@@ -1,31 +1,11 @@
-import localeTw from "./_wangeditor/locale-tw";
-import errorHandle from "./errorHandle";
-import _Ajv from "./_Ajv";
-import Debounce from "./Debounce";
-import formFeedback from "./formFeedback";
-
-import _Axios from "./_Axios";
-import _xss from "./_xss";
-
-import Loop from "./Loop";
-import { dev_alert, dev_log } from "./dev";
-import redir from "./redir";
-import initPagination from "./pagination";
+import _Ajv from "./_ajv";
+import Debounce from "./debounce";
 
 import render from "./render";
+import _xss from "./_xss";
+import formFeedback from "./formFeedback";
+import redir from "./redir";
 
-export {
-  localeTw,
-  errorHandle,
-  Loop,
-  _Ajv,
-  formFeedback,
-  _Axios,
-  _xss,
-  Debounce,
-  dev_alert,
-  dev_log,
-  redir,
-  initPagination,
-  render,
-};
+import errorHandle from "./errorHandle";
+
+export { _Ajv, Debounce, render, _xss, formFeedback, redir, errorHandle };

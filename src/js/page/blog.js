@@ -1,13 +1,17 @@
 /* CSS Module ------------------------------------------------------------------------------- */
 import "@css/blog.scss";
-/* Const Module ----------------------------------------------------------------------------- */
+
+/* Config Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
+
 /* NPM Module ------------------------------------------------------------------------------- */
 import { createEditor } from "@wangeditor/editor";
+
 /* Utils Module ----------------------------------------------------------------------------- */
-import G from "../wedgets";
-import { errorHandle, render, _xss, redir, dev_log } from "../utils";
-/* runtime ---------------------------------------------------------------------------------- */
+import G from "../common";
+import { _Ajv, render, _xss, redir, errorHandle } from "../utils";
+
+/* Runtime ---------------------------------------------------------------------------------- */
 try {
   G.page = "blog";
   G.constant = FRONTEND.BLOG;
@@ -370,7 +374,8 @@ async function initMain() {
       let replaceStr = style ? `${imgEle} style="${style}"/>` : `${imgEle}/>`;
       //  修改 _html 內對應的 img相關字符
       htmlStr = htmlStr.replace(res[0], replaceStr);
-      dev_log(`html內blogImgAlt/${alt_id}的tag數據-----parse完成`);
+      !process.env.isProd &&
+        console.log(`html內blogImgAlt/${alt_id}的tag數據-----parse完成`);
     }
     return htmlStr;
   }

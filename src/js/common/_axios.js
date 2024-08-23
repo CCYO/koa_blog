@@ -1,19 +1,28 @@
-/* Const Module ----------------------------------------------------------------------------- */
+/* Config Module ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
-/* Utils Module ----------------------------------------------------------------------------- */
-import axios from "axios";
-import errorHandle from "./errorHandle";
-import { dev_log } from "./dev";
 
+/* NPM Module -------------------------------------------------------------------------------- */
+import axios from "axios";
+
+/* Utils Module ------------------------------------------------------------------------------ */
+import errorHandle from "../utils/errorHandle";
+
+/* Utils Module ------------------------------------------------------------------------------ */
 export default class {
-  REG = {
-    IGNORE_PATH:
-      /^\/(login)|(register)|(other)|(square)|(blog)|(permission)|(serverError)/,
-  };
-  constructor({ backdrop = undefined }) {
-    if (!backdrop) {
-      throw new Error("創建axios instance未提供blockPage參數");
-    }
+  #NEWS_WHITE_LIST = [
+    "register",
+    "login",
+    "square",
+    "other",
+    "blog-preview",
+    "permission",
+  ];
+  IGNORE_NEWS = undefined;
+
+  constructor({ backdrop = undefined, G }) {
+    this.IGNORE_NEWS = this.#NEWS_WHITE_LIST.some(
+      (item) => item === G.data.active
+    );
     let instance = axios.create();
     instance.backdrop = backdrop;
 
@@ -48,7 +57,7 @@ export default class {
 
         if (
           errno === FRONTEND._AXIOS.ERR_RES.NEWS_NO_LOGIN.errno &&
-          !this.REG.IGNORE_PATH.test(location.pathname)
+          !this.IGNORE_NEWS
         ) {
           ////  response 為 news請求的 noLogin 提醒
           resolve = false;
@@ -65,7 +74,8 @@ export default class {
         return Promise.resolve(res);
       },
       (axiosError) => {
-        dev_log("_axios 捕獲到錯誤，交給 $M_common.error_handle 處理");
+        !process.env.isProd &&
+          console.log("_axios 捕獲到錯誤，交給 $M_common.error_handle 處理");
         errorHandle(axiosError.response.data);
       }
     );
