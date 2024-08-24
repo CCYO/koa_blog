@@ -240,7 +240,7 @@ const FIND = {
   }),
   album: (id) => ({
     where: { id },
-    attributes: ["id", "title"],
+    attributes: ["id", "title", "show"],
     include: [
       {
         model: BlogImg,

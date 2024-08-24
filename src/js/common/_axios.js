@@ -9,7 +9,7 @@ import errorHandle from "../utils/errorHandle";
 
 /* Utils Module ------------------------------------------------------------------------------ */
 export default class {
-  #NEWS_WHITE_LIST = [
+  #ACTIVE_WHITE_LIST = [
     "register",
     "login",
     "square",
@@ -20,7 +20,7 @@ export default class {
   IGNORE_NEWS = undefined;
 
   constructor({ backdrop = undefined, G }) {
-    this.IGNORE_NEWS = this.#NEWS_WHITE_LIST.some(
+    this.IGNORE_NEWS = this.#ACTIVE_WHITE_LIST.some(
       (item) => item === G.data.active
     );
     let instance = axios.create();
@@ -76,6 +76,7 @@ export default class {
       (axiosError) => {
         !process.env.isProd &&
           console.log("_axios 捕獲到錯誤，交給 $M_common.error_handle 處理");
+        // axiosError.response.data { model: { errno, data }}
         errorHandle(axiosError.response.data);
       }
     );

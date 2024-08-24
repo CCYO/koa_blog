@@ -6,8 +6,8 @@
 const DATA_SET = "my-data";
 const SELECTOR = `[data-${DATA_SET}]`;
 const KEYS = {
-  BLOG: "blog",
   ALBUM: "imgs",
+  BLOG: "blog",
 };
 
 //  將ejs傳入el[data-my-data]的純字符數據，轉化為物件數據
@@ -16,10 +16,10 @@ export default function () {
   if (!$container.length) {
     return;
   }
-
   //  收集存放ejs data的元素
   let $box_list = Array.from($container, (box) => $(box).first());
-  let res = $box_list.reduce((acc, $box) => {
+  let ejs_data = {};
+  ejs_data = $box_list.reduce((ejs_data, $box) => {
     //  取得data-set，同時代表此數據的類型
     let key = $box.data(DATA_SET);
     //  該ejs數據元素內，所存放的數據種類名稱
@@ -44,48 +44,43 @@ export default function () {
       //  其餘數據
       kv = { [key]: val };
     }
-    return { ...acc, ...kv };
+    return { ...ejs_data, ...kv };
     //  儲存整理後的ejs數據
-  }, {});
+  }, ejs_data);
+
   $container.parent().remove();
-  //  移除存放ejs數據的元素
-  return res;
-  //  返回整理後的EJS數據
+  return ejs_data;
 }
 //  初始化album數據
 function initAlbum(imgs) {
   //  img數據map化
-  return init_map_imgs(imgs);
+  return initImg(imgs);
 }
 //  初始化blog數據
 function initBlog(blog) {
-  if (blog.hasOwnProperty("imgs")) {
-    blog.map_imgs = init_map_imgs(blog.imgs);
+  if (blog.imgs) {
+    blog.map_imgs = initImg(blog.imgs);
     delete blog.imgs;
   }
-  if (blog.hasOwnProperty("html")) {
-    //  處理blog內的img數據
-    //  blog.imgs: [ img { alt_id, alt, blogImg_id, name, img_id, hash, url }]
-    //  blog.map_imgs: alt_id → img
+  //  對 blog.html(百分比編碼格式) 進行解碼
+  if (blog.html) {
     blog.html = parseBlogContent(blog.html);
   }
-  //  對 blog.html(百分比編碼格式) 進行解碼
-  if (blog.hasOwnProperty("showComment") && blog.showComment) {
-    /* 不是編輯頁與預覽頁，請求comment數據 */
-    blog.map_comment = init_map_comment(blog.comment.list);
+  if (blog.showComment) {
+    blog.map_comment = _initComment(blog.comment.list);
   }
   delete blog.comment;
   return blog; //  再將整體轉為字符
 
-  function init_map_comment(list) {
+  function _initComment(list) {
     class Comment extends Map {
       constructor(list) {
         let kv_list = list.map((comment) => [comment.id, comment]);
         super(kv_list);
       }
-      mset(comment) {
-        this.set(comment.id, comment);
-        return this.get(comment.id);
+      add(comment) {
+        super.set(comment.id, comment);
+        return super.get(comment.id);
       }
     }
     return new Comment(list);
@@ -105,9 +100,14 @@ function initBlog(blog) {
   }
 }
 //  將 img 數據 map化
-function init_map_imgs(imgs) {
+function initImg(imgs) {
   let map = new Map();
-  /* 以 alt_id 作為 Map key，整理為格式 img.key → img 的數據 */
+  /*  alt_id => {
+   *    alt,
+   *    blogImg: { id: blogImg_id, name },
+   *    img: { id: img_id, url }
+   *  }
+   */
   for (let alt_id in imgs) {
     map.set(alt_id * 1, imgs[alt_id]);
   }

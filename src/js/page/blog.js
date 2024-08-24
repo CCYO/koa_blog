@@ -254,8 +254,8 @@ async function initMain() {
           let { data } = await postComment();
           //  渲染此次送出的評論
           renderComment(data);
-          //  更新評論數據    { id, html, time, pid, commenter: { id, email, nickname}}
-          G.data.blog.map_comment.mset(data);
+          //  更新評論數據 { id, html, time, pid, commenter: { id, email, nickname}}
+          G.data.blog.map_comment.add(data);
           //  清空評論框
           editor.clear();
 
