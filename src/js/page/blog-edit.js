@@ -82,7 +82,9 @@ async function initMain() {
       location.replace("/self");
     }
   }
-  $("#preview").on("click", async (e) => {
+  $("#preview").on("click", preview);
+
+  async function preview(e) {
     // 取得當前 title
     let title = G.utils.lock.get("title");
     if (!title) {
@@ -100,7 +102,7 @@ async function initMain() {
     window.open(
       `/blog/preview/${G.data.blog.id}?${G.constant.PREVIEW_KEY}=${key}`
     );
-  });
+  }
   //  生成 blog title 的 input handle
   let { debounce: handle_debounce_input_for_title } = new Debounce(
     handle_input,
@@ -620,6 +622,10 @@ async function initMain() {
       G.constant.API.UPDATE_BLOG,
       payload
     );
+    // 由click觸發，才詢問是否預覽
+    if (e && confirm("儲存成功！是否預覽？（新開視窗）")) {
+      preview();
+    }
     let { title, html, show, time } = data;
     let newData = { title, html, show, time };
     //  畫面內容處理
@@ -647,9 +653,6 @@ async function initMain() {
     }
     G.utils.lock.clear();
     G.utils.lock.check_submit();
-    if (confirm("儲存成功！是否預覽？（新開視窗）")) {
-      window.open(`/blog/preview/${G.data.blog.id}`);
-    }
     return;
   }
   //  關於 設定文章公開/隱藏時的操作
