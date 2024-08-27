@@ -3,7 +3,7 @@
 <div class="blogList card" <%= `data-${G_PAGE.DATASET.KEY.BLOG_STATUS}=${G_PAGE.DATASET.VALUE.BLOG_STATUS_PUBLIC}` %>>
   <% if(count){ %>
   <ul class="list-group">
-    <%- ejs_render.square.blogList({ blogs, page: 1, pagination }) %>
+    <%- ejs_render.blogList({ blogs, page: 1, pagination }) %>
     <div class="pageLoading" style="display: none;">
       <h1></h1>
     </div>

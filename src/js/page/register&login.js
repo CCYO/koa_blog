@@ -80,18 +80,6 @@ async function initMain() {
       $navTab_login.parent().addClass("active");
       $navTab_register.parent().removeClass("active");
     });
-
-    // for (let item of selectorList) {
-    //   let card_tab = document.querySelector(`[data-bs-target="#${item}-card"]`);
-    //   let bs_tab = new Tab(card_tab);
-    //   navTab.addEventListener("click", (e) => {
-    //     bs_tab.show();
-    //     $navTab.addClass("active");
-    //   });
-    //   card_tab.addEventListener("hide.bs.tab", (e) => {
-    //     $navTab.children().removeClass("active");
-    //   });
-    // }
   }
   /* 初始化 Register Form 功能 */
   function initLoginFn(form_id) {

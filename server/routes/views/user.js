@@ -4,7 +4,7 @@
 const router = require("koa-router")();
 const { CHECK, CACHE } = require("../../middleware/views");
 const User = require("../../controller/user");
-const ejs_render = require("../../utils/render");
+const render = require("../../utils/render");
 const {
   FRONTEND_CONST,
   BLOG,
@@ -13,6 +13,8 @@ const {
 
 const privateCache = CACHE.genPrivate(TYPE.PAGE.USER);
 const commonCache = CACHE.genCommon(TYPE.PAGE.USER);
+
+const ejs_render = render.user;
 
 //  register page
 router.get("/register", CACHE.noCache, CHECK.skipLogin, async (ctx) => {

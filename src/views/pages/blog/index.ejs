@@ -22,7 +22,7 @@
         <div class="<%= G_PAGE.CLASS.COMMENT_LIST_CONTAINER %>">
           <div class="<%= G_PAGE.CLASS.COMMENT_LIST %>" <%= `data-${G_PAGE.DATASET.KEY.PID}=0` %>>
             <% if(blog.comment.tree){ %>
-            <%- ejs_render.blog.commentTree({tree: blog.comment.tree, ejs_render }) %>
+            <%- ejs_render.commentTree({tree: blog.comment.tree, ejs_render }) %>
             <% } %>
           </div>
         </div>

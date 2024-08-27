@@ -11,7 +11,7 @@
   <% if(_blogData.count){ %>
   <ul class="list-group">
     <% let blogs = _blogData.blogs %>
-    <%- ejs_render.user.blogList({ blogs, page: 1, isSelf, isPublic: _isPublic, pagination: G_PAGE.PAGINATION }) %>
+    <%- ejs_render.blogList({ blogs, page: 1, isSelf, isPublic: _isPublic, pagination: G_PAGE.PAGINATION }) %>
     <div class="pageLoading" style="display: none;">
       <h1></h1>
     </div>

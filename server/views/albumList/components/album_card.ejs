@@ -9,7 +9,7 @@
   </div>
   <% if(count){ %>
   <ul class="list-group">
-    <%- ejs_render.albumList.blogList({ blogs, page: 1, isPublic: _isPublic, pagination }) %>
+    <%- ejs_render.blogList({ blogs, page: 1, isPublic: _isPublic, pagination }) %>
     <div class="pageLoading" style="display: none;">
       <h1></h1>
     </div>

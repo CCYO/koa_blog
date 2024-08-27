@@ -272,7 +272,7 @@ async function initMain() {
             //  updatedAt
             let template_values = {
               tree: [{ ...new_comment }],
-              ejs_render: render,
+              ejs_render: G.utils.render,
             };
             let html_str = G.utils.render.commentTree(template_values);
             //  創建評論htmlStr，data: { id, html, time, pid, commenter: { id, email, nickname}}

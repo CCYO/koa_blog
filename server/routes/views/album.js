@@ -5,7 +5,9 @@ let router = require("koa-router")();
 const { CHECK, CACHE } = require("../../middleware/views");
 const Blog = require("../../controller/blog");
 const { FRONTEND_CONST, ALBUM_LIST } = require("../../config");
-const ejs_render = require("../../utils/render");
+const render = require("../../utils/render");
+
+const ejs_render = render.albumList;
 
 router.prefix("/album");
 

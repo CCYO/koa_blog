@@ -3,7 +3,7 @@
  */
 const router = require("koa-router")();
 const Blog = require("../../controller/blog");
-const ejs_render = require("../../utils/render");
+const render = require("../../utils/render");
 const {
   FRONTEND_CONST,
   CACHE: { TYPE },
@@ -14,6 +14,8 @@ const commonCache = CACHE.genCommon(TYPE.PAGE.BLOG);
 const {
   BLOG: { PREVIEW_KEY },
 } = require("../../config");
+
+const ejs_render = render.blog;
 
 //  preview blog page
 router.get("/blog/preview/:id", privateCache, async (ctx) => {

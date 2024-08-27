@@ -4,7 +4,10 @@
 const router = require("koa-router")();
 const Square = require("../../controller/square");
 const { FRONTEND_CONST, SQUARE } = require("../../config");
-const ejs_render = require("../../utils/render");
+const render = require("../../utils/render");
+
+const ejs_render = render.square;
+
 //  square page
 router.get("/square", async (ctx) => {
   let { data: blog } = await Square.findListForPagination({
