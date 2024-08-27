@@ -1,4 +1,4 @@
-<% let G_PAGE = JSON.parse('{"API":{"REMOVE_COMMENT":"/api/comment","CREATE_COMMENT":"/api/comment"},"DATASET":{"KEY":{"REMOVE_COMMENT":"remove","PID":"pid"}},"CLASS":{"COMMENT_ITEM_CONTENT":"comment-item-content","COMMENT_EDITOR_CONTAINER":"editor-container","COMMENT_LIST_CONTAINER":"comment-list-container","BLOG_CONTENT":"editor-content-view"}}') %>
+<% let G_PAGE = JSON.parse('{"PAGE_NAME":"BLOG","API":{"REMOVE_COMMENT":"/api/comment","CREATE_COMMENT":"/api/comment"},"DATASET":{"KEY":{"REMOVE_COMMENT":"remove","PID":"pid"}},"CLASS":{"COMMENT_ITEM_CONTENT":"comment-item-content","COMMENT_EDITOR_CONTAINER":"editor-container","COMMENT_LIST_CONTAINER":"comment-list-container","BLOG_CONTENT":"editor-content-view"}}') %>
 <% tree.forEach( _comment => { %>
 <% if (_comment.html || _comment.reply.length) { %>
 <!-- comment-box 是一個留言串的 container -->

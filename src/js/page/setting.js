@@ -1,14 +1,10 @@
-/* CSS Module ------------------------------------------------------------------------------- */
+/* CSS        ----------------------------------------------------------------------------- */
 import "@css/setting.scss";
 
-/* Config Module ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
-
-/* NPM Module ------------------------------------------------------------------------------- */
-import SparkMD5 from "spark-md5";
-
-/* Utils Module ----------------------------------------------------------------------------- */
+/* COMMON     ----------------------------------------------------------------------------- */
 import G from "../common";
+
+/* UTILS      ----------------------------------------------------------------------------- */
 import {
   _Ajv,
   Debounce,
@@ -18,17 +14,18 @@ import {
   errorHandle,
 } from "../utils";
 
-/* Runtime ---------------------------------------------------------------------------------- */
+/* NPM        ----------------------------------------------------------------------------- */
+import SparkMD5 from "spark-md5";
+
+/* RUNTIME    ----------------------------------------------------------------------------- */
 try {
   const $$ajv = new _Ajv(G.utils.axios);
-  G.page = "setting";
-  G.constant = FRONTEND.SETTING;
   G.utils.validate = {
     setting: $$ajv._validate.setting,
     avartar: $$ajv._validate.avatar,
     password: $$ajv._validate.password,
   };
-  await G.main(initMain);
+  await G.initPage(initMain);
 } catch (error) {
   errorHandle(error);
 }

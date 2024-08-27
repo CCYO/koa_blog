@@ -1,36 +1,32 @@
-/* CSS Module ------------------------------------------------------------------------------- */
+/* CSS        ----------------------------------------------------------------------------- */
 import "@css/blog.scss";
 
-/* Config Module ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
-
-/* NPM Module ------------------------------------------------------------------------------- */
-import { createEditor } from "@wangeditor/editor";
-
-/* Utils Module ----------------------------------------------------------------------------- */
+/* COMMON     ----------------------------------------------------------------------------- */
 import G from "../common";
+
+/* UTILS      ----------------------------------------------------------------------------- */
 import { _Ajv, render, _xss, redir, errorHandle } from "../utils";
 
-/* Runtime ---------------------------------------------------------------------------------- */
+/* NPM        ----------------------------------------------------------------------------- */
+import { createEditor } from "@wangeditor/editor";
+
+/* RUNTIME    ----------------------------------------------------------------------------- */
 try {
-  G.page = "blog";
-  G.constant = FRONTEND.BLOG;
-  await G.main(initMain);
+  G.utils.render = render[G.data.page];
+  await G.initPage(initMain);
 } catch (error) {
   errorHandle(error);
 }
 
 async function initMain() {
-  if (G.data.active === "blog-preview") {
-    document.addEventListener("initPage", preview);
-    return;
-  } else if (G.data.blog.showComment) {
-    initComment();
-  }
-  $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg());
+  renderBlog();
+  initComment();
   return;
 
   function initComment() {
+    if (!G.data.blog.showComment) {
+      return;
+    }
     //  若是因為comment通知前來此頁面，可以直接滑動至錨點
     document.addEventListener("initPage", scrollToComment);
     ////  根據使用者身分，顯示/移除刪除紐
@@ -126,7 +122,7 @@ async function initMain() {
           }
         );
         //  data { commenter, time, isDeleted, ... }
-        let htmlStr = render.blog.commentItem({ ...data });
+        let htmlStr = G.utils.render.commentItem({ ...data });
         $btn_remove
           .parents(`.${G.constant.CLASS.COMMENT_ITEM_CONTENT}`)
           .first()
@@ -278,7 +274,7 @@ async function initMain() {
               tree: [{ ...new_comment }],
               ejs_render: render,
             };
-            let html_str = render.blog.commentTree(template_values);
+            let html_str = G.utils.render.commentTree(template_values);
             //  創建評論htmlStr，data: { id, html, time, pid, commenter: { id, email, nickname}}
             //  渲染
             editor.render(html_str, new_comment.id);
@@ -308,13 +304,18 @@ async function initMain() {
       }
     }
   }
-
-  function preview() {
+  function renderBlog() {
+    let active = G.data.active;
+    if (active === "blog") {
+      $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg());
+    } else if (active !== "blog-preview") {
+      _preview();
+    }
+  }
+  function _preview() {
     let preview_key = new URL(location.href).searchParams.get(
       G.constant.PREVIEW_KEY
     );
-    // 取消登入全縣的各個功能
-    G.utils.news.loop.stop();
     let { title, html } = JSON.parse(localStorage.getItem(preview_key));
     $(`.card-header > h1`).text(title);
     $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg(html));

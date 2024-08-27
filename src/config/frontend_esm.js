@@ -47,7 +47,7 @@ function genFRONTEND_CONFIG(FRONTEND_CONST, SERVER_CONST, PATTERN, ERR_RES) {
   (FRONTEND_CONST.BLOG_EDIT.PREVIEW_KEY = SERVER_CONST.BLOG.PREVIEW_KEY),
     (FRONTEND_CONST.BLOG_EDIT.REG = {
       IMG_ALT_ID: /alt_id=(?<alt_id>\w+)/,
-      IMG_NAME_AND_EXT: /^(.+?)\.([jJ][pP][gG]|[pP][nN][gG])$/,
+      IMG_NAME_AND_EXT: /^(.+?)\.(jpg|png)$/i,
       X_IMG_PARSE_TO_IMG: new RegExp(PATTERN.X_IMG_PARSE_TO_IMG, "g"),
       IMG_PARSE_TO_X_IMG: new RegExp(PATTERN.IMG_PARSE_TO_X_IMG, "g"),
     });

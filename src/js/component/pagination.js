@@ -1,20 +1,25 @@
+/*  初始化文章列表的分頁功能 */
+/* CSS    MODULE ------------------------------------------------------------------------------- */
 import "@css/component/pagination";
 
-/*  初始化文章列表的分頁功能 */
+import FRONTEND from "@config/frontend_esm";
+import { render } from "../utils";
+/* EXPORT MODULE ---------------------------------------------------------------------------- */
 export default function (G) {
   let pageConst = G.constant;
+  let template_blogList = render[G.data.page].blogList;
   let author_id = undefined;
   let pageData = undefined;
   switch (G.data.page) {
-    case "user":
+    case FRONTEND.USER.PAGE_NAME:
       author_id = G.data.currentUser.id;
       pageData = G.data.blogs;
       break;
-    case "albumList":
+    case FRONTEND.ALBUM_LIST.PAGE_NAME:
       author_id = G.data.me.id;
       pageData = G.data.album;
       break;
-    case "square":
+    case FRONTEND.SQUARE.PAGE_NAME:
       pageData = G.data.blog;
       break;
   }
@@ -106,7 +111,7 @@ export default function (G) {
           show,
         });
         //  生成html
-        let html = G.utils.render[G.page].blogList({
+        let html = template_blogList({
           blogs,
           page: targetPage,
           pagination: pageConst.PAGINATION,

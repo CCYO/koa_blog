@@ -1,15 +1,10 @@
-/* CSS Module ------------------------------------------------------------------------------- */
+/* CSS        ----------------------------------------------------------------------------- */
 import "@css/user.scss";
 
-/* Config Module ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
-
-/* NPM Module ------------------------------------------------------------------------------- */
-import BetterScroll from "better-scroll";
-
-/* Utils Module ----------------------------------------------------------------------------- */
+/* COMMON     ----------------------------------------------------------------------------- */
 import G from "../common";
-import initPagination from "../component/pagination";
+
+/* UTILS      ----------------------------------------------------------------------------- */
 import {
   _Ajv,
   Debounce,
@@ -20,16 +15,20 @@ import {
   errorHandle,
 } from "../utils";
 
-/* Runtime ---------------------------------------------------------------------------------- */
+/* NPM        ----------------------------------------------------------------------------- */
+import BetterScroll from "better-scroll";
+
+/* COMPONENT   ---------------------------------------------------------------------------- */
+import initPagination from "../component/pagination";
+
+/* RUNTIME    ----------------------------------------------------------------------------- */
 try {
   const $$ajv = new _Ajv(G.utils.axios);
-  G.page = "user";
-  G.constant = FRONTEND.USER;
-  G.utils.render = render;
+  G.utils.render = render[G.data.page];
   G.utils.validate = {
     blog_title: $$ajv._validate.blog_title,
   };
-  await G.main(initMain);
+  await G.initPage(initMain);
 } catch (error) {
   errorHandle(error);
 }
@@ -196,7 +195,7 @@ async function initMain() {
       //  同步 fansList 數據
       G.data.relationShip.fansList.unshift(G.data.me);
       //  在粉絲列表中插入 粉絲htmlStr
-      let html = render.user.relationshipItem({ user: G.data.me });
+      let html = G.utils.render.relationshipItem({ user: G.data.me });
 
       if (G.data.relationShip.fansList.length === 1) {
         //  如果追蹤者只有當前的你

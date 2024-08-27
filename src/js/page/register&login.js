@@ -1,14 +1,10 @@
-/* CSS Module ------------------------------------------------------------------------------- */
+/* CSS        ----------------------------------------------------------------------------- */
 import "@css/register&login.scss";
 
-/* Config Module ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
-
-/* NPM Module ------------------------------------------------------------------------------- */
-import Tab from "bootstrap/js/dist/tab";
-
-/* Utils Module ----------------------------------------------------------------------------- */
+/* COMMON     ----------------------------------------------------------------------------- */
 import G from "../common";
+
+/* UTILS      ----------------------------------------------------------------------------- */
 import {
   _Ajv,
   Debounce,
@@ -18,18 +14,22 @@ import {
   errorHandle,
 } from "../utils";
 
-/* Runtime ---------------------------------------------------------------------------------- */
+/* NPM        ----------------------------------------------------------------------------- */
+import Tab from "bootstrap/js/dist/tab";
+
+/* CONFIG     ----------------------------------------------------------------------------- */
+import FRONTEND from "@config/frontend_esm";
+
+/* RUNTIME    ----------------------------------------------------------------------------- */
 try {
   const ajv = new _Ajv(G.utils.axios);
-  G.page = "register&login";
-  G.constant = FRONTEND.REGISTER_LOGIN;
   G.utils.validate = {
     login: ajv._validate.login,
     register: ajv._validate.register,
     passwordAndAgain: ajv._validate.password_again,
     isEmailExist: ajv._validate.is_email_exist,
   };
-  await G.main(initMain);
+  await G.initPage(initMain);
 } catch (error) {
   errorHandle(error);
 }

@@ -1,5 +1,7 @@
+/* Utils  Module ----------------------------------------------------------------------------- */
 import errorHandle from "../utils/errorHandle";
 
+/* EXPORT MODULE ---------------------------------------------------------------------------- */
 export default class {
   ms = 5 * 1000 * 60;
   timeSet = undefined;
@@ -8,11 +10,6 @@ export default class {
   error_handle = errorHandle;
   /* 防抖動的函數工廠 */
   constructor(callback, config) {
-    if (!callback) {
-      throw new Error("創建Loop Ins必須提供callback參數");
-    } else if (typeof callback !== "function") {
-      throw new Error("創建Loop Ins的callback參數必須是function");
-    }
     if (config) {
       this.name = config.name ? config.name : callback.name;
       this.ms = config.ms ? config.ms : this.ms;

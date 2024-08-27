@@ -1,12 +1,15 @@
-/* NPM Module ------------------------------------------------------------------------------- */
+/* CONFIG Module ----------------------------------------------------------------------------- */
+import FRONTEND from "@config/frontend_esm";
+
+/* COMMON Module ----------------------------------------------------------------------------- */
+import Loop from "./loop";
+import { render } from "@js/utils";
+
+/* NPM    Module ------------------------------------------------------------------------------- */
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/zh-tw";
-/* Const Module ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
-/* Utils Module ----------------------------------------------------------------------------- */
-import Loop from "./loop";
-import { render } from "@js/utils";
+
 /* EXPORT MODULE ---------------------------------------------------------------------------- */
 export default class {
   #API = `/api/news`;
@@ -89,14 +92,11 @@ export default class {
         }
       },
     });
-  }
-  init() {
     let renderClass = new this.Render(this);
     this.checkNewsMore = renderClass.checkNewsMore.bind(renderClass);
-
     this.loop = renderClass.loop;
-    return this;
   }
+
   update({ list, num, hasNews }) {
     if (hasNews) {
       this.clear();

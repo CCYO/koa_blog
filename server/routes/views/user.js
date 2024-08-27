@@ -6,6 +6,7 @@ const { CHECK, CACHE } = require("../../middleware/views");
 const User = require("../../controller/user");
 const ejs_render = require("../../utils/render");
 const {
+  FRONTEND_CONST,
   BLOG,
   CACHE: { TYPE },
 } = require("../../config");
@@ -16,7 +17,7 @@ const commonCache = CACHE.genCommon(TYPE.PAGE.USER);
 //  register page
 router.get("/register", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
   await ctx.render("register&login", {
-    page: "register_login",
+    page: FRONTEND_CONST.REGISTER_LOGIN.PAGE_NAME,
     login: false,
     active: "register",
     title: "註冊",
@@ -25,7 +26,7 @@ router.get("/register", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
 //  login page
 router.get("/login", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
   await ctx.render("register&login", {
-    page: "register_login",
+    page: FRONTEND_CONST.REGISTER_LOGIN.PAGE_NAME,
     login: false,
     active: "login",
     title: "登入",
@@ -45,7 +46,7 @@ router.get("/self", privateCache, async (ctx) => {
   //  將 DB 數據賦予給 ctx.cache
   let { currentUser, relationShip, blogs } = (ctx.cache.data = data);
   await ctx.render("user", {
-    page: "user",
+    page: FRONTEND_CONST.USER.PAGE_NAME,
     login: true,
     active: "self",
     ejs_render,
@@ -78,7 +79,7 @@ router.get("/other/:id", CHECK.isSelf, commonCache, async (ctx) => {
   //  非文章作者，所以不傳入未公開的文章
   blogs = { public: blogs.public };
   await ctx.render("user", {
-    page: "user",
+    page: FRONTEND_CONST.USER.PAGE_NAME,
     login: Boolean(ctx.session.user),
     active: "other",
     ejs_render,
@@ -94,7 +95,7 @@ router.get("/other/:id", CHECK.isSelf, commonCache, async (ctx) => {
 router.get("/setting", CACHE.noCache, CHECK.login, async (ctx, next) => {
   let currentUser = ctx.session.user;
   await ctx.render("setting", {
-    page: "setting",
+    page: FRONTEND_CONST.SETTING.PAGE_NAME,
     login: true,
     active: "setting",
     title: `${currentUser.nickname}個人資料設置`,

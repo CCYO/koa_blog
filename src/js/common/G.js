@@ -1,43 +1,51 @@
-/* Utils Module ----------------------------------------------------------------------------- */
+/* COMMON Module ------------------------------------------------------------------------------ */
 import _Axios from "./_axios";
 import Loading_backdrop from "./LoadingBackdrop";
+import News from "./news";
 import initNavbar from "./navbar";
 import initEJSData from "./initEJSData";
 
+/* CONFIG MODULE ---------------------------------------------------------------------------- */
+import FRONTEND from "@config/frontend_esm";
+
+/* EXPORT MODULE ---------------------------------------------------------------------------- */
 export default class {
   utils = {};
   data = {};
+  event = {};
   async init() {
-    this.event = {
-      initPage: new CustomEvent("initPage"),
-    };
-    this.data = initEJSData();
-
+    let event_initPage = new CustomEvent("initPage");
+    let ejs_data = initEJSData();
     let loading_backdrop = new Loading_backdrop();
-    let axios = new _Axios({ backdrop: loading_backdrop, G: this });
+    let _axios = new _Axios({ backdrop: loading_backdrop, G: this });
+    /**
+     * G.init期間，LoadingBackdrop已開啟，故關閉_axios 的LoadingBackdrop auto
+     */
+    _axios.autoLoadingBackdrop = false;
+    await initNavbar(ejs_data, _axios);
+    if (ejs_data.login) {
+      let news = new News(_axios);
+      this.utils.news = news;
+      let { me } = await news.getLoginData();
+      this.data.me = me;
+      _axios.autoLoadingBackdrop = true;
+      document.addEventListener("initPage", async () => {
+        console.log("initPage 調用 checkNewsMore");
+        await news.checkNewsMore();
+      });
+    }
+    this.data = { ...this.data, ...ejs_data };
     this.utils = {
       loading_backdrop,
-      axios,
+      axios: _axios,
     };
-
-    let loginData = await initNavbar(this.data, axios);
-    if (loginData) {
-      let { me, news } = loginData;
-      this.utils.news = news;
-      this.data.me = me;
-    }
-
+    this.event = { initPage: event_initPage };
+    this.constant = FRONTEND[ejs_data.page];
     return this;
   }
-  async main(fn) {
-    this.utils.loading_backdrop.show({ blockPage: true });
-    if (fn) {
-      await fn();
-    }
+  async initPage(fn) {
+    fn && (await fn());
     await this.utils.loading_backdrop.hidden();
-    if (this.data.login) {
-      await this.utils.news.checkNewsMore();
-    }
     await new Promise((resolve) => {
       setTimeout(() => {
         document.dispatchEvent(this.event.initPage);

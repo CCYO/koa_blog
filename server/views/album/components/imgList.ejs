@@ -1,4 +1,4 @@
-<% let G_PAGE = JSON.parse('{"ID":{"MODAL":"modal_album"},"DATASET":{"KEY":{"ALT_ID":"alt_id"}}}') %>
+<% let G_PAGE = JSON.parse('{"PAGE_NAME":"ALBUM","ID":{"MODAL":"modal_album"},"DATASET":{"KEY":{"ALT_ID":"alt_id"}}}') %>
 <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
   <% for( let alt_id in imgs ){  %>
   <% let _url = `${imgs[alt_id].img.url}?blogImgAlt=${alt_id}` %>

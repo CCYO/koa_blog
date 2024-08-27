@@ -1,11 +1,13 @@
-/* CSS Module ------------------------------------------------------------------------------- */
+/* CSS        ----------------------------------------------------------------------------- */
 import "@css/blog-edit.scss";
 
-/* Config Module ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
+/* COMMON     ----------------------------------------------------------------------------- */
+import G from "../common";
+
+/* CONFIG     ----------------------------------------------------------------------------- */
 import localeTw from "@config/const/wangeditor_locale_tw.json";
 
-/* NPM Module ------------------------------------------------------------------------------- */
+/* NPM        ----------------------------------------------------------------------------- */
 import SparkMD5 from "spark-md5";
 import {
   i18nAddResources,
@@ -14,8 +16,7 @@ import {
   createEditor,
 } from "@wangeditor/editor";
 
-/* Utils Module ----------------------------------------------------------------------------- */
-import G from "../common";
+/* UTILS      ----------------------------------------------------------------------------- */
 import {
   _Ajv,
   Debounce,
@@ -25,18 +26,16 @@ import {
   errorHandle,
 } from "../utils";
 
-/* Runtime ---------------------------------------------------------------------------------- */
+/* RUNTIME    ----------------------------------------------------------------------------- */
 try {
-  const $$ajv = new _Ajv(G.utils.axios);
-  G.page = "blog_edit";
-  G.constant = FRONTEND.BLOG_EDIT;
   G.utils._xss = _xss;
+  const $$ajv = new _Ajv(G.utils.axios);
   G.utils.validate = {
     img_alt: $$ajv._validate.img_alt,
     blog_img: $$ajv._validate.blog_img,
     blog: $$ajv._validate.blog,
   };
-  await G.main(initMain);
+  await G.initPage(initMain);
 } catch (error) {
   errorHandle(error);
 }
@@ -332,6 +331,10 @@ async function initMain() {
       }
       //  取得 name ext
       let _res = G.constant.REG.IMG_NAME_AND_EXT.exec(img.name);
+      if (!_res) {
+        alert("圖檔格式必須為PNG或JPG");
+        return false;
+      }
       let [_ = "", alt = "", ext] = _res;
       let validated_list = await G.utils.validate.blog_img({
         alt,
@@ -615,6 +618,10 @@ async function initMain() {
     if (!result.valid) {
       throw new Error(JSON.stringify(result));
     }
+    // 作為event_handle才詢問預覽
+    if (e instanceof Event && confirm("儲存成功！是否預覽？（新開視窗）")) {
+      window.open(`/blog/preview/${G.data.blog.id}`);
+    }
     payload.blog_id = G.data.blog.id;
     let { data } = await G.utils.axios.patch(
       G.constant.API.UPDATE_BLOG,
@@ -647,9 +654,7 @@ async function initMain() {
     }
     G.utils.lock.clear();
     G.utils.lock.check_submit();
-    if (confirm("儲存成功！是否預覽？（新開視窗）")) {
-      window.open(`/blog/preview/${G.data.blog.id}`);
-    }
+    alert("文章已更新");
     return;
   }
   //  關於 設定文章公開/隱藏時的操作

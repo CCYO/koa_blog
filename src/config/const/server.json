@@ -1,13 +1,13 @@
 {
   "SQUARE": {
     "PAGINATION": {
-      "BLOG_COUNT": 5,
+      "BLOG_COUNT": 2,
       "PAGE_COUNT": 2
     }
   },
   "ALBUM_LIST": {
     "PAGINATION": {
-      "BLOG_COUNT": 5,
+      "BLOG_COUNT": 2,
       "PAGE_COUNT": 2
     }
   },

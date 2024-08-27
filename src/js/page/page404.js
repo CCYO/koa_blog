@@ -1,14 +1,15 @@
-/* CSS Module ------------------------------------------------------------------------------- */
+/* CSS        ----------------------------------------------------------------------------- */
 import "@css/page404.scss";
 
-/* Utils Module ----------------------------------------------------------------------------- */
+/* COMMON     ----------------------------------------------------------------------------- */
 import G from "../common";
+
+/* UTILS      ----------------------------------------------------------------------------- */
 import { errorHandle } from "../utils";
 
-/* Runtime ---------------------------------------------------------------------------------- */
+/* RUNTIME    ----------------------------------------------------------------------------- */
 try {
-  G.page = "page404";
-  await G.main(initMain);
+  await G.initPage(initMain);
 } catch (error) {
   errorHandle(error);
 }
@@ -20,7 +21,7 @@ async function initMain() {
     let target = document.referrer;
     let someOrigin = target && new URL(target).origin === location.origin;
     //  404 || 通知已過期 || 需要登入權限 || 其他
-    let alertMsg = G.data.errModel.msg;
+    let alertMsg = G.data.errModel?.msg;
 
     if (someOrigin && !/\/permission/.test(target)) {
       // 是否來自同域

@@ -1,8 +1,11 @@
+//  將ejs傳入el[data-my-data]的純字符數據，轉化為物件數據
 //  初始化數據
 //  取得由 JSON.stringify(data) 轉譯過的純跳脫字符，
 //  如 { html: `<p>56871139</p>`}
 //     無轉譯 => { "html":"<p>56871139</p>") 會造成<p>直接渲染至頁面
 //     轉譯 => {&#34;html&#34;:&#34;&lt;p&gt;56871139&lt}
+
+/* CONSTANT --------------------------------------------------------------------------------- */
 const DATA_SET = "my-data";
 const SELECTOR = `[data-${DATA_SET}]`;
 const KEYS = {
@@ -10,7 +13,7 @@ const KEYS = {
   BLOG: "blog",
 };
 
-//  將ejs傳入el[data-my-data]的純字符數據，轉化為物件數據
+/* EXPORT MODULE ---------------------------------------------------------------------------- */
 export default function () {
   let $container = $(SELECTOR);
   if (!$container.length) {
