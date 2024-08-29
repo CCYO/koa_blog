@@ -19,7 +19,7 @@ try {
 }
 
 async function initMain() {
-  renderBlog();
+  await renderBlog();
   initComment();
   return;
 
@@ -304,21 +304,24 @@ async function initMain() {
       }
     }
   }
-  function renderBlog() {
+  async function renderBlog() {
     let active = G.data.active;
+
     if (active === "blog") {
-      $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg());
+      await insertHtml();
+      // $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg());
     } else if (active !== "blog-preview") {
       _preview();
     }
   }
-  function _preview() {
+  async function _preview() {
     let preview_key = new URL(location.href).searchParams.get(
       G.constant.PREVIEW_KEY
     );
     let { title, html } = JSON.parse(localStorage.getItem(preview_key));
     $(`.card-header > h1`).text(title);
-    $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg(html));
+    // $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg(html));
+    await insertHtml(html);
     localStorage.clear();
     G.utils.loading_backdrop.show({ blockPage: false });
   }
@@ -358,11 +361,13 @@ async function initMain() {
     }, 4000);
   }
 
-  function _parseHtmlStr_XImgToImg(htmlStr = G.data.blog.html) {
+  // function _parseHtmlStr_XImgToImg(htmlStr = G.data.blog.html) {
+  async function insertHtml(htmlStr = G.data.blog.html) {
     /* 將 <x-img> 數據轉回 <img> */
     //  複製一份htmlStr
     let reg = G.constant.REG.X_IMG_PARSE_TO_IMG;
     let res;
+    let fn_list = [];
     //  存放 reg 匹配後 的 img src 數據
     while ((res = reg.exec(htmlStr))) {
       let { alt_id, style } = res.groups;
@@ -373,11 +378,25 @@ async function initMain() {
       } = G.data.blog.map_imgs.get(alt_id * 1);
       let imgEle = `<img src="${url}?alt_id=${alt_id}" alt="${alt}" title="${alt}"`;
       let replaceStr = style ? `${imgEle} style="${style}"/>` : `${imgEle}/>`;
+
+      function cb() {
+        return new Promise((resolve) => {
+          let dom = document.querySelector(`[src="${url}?alt_id=${alt_id}"]`);
+          dom.onload = function () {
+            !process.env.isProd &&
+              console.log(`blog_alt: ${alt_id} load finish`);
+            return resolve();
+          };
+        });
+      }
+      fn_list.push(cb);
       //  修改 _html 內對應的 img相關字符
       htmlStr = htmlStr.replace(res[0], replaceStr);
       !process.env.isProd &&
         console.log(`html內blogImgAlt/${alt_id}的tag數據-----parse完成`);
     }
-    return htmlStr;
+    $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(htmlStr);
+    await Promise.all(fn_list.map((fn) => fn()));
+    return;
   }
 }

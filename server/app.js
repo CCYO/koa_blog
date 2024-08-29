@@ -1,3 +1,4 @@
+const { consola } = require("consola/basic");
 const { ENV } = require("./config");
 ////  NODE.JS MODULE
 const { resolve } = require("path");
@@ -68,7 +69,7 @@ app.use(router.routes(), router.allowedMethods());
 app.on("error", (error) => {
   if (error instanceof MyErr) {
     let { serverError } = error;
-    console.error(
+    consola.error(
       "\n----- -----\nMyErr.model:\n",
       error.model,
       "\n+++++ +++++\nnMyErr.stack:\n",
@@ -78,7 +79,7 @@ app.on("error", (error) => {
       "\n----- -----"
     );
   } else {
-    console.error("\n!!!!! !!!!!\nserverError:\n", error);
+    consola.error("\n!!!!! !!!!!\nserverError:\n", error);
   }
 });
 module.exports = app;

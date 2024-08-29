@@ -84,7 +84,7 @@ function _getListOfNeedRemove(list) {
   }
 }
 
-function _toNest(list, mode) {
+function _toNest(list) {
   //  存放 nest 結果的數據
   let tree = [];
   let copyList = deepCopy(list);

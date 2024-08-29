@@ -4,6 +4,7 @@ const C_Img = require("./img");
 const C_BlogImg = require("./blogImg");
 const C_BlogImgAlt = require("./blogImgAlt");
 const C_ArticleReader = require("./articleReader");
+const C_MsgReceiver = require("./msgReceiver");
 const { MyErr, ErrModel, SuccModel } = require("../utils/model");
 const { CACHE, ERR_RES, ENV } = require("../config");
 
@@ -108,12 +109,23 @@ async function modify({ blog_id, author_id, ...blog_data }) {
     if (newData.show) {
       newData.showAt = new Date();
       let { data: list } = await _addReadersFromFans(blog_id);
+      // 找出 msgReceiver
+      let res = await _findMsgReceiverListById(blog_id);
+      if (res) {
+        // 恢復軟刪除的msgReceiver
+        await C_MsgReceiver.restory(res.msgReceivers);
+      }
       if (cache && list.length) {
         cache[CACHE.TYPE.NEWS] = list;
       }
     } else {
       newData.showAt = null;
       await _destoryReaders(blog_id);
+      let res = await _findMsgReceiverListById(blog_id);
+      if (res) {
+        // 軟刪除msgReceiver
+        await C_MsgReceiver.removeList(res.msgReceivers);
+      }
     }
     go = true;
   }
@@ -411,4 +423,8 @@ async function checkPermission({ author_id, blog_id }) {
   }
   let opts = { data };
   return new SuccModel(opts);
+}
+
+async function _findMsgReceiverListById(blog_id) {
+  return await Blog.read(Opts.BLOG.FIND.msgReceiverListById(blog_id));
 }

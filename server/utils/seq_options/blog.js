@@ -3,12 +3,32 @@ const { Img, BlogImg, BlogImgAlt, User } = require("../../db/mysql/model");
 const _REMOVE = require("./_remove");
 const my_xss = require("../xss");
 const BACKEND = require("../../config");
+const { msgReceiver } = require("../init");
 
 const REMOVE = {
   list: _REMOVE.list,
 };
 
 const FIND = {
+  msgReceiverListById: (blog_id) => ({
+    attributes: ["id"],
+    where: { id: blog_id },
+    include: {
+      association: "replys",
+      attributes: ["id"],
+      include: {
+        model: User,
+        as: "receivers",
+        attributes: ["id"],
+        through: {
+          required: true,
+          attributes: ["id"],
+          // 無視軟刪除
+          paranoid: false,
+        },
+      },
+    },
+  }),
   permission: (id, paranoid) => ({
     where: { id },
     attributes: ["id", "author_id"],

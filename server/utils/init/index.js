@@ -76,6 +76,17 @@ function blog(data) {
     }
     if (map.has("replys")) {
       let list = comment(data.replys);
+      if (
+        list?.length &&
+        list[0].receivers?.length &&
+        list[0].receivers[0].MsgReceiver
+      ) {
+        blog.msgReceivers = list
+          .map(({ receivers }) =>
+            receivers.map(({ MsgReceiver }) => MsgReceiver.id)
+          )
+          .flat();
+      }
       blog.comment = _comment.toNest(list);
       delete blog.replys;
     }

@@ -1,4 +1,5 @@
 const _REMOVE = require("./_remove");
+const _RESTORE = require("./_restore");
 
 const CREATE = {
   bulk: (datas) => ({
@@ -21,7 +22,12 @@ const REMOVE = {
   list: _REMOVE.list,
 };
 
+const RESTORE = {
+  list: _RESTORE.list,
+};
+
 module.exports = {
+  RESTORE,
   REMOVE,
   CREATE,
 };

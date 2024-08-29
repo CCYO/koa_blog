@@ -14,6 +14,15 @@ async function bulkCreate({ datas, updateOnDuplicate }) {
   }
 }
 
+async function restory(opts) {
+  try {
+    // RV ROW
+    return await MsgReceiver.restore(opts);
+  } catch (error) {
+    throw new MyErr({ ...ERR_RES.MSG_RECEIVER.RESTORE.ERR, error });
+  }
+}
+
 async function destroyList(opts) {
   try {
     //  RV: row
@@ -34,6 +43,7 @@ async function update(id, newData) {
 
 module.exports = {
   update,
+  restory,
   destroyList,
   bulkCreate,
 };

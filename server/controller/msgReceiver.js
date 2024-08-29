@@ -20,7 +20,18 @@ async function removeList(list, force = false) {
   if (list.length !== row) {
     throw new MyErr({
       ...ERR_RES.MSG_RECEIVER.REMOVE.ROW,
-      error: `要刪除的list為 ${list}`,
+      error: `要刪除的MsgReceiver_list為 ${list}`,
+    });
+  }
+  return new SuccModel();
+}
+
+async function restory(list) {
+  let row = await MsgReceiver.restory(Opts.MSG_RECEIVER.RESTORE.list(list));
+  if (list.length !== row) {
+    throw new MyErr({
+      ...ERR_RES.MSG_RECEIVER.RESTORE.ROW_ERR,
+      error: `要restory的msgReceiver_list為 ${receiverList}`,
     });
   }
   return new SuccModel();
@@ -39,6 +50,7 @@ async function modify(id, newData) {
 
 module.exports = {
   modify,
+  restory,
   removeList,
   setList,
 };
