@@ -5,6 +5,7 @@ const C_BlogImg = require("./blogImg");
 const C_BlogImgAlt = require("./blogImgAlt");
 const C_ArticleReader = require("./articleReader");
 const C_MsgReceiver = require("./msgReceiver");
+const C_Comment = require("./comment");
 const { MyErr, ErrModel, SuccModel } = require("../utils/model");
 const { CACHE, ERR_RES, ENV } = require("../config");
 
@@ -108,24 +109,21 @@ async function modify({ blog_id, author_id, ...blog_data }) {
     newData.show = map.get("show");
     if (newData.show) {
       newData.showAt = new Date();
+      // 增加reader
       let { data: list } = await _addReadersFromFans(blog_id);
-      // 找出 msgReceiver
-      let res = await _findMsgReceiverListById(blog_id);
-      if (res) {
-        // 恢復軟刪除的msgReceiver
-        await C_MsgReceiver.restory(res.msgReceivers);
-      }
+      // 恢復軟刪除的MsgReceiver
+      await C_Comment.restoryReceiver(blog_id);
+      // await _restoryMsgReceiverList(blog_id);
       if (cache && list.length) {
         cache[CACHE.TYPE.NEWS] = list;
       }
     } else {
       newData.showAt = null;
+      // 軟刪除reader
       await _destoryReaders(blog_id);
-      let res = await _findMsgReceiverListById(blog_id);
-      if (res) {
-        // 軟刪除msgReceiver
-        await C_MsgReceiver.removeList(res.msgReceivers);
-      }
+      // 軟刪除MsgReceiver
+      await C_Comment.destoryReceiver(blog_id);
+      // await _removeMsgReceiverList(blog_id);
     }
     go = true;
   }
@@ -213,7 +211,10 @@ async function removeList({ blogList, author_id }) {
   await Promise.all(
     blogList.map((blog_id) => checkPermission({ author_id, blog_id }))
   );
+  // 軟刪除讀者(連同articleReader一併刪除)
   await Promise.all(blogList.map(_destoryReaders));
+  // 移除comment(連同MsgReceiver一併刪除)
+  await Promise.all(blogList.map(C_Comment.removeListInBlog));
   let row = await Blog.destroyList(Opts.BLOG.REMOVE.list(blogList));
   if (row !== blogList.length) {
     throw new MyErr(ERR_RES.BLOG.REMOVE.ROW);
@@ -423,8 +424,4 @@ async function checkPermission({ author_id, blog_id }) {
   }
   let opts = { data };
   return new SuccModel(opts);
-}
-
-async function _findMsgReceiverListById(blog_id) {
-  return await Blog.read(Opts.BLOG.FIND.msgReceiverListById(blog_id));
 }

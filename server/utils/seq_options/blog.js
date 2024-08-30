@@ -10,25 +10,6 @@ const REMOVE = {
 };
 
 const FIND = {
-  msgReceiverListById: (blog_id) => ({
-    attributes: ["id"],
-    where: { id: blog_id },
-    include: {
-      association: "replys",
-      attributes: ["id"],
-      include: {
-        model: User,
-        as: "receivers",
-        attributes: ["id"],
-        through: {
-          required: true,
-          attributes: ["id"],
-          // 無視軟刪除
-          paranoid: false,
-        },
-      },
-    },
-  }),
   permission: (id, paranoid) => ({
     where: { id },
     attributes: ["id", "author_id"],

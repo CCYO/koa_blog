@@ -2,6 +2,42 @@ const { Op } = require("sequelize");
 const xss = require("xss");
 const _REMOVE = require("./_remove");
 const FIND = {
+  _removeListInBlog: (article_id) => ({
+    where: { article_id },
+    attributes: ["id"],
+    include: {
+      association: "receivers",
+      attributes: ["id"],
+      through: {
+        attributes: ["id"],
+      },
+    },
+  }),
+  _receiverListForDestory: (article_id) => ({
+    where: { article_id },
+    attributes: ["id"],
+    include: {
+      association: "receivers",
+      attributes: ["id"],
+      through: {
+        attributes: ["id"],
+        required: true,
+      },
+    },
+  }),
+  _receiverListForRestory: (article_id) => ({
+    where: { article_id },
+    attributes: ["id"],
+    include: {
+      association: "receivers",
+      attributes: ["id"],
+      through: {
+        where: { deletedAt: { [Op.not]: null } },
+        attributes: ["id"],
+        paranoid: false,
+      },
+    },
+  }),
   _infoAboutItem: (id, paranoid = true) => ({
     where: { id },
     paranoid,

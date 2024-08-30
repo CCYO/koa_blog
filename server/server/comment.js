@@ -27,6 +27,7 @@ async function destroyList(opts) {
     throw new MyErr({ ...ERR_RES.COMMENT.REMOVE.ERR, error });
   }
 }
+
 module.exports = {
   destroyList,
   create,
