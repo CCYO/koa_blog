@@ -197,6 +197,10 @@ async function initMain() {
           } else {
             $(`[data-${G.constant.DATASET.KEY.PID}=0]`).prepend(html);
           }
+          // 顯示刪除鈕
+          $(
+            `button[data-${G.constant.DATASET.KEY.REMOVE_COMMENT}=${comment_id}]`
+          ).removeAttr("style");
           scrollToComment(comment_id);
         };
         //  為container綁定判斷登入狀態的handle
