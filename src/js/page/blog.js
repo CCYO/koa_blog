@@ -10,8 +10,12 @@ import { _Ajv, render, _xss, redir, errorHandle } from "../utils";
 /* NPM        ----------------------------------------------------------------------------- */
 import { createEditor } from "@wangeditor/editor";
 
+/* COMPONENT   ---------------------------------------------------------------------------- */
+import blog_htmlStr from "../component/blog_htmlStr";
+
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
+  G.utils.checkImgLoad = async function () {};
   G.utils.render = render[G.data.page];
   await G.initPage(initMain);
 } catch (error) {
@@ -312,25 +316,31 @@ async function initMain() {
     let active = G.data.active;
 
     if (active === "blog") {
-      await insertHtml();
+      let { htmlStr, checkImgLoad } = blog_htmlStr(G);
+      G.utils.checkImgLoad = checkImgLoad;
+      $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(htmlStr);
     } else if (active === "blog-preview") {
-      await _preview();
+      _preview();
     }
+    await G.utils.checkImgLoad();
   }
-  async function _preview() {
+  function _preview() {
     let preview_key = new URL(location.href).searchParams.get(
       G.constant.PREVIEW_KEY
     );
-    let data = localStorage.getItem(preview_key);
-    if (!data) {
-      alert(`必須回到文章編輯頁，重新點擊預覽頁，此視窗將自動關閉`);
+    let preview_data = localStorage.getItem(preview_key);
+    if (!preview_data) {
+      alert(`請回到文章編輯頁，重新點擊預覽頁，此視窗將自動關閉`);
       window.close();
       return;
     }
-    let { title, html } = JSON.parse(localStorage.getItem(preview_key));
-    localStorage.removeItem(preview_key);
+    let { title, html } = JSON.parse(preview_data);
+    G.data.blog.html = html;
     $(`.card-header > h1`).text(title);
-    await insertHtml(html);
+    let { htmlStr, checkImgLoad } = blog_htmlStr(G);
+    G.utils.checkImgLoad = checkImgLoad;
+    $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(htmlStr);
+    localStorage.removeItem(preview_key);
 
     document.addEventListener("initPage", () => {
       !process.env.isProd &&
@@ -372,47 +382,5 @@ async function initMain() {
     setTimeout(() => {
       $comment.removeAttr("style");
     }, 4000);
-  }
-
-  // function _parseHtmlStr_XImgToImg(htmlStr = G.data.blog.html) {
-  async function insertHtml(htmlStr = G.data.blog.html) {
-    /* 將 <x-img> 數據轉回 <img> */
-    //  複製一份htmlStr
-    let reg = G.constant.REG.X_IMG_PARSE_TO_IMG;
-    let res;
-    let loadImgs = [];
-    //  存放 reg 匹配後 的 img src 數據
-    while ((res = reg.exec(htmlStr))) {
-      let { alt_id, style } = res.groups;
-      //  MAP: alt_id → { alt, blogImg: {id, name}, img: {id, hash, url}}
-      let {
-        alt,
-        img: { url },
-      } = G.data.blog.map_imgs.get(alt_id * 1);
-      let imgEle = `<img src="${url}?alt_id=${alt_id}" alt="${alt}" title="${alt}"`;
-      let replaceStr = style ? `${imgEle} style="${style}"/>` : `${imgEle}/>`;
-
-      function loadImg() {
-        return new Promise((resolve) => {
-          let img = document.querySelector(`[src="${url}?alt_id=${alt_id}"]`);
-          if (img.complete) {
-            return complete();
-          }
-          img.onload = () => complete();
-          function complete() {
-            !process.env.isProd &&
-              console.log(`blogImgAlt/${alt_id} onload ---> finish`);
-            return resolve();
-          }
-        });
-      }
-
-      loadImgs.push(loadImg);
-      //  修改 _html 內對應的 img相關字符
-      htmlStr = htmlStr.replace(res[0], replaceStr);
-    }
-    $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(htmlStr);
-    await Promise.all(loadImgs.map((loadimg) => loadimg()));
-    return;
   }
 }

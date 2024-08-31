@@ -1,14 +1,14 @@
-/* COMMON Module ------------------------------------------------------------------------------ */
+/* COMMON     ----------------------------------------------------------------------------- */
 import _Axios from "./_axios";
 import Loading_backdrop from "./LoadingBackdrop";
 import News from "./news";
 import initNavbar from "./navbar";
 import initEJSData from "./initEJSData";
 
-/* CONFIG MODULE ---------------------------------------------------------------------------- */
+/* CONFIG     ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
 
-/* EXPORT MODULE ---------------------------------------------------------------------------- */
+/* EXPORT     ----------------------------------------------------------------------------- */
 export default class {
   utils = {};
   data = {};
@@ -40,7 +40,9 @@ export default class {
       loading_backdrop,
       axios: _axios,
     };
-    this.event = { initPage: event_initPage };
+    this.event = {
+      initPage: event_initPage,
+    };
     this.constant = FRONTEND[ejs_data.page];
     return this;
   }
@@ -52,9 +54,9 @@ export default class {
         if (!process.env.isProd) {
           window.G = this;
           console.log("initPage Event ---> dispatch");
+          console.log("===============【PAGE INIT FINISH】=================");
         }
         document.dispatchEvent(this.event.initPage);
-
         resolve();
       }, 0);
     });

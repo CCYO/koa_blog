@@ -26,8 +26,12 @@ import {
   errorHandle,
 } from "../utils";
 
+/* COMPONENT   ---------------------------------------------------------------------------- */
+import blog_htmlStr from "../component/blog_htmlStr";
+
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
+  G.utils.checkImgLoad = async function () {};
   G.utils._xss = _xss;
   const $$ajv = new _Ajv(G.utils.axios);
   G.utils.validate = {
@@ -54,9 +58,11 @@ async function initMain() {
   /* Public Var in Closure -------------------------------------------------------------------- */
   /* ------------------------------------------------------------------------------------------ */
   //  初始化 頁面各功能
+  G.data.loadImgs = [];
   G.utils.lock = initLock();
   G.utils.editor = create_editor();
   G.utils.loading_backdrop.insertEditors([G.utils.editor]);
+  await G.utils.loadImgs();
   //  整理圖片數據
   await initImgData();
   //  focus editor
@@ -192,10 +198,12 @@ async function initMain() {
         },
       },
     };
+    let { htmlStr, checkImgLoad } = blog_htmlStr(G);
+    G.utils.checkImgLoad = checkImgLoad;
     //  editor 編輯欄 創建
     const editor = createEditor({
       //  插入後端取得的 html
-      html: parseHtmlStr_XImgToImg() || "",
+      html: htmlStr || "",
       selector: `#${G.constant.ID.EDITOR_CONTAINER}`,
       config: editorConfig,
     });
@@ -442,27 +450,6 @@ async function initMain() {
       return true;
     }
 
-    function parseHtmlStr_XImgToImg() {
-      /* 將 <x-img> 數據轉回 <img> */
-      let htmlStr = G.data.blog.html;
-      //  複製一份htmlStr
-      let reg = G.constant.REG.X_IMG_PARSE_TO_IMG;
-      let res;
-      //  存放 reg 匹配後 的 img src 數據
-      while ((res = reg.exec(htmlStr))) {
-        let { alt_id, style } = res.groups;
-        //  MAP: alt_id → { alt, blogImg: {id, name}, img: {id, hash, url}}
-        let {
-          alt,
-          img: { url },
-        } = G.data.blog.map_imgs.get(alt_id * 1);
-        let imgEle = `<img src="${url}?alt_id=${alt_id}" alt="${alt}"`;
-        let replaceStr = style ? `${imgEle} style="${style}"/>` : `${imgEle}/>`;
-        //  修改 _html 內對應的 img相關字符
-        htmlStr = htmlStr.replace(res[0], replaceStr);
-      }
-      return htmlStr;
-    }
     //  handle：editor選區改變、內容改變時觸發
     async function handle_editorChange() {
       if (first) {
