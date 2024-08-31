@@ -23,14 +23,15 @@ export default class {
      */
     _axios.autoLoadingBackdrop = false;
     await initNavbar(ejs_data, _axios);
-    if (ejs_data.login) {
+    if (ejs_data.login && ejs_data.active !== "blog-preview") {
       let news = new News(_axios);
       this.utils.news = news;
       let { me } = await news.getLoginData();
       this.data.me = me;
       _axios.autoLoadingBackdrop = true;
       document.addEventListener("initPage", async () => {
-        console.log("initPage 調用 checkNewsMore");
+        !process.env.isProd &&
+          console.log("initPage handle ---> checkNewsMore");
         await news.checkNewsMore();
       });
     }
@@ -48,11 +49,12 @@ export default class {
     await this.utils.loading_backdrop.hidden();
     await new Promise((resolve) => {
       setTimeout(() => {
-        document.dispatchEvent(this.event.initPage);
         if (!process.env.isProd) {
           window.G = this;
-          console.log("initPage Event dispatch");
+          console.log("initPage Event ---> dispatch");
         }
+        document.dispatchEvent(this.event.initPage);
+
         resolve();
       }, 0);
     });

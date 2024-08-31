@@ -32,7 +32,7 @@ export default class {
       if (this.timeSet) {
         !process.env.isProd &&
           console.log(
-            `debounce/setTimeout【${this.timeSet}】 CB/${this.name} clearTimeout`
+            `debounce ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- cancel`
           );
         /* 取消上一次的 setTimeout */
         this.timeSet = clearTimeout(this.timeSet);
@@ -48,14 +48,14 @@ export default class {
           let result = await this.callback(...args);
           !process.env.isProd &&
             console.log(
-              `debounce/setTimeout【${this.timeSet}】 CB/${this.name} call finish`
+              `debounce ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- finish`
             );
           this.timeSet = undefined;
           resolve(result);
         } catch (e) {
           !process.env.isProd &&
             console.log(
-              `debounce/setTimeout【${this.timeSet}】CB/${this.name} error`
+              `debounce ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- catch error, and call error_handle`
             );
           this.timeSet = clearTimeout(this.timeSet);
           this.error_handle(e);
@@ -64,7 +64,7 @@ export default class {
       }, this.ms);
       !process.env.isProd &&
         console.log(
-          `debounce/setTimeout【${this.timeSet}】 CB/${this.name} ready`
+          `debounce ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- ready`
         );
     });
   }

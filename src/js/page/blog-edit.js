@@ -71,6 +71,7 @@ async function initMain() {
       return "1";
     }
   });
+
   $("#leave").on("click", beforeLeave);
   async function beforeLeave() {
     if (confirm("真的要放棄編輯?")) {
@@ -459,8 +460,6 @@ async function initMain() {
         let replaceStr = style ? `${imgEle} style="${style}"/>` : `${imgEle}/>`;
         //  修改 _html 內對應的 img相關字符
         htmlStr = htmlStr.replace(res[0], replaceStr);
-        !process.env.isProd &&
-          console.log(`html內blogImgAlt/${alt_id}的tag數據-----parse完成`);
       }
       return htmlStr;
     }

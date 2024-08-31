@@ -313,21 +313,30 @@ async function initMain() {
 
     if (active === "blog") {
       await insertHtml();
-      // $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg());
-    } else if (active !== "blog-preview") {
-      _preview();
+    } else if (active === "blog-preview") {
+      await _preview();
     }
   }
   async function _preview() {
     let preview_key = new URL(location.href).searchParams.get(
       G.constant.PREVIEW_KEY
     );
+    let data = localStorage.getItem(preview_key);
+    if (!data) {
+      alert(`必須回到文章編輯頁，重新點擊預覽頁，此視窗將自動關閉`);
+      window.close();
+      return;
+    }
     let { title, html } = JSON.parse(localStorage.getItem(preview_key));
+    localStorage.removeItem(preview_key);
     $(`.card-header > h1`).text(title);
-    // $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg(html));
     await insertHtml(html);
-    localStorage.clear();
-    G.utils.loading_backdrop.show({ blockPage: false });
+
+    document.addEventListener("initPage", () => {
+      !process.env.isProd &&
+        console.log("initPage handle ---> loading_backdrop.show");
+      G.utils.loading_backdrop.show({ blockPage: false });
+    });
   }
 
   //  若是因為comment通知前來此頁面，可以直接滑動至錨點
@@ -371,7 +380,7 @@ async function initMain() {
     //  複製一份htmlStr
     let reg = G.constant.REG.X_IMG_PARSE_TO_IMG;
     let res;
-    let fn_list = [];
+    let loadImgs = [];
     //  存放 reg 匹配後 的 img src 數據
     while ((res = reg.exec(htmlStr))) {
       let { alt_id, style } = res.groups;
@@ -383,24 +392,27 @@ async function initMain() {
       let imgEle = `<img src="${url}?alt_id=${alt_id}" alt="${alt}" title="${alt}"`;
       let replaceStr = style ? `${imgEle} style="${style}"/>` : `${imgEle}/>`;
 
-      function cb() {
+      function loadImg() {
         return new Promise((resolve) => {
-          let dom = document.querySelector(`[src="${url}?alt_id=${alt_id}"]`);
-          dom.onload = function () {
+          let img = document.querySelector(`[src="${url}?alt_id=${alt_id}"]`);
+          if (img.complete) {
+            return complete();
+          }
+          img.onload = () => complete();
+          function complete() {
             !process.env.isProd &&
-              console.log(`blog_alt: ${alt_id} load finish`);
+              console.log(`blogImgAlt/${alt_id} onload ---> finish`);
             return resolve();
-          };
+          }
         });
       }
-      fn_list.push(cb);
+
+      loadImgs.push(loadImg);
       //  修改 _html 內對應的 img相關字符
       htmlStr = htmlStr.replace(res[0], replaceStr);
-      !process.env.isProd &&
-        console.log(`html內blogImgAlt/${alt_id}的tag數據-----parse完成`);
     }
     $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(htmlStr);
-    await Promise.all(fn_list.map((fn) => fn()));
+    await Promise.all(loadImgs.map((loadimg) => loadimg()));
     return;
   }
 }

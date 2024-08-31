@@ -72,22 +72,22 @@ export default class {
     Object.defineProperty(this, "status", {
       get() {
         if (this.#id_list.total === 0) {
-          !process.env.isProd && console.log("讀取通知(初次調用)");
+          !process.env.isProd && console.log("請求news ---> 首次");
           return { status: FRONTEND.NAVBAR.NEWS.STATUS.FIRST };
         } else if (this.#auto) {
-          !process.env.isProd && console.log("讀取通知(定時自動調用)");
+          !process.env.isProd && console.log("請求news ---> 定時調用");
           return {
             status: FRONTEND.NAVBAR.NEWS.STATUS.CHECK,
             excepts: { ...this.#id_list },
           };
         } else if (this.db.total > this.#id_list.total) {
-          !process.env.isProd && console.log("讀取通知(主動調用)");
+          !process.env.isProd && console.log("請求news ---> 手動調用");
           return {
             status: FRONTEND.NAVBAR.NEWS.STATUS.AGAIN,
             excepts: { ...this.#id_list },
           };
         } else {
-          !process.env.isProd && console.log("讀取通知(主動調用)");
+          !process.env.isProd && console.log("請求news ---> 手動調用");
           return { status: FRONTEND.NAVBAR.NEWS.STATUS.CHECK };
         }
       },
@@ -294,8 +294,12 @@ class Render {
       ms: this.LOAD_NEWS,
     }));
 
-    //  啟動 readMore 自動循環
-    loop.start();
+    document.addEventListener("initPage", () => {
+      !process.env.isProd && console.log("initPage handle ---> loop.start");
+      //  啟動 readMore 自動循環
+      loop.start();
+    });
+
     // 頁面不被使用時，停止自動獲取news數據
     document.addEventListener("visibilitychange", (e) => {
       if (document.hidden) {
@@ -303,7 +307,6 @@ class Render {
       } else {
         loop.start();
       }
-      console.log("document.hidden", document.hidden);
     });
     //  為 BS5 下拉選單元件 註冊 hide.bs.dropdown handler(選單展開時回調)
     this.$newsDropdown[0].addEventListener("show.bs.dropdown", () => {

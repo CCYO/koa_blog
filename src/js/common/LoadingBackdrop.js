@@ -24,6 +24,7 @@ export default class {
     $("form button[type=submit]").removeAttr("disabled");
     $("form button[type=submit]").prop("disabled", true);
     this.$backdrop.removeAttr("style");
+    !process.env.isProd && console.log("loadingBackdrop ---> init");
     //  使backdrop的focus自動blur
     this.el_backdrop.addEventListener("focus", function (e) {
       e.preventDefault();
@@ -39,7 +40,7 @@ export default class {
         return resolve();
       });
     });
-    !process.env.isProd && console.log("loadingBackdrop hidden");
+    !process.env.isProd && console.log("loadingBackdrop ---> hidden");
   }
   //  顯示
   show(config) {
@@ -57,7 +58,7 @@ export default class {
       this.$backdrop.css("opacity", 0);
     }
     this.$backdrop.fadeIn();
-    !process.env.isProd && console.log("LoadingBackdrop show");
+    !process.env.isProd && console.log("LoadingBackdrop ---> show");
   }
   //  存入this.editors
   insertEditors(editors) {
