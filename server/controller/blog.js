@@ -307,10 +307,7 @@ async function findItemForNews(blog_id) {
   }
   let data = await Blog.read(Opts.BLOG.FIND.itemForNews(blog_id));
   if (!data) {
-    throw new MyErr({
-      ...ERR_RES.BLOG.READ.NOT_EXIST,
-      error: `blog/${blog_id} 不存在`,
-    });
+    return new ErrModel(ERR_RES.BLOG.READ.NOT_EXIST);
   }
   return new SuccModel({ data });
 }

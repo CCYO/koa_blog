@@ -287,7 +287,7 @@ async function remove({ user_id, comment_id }) {
 async function findInfoForNews(comment_id) {
   let info = await Comment.read(Opts.COMMENT.FIND._wholeInfo(comment_id));
   if (!info) {
-    throw new ErrModel(ERR_RES.COMMENT.READ.NOT_EXIST);
+    return new ErrModel(ERR_RES.COMMENT.READ.NOT_EXIST);
   }
   let { createdAt, pid, article } = info;
 
