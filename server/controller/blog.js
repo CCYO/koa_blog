@@ -4,7 +4,6 @@ const C_Img = require("./img");
 const C_BlogImg = require("./blogImg");
 const C_BlogImgAlt = require("./blogImgAlt");
 const C_ArticleReader = require("./articleReader");
-const C_MsgReceiver = require("./msgReceiver");
 const C_Comment = require("./comment");
 const { MyErr, ErrModel, SuccModel } = require("../utils/model");
 const { CACHE, ERR_RES, ENV } = require("../config");
@@ -45,7 +44,7 @@ async function findInfoForPrivatePage({ cache, blog_id, author_id }) {
 async function findInfoForCommonPage({ cache, blog_id, user_id }) {
   let { exist, data } = cache;
   if (exist === CACHE.STATUS.NO_CACHE) {
-    let resModel = await findInfoOfPublic({ blog_id, user_id });
+    let resModel = await _findWholeInfo({ blog_id, user_id });
     if (!resModel.errno) {
       resModel.data.html = encodeURI(
         resModel.data.html ? resModel.data.html : ""
@@ -55,21 +54,6 @@ async function findInfoForCommonPage({ cache, blog_id, user_id }) {
   } else {
     return new SuccModel({ data });
   }
-}
-/** 取得 blog 紀錄
- *
- * @param {number} blog_id blog id
- * @returns
- */
-async function findInfoOfPublic({ blog_id, user_id }) {
-  let data = await Blog.read(Opts.BLOG.FIND.wholeInfo(blog_id));
-  if (!data || (!data.show && data.author.id !== user_id)) {
-    return new ErrModel({
-      ...ERR_RES.BLOG.READ.NOT_EXIST,
-      msg: `blog/${blog_id}不存在`,
-    });
-  }
-  return new SuccModel({ data });
 }
 
 /** 建立 blog
@@ -92,7 +76,9 @@ async function add(title, author_id) {
  * @returns {object} SuccModel || ErrModel
  */
 async function modify({ blog_id, author_id, ...blog_data }) {
-  // let { title, cancelImgs = [], html, show } = blog_data
+  //  確認權限
+  await checkPermission({ author_id, blog_id });
+  //  let { title, cancelImgs = [], html, show } = blog_data
   let map = new Map(Object.entries(blog_data));
   let cache = undefined;
   if (!ENV.isNoCache) {
@@ -143,12 +129,11 @@ async function modify({ blog_id, author_id, ...blog_data }) {
   if (map.has("cancelImgs")) {
     let cancelImgs = map.get("cancelImgs");
     //  cancelImgs [{blogImg_id, blogImgAlt_list}, ...]
-    await _removeImgList({ author_id, blog_id, cancelImgs });
+    await _removeImgList(cancelImgs);
   }
-  let resModel = await checkPermission({ author_id, blog_id });
-  let data = resModel.data;
+  let { data } = await _findWholeInfo({ blog_id, user_id: author_id });
+  data.html = encodeURI(data.html ? data.html : "");
   let opts = { data };
-
   if (cache) {
     if (map.has("title") || map.has("show")) {
       cache[CACHE.TYPE.PAGE.USER] = [author_id];
@@ -208,13 +193,25 @@ async function removeList({ blogList, author_id }) {
   if (!Array.isArray(blogList) || !blogList.length) {
     throw new MyErr(ERR_RES.BLOG.REMOVE.NO_DATA);
   }
-  await Promise.all(
+  // 確認權限
+  let resModel_list = await Promise.all(
     blogList.map((blog_id) => checkPermission({ author_id, blog_id }))
   );
+  // 取得待刪除文章內的blogImg_id
+  let blogImg_id_list = resModel_list
+    .map((resModel) => {
+      let { imgs } = resModel.data;
+      // imgs: { alt_id: { alt, img: {id, url, hash}, blogImg: {id, name }}, ...}
+      return Object.values(imgs).map(({ blogImg }) => blogImg.id);
+    })
+    .flat();
+  // 移除blogImg
+  await C_BlogImg.removeList([...new Set(blogImg_id_list)]);
   // 軟刪除讀者(連同articleReader一併刪除)
   await Promise.all(blogList.map(_destoryReaders));
   // 移除comment(連同MsgReceiver一併刪除)
   await Promise.all(blogList.map(C_Comment.removeListInBlog));
+  // 移除blog
   let row = await Blog.destroyList(Opts.BLOG.REMOVE.list(blogList));
   if (row !== blogList.length) {
     throw new MyErr(ERR_RES.BLOG.REMOVE.ROW);
@@ -222,6 +219,7 @@ async function removeList({ blogList, author_id }) {
   let opts = {};
   if (!ENV.isNoCache) {
     opts.cache = {
+      [CACHE.TYPE.NEWS]: [author_id],
       [CACHE.TYPE.PAGE.USER]: [author_id],
       [CACHE.TYPE.PAGE.BLOG]: blogList,
     };
@@ -266,11 +264,14 @@ async function findListAndCountOfAlbum(opts) {
   }
   return new SuccModel({ data });
 }
+async function findListAndCount(opts) {
+  //  opts { user_id, show, offset, limit }
+  //  data {list, count}
+  let data = await Blog.readListAndCountAll(Opts.BLOG.FIND.listAndCount(opts));
+  return new SuccModel({ data });
+}
 async function findAlbum({ author_id, blog_id }) {
-  let resModel = await checkPermission({ author_id, blog_id });
-  if (resModel.errno) {
-    return resModel;
-  }
+  await checkPermission({ author_id, blog_id });
   let data = await Blog.read(Opts.BLOG.FIND.album(blog_id));
   if (data) {
     return new SuccModel({ data });
@@ -313,6 +314,23 @@ async function findItemForNews(blog_id) {
   }
   return new SuccModel({ data });
 }
+async function checkPermission({ author_id, blog_id }) {
+  let data = await Blog.read(Opts.BLOG.FIND.wholeInfo(blog_id));
+  if (!data) {
+    throw new MyErr({
+      ...ERR_RES.BLOG.READ.NOT_EXIST,
+      error: `blog/${blog_id}不存在`,
+    });
+  }
+  if (data.author.id !== author_id) {
+    throw new MyErr({
+      ...ERR_RES.BLOG.READ.NOT_AUTHOR,
+      error: `user/${author_id} 不是 blog/${blog_id} 的作者`,
+    });
+  }
+  let opts = { data };
+  return new SuccModel(opts);
+}
 module.exports = {
   confirmNews,
   findAlbum,
@@ -329,7 +347,7 @@ module.exports = {
   findListForPagination,
   findItemForNews,
 };
-async function _removeImgList({ blog_id, cancelImgs }) {
+async function _removeImgList(cancelImgs) {
   //  cancelImgs [ { blogImg_id, blogImgAlt_list: [alt_id, ...] }, ...]
   // try {
   //  確認blog_id是否真為author_id所有
@@ -401,27 +419,18 @@ async function _addReadersFromFans(blog_id) {
   let data = [...fansList, ...readers];
   return new SuccModel({ data });
 }
-
-async function findListAndCount(opts) {
-  //  opts { user_id, show, offset, limit }
-  //  data {list, count}
-  let data = await Blog.readListAndCountAll(Opts.BLOG.FIND.listAndCount(opts));
-  return new SuccModel({ data });
-}
-async function checkPermission({ author_id, blog_id }) {
+/** 取得 blog 紀錄
+ *
+ * @param {number} blog_id blog id
+ * @returns
+ */
+async function _findWholeInfo({ blog_id, user_id }) {
   let data = await Blog.read(Opts.BLOG.FIND.wholeInfo(blog_id));
-  if (!data) {
-    throw new MyErr({
+  if (!data || (!data.show && data.author.id !== user_id)) {
+    return new ErrModel({
       ...ERR_RES.BLOG.READ.NOT_EXIST,
-      error: `blog/${blog_id}不存在`,
+      msg: `blog/${blog_id}不存在`,
     });
   }
-  if (data.author.id !== author_id) {
-    throw new MyErr({
-      ...ERR_RES.BLOG.READ.NOT_AUTHOR,
-      error: `user/${author_id} 不是 blog/${blog_id} 的作者`,
-    });
-  }
-  let opts = { data };
-  return new SuccModel(opts);
+  return new SuccModel({ data });
 }
