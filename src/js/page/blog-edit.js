@@ -61,9 +61,9 @@ async function initMain() {
   await initImgData();
   //  focus editor
   G.utils.editor.focus();
-  let noBeforeunload = false;
+  G.data.saveWarn = true;
   window.addEventListener("beforeunload", (e) => {
-    if (!noBeforeunload && G.utils.lock.check_submit()) {
+    if (G.data.saveWarn && G.utils.lock.check_submit()) {
       e.preventDefault();
       // 過去有些browser必須給予e.returnValue字符值，才能使beforeunload有效運作
       e.returnValue = "mark";
@@ -77,7 +77,7 @@ async function initMain() {
       if (G.utils.lock.check_submit() && confirm("放棄編輯前是否儲存?")) {
         await handle_updateBlog();
       }
-      noBeforeunload = true;
+      G.data.saveWarn = false;
       location.replace("/self");
     }
   }
@@ -598,6 +598,7 @@ async function initMain() {
     };
     await G.utils.axios.delete(G.constant.API.UPDATE_BLOG, { data });
     alert("已成功刪除此篇文章，現在將跳往個人頁面");
+    G.data.saveWarn = false;
     location.href = "/self";
   }
 
