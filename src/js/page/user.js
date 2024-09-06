@@ -187,7 +187,7 @@ async function initMain() {
   //  登入狀態擁有的功能權限(追蹤、退追)
   function init_login_permission() {
     //  判端是否為自己的偶像
-    const isMyIdol = G.data.login
+    const isMyIdol = G.data.me
       ? G.data.relationShip.fansList.some((fans) => fans.id === G.data.me.id)
       : false;
     //  依據 isMyIdol 顯示 退追紐

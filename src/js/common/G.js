@@ -1,7 +1,7 @@
 /* COMMON     ----------------------------------------------------------------------------- */
 import _Axios from "./_axios";
 import Loading_backdrop from "./LoadingBackdrop";
-import News from "./news";
+// import News from "./news";
 import initNavbar from "./navbar";
 import initEJSData from "./initEJSData";
 
@@ -17,25 +17,29 @@ export default class {
     let event_initPage = new CustomEvent("initPage");
     let ejs_data = initEJSData();
     let loading_backdrop = new Loading_backdrop();
-    let _axios = new _Axios({ backdrop: loading_backdrop, G: this });
+    let _axios = new _Axios({
+      backdrop: loading_backdrop,
+      active: ejs_data.active,
+    });
     /**
      * G.init期間，LoadingBackdrop已開啟，故關閉_axios 的LoadingBackdrop auto
      */
     _axios.autoLoadingBackdrop = false;
-    await initNavbar(ejs_data, _axios);
-    if (ejs_data.login && ejs_data.active !== "blog-preview") {
-      let news = new News(_axios);
-      this.utils.news = news;
-      let { me } = await news.getLoginData();
-      this.data.me = me;
-      _axios.autoLoadingBackdrop = true;
-      document.addEventListener("initPage", async () => {
-        !process.env.isProd &&
-          console.log("initPage handle ---> checkNewsMore");
-        await news.checkNewsMore();
-      });
-    }
-    this.data = { ...this.data, ...ejs_data };
+    ejs_data.me = await initNavbar(ejs_data, _axios);
+    // if (ejs_data.login && ejs_data.active !== "blog-preview") {
+    //   let news = new News(_axios);
+    //   this.utils.news = news;
+    //   let { me } = await news.getLoginData();
+    //   this.data.me = me;
+    //   _axios.autoLoadingBackdrop = true;
+    //   document.addEventListener("initPage", async () => {
+    //     !process.env.isProd &&
+    //       console.log("initPage handle ---> checkNewsMore");
+    //     await news.checkNewsMore();
+    //   });
+    // }
+
+    this.data = ejs_data;
     this.utils = {
       loading_backdrop,
       axios: _axios,

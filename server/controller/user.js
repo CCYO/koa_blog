@@ -241,9 +241,11 @@ async function _findBlogListHasCommented(user_id) {
   return [...set_blogs];
 }
 async function _findInfoForUserPage(user_id, limit, offset) {
-  let {
-    data: { currentUser, fansList, idolList },
-  } = await _findRelationship(user_id);
+  let resModel = await _findRelationship(user_id);
+  if (resModel.errno) {
+    return resModel;
+  }
+  let { currentUser, fansList, idolList } = resModel.data;
   let options = {
     currentUser_id: user_id,
     author_id: user_id,
@@ -319,7 +321,7 @@ async function _findIdolList(fans_id) {
 async function _findRelationship(userId) {
   let resModel = await find(userId);
   if (resModel.errno) {
-    throw new MyErr(resModel);
+    return new ErrModel(resModel);
   }
   let { data: currentUser } = resModel;
   let { data: idolList } = await _findIdolList(userId);

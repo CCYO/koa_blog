@@ -19,10 +19,8 @@ export default class {
   ];
   IGNORE_NEWS = undefined;
 
-  constructor({ backdrop = undefined, G }) {
-    this.IGNORE_NEWS = this.#ACTIVE_WHITE_LIST.some(
-      (item) => item === G.data.active
-    );
+  constructor({ backdrop = undefined, active }) {
+    this.IGNORE_NEWS = this.#ACTIVE_WHITE_LIST.some((item) => item === active);
     let instance = axios.create();
     instance.backdrop = backdrop;
 

@@ -92,11 +92,12 @@ export default class {
         }
       },
     });
+  }
+  init() {
     let renderClass = new this.Render(this);
     this.checkNewsMore = renderClass.checkNewsMore.bind(renderClass);
     this.loop = renderClass.loop;
   }
-
   update({ list, num, hasNews }) {
     if (hasNews) {
       this.clear();

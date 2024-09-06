@@ -10,17 +10,46 @@ import News from "./news";
 const API_LOGOUT = "/api/user/logout";
 
 /* EXPORT MODULE ---------------------------------------------------------------------------- */
-export default async function ({ me, active }, _axios) {
-  if (ejs_data.login && ejs_data.active !== "blog-preview") {
-    let news = new News(_axios);
-    this.utils.news = news;
-    let { me } = await news.getLoginData();
-    this.data.me = me;
-    _axios.autoLoadingBackdrop = true;
+export default async function ({ active }, _axios) {
+  // if (ejs_data.login && ejs_data.active !== "blog-preview") {
+  //   let news = new News(_axios);
+  //   this.utils.news = news;
+  //   let { me } = await news.getLoginData();
+  //   this.data.me = me;
+  //   _axios.autoLoadingBackdrop = true;
+  //   document.addEventListener("initPage", async () => {
+  //     !process.env.isProd && console.log("initPage handle ---> checkNewsMore");
+  //     await news.checkNewsMore();
+  //   });
+  // }
+  let loginData;
+  let news;
+  if (!["login", "register", "blog-preview"].some((item) => item === active)) {
+    news = new News(_axios);
+    loginData = await news.getLoginData();
+  }
+  if (!loginData?.me) {
+    _renderLogoutNavBar(active);
+    return undefined;
+  } else {
+    _renderLoginNav(active);
+    await import(
+      /*webpackChunkName:'bootstrap-offcanvas'*/ "bootstrap/js/dist/offcanvas"
+    );
+    await import(
+      /*webpackChunkName:'bootstrap-dropdown'*/ "bootstrap/js/dist/dropdown"
+    );
+    news.init();
     document.addEventListener("initPage", async () => {
       !process.env.isProd && console.log("initPage handle ---> checkNewsMore");
       await news.checkNewsMore();
     });
+    //  初始化News功能
+    // news = newsClass.init();
+    //  登出功能
+    $("#logout").on("click", logout);
+
+    return loginData.me;
   }
 
   //  頁面初始化期間，loadingBackdrop統一由G管理，故標示_axios不需要調用loadingBackdrop

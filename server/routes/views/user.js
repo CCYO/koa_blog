@@ -75,7 +75,11 @@ router.get("/other/:id", CHECK.isSelf, commonCache, async (ctx) => {
     cache: ctx.cache,
     user_id: ctx.params.id * 1,
   };
-  let { data } = await User.findDataForUserPage(opts);
+  let resModel = await User.findDataForUserPage(opts);
+  if (resModel.errno) {
+    return ctx.redirect(`/permission/${resModel.errno}`);
+  }
+  let { data } = resModel;
   //  將 DB 數據賦予給 ctx.cache
   let { currentUser, relationShip, blogs } = (ctx.cache.data = data);
   //  非文章作者，所以不傳入未公開的文章
