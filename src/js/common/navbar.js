@@ -9,9 +9,9 @@ import { render } from "@js/utils";
 const API_LOGOUT = "/api/user/logout";
 
 /* EXPORT MODULE ---------------------------------------------------------------------------- */
-export default async function ({ login, active }, _axios) {
+export default async function ({ me, active }, _axios) {
   //  頁面初始化期間，loadingBackdrop統一由G管理，故標示_axios不需要調用loadingBackdrop
-  if (!login) {
+  if (!me) {
     _renderLogoutNavBar(active);
     return;
   }

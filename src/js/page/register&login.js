@@ -34,7 +34,7 @@ try {
   errorHandle(error);
 }
 
-async function initMain() {
+function initMain() {
   initNavTab();
   //  初始化 Register Form 功能
   initRegistFn(`#${G.constant.ID.REGISTER_FORM}`);
@@ -42,7 +42,7 @@ async function initMain() {
   initLoginFn(`#${G.constant.ID.LOGIN_FORM}`);
 
   document.addEventListener("initPage", () => {
-    // 頁面渲染結束後，檢視提醒
+    //   // 頁面渲染結束後，檢視提醒
     let params = new URL(location.href).searchParams;
     if (params.has(FRONTEND.REDIR.FROM)) {
       alert("需要登入才能使用頁面功能");

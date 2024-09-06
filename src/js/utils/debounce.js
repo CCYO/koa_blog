@@ -21,6 +21,7 @@ export default class {
     }
     this.callback = callback;
     this.debounce = this.#debounce.bind(this);
+    this.resolve = undefined;
   }
 
   //  setTimeout 標記
@@ -34,9 +35,12 @@ export default class {
           console.log(
             `debounce ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- cancel`
           );
+
         /* 取消上一次的 setTimeout */
-        this.timeSet = clearTimeout(this.timeSet);
-        resolve();
+        clearTimeout(this.timeSet);
+        this.resolve(null, this.timeSet);
+        this.timeSet = undefined;
+        // resolve();
       } else if (this.loading) {
         //  例如fn若是EventHandle，則代表可藉由args[0]取得event
         this.loading(...args);
@@ -51,7 +55,8 @@ export default class {
               `debounce ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- finish`
             );
           this.timeSet = undefined;
-          resolve(result);
+          this.resolve(result);
+          return;
         } catch (e) {
           !process.env.isProd &&
             console.log(
@@ -62,6 +67,17 @@ export default class {
           reject();
         }
       }, this.ms);
+      this.resolve = (result, timeSet) => {
+        if (timeSet) {
+          !process.env.isProd &&
+            console.log(`【${timeSet}】取消，仍調用resolve`);
+        } else {
+          !process.env.isProd &&
+            console.log(`【${this.timeSet}】成功延遲調用，調用resolve`);
+        }
+        resolve(result);
+        this.resolve = undefined;
+      };
       !process.env.isProd &&
         console.log(
           `debounce ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- ready`

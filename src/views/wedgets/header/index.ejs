@@ -8,6 +8,8 @@
   <title>
     <%= locals.title ? title : errModel.msg %>
   </title>
+
+  <%- include('./components/favicon') %>
   <!-- JetBrainsMono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,6 +20,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@200..900&display=swap" rel="stylesheet">
 </head>
 
-<body style="overflow: hidden;">
-  <%- include('./components/pageLoading') %>
+<!-- <body style="overflow: hidden;"> -->
+
+<body>
   <%- include('./components/navbar/index.ejs') %>
+  <%- include('./components/pageLoading.ejs') %>

@@ -16,13 +16,14 @@ export default class {
   async init() {
     let event_initPage = new CustomEvent("initPage");
     let ejs_data = initEJSData();
+    this.data = ejs_data;
     let loading_backdrop = new Loading_backdrop();
     let _axios = new _Axios({ backdrop: loading_backdrop, G: this });
     /**
      * G.init期間，LoadingBackdrop已開啟，故關閉_axios 的LoadingBackdrop auto
      */
     _axios.autoLoadingBackdrop = false;
-    await initNavbar(ejs_data, _axios);
+
     if (ejs_data.login && ejs_data.active !== "blog-preview") {
       let news = new News(_axios);
       this.utils.news = news;
@@ -35,6 +36,7 @@ export default class {
         await news.checkNewsMore();
       });
     }
+    await initNavbar(this.data, _axios);
     this.data = { ...this.data, ...ejs_data };
     this.utils = {
       loading_backdrop,

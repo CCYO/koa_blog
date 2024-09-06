@@ -56,17 +56,20 @@ async function initMain() {
   //  分頁功能
   initPagination(G);
   if (G.data.active === "self") {
-    //  文章創建、編輯、刪除功能
+    //   //  文章創建、編輯、刪除功能
     await init_self_permission();
-  } else {
-    //  追蹤、退追功能
-    init_login_permission();
   }
+  //  追蹤、退追功能
+  init_login_permission();
   //  追蹤名單better-scroll
   G.utils.betterScroll = initBetterScroll([$fansList, $idolList]);
-  //  刷新追蹤名單的滾動功能
-  await G.utils.betterScroll.refresh();
 
+  document.addEventListener("initPage", async () => {
+    await G.utils.betterScroll.refresh();
+  });
+  //  刷新追蹤名單的滾動功能
+
+  // =============================================================================================
   /*  初始化BetterScroll */
   function initBetterScroll(JQ_Eles) {
     class myBS {
@@ -158,10 +161,26 @@ async function initMain() {
         this.#list.off("touchendend.end");
       }
     }
+
     let bs_list = [...JQ_Eles].map(($el) => new myBS($el));
-    bs_list.refresh = async () =>
-      await Promise.all(bs_list.map((bs) => bs.refresh()));
-    window.addEventListener("resize", bs_list.refresh);
+    bs_list.refresh = async () => {
+      return await Promise.all(bs_list.map((bs) => bs.refresh()));
+    };
+    let _vW = document.documentElement.clientWidth;
+    async function handle_resize() {
+      let go = false;
+      let vW = document.documentElement.clientWidth;
+      if (_vW - vW !== 0) {
+        !process.env.isProd &&
+          console.log(`refresh by window, _vW:${_vW}, vW:${vW}`);
+        this._vW = vW;
+        go = true;
+      }
+      if (go) {
+        await bs_list.refresh();
+      }
+    }
+    window.addEventListener("resize", handle_resize);
     return bs_list;
   }
 
