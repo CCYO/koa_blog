@@ -4,12 +4,25 @@ import "@css/wedgets/navbar.scss";
 
 /* Utils  Module ----------------------------------------------------------------------------- */
 import { render } from "@js/utils";
+import News from "./news";
 
 /* CONSTANT --------------------------------------------------------------------------------- */
 const API_LOGOUT = "/api/user/logout";
 
 /* EXPORT MODULE ---------------------------------------------------------------------------- */
 export default async function ({ me, active }, _axios) {
+  if (ejs_data.login && ejs_data.active !== "blog-preview") {
+    let news = new News(_axios);
+    this.utils.news = news;
+    let { me } = await news.getLoginData();
+    this.data.me = me;
+    _axios.autoLoadingBackdrop = true;
+    document.addEventListener("initPage", async () => {
+      !process.env.isProd && console.log("initPage handle ---> checkNewsMore");
+      await news.checkNewsMore();
+    });
+  }
+
   //  頁面初始化期間，loadingBackdrop統一由G管理，故標示_axios不需要調用loadingBackdrop
   if (!me) {
     _renderLogoutNavBar(active);
