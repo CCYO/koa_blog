@@ -40,6 +40,7 @@ export default class {
         return resolve();
       });
     });
+    $("body").removeClass("wait");
     !process.env.isProd && console.log("loadingBackdrop ---> hidden");
   }
   //  顯示
@@ -53,6 +54,7 @@ export default class {
     if (editors.length) {
       this.insertEditors(editors);
     }
+    $("body").addClass("wait");
     this.#turnOffInteraction();
     if (!blockPage) {
       this.$backdrop.css("opacity", 0);

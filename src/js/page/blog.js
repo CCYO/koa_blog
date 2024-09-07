@@ -346,6 +346,8 @@ async function initMain() {
       !process.env.isProd &&
         console.log("initPage handle ---> loading_backdrop.show");
       G.utils.loading_backdrop.show({ blockPage: false });
+      // 移除loading_backdrop導致的滑鼠讀取狀態
+      $("body").removeClass("wait");
     });
   }
 

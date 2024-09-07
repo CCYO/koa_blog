@@ -26,6 +26,7 @@ export default class {
      */
     _axios.autoLoadingBackdrop = false;
     ejs_data.me = await initNavbar(ejs_data, _axios);
+    _axios.autoLoadingBackdrop = true;
     // if (ejs_data.login && ejs_data.active !== "blog-preview") {
     //   let news = new News(_axios);
     //   this.utils.news = news;
