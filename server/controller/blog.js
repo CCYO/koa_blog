@@ -41,10 +41,10 @@ async function findInfoForPrivatePage({ cache, blog_id, author_id }) {
     return new SuccModel({ data });
   }
 }
-async function findInfoForCommonPage({ cache, blog_id, user_id }) {
+async function findInfoForCommonPage({ cache, blog_id }) {
   let { exist, data } = cache;
   if (exist === CACHE.STATUS.NO_CACHE) {
-    let resModel = await _findWholeInfo({ blog_id, user_id });
+    let resModel = await _findWholeInfo({ blog_id });
     if (!resModel.errno) {
       resModel.data.html = encodeURI(
         resModel.data.html ? resModel.data.html : ""
@@ -131,7 +131,7 @@ async function modify({ blog_id, author_id, ...blog_data }) {
     //  cancelImgs [{blogImg_id, blogImgAlt_list}, ...]
     await _removeImgList(cancelImgs);
   }
-  let { data } = await _findWholeInfo({ blog_id, user_id: author_id });
+  let { data } = await _findWholeInfo({ blog_id });
   data.html = encodeURI(data.html ? data.html : "");
   let opts = { data };
   if (cache) {
@@ -421,9 +421,9 @@ async function _addReadersFromFans(blog_id) {
  * @param {number} blog_id blog id
  * @returns
  */
-async function _findWholeInfo({ blog_id, user_id }) {
+async function _findWholeInfo({ blog_id }) {
   let data = await Blog.read(Opts.BLOG.FIND.wholeInfo(blog_id));
-  if (!data || (!data.show && data.author.id !== user_id)) {
+  if (!data) {
     return new ErrModel({
       ...ERR_RES.BLOG.READ.NOT_EXIST,
       msg: `blog/${blog_id}不存在`,

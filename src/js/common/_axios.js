@@ -14,7 +14,7 @@ export default class {
     "login",
     "square",
     "other",
-    "blog-preview",
+    "blog",
     "permission",
   ];
   IGNORE_NEWS = undefined;

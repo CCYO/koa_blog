@@ -71,7 +71,6 @@ router.get("/blog/:id", commonCache, async (ctx) => {
     //  來自 privateCache
     cache: ctx.cache,
     blog_id: ctx.params.id * 1,
-    user_id: ctx.session.user?.id,
   };
   let { errno, data } = await Blog.findInfoForCommonPage(opts);
   if (errno) {

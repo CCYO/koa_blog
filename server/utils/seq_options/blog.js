@@ -3,7 +3,6 @@ const { Img, BlogImg, BlogImgAlt, User } = require("../../db/mysql/model");
 const _REMOVE = require("./_remove");
 const my_xss = require("../xss");
 const BACKEND = require("../../config");
-const { msgReceiver } = require("../init");
 
 const REMOVE = {
   list: _REMOVE.list,
@@ -17,7 +16,7 @@ const FIND = {
   }),
   wholeInfo: (id) => ({
     attributes: ["id", "title", "html", "show", "showAt", "updatedAt"],
-    where: { id },
+    where: { id, show: true },
     include: [
       {
         association: "author",
