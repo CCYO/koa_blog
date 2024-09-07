@@ -31,11 +31,15 @@ async function findListForPagination({
 }
 async function findInfoForPrivatePage({ cache, blog_id, author_id }) {
   let { exist, data } = cache;
+  let resModel;
   if (exist === CACHE.STATUS.NO_CACHE) {
-    return await checkPermission({ blog_id, author_id });
+    resModel = await checkPermission({ blog_id, author_id });
+  } else if (data.author.id !== author_id) {
+    resModel = new ErrModel(ERR_RES.BLOG.READ.NOT_AUTHOR);
   } else {
-    return new SuccModel({ data });
+    resModel = new SuccModel({ data });
   }
+  return resModel;
 }
 async function findInfoForCommonPage({ cache, blog_id }) {
   let { exist, data } = cache;

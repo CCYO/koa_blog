@@ -207,7 +207,7 @@ async function initMain() {
       config: editorConfig,
     });
     //  editor 工具欄 創建
-    const toolbar = createToolbar({
+    createToolbar({
       editor,
       selector: `#${G.constant.ID.EDITOR_TOOLBAR_CONTAINER}`,
       mode: "simple",
