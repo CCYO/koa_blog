@@ -7,6 +7,7 @@ export default class {
   timeSet = undefined;
   loading = undefined;
   args = [];
+  #loop = false;
   error_handle = errorHandle;
   /* 防抖動的函數工廠 */
   constructor(callback, config) {
@@ -46,6 +47,9 @@ export default class {
   }
   //  setTimeout 標記
   start() {
+    if (this.timeSet) {
+      return;
+    }
     //  創建call時，已將this綁定在實例上，故call若作為eventHandle使用，調用時的this也是指向實例
     //  args 是傳給 fn 的參數
     if (arguments.length) {
