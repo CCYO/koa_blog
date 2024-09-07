@@ -24,6 +24,9 @@ router.get("/permission/:errno", async (ctx) => {
     case ERR_RES.BLOG.READ.NOT_EXIST.errno:
       opts.errModel = new ErrModel(ERR_RES.BLOG.READ.NOT_EXIST);
       break;
+    case ERR_RES.BLOG.READ.NOT_AUTHOR.errno:
+      opts.errModel = new ErrModel(ERR_RES.BLOG.READ.NOT_AUTHOR);
+      break;
     case ERR_RES.COMMENT.READ.NOT_EXIST.errno:
       opts.errModel = new ErrModel(ERR_RES.COMMENT.READ.NOT_EXIST);
       break;

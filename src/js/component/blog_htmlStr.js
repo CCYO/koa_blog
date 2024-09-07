@@ -37,6 +37,8 @@ export default function parseHtmlStr_XImgToImg(G) {
     htmlStr = htmlStr.replace(res[0], replaceStr);
   }
   let checkImgLoad = () =>
-    Promise.all(imgLoad_list.map((imgLoad) => imgLoad()));
+    Promise.all(imgLoad_list.map((imgLoad) => imgLoad())).catch((e) => {
+      console.log(e);
+    });
   return { htmlStr, checkImgLoad };
 }

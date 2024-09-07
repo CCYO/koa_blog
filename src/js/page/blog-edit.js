@@ -58,11 +58,10 @@ async function initMain() {
   /* Public Var in Closure -------------------------------------------------------------------- */
   /* ------------------------------------------------------------------------------------------ */
   //  初始化 頁面各功能
-  G.data.loadImgs = [];
   G.utils.lock = initLock();
   G.utils.editor = create_editor();
+  await G.utils.checkImgLoad();
   G.utils.loading_backdrop.insertEditors([G.utils.editor]);
-  await G.utils.loadImgs();
   //  整理圖片數據
   await initImgData();
   //  focus editor
@@ -322,11 +321,15 @@ async function initMain() {
         let { message } = result.find(({ field_name }) => field_name === "alt");
         return message;
       }
-      await G.utils.axios.patch(G.constant.API.UPDATE_ALBUM, {
+      let { errno } = await G.utils.axios.patch(G.constant.API.UPDATE_ALBUM, {
         alt_id,
         blog_id: G.data.blog.id,
         alt: _xss.trim(new_alt),
       });
+      if (errno) {
+        location.href = `/permission/${errno}`;
+        return;
+      }
       //  尋找相同 alt_id
       let imgData = G.data.blog.map_imgs.get(alt_id);
       imgData.alt = alt;
@@ -582,7 +585,13 @@ async function initMain() {
     const data = {
       blogList: [G.data.blog.id],
     };
-    await G.utils.axios.delete(G.constant.API.UPDATE_BLOG, { data });
+    let { errno } = await G.utils.axios.delete(G.constant.API.UPDATE_BLOG, {
+      data,
+    });
+    if (errno) {
+      location.href = `/permission/${errno}`;
+      return;
+    }
     alert("已成功刪除此篇文章，現在將跳往個人頁面");
     G.data.saveWarn = false;
     location.href = "/self";
@@ -610,10 +619,14 @@ async function initMain() {
       window.open(`/blog/preview/${G.data.blog.id}`);
     }
     payload.blog_id = G.data.blog.id;
-    let { data } = await G.utils.axios.patch(
+    let { errno, data } = await G.utils.axios.patch(
       G.constant.API.UPDATE_BLOG,
       payload
     );
+    if (errno) {
+      location.href = `/permission/${errno}`;
+      return;
+    }
     let { title, html, show, time } = data;
     let newData = { title, html, show, time };
     //  畫面內容處理

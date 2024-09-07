@@ -47,7 +47,10 @@ module.exports = async (ctx, next) => {
         blog_id: ctx.request.body.blog_id,
       };
       // 找出原值比對
-      let { data } = await C_Blog.checkPermission(opts);
+      let resModel = await C_Blog.checkPermission(opts);
+      if (resModel.errno) {
+        throwErr(resModel, BLOG.UPDATE.AJV_UPDATE, method, to);
+      }
       // data { title, html, show };
       ctx.request.body._old = data;
       validate_result = await validator(TYPE.BLOG.UPDATE)(ctx.request.body);

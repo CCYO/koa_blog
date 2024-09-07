@@ -338,6 +338,7 @@ async function initMain() {
         },
       });
       if (errno) {
+        location.href = `/permission/${errno}`;
         return;
       }
       alert("刪除成功");

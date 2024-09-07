@@ -32,11 +32,7 @@ async function findListForPagination({
 async function findInfoForPrivatePage({ cache, blog_id, author_id }) {
   let { exist, data } = cache;
   if (exist === CACHE.STATUS.NO_CACHE) {
-    let resModel = await checkPermission({ blog_id, author_id });
-    resModel.data.html = encodeURI(
-      resModel.data.html ? resModel.data.html : ""
-    );
-    return resModel;
+    return await checkPermission({ blog_id, author_id });
   } else {
     return new SuccModel({ data });
   }
@@ -75,7 +71,10 @@ async function add(title, author_id) {
  */
 async function modify({ blog_id, author_id, ...blog_data }) {
   //  確認權限
-  await checkPermission({ author_id, blog_id });
+  let resModel = await checkPermission({ author_id, blog_id });
+  if (resModel.errno) {
+    return resModel;
+  }
   //  let { title, cancelImgs = [], html, show } = blog_data
   let map = new Map(Object.entries(blog_data));
   let cache = undefined;
@@ -194,6 +193,10 @@ async function removeList({ blogList, author_id }) {
   let resModel_list = await Promise.all(
     blogList.map((blog_id) => checkPermission({ author_id, blog_id }))
   );
+  let resModel = resModel_list.find(({ errno }) => errno);
+  if (resModel) {
+    return resModel;
+  }
   // 取得待刪除文章內的blogImg_id
   let blogImg_id_list = resModel_list
     .map((resModel) => {
@@ -268,7 +271,10 @@ async function findListAndCount(opts) {
   return new SuccModel({ data });
 }
 async function findAlbum({ author_id, blog_id }) {
-  await checkPermission({ author_id, blog_id });
+  let resModel = await checkPermission({ author_id, blog_id });
+  if (resModel.errno) {
+    return resModel;
+  }
   let data = await Blog.read(Opts.BLOG.FIND.album(blog_id));
   if (data) {
     return new SuccModel({ data });
@@ -309,21 +315,12 @@ async function findItemForNews(blog_id) {
   return new SuccModel({ data });
 }
 async function checkPermission({ author_id, blog_id }) {
-  let data = await Blog.read(Opts.BLOG.FIND.wholeInfo(blog_id));
-  if (!data) {
-    throw new MyErr({
-      ...ERR_RES.BLOG.READ.NOT_EXIST,
-      error: `blog/${blog_id}不存在`,
-    });
+  let resModel = await _findWholeInfo({ blog_id });
+  let { data } = resModel;
+  if (data && data.author.id !== author_id) {
+    resModel = new ErrModel(ERR_RES.BLOG.READ.NOT_AUTHOR);
   }
-  if (data.author.id !== author_id) {
-    throw new MyErr({
-      ...ERR_RES.BLOG.READ.NOT_AUTHOR,
-      error: `user/${author_id} 不是 blog/${blog_id} 的作者`,
-    });
-  }
-  let opts = { data };
-  return new SuccModel(opts);
+  return resModel;
 }
 module.exports = {
   confirmNews,
