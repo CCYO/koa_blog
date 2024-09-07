@@ -14,9 +14,9 @@ const FIND = {
     attributes: ["id", "author_id"],
     paranoid,
   }),
-  wholeInfo: (id, show = true) => ({
+  wholeInfo: (id) => ({
     attributes: ["id", "title", "html", "show", "showAt", "updatedAt"],
-    where: { id, show },
+    where: { id },
     include: [
       {
         association: "author",

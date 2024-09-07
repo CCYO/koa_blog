@@ -45,10 +45,8 @@ async function findInfoForCommonPage({ cache, blog_id }) {
   let { exist, data } = cache;
   if (exist === CACHE.STATUS.NO_CACHE) {
     let resModel = await _findWholeInfo({ blog_id });
-    if (!resModel.errno) {
-      resModel.data.html = encodeURI(
-        resModel.data.html ? resModel.data.html : ""
-      );
+    if (!resModel.errno && !resModel.data.show) {
+      resModel = new ErrModel(ERR_RES.BLOG.READ.NOT_EXIST);
     }
     return resModel;
   } else {
@@ -132,7 +130,6 @@ async function modify({ blog_id, author_id, ...blog_data }) {
     await _removeImgList(cancelImgs);
   }
   let { data } = await _findWholeInfo({ blog_id });
-  data.html = encodeURI(data.html ? data.html : "");
   let opts = { data };
   if (cache) {
     if (map.has("title") || map.has("show")) {
@@ -424,10 +421,8 @@ async function _addReadersFromFans(blog_id) {
 async function _findWholeInfo({ blog_id }) {
   let data = await Blog.read(Opts.BLOG.FIND.wholeInfo(blog_id));
   if (!data) {
-    return new ErrModel({
-      ...ERR_RES.BLOG.READ.NOT_EXIST,
-      msg: `blog/${blog_id}不存在`,
-    });
+    return new ErrModel(ERR_RES.BLOG.READ.NOT_EXIST);
   }
+  data.html = encodeURI(data.html ? data.html : "");
   return new SuccModel({ data });
 }
