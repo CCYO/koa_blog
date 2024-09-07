@@ -52,7 +52,7 @@ module.exports = async (ctx, next) => {
         throwErr(resModel, BLOG.UPDATE.AJV_UPDATE, method, to);
       }
       // data { title, html, show };
-      ctx.request.body._old = data;
+      ctx.request.body._old = resModel.data;
       validate_result = await validator(TYPE.BLOG.UPDATE)(ctx.request.body);
       if (!validate_result.valid) {
         throwErr(validate_result, BLOG.UPDATE.AJV_UPDATE, method, to);
