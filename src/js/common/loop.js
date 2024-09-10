@@ -1,28 +1,31 @@
-/* Utils  Module ----------------------------------------------------------------------------- */
+/**
+ * @description Loop Func
+ */
+
+/* UTILS      ----------------------------------------------------------------------------- */
 import errorHandle from "../utils/errorHandle";
 
-/* EXPORT MODULE ---------------------------------------------------------------------------- */
+/* EXPORT     ----------------------------------------------------------------------------- */
 export default class {
+  // 間隔時間
   ms = 5 * 1000 * 60;
-  timeSet = undefined;
+  // 過渡函數
   loading = undefined;
+  // setTimeout 紀錄
+  timeSet = undefined;
+  // Array，可以在constructor設定，也可以藉由loop.start更新
   args = [];
-  #loop = false;
-  error_handle = errorHandle;
-  /* 防抖動的函數工廠 */
+
   constructor(callback, config) {
     if (config) {
       this.name = config.name ? config.name : callback.name;
       this.ms = config.ms ? config.ms : this.ms;
       this.args = config.args ? config.args : this.args;
       this.loading = config.loading ? config.loading : this.loading;
-      this.error_handle = config.error_handle
-        ? config.error_handle
-        : this.error_handle;
     }
     this.callback = callback;
   }
-
+  //  停止loop
   stop() {
     if (this.timeSet) {
       !process.env.isProd &&
@@ -32,6 +35,7 @@ export default class {
       this.timeSet = clearTimeout(this.timeSet);
     }
   }
+  // 立刻執行一次
   async now() {
     this.stop();
     !process.env.isProd &&
@@ -45,7 +49,7 @@ export default class {
       );
     return res;
   }
-  //  setTimeout 標記
+  //  開始loop(設定setTimeout)
   start() {
     if (this.timeSet) {
       return;
@@ -72,10 +76,10 @@ export default class {
       } catch (e) {
         !process.env.isProd &&
           console.log(
-            `loop auto ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- catch error, and call error_handle`
+            `loop auto ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- catch error, and call errorHandle`
           );
         this.stop();
-        this.error_handle(e);
+        errorHandle(e);
       }
       return;
     }, this.ms);

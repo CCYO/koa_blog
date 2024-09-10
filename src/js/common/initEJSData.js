@@ -1,28 +1,26 @@
-//  將ejs傳入el[data-my-data]的純字符數據，轉化為物件數據
-//  初始化數據
-//  取得由 JSON.stringify(data) 轉譯過的純跳脫字符，
-//  如 { html: `<p>56871139</p>`}
-//     無轉譯 => { "html":"<p>56871139</p>") 會造成<p>直接渲染至頁面
-//     轉譯 => {&#34;html&#34;:&#34;&lt;p&gt;56871139&lt}
+/**
+ * @description 後端EJS模板傳入，要給JS使用的數據
+ */
 
-/* CONSTANT --------------------------------------------------------------------------------- */
+/* VAR        ----------------------------------------------------------------------------- */
 const DATA_SET = "my-data";
-const SELECTOR = `[data-${DATA_SET}]`;
+//  需要特別處理的數據
 const KEYS = {
-  ALBUM: "imgs",
-  BLOG: "blog",
+  //  album頁面的 imgs數據
+  ALBUM: ["imgs", "map_imgs"],
+  //  blog頁面的 blog 數據
+  BLOG: ["blog", "blog"],
 };
 
-/* EXPORT MODULE ---------------------------------------------------------------------------- */
+/* EXPORT     ----------------------------------------------------------------------------- */
 export default function () {
-  let $container = $(SELECTOR);
+  let $container = $(`[data-${DATA_SET}]`);
   if (!$container.length) {
     return;
   }
   //  收集存放ejs data的元素
   let $box_list = Array.from($container, (box) => $(box).first());
-  let ejs_data = {};
-  ejs_data = $box_list.reduce((ejs_data, $box) => {
+  let ejs_data = $box_list.reduce((ejs_data, $box) => {
     //  取得data-set，同時代表此數據的類型
     let key = $box.data(DATA_SET);
     //  該ejs數據元素內，所存放的數據種類名稱
@@ -37,19 +35,20 @@ export default function () {
       val = "";
     }
     //  統整ejs data
-    if (key === KEYS.BLOG) {
+    if (key === KEYS.BLOG[0]) {
       //  blog 數據
-      kv = { [key]: initBlog(val) };
-    } else if (key === KEYS.ALBUM) {
+      kv = { [KEYS.BLOG[1]]: initBlog(val) };
+    } else if (key === KEYS.ALBUM[0]) {
       //  album 數據
-      kv = { map_imgs: initAlbum(val) };
+      kv = { [KEYS.ALBUM[1]]: initAlbum(val) };
     } else {
       //  其餘數據
       kv = { [key]: val };
     }
-    return { ...ejs_data, ...kv };
+    ejs_data = { ...ejs_data, ...kv };
+    return ejs_data;
     //  儲存整理後的ejs數據
-  }, ejs_data);
+  }, {});
 
   $container.parent().remove();
   return ejs_data;
@@ -67,7 +66,7 @@ function initBlog(blog) {
   }
   //  對 blog.html(百分比編碼格式) 進行解碼
   if (blog.html) {
-    blog.html = parseBlogContent(blog.html);
+    blog.html = parseHTML(blog.html);
   }
   if (blog.showComment) {
     blog.map_comment = _initComment(blog.comment.list);
@@ -75,6 +74,7 @@ function initBlog(blog) {
   delete blog.comment;
   return blog; //  再將整體轉為字符
 
+  //  將 comment 數據 map化
   function _initComment(list) {
     class Comment extends Map {
       constructor(list) {
@@ -88,20 +88,17 @@ function initBlog(blog) {
     }
     return new Comment(list);
   }
-  //  因為「後端存放的blog.html數據」是以
-  //  1.百分比編碼存放
-  //  2.<img>是以<x-img>存放
-  //  所以此函數是用來將其轉化為一般htmlStr
-  function parseBlogContent(URI_String) {
-    /* 新創的文章會是空內容 */
+
+  function parseHTML(URI_String) {
+    //  新創的文章會是空內容
     if (!URI_String) {
       return "";
     }
-    //  百分比編碼 解碼
-    let res = decodeURI(URI_String);
-    return res;
+    //  後端blog.html數據內容，是以百分比編碼格式存放，需解碼
+    return decodeURI(URI_String);
   }
 }
+
 //  將 img 數據 map化
 function initImg(imgs) {
   let map = new Map();

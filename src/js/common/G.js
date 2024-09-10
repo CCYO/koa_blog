@@ -1,7 +1,10 @@
+/**
+ * @description 頁面初始化，集中管理需要的數據與功能
+ */
+
 /* COMMON     ----------------------------------------------------------------------------- */
 import _Axios from "./_axios";
 import Loading_backdrop from "./LoadingBackdrop";
-// import News from "./news";
 import initNavbar from "./navbar";
 import initEJSData from "./initEJSData";
 
@@ -10,49 +13,38 @@ import FRONTEND from "@config/frontend_esm";
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default class {
-  utils = {};
-  data = {};
-  event = {};
+  data;
+  constant;
+  utils;
+  event;
   async init() {
-    let event_initPage = new CustomEvent("initPage");
-    let ejs_data = initEJSData();
+    this.data = initEJSData();
+    let { page, active } = this.data;
+    this.constant = FRONTEND[page];
     let loading_backdrop = new Loading_backdrop();
     let _axios = new _Axios({
       backdrop: loading_backdrop,
-      active: ejs_data.active,
+      active,
     });
     /**
      * G.init期間，LoadingBackdrop已開啟，故關閉_axios 的LoadingBackdrop auto
      */
     _axios.autoLoadingBackdrop = false;
-    ejs_data.me = await initNavbar(ejs_data, _axios);
+    this.data.me = await initNavbar(active, _axios);
     _axios.autoLoadingBackdrop = true;
-    // if (ejs_data.login && ejs_data.active !== "blog-preview") {
-    //   let news = new News(_axios);
-    //   this.utils.news = news;
-    //   let { me } = await news.getLoginData();
-    //   this.data.me = me;
-    //   _axios.autoLoadingBackdrop = true;
-    //   document.addEventListener("initPage", async () => {
-    //     !process.env.isProd &&
-    //       console.log("initPage handle ---> checkNewsMore");
-    //     await news.checkNewsMore();
-    //   });
-    // }
-
-    this.data = ejs_data;
     this.utils = {
       loading_backdrop,
       axios: _axios,
     };
     this.event = {
-      initPage: event_initPage,
+      // 頁面初始化完成事件
+      initPage: new CustomEvent("initPage"),
     };
-    this.constant = FRONTEND[ejs_data.page];
+
     return this;
   }
-  async initPage(fn) {
-    fn && (await fn());
+  async initPage(initMain) {
+    initMain && (await initMain());
     await this.utils.loading_backdrop.hidden();
     await new Promise((resolve) => {
       setTimeout(() => {

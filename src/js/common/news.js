@@ -1,20 +1,23 @@
-/* CONFIG Module ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
-
-/* COMMON Module ----------------------------------------------------------------------------- */
+/* COMMON     ----------------------------------------------------------------------------- */
 import Loop from "./loop";
 import { render } from "@js/utils";
 
-/* NPM    Module ------------------------------------------------------------------------------- */
+/* CONFIG     ----------------------------------------------------------------------------- */
+import FRONTEND from "@config/frontend_esm";
+
+/* NPM        ----------------------------------------------------------------------------- */
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/zh-tw";
 
-/* EXPORT MODULE ---------------------------------------------------------------------------- */
+/* EXPORT     ----------------------------------------------------------------------------- */
 export default class {
   #API = `/api/news`;
+  // 是否第一次調用
+  #first = false;
+  // 是否自動調用
   #auto = false;
-  #init = false;
+  // 上一次請求，是否以獲取後端所有unconfirm
   #checkNews = false;
   db = _count();
   #id_list = Object.defineProperties(
@@ -73,7 +76,7 @@ export default class {
     });
     Object.defineProperty(this, "status", {
       get() {
-        if (!this.#init) {
+        if (!this.#first) {
           !process.env.isProd && console.log("news ---> 首次");
           return { status: FRONTEND.NAVBAR.NEWS.STATUS.FIRST };
         } else if (this.#checkNews) {
@@ -106,7 +109,7 @@ export default class {
     let renderClass = new this.Render(this);
     this.checkNewsMore = renderClass.checkNewsMore.bind(renderClass);
     this.loop = renderClass.loop;
-    this.#init = true;
+    this.#first = true;
   }
   update({ list, num, hasNews }) {
     if (hasNews) {
@@ -119,7 +122,6 @@ export default class {
       this.htmlStr.update(list, isConfirm);
     }
     this.db = num;
-    // this.#auto = false;
   }
   clear() {
     this.htmlStr.clear();
@@ -157,6 +159,7 @@ export default class {
     // 自動調用前，從前一次與後端取得的資料若已確認後端沒有新通知了，auto設為false
     this.#auto = auto;
     if (auto) {
+      // 若已經獲取後端所有unconfirm，此次請求僅再次確認後端是否有unconfirm
       this.axios.autoLoadingBackdrop = false;
       this.#checkNews =
         this.db.unconfirm -
@@ -170,6 +173,8 @@ export default class {
     if (!errno) {
       this.update(data.news);
       return data;
+    } else {
+      return undefined;
     }
   }
   //  confirm news

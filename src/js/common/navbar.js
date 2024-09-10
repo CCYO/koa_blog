@@ -1,70 +1,33 @@
-/* 初始化 通知列表 功能 */
-/* CSS    Module ------------------------------------------------------------------------------- */
+/**
+ * NAVBAR & NEWS
+ */
+
+/* CSS        ----------------------------------------------------------------------------- */
 import "@css/wedgets/navbar.scss";
 
-/* Utils  Module ----------------------------------------------------------------------------- */
+/* UTILS      ----------------------------------------------------------------------------- */
 import { render } from "@js/utils";
 import News from "./news";
 
-/* CONSTANT --------------------------------------------------------------------------------- */
+/* VAR        ----------------------------------------------------------------------------- */
 const API_LOGOUT = "/api/user/logout";
+// 不允許登入權限的頁面
+const logoutPage = ["login", "register"];
 
-/* EXPORT MODULE ---------------------------------------------------------------------------- */
-export default async function ({ active }, _axios) {
-  // if (ejs_data.login && ejs_data.active !== "blog-preview") {
-  //   let news = new News(_axios);
-  //   this.utils.news = news;
-  //   let { me } = await news.getLoginData();
-  //   this.data.me = me;
-  //   _axios.autoLoadingBackdrop = true;
-  //   document.addEventListener("initPage", async () => {
-  //     !process.env.isProd && console.log("initPage handle ---> checkNewsMore");
-  //     await news.checkNewsMore();
-  //   });
-  // }
+/* EXPORT     ----------------------------------------------------------------------------- */
+export default async function (active, _axios) {
   let loginData;
   let news;
-  if (!["login", "register", "blog-preview"].some((item) => item === active)) {
+  if (!logoutPage.some((item) => item === active)) {
     news = new News(_axios);
     loginData = await news.getLoginData();
   }
-  if (!loginData?.me) {
+  // 未登入狀態
+  if (!loginData) {
     _renderLogoutNavBar(active);
     return undefined;
-  } else {
-    _renderLoginNav(active);
-    await import(
-      /*webpackChunkName:'bootstrap-offcanvas'*/ "bootstrap/js/dist/offcanvas"
-    );
-    await import(
-      /*webpackChunkName:'bootstrap-dropdown'*/ "bootstrap/js/dist/dropdown"
-    );
-    news.init();
-    document.addEventListener("initPage", async () => {
-      !process.env.isProd && console.log("initPage handle ---> checkNewsMore");
-      await news.checkNewsMore();
-    });
-    //  初始化News功能
-    // news = newsClass.init();
-    //  登出功能
-    $("#logout").on("click", logout);
-
-    return loginData.me;
   }
-
-  //  頁面初始化期間，loadingBackdrop統一由G管理，故標示_axios不需要調用loadingBackdrop
-  if (!me) {
-    _renderLogoutNavBar(active);
-    return;
-  }
-  /**
-   * 此module由G.init調用，而G.init已開啟LoadingBackdrop
-   * 故需關閉_axios 的LoadingBackdrop auto
-   */
-  // _axios.autoLoadingBackdrop = false;
-  // let newsClass = new News(_axios);
-  // let { me, news } = await newsClass.getLoginData();
-  // _axios.autoLoadingBackdrop = true;
+  // 登入狀態
   _renderLoginNav(active);
   await import(
     /*webpackChunkName:'bootstrap-offcanvas'*/ "bootstrap/js/dist/offcanvas"
@@ -72,12 +35,16 @@ export default async function ({ active }, _axios) {
   await import(
     /*webpackChunkName:'bootstrap-dropdown'*/ "bootstrap/js/dist/dropdown"
   );
-
   //  初始化News功能
-  // news = newsClass.init();
+  news.init();
+  document.addEventListener("initPage", async () => {
+    !process.env.isProd && console.log("initPage handle ---> checkNewsMore");
+    await news.checkNewsMore();
+  });
   //  登出功能
   $("#logout").on("click", logout);
-  // return { me, news };
+  // 僅返回me
+  return loginData.me;
 
   async function logout() {
     if (!confirm("真的要登出?")) {
