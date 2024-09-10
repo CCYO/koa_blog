@@ -433,7 +433,7 @@ async function _findLastItemOfPidAndNotSelf(
   pid
 ) {
   let comment = await Comment.read(
-    Opts.COMMENT._findLastItemOfPidAndNotSelf(
+    Opts.COMMENT.FIND._lastItemOfPidAndNotSelf(
       article_id,
       commenter_id,
       time,

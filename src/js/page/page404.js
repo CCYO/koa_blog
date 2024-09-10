@@ -15,6 +15,7 @@ try {
 }
 
 async function initMain() {
+  // 網址自動跳轉
   document.addEventListener("initPage", redir);
 
   function redir() {

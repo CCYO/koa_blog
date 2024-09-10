@@ -35,25 +35,23 @@ try {
 }
 
 function initMain() {
+  //  初始化 NavTab
   initNavTab();
   //  初始化 Register Form 功能
   initRegistFn(`#${G.constant.ID.REGISTER_FORM}`);
   //  初始化 Login Form 功能
   initLoginFn(`#${G.constant.ID.LOGIN_FORM}`);
 
+  //  提示需登入權限
   document.addEventListener("initPage", () => {
-    //   // 頁面渲染結束後，檢視提醒
     let params = new URL(location.href).searchParams;
     if (params.has(FRONTEND.REDIR.FROM)) {
       alert("需要登入才能使用頁面功能");
     }
   });
-  /* ------------------------------------------------------------------------------------------ */
-  /* Init ------------------------------------------------------------------------------------ */
-  /* ------------------------------------------------------------------------------------------ */
 
+  // 初始化 NavTab
   function initNavTab() {
-    let selectorList = ["register", "login"];
     let navTab_login = document.querySelector(`[data-my-tab="#login"]`);
     let navTab_register = document.querySelector(`[data-my-tab="#register"]`);
     let $navTab_login = $(navTab_login);
@@ -124,6 +122,7 @@ function initMain() {
       }
       return;
     }
+
     /* 登入表單內容表格的 input Event handler */
     async function handle_input_login(e) {
       e.preventDefault();
@@ -143,6 +142,7 @@ function initMain() {
       return;
     }
   }
+
   /* 初始化 Register Form 功能 */
   function initRegistFn(form_id) {
     const form = document.querySelector(form_id);
@@ -153,6 +153,7 @@ function initMain() {
     _add_form_debounce_inputEvent_handler(form, handle_input_register);
     //  為 form 註冊 submitEvent handler
     form.addEventListener("submit", handle_submit_register);
+
     /* 註冊表單 submit Event handler */
     async function handle_submit_register(e) {
       e.preventDefault();
@@ -189,6 +190,7 @@ function initMain() {
       }
       return status;
     }
+
     /* 註冊表單內容表格的 input Event handler */
     async function handle_input_register(e) {
       e.preventDefault();
@@ -218,9 +220,9 @@ function initMain() {
     }
   }
 
-  /* genFn => 處理校驗錯誤 ..............*/
+  // 處理校驗錯誤
   function _gen_form_lock(form) {
-    /* 管理form可否submit的鎖 */
+    //  管理form可否submit
     class Lock {
       constructor(form) {
         let $form = $(form);

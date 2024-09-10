@@ -1,13 +1,20 @@
-/*  初始化文章列表的分頁功能 */
-/* CSS    MODULE ------------------------------------------------------------------------------- */
+/**
+ * @description 文章列表的分頁功能
+ */
+
+/* CSS        ----------------------------------------------------------------------------- */
 import "@css/component/pagination";
 
-import FRONTEND from "@config/frontend_esm";
+/* UTILS      ----------------------------------------------------------------------------- */
 import { render } from "../utils";
-/* EXPORT MODULE ---------------------------------------------------------------------------- */
+
+/* CONFIG     ----------------------------------------------------------------------------- */
+import FRONTEND from "@config/frontend_esm";
+
+/* EXPORT     ----------------------------------------------------------------------------- */
 export default function (G) {
-  let pageConst = G.constant;
-  let template_blogList = render[G.data.page].blogList;
+  const pageConst = G.constant;
+  const template_blogList = render[G.data.page].blogList;
   let author_id = undefined;
   let pageData = undefined;
   switch (G.data.page) {

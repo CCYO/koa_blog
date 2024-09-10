@@ -24,54 +24,46 @@ import initPagination from "../component/pagination";
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
   const $$ajv = new _Ajv(G.utils.axios);
-  G.utils.render = render[G.data.page];
   G.utils.validate = {
     blog_title: $$ajv._validate.blog_title,
   };
+  G.utils.render = render[G.data.page];
   await G.initPage(initMain);
 } catch (error) {
   errorHandle(error);
 }
 
 async function initMain() {
-  /* ------------------------------------------------------------------------------------------ */
-  /* JQ Ele in Closure -------------------------------------------------------------------- */
-  /* ------------------------------------------------------------------------------------------ */
   let $input_new_blog_title = $(`#${G.constant.ID.NEW_BLOG_TITLE}`);
   let $btn_new_blog = $(`#${G.constant.ID.NEW_BLOG}`);
+  //  粉絲列表contaner
   let $fansList = $(`#${G.constant.ID.FANS_LIST}`);
-  // //  粉絲列表contaner
-  let $idolList = $(`#${G.constant.ID.IDOL_LIST}`);
   //  偶像列表contaner
-  let $btn_follow = $(`#${G.constant.ID.FOLLOW}`);
+  let $idolList = $(`#${G.constant.ID.IDOL_LIST}`);
   //  追蹤鈕
-  let $btn_cancelFollow = $(`#${G.constant.ID.CANCEL_FOLLOW}`);
+  let $btn_follow = $(`#${G.constant.ID.FOLLOW}`);
   //  退追鈕
-  let $div_blogList = $(`[data-${G.constant.DATASET.KEY.BLOG_STATUS}]`);
+  let $btn_cancelFollow = $(`#${G.constant.ID.CANCEL_FOLLOW}`);
   //  文章列表container
-
-  /* ------------------------------------------------------------------------------------------ */
-  /* Public Var in Closure -------------------------------------------------------------------- */
-  /* ------------------------------------------------------------------------------------------ */
+  let $div_blogList = $(`[data-${G.constant.DATASET.KEY.BLOG_STATUS}]`);
+  if (G.data.active === "self") {
+    //  文章創建、編輯、刪除功能
+    await init_self();
+  } else {
+    //  追蹤、退追功能
+    init_other();
+  }
   //  分頁功能
   initPagination(G);
-  if (G.data.active === "self") {
-    //   //  文章創建、編輯、刪除功能
-    await init_self_permission();
-  }
-  //  追蹤、退追功能
-  init_login_permission();
-  //  追蹤名單better-scroll
-  G.utils.betterScroll = initBetterScroll([$fansList, $idolList]);
-
+  //  初始化追蹤名單BetterScroll功能
+  G.utils.betterScroll = init_BS([$fansList, $idolList]);
+  //  刷新追蹤名單的滾動功能
   document.addEventListener("initPage", async () => {
     await G.utils.betterScroll.refresh();
   });
-  //  刷新追蹤名單的滾動功能
 
-  // =============================================================================================
-  /*  初始化BetterScroll */
-  function initBetterScroll(JQ_Eles) {
+  // 初始化BetterScroll
+  function init_BS(JQ_Eles) {
     class myBS {
       options = {
         click: true,
@@ -184,8 +176,8 @@ async function initMain() {
     return bs_list;
   }
 
-  //  登入狀態擁有的功能權限(追蹤、退追)
-  function init_login_permission() {
+  //  追蹤、退追功能
+  function init_other() {
     //  判端是否為自己的偶像
     const isMyIdol = G.data.me
       ? G.data.relationShip.fansList.some((fans) => fans.id === G.data.me.id)
@@ -199,9 +191,6 @@ async function initMain() {
     //  為btn註冊clickEvent handler
     $btn_cancelFollow.on("click", cancelFollow);
 
-    /* ------------------------------------------------------------------------------------------ */
-    /* Handle ------------------------------------------------------------------------------------ */
-    /* ------------------------------------------------------------------------------------------ */
     //  追蹤
     async function follow() {
       //  檢查登入狀態
@@ -233,6 +222,7 @@ async function initMain() {
       alert("已追蹤");
       return;
     }
+
     //  退追
     async function cancelFollow() {
       //  檢查登入狀態
@@ -271,7 +261,7 @@ async function initMain() {
   }
 
   //  登入者本人頁面功能權限(建立/刪除文章)
-  async function init_self_permission() {
+  async function init_self() {
     //  禁用 創建文章鈕
     $btn_new_blog.prop("disabled", true);
     await import(
@@ -300,9 +290,6 @@ async function initMain() {
     //  為btn註冊clickEvent handler
     $div_blogList.on("click", handle_removeBlogs);
 
-    /* ------------------------------------------------------------------------------------------ */
-    /* Handle ------------------------------------------------------------------------------------ */
-    /* ------------------------------------------------------------------------------------------ */
     //  刪除文章
     async function handle_removeBlogs(e) {
       let $target = $(e.target);
@@ -342,9 +329,10 @@ async function initMain() {
         return;
       }
       alert("刪除成功");
-      location.reload();
       //  刷新頁面
+      location.reload();
     }
+
     //  創建文章
     async function handle_createBlog(e) {
       e && e.preventDefault();

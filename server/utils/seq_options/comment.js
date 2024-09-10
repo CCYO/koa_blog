@@ -93,6 +93,25 @@ const FIND = {
       where: { id: author_id },
     },
   }),
+  _lastItemOfPidAndNotSelf: (article_id, commenter_id, time, pid) => ({
+    attributes: [
+      "id",
+      "html",
+      "article_id",
+      "commenter_id",
+      "updatedAt",
+      "createdAt",
+      "deletedAt",
+      "pid",
+    ],
+    where: {
+      article_id,
+      commenter_id: { [Op.not]: commenter_id },
+      createdAt: { [Op.lte]: time },
+      pid,
+    },
+    order: [["createdAt", "DESC"]],
+  }),
   lastItemOfNotSelf: (article_id, commenter_id, time) => ({
     attributes: [
       "id",

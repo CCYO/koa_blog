@@ -19,6 +19,7 @@ import SparkMD5 from "spark-md5";
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
+  G.utils.bs5_modal = undefined;
   const $$ajv = new _Ajv(G.utils.axios);
   G.utils.validate = {
     setting: $$ajv._validate.setting,
@@ -31,17 +32,13 @@ try {
 }
 
 async function initMain() {
-  /* ------------------------- 公用常數 ------------------------- */
-
-  /* ------------------------- 公用變量 ------------------------- */
   let el_origin_password = document.querySelector(
     `[name=${G.constant.NAME.ORIGIN_PASSWORD}]`
   );
   let el_password_again = $(`[name=password_again]`).get(0);
-  let el_model = document.querySelector(
+  let el_check_origin_password_model = document.querySelector(
     `#${G.constant.ID.MODAL_ORIGIN_PASSWORD}`
   );
-  /* ------------------------- 公用 JQ Ele ------------------------- */
   let $avatar = $("#avatar");
   let $avatar_previes = $("#avatar-img");
   let $newPasswordList = $("[name=password], [name=password_again]");
@@ -50,6 +47,7 @@ async function initMain() {
   let jq_settingForm = $("#setting");
 
   let noBeforeunload = false;
+  // 離開頁面，提醒有數據未儲存
   window.addEventListener("beforeunload", (e) => {
     if (!noBeforeunload && G.utils.lock.check_submit()) {
       e.preventDefault();
@@ -59,6 +57,7 @@ async function initMain() {
       return "1";
     }
   });
+  // 取消修改，提醒有數據未儲存
   $("#leave").on("click", beforeLeave);
   async function beforeLeave() {
     if (confirm("真的要放棄編輯?")) {
@@ -70,28 +69,29 @@ async function initMain() {
     }
     return;
   }
-  let bs5_modal;
+
   $newPassword.on("focus", async (e) => {
-    if (!bs5_modal) {
+    if (!G.utils.bs5_modal) {
       //  生成BS5 Modal
       let { default: BS_Modal } = await import(
         /*webpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
       );
-      bs5_modal = new BS_Modal(el_model);
-      bs5_modal.show();
+      G.utils.bs5_modal = new BS_Modal(el_check_origin_password_model);
+      G.utils.bs5_modal.show();
     }
   });
   //  初始化 頁面各功能
   G.utils.lock = initLock();
-  /* ------------------------- handle ------------------------- */
-  el_model.addEventListener(
+
+  // el_check_origin_password_model handle
+  el_check_origin_password_model.addEventListener(
     "shown.bs.modal",
     //  顯示 modal 時，focus input
     () => {
       el_origin_password.focus();
     }
   );
-  el_model.addEventListener(
+  el_check_origin_password_model.addEventListener(
     "hidden.bs.modal",
     //  隱藏 modal 時，focus input
     () => {
@@ -99,10 +99,10 @@ async function initMain() {
       el_origin_password.value = "";
     }
   );
-  el_model.addEventListener("input", (e) => {
+  el_check_origin_password_model.addEventListener("input", (e) => {
     formFeedback.clear(e.target);
   });
-  el_model.addEventListener("keyup", (e) => {
+  el_check_origin_password_model.addEventListener("keyup", (e) => {
     e.preventDefault();
     if (e.key.toUpperCase() !== "ENTER") {
       return;
@@ -361,12 +361,10 @@ async function initMain() {
       }
 
       let result = await G.utils.validate.setting(newData);
-      let x = result.filter(({ field_name }) => {
+      return result.filter(({ field_name }) => {
         let exclude = ["_old", "avatar_hash", "avatar_ext"];
         return !exclude.some((item) => item === field_name);
       });
-      console.log(x);
-      return x;
     }
   }
   //  驗證原密碼
@@ -396,12 +394,12 @@ async function initMain() {
     }
     G.utils.lock.setKVpairs(payload);
     alert("驗證成功，請輸入新密碼");
-    bs5_modal.hide();
+    G.utils.bs5_modal.hide();
     $newPassword.get(0).focus();
   }
   //  顯示 origin_password 的 model
   function handle_showModel(e) {
-    if (!bs5_modal) {
+    if (!G.utils.bs5_modal) {
       return;
     }
     const KEY = "origin_password";
@@ -410,7 +408,7 @@ async function initMain() {
       ////  已經驗證過 origin_password，不須再顯示 Model
       return false;
     }
-    bs5_modal.show();
+    G.utils.bs5_modal.show();
   }
 
   /* ------------------------------------------------------------------------------------------ */

@@ -15,7 +15,6 @@ import blog_htmlStr from "../component/blog_htmlStr";
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
-  G.utils.checkImgLoad = async function () {};
   G.utils.render = render[G.data.page];
   await G.initPage(initMain);
 } catch (error) {
@@ -23,55 +22,30 @@ try {
 }
 
 async function initMain() {
-  await renderBlog();
-  initComment();
-  return;
-
-  function initComment() {
-    if (!G.data.blog.showComment) {
-      return;
-    }
-    //  若是因為comment通知前來此頁面，可以直接滑動至錨點
+  await render_blog();
+  if (G.data.blog.showComment) {
+    init_comment();
+  }
+  // 初始化留言功能
+  function init_comment() {
+    //  滑動至指定comment
     document.addEventListener("initPage", scrollToComment);
-    ////  根據使用者身分，顯示/移除刪除紐
-    if (G.data.me?.id) {
-      let isAuthor = G.data.me.id === G.data.blog.author.id;
-      $(`button[data-${G.constant.DATASET.KEY.REMOVE_COMMENT}]`).each(
-        (i, el) => {
-          let $el = $(el);
-          if (isAuthor) {
-            $el.show();
-            return;
-          }
-          let url = $el.parent("div").children("a").attr("href");
-          let res = /\/other\/(?<commenter_id>\d+)/.exec(url);
-          let commenter_id = res.groups.commenter_id * 1;
-          if (G.data.me.id === commenter_id) {
-            $el.show();
-          } else {
-            $el.remove();
-          }
-        }
-      );
-    }
 
-    /* ------------------------------------------------------------------------------------------ */
-    /* JQ Ele in Closure -------------------------------------------------------------------- */
-    /* ------------------------------------------------------------------------------------------ */
-    const $root_comment_list_container = $(
-      `.${G.constant.CLASS.COMMENT_LIST_CONTAINER}`
-    ).first();
-    const $root_editor_container = $(
-      `.${G.constant.CLASS.COMMENT_EDITOR_CONTAINER}`
-    ).first();
-    /* ------------------------------------------------------------------------------------------ */
-    /* Public Var in Closure -------------------------------------------------------------------- */
-    /* ------------------------------------------------------------------------------------------ */
-    //  初始化根評論editor
-    init_editor($root_editor_container.get(0));
-    $root_comment_list_container.on("click", handle_click);
+    //  顯示/移除刪除紐
+    init_removeBtn();
 
-    function handle_click(e) {
+    //  初始化根評論editor功能
+    init_editor(
+      document.querySelector(`.${G.constant.CLASS.COMMENT_EDITOR_CONTAINER}`)
+    );
+
+    // 初始化所有回覆鈕&刪除鈕功能
+    document
+      .querySelector(`.${G.constant.CLASS.COMMENT_LIST_CONTAINER}`)
+      .addEventListener("click", create_or_remove_comment);
+
+    // 回覆/刪除留言功能
+    function create_or_remove_comment(e) {
       let target = e.target;
       if (target.tagName !== "BUTTON") {
         return;
@@ -311,8 +285,70 @@ async function initMain() {
         }
       }
     }
+
+    //  顯示/移除刪除紐
+    function init_removeBtn() {
+      if (G.data.me?.id) {
+        let isAuthor = G.data.me.id === G.data.blog.author.id;
+        $(`button[data-${G.constant.DATASET.KEY.REMOVE_COMMENT}]`).each(
+          (i, el) => {
+            let $el = $(el);
+            if (isAuthor) {
+              $el.show();
+              return;
+            }
+            let url = $el.parent("div").children("a").attr("href");
+            let res = /\/other\/(?<commenter_id>\d+)/.exec(url);
+            let commenter_id = res.groups.commenter_id * 1;
+            if (G.data.me.id === commenter_id) {
+              $el.show();
+            } else {
+              $el.remove();
+            }
+          }
+        );
+      }
+    }
+
+    //  滑動至指定comment
+    function scrollToComment(comment_id) {
+      if (!comment_id || comment_id instanceof Event) {
+        let res = /#comment_(?<comment_id>\d+)/.exec(location.href);
+        if (!res) {
+          return;
+        }
+        comment_id = res.groups.comment_id;
+      }
+
+      let selector = `#comment_${comment_id}`;
+      let viewpointH = window.innerHeight;
+      let scrollY = window.scrollY;
+      let { height: navHeight } = document
+        .querySelector("nav.navbar")
+        .getBoundingClientRect();
+      let $comment = $(selector).eq(0);
+      let $container = $comment.parent();
+      let commentRect = $container.get(0).getBoundingClientRect();
+
+      let commentY = Math.floor(commentRect.y);
+      let commentH_half = Math.floor(Math.floor(commentRect.height) / 2);
+      let navH = Math.floor(navHeight);
+      let viewpointH_half = Math.floor(Math.floor(viewpointH) / 2);
+      let targetY_1 = scrollY + commentY - navH;
+      let up = viewpointH_half - navH;
+      let targetY = targetY_1 - up + commentH_half;
+      document.body.scrollTop = targetY;
+
+      $comment.css({ backgroundColor: "rgb(219, 159, 159)" });
+      // 配合 .comment-item-content { transition: background-color 4s ease-out; }
+      setTimeout(() => {
+        $comment.removeAttr("style");
+      }, 4000);
+    }
   }
-  async function renderBlog() {
+
+  // 渲染文章
+  async function render_blog() {
     let active = G.data.active;
 
     if (active === "blog") {
@@ -323,66 +359,36 @@ async function initMain() {
       _preview();
     }
     await G.utils.checkImgLoad();
-  }
-  function _preview() {
-    let preview_key = new URL(location.href).searchParams.get(
-      G.constant.PREVIEW_KEY
-    );
-    let preview_data = localStorage.getItem(preview_key);
-    if (!preview_data) {
-      alert(`請回到文章編輯頁，重新點擊預覽頁，此視窗將自動關閉`);
-      window.close();
-      return;
-    }
-    let { title, html } = JSON.parse(preview_data);
-    G.data.blog.html = html;
-    $(`.card-header > h1`).text(title);
-    let { htmlStr, checkImgLoad } = blog_htmlStr(G);
-    G.utils.checkImgLoad = checkImgLoad;
-    $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(htmlStr);
-    localStorage.removeItem(preview_key);
 
-    document.addEventListener("initPage", () => {
-      !process.env.isProd &&
-        console.log("initPage handle ---> loading_backdrop.show");
-      G.utils.loading_backdrop.show({ blockPage: false });
-      // 移除loading_backdrop導致的滑鼠讀取狀態
-      $("body").removeClass("wait");
-    });
-  }
-
-  //  若是因為comment通知前來此頁面，可以直接滑動至錨點
-  function scrollToComment(comment_id) {
-    if (!comment_id || comment_id instanceof Event) {
-      let res = /#comment_(?<comment_id>\d+)/.exec(location.href);
-      if (!res) {
+    // 渲染文章預覽
+    function _preview() {
+      //  讀取localStorage數據
+      let preview_key = new URL(location.href).searchParams.get(
+        G.constant.PREVIEW_KEY
+      );
+      let preview_data = localStorage.getItem(preview_key);
+      if (!preview_data) {
+        alert(`請回到文章編輯頁，重新點擊預覽頁，此視窗將自動關閉`);
+        window.close();
         return;
       }
-      comment_id = res.groups.comment_id;
+      let { title, html } = JSON.parse(preview_data);
+      G.data.blog.html = html;
+      $(`.card-header > h1`).text(title);
+      let { htmlStr, checkImgLoad } = blog_htmlStr(G);
+      G.utils.checkImgLoad = checkImgLoad;
+      $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(htmlStr);
+      //  刪除localStorage數據
+      localStorage.removeItem(preview_key);
+
+      // 使用loadBackdrop，但鼠標不使用讀取樣式
+      document.addEventListener("initPage", () => {
+        !process.env.isProd &&
+          console.log("initPage handle ---> loading_backdrop.show");
+        G.utils.loading_backdrop.show({ blockPage: false });
+        // 移除loading_backdrop導致的滑鼠讀取狀態
+        $("body").removeClass("wait");
+      });
     }
-
-    let selector = `#comment_${comment_id}`;
-    let viewpointH = window.innerHeight;
-    let scrollY = window.scrollY;
-    let { height: navHeight } = document
-      .querySelector("nav.navbar")
-      .getBoundingClientRect();
-    let $comment = $(selector).eq(0);
-    let $container = $comment.parent();
-    let commentRect = $container.get(0).getBoundingClientRect();
-
-    let commentY = Math.floor(commentRect.y);
-    let commentH_half = Math.floor(Math.floor(commentRect.height) / 2);
-    let navH = Math.floor(navHeight);
-    let viewpointH_half = Math.floor(Math.floor(viewpointH) / 2);
-    let targetY_1 = scrollY + commentY - navH;
-    let up = viewpointH_half - navH;
-    let targetY = targetY_1 - up + commentH_half;
-    document.body.scrollTop = targetY;
-
-    $comment.css({ backgroundColor: "rgb(219, 159, 159)" });
-    setTimeout(() => {
-      $comment.removeAttr("style");
-    }, 4000);
   }
 }

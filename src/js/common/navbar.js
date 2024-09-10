@@ -11,14 +11,20 @@ import News from "./news";
 
 /* VAR        ----------------------------------------------------------------------------- */
 const API_LOGOUT = "/api/user/logout";
-// 不允許登入權限的頁面
-const logoutPage = ["login", "register"];
+// 不需要news數據的頁面
+const noNewsPage = [
+  // 不允許登入權限的頁面
+  "login",
+  "register",
+  // 不需要news數據
+  "blog-preview",
+];
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default async function (active, _axios) {
   let loginData;
   let news;
-  if (!logoutPage.some((item) => item === active)) {
+  if (!noNewsPage.some((item) => item === active)) {
     news = new News(_axios);
     loginData = await news.getLoginData();
   }
