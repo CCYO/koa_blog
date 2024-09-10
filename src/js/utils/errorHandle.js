@@ -33,7 +33,7 @@ window.addEventListener("unhandledrejection", function (event) {
       } catch (e) {
         error = result;
       }
-      alert(error.message);
+      alert("unhandledrejection", error.message);
       if (process.env.isProd) {
         // 後端響應請求需要登入權限
         redir.check_login();
@@ -56,7 +56,7 @@ function watchError(error) {
       msg = "前端代碼錯誤，請確認console";
     }
   }
-  alert(msg);
+  alert("來自axios", msg);
   throw error;
 }
 

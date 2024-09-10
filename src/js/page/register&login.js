@@ -1,14 +1,10 @@
-/* CSS Module ------------------------------------------------------------------------------- */
+/* CSS        ----------------------------------------------------------------------------- */
 import "@css/register&login.scss";
 
-/* Config Module ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
-
-/* NPM Module ------------------------------------------------------------------------------- */
-import Tab from "bootstrap/js/dist/tab";
-
-/* Utils Module ----------------------------------------------------------------------------- */
+/* COMMON     ----------------------------------------------------------------------------- */
 import G from "../common";
+
+/* UTILS      ----------------------------------------------------------------------------- */
 import {
   _Ajv,
   Debounce,
@@ -18,42 +14,44 @@ import {
   errorHandle,
 } from "../utils";
 
-/* Runtime ---------------------------------------------------------------------------------- */
+/* NPM        ----------------------------------------------------------------------------- */
+import Tab from "bootstrap/js/dist/tab";
+
+/* CONFIG     ----------------------------------------------------------------------------- */
+import FRONTEND from "@config/frontend_esm";
+
+/* RUNTIME    ----------------------------------------------------------------------------- */
 try {
   const ajv = new _Ajv(G.utils.axios);
-  G.page = "register&login";
-  G.constant = FRONTEND.REGISTER_LOGIN;
   G.utils.validate = {
     login: ajv._validate.login,
     register: ajv._validate.register,
     passwordAndAgain: ajv._validate.password_again,
     isEmailExist: ajv._validate.is_email_exist,
   };
-  await G.main(initMain);
+  await G.initPage(initMain);
 } catch (error) {
   errorHandle(error);
 }
 
-async function initMain() {
+function initMain() {
+  //  初始化 NavTab
   initNavTab();
   //  初始化 Register Form 功能
   initRegistFn(`#${G.constant.ID.REGISTER_FORM}`);
   //  初始化 Login Form 功能
   initLoginFn(`#${G.constant.ID.LOGIN_FORM}`);
 
+  //  提示需登入權限
   document.addEventListener("initPage", () => {
-    // 頁面渲染結束後，檢視提醒
     let params = new URL(location.href).searchParams;
     if (params.has(FRONTEND.REDIR.FROM)) {
       alert("需要登入才能使用頁面功能");
     }
   });
-  /* ------------------------------------------------------------------------------------------ */
-  /* Init ------------------------------------------------------------------------------------ */
-  /* ------------------------------------------------------------------------------------------ */
 
+  // 初始化 NavTab
   function initNavTab() {
-    let selectorList = ["register", "login"];
     let navTab_login = document.querySelector(`[data-my-tab="#login"]`);
     let navTab_register = document.querySelector(`[data-my-tab="#register"]`);
     let $navTab_login = $(navTab_login);
@@ -80,18 +78,6 @@ async function initMain() {
       $navTab_login.parent().addClass("active");
       $navTab_register.parent().removeClass("active");
     });
-
-    // for (let item of selectorList) {
-    //   let card_tab = document.querySelector(`[data-bs-target="#${item}-card"]`);
-    //   let bs_tab = new Tab(card_tab);
-    //   navTab.addEventListener("click", (e) => {
-    //     bs_tab.show();
-    //     $navTab.addClass("active");
-    //   });
-    //   card_tab.addEventListener("hide.bs.tab", (e) => {
-    //     $navTab.children().removeClass("active");
-    //   });
-    // }
   }
   /* 初始化 Register Form 功能 */
   function initLoginFn(form_id) {
@@ -136,6 +122,7 @@ async function initMain() {
       }
       return;
     }
+
     /* 登入表單內容表格的 input Event handler */
     async function handle_input_login(e) {
       e.preventDefault();
@@ -155,6 +142,7 @@ async function initMain() {
       return;
     }
   }
+
   /* 初始化 Register Form 功能 */
   function initRegistFn(form_id) {
     const form = document.querySelector(form_id);
@@ -165,6 +153,7 @@ async function initMain() {
     _add_form_debounce_inputEvent_handler(form, handle_input_register);
     //  為 form 註冊 submitEvent handler
     form.addEventListener("submit", handle_submit_register);
+
     /* 註冊表單 submit Event handler */
     async function handle_submit_register(e) {
       e.preventDefault();
@@ -201,6 +190,7 @@ async function initMain() {
       }
       return status;
     }
+
     /* 註冊表單內容表格的 input Event handler */
     async function handle_input_register(e) {
       e.preventDefault();
@@ -230,9 +220,9 @@ async function initMain() {
     }
   }
 
-  /* genFn => 處理校驗錯誤 ..............*/
+  // 處理校驗錯誤
   function _gen_form_lock(form) {
-    /* 管理form可否submit的鎖 */
+    //  管理form可否submit
     class Lock {
       constructor(form) {
         let $form = $(form);

@@ -1,16 +1,24 @@
-/* NPM Module ------------------------------------------------------------------------------- */
+/* COMMON     ----------------------------------------------------------------------------- */
+import Loop from "./loop";
+import { render } from "@js/utils";
+
+/* CONFIG     ----------------------------------------------------------------------------- */
+import FRONTEND from "@config/frontend_esm";
+
+/* NPM        ----------------------------------------------------------------------------- */
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/zh-tw";
-/* Const Module ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
-/* Utils Module ----------------------------------------------------------------------------- */
-import Loop from "./loop";
-import { render } from "@js/utils";
-/* EXPORT MODULE ---------------------------------------------------------------------------- */
+
+/* EXPORT     ----------------------------------------------------------------------------- */
 export default class {
   #API = `/api/news`;
+  // 是否第一次調用
+  #first = false;
+  // 是否自動調用
   #auto = false;
+  // 上一次請求，是否以獲取後端所有unconfirm
+  #checkNews = false;
   db = _count();
   #id_list = Object.defineProperties(
     {},
@@ -68,34 +76,40 @@ export default class {
     });
     Object.defineProperty(this, "status", {
       get() {
-        if (this.#id_list.total === 0) {
-          !process.env.isProd && console.log("讀取通知(初次調用)");
+        if (!this.#first) {
+          !process.env.isProd && console.log("news ---> 首次");
           return { status: FRONTEND.NAVBAR.NEWS.STATUS.FIRST };
-        } else if (this.#auto) {
-          !process.env.isProd && console.log("讀取通知(定時自動調用)");
+        } else if (this.#checkNews) {
+          !process.env.isProd && console.log("news ---> 自動|check");
           return {
             status: FRONTEND.NAVBAR.NEWS.STATUS.CHECK,
-            excepts: { ...this.#id_list },
+            // excepts: { ...this.#id_list },
           };
-        } else if (this.db.total > this.#id_list.total) {
-          !process.env.isProd && console.log("讀取通知(主動調用)");
+        } else if (this.#auto) {
+          !process.env.isProd && console.log("news ---> 自動|獲取新通知");
           return {
             status: FRONTEND.NAVBAR.NEWS.STATUS.AGAIN,
             excepts: { ...this.#id_list },
           };
-        } else {
-          !process.env.isProd && console.log("讀取通知(主動調用)");
-          return { status: FRONTEND.NAVBAR.NEWS.STATUS.CHECK };
+        } else if (this.db.total > this.#id_list.total) {
+          !process.env.isProd && console.log("news ---> 手動|獲取通知");
+          return {
+            status: FRONTEND.NAVBAR.NEWS.STATUS.AGAIN,
+            excepts: { ...this.#id_list },
+          };
         }
+        // else {
+        //   !process.env.isProd && console.log("請求news ---> 手動調用");
+        //   return { status: FRONTEND.NAVBAR.NEWS.STATUS.CHECK };
+        // }
       },
     });
   }
   init() {
     let renderClass = new this.Render(this);
     this.checkNewsMore = renderClass.checkNewsMore.bind(renderClass);
-
     this.loop = renderClass.loop;
-    return this;
+    this.#first = true;
   }
   update({ list, num, hasNews }) {
     if (hasNews) {
@@ -108,7 +122,6 @@ export default class {
       this.htmlStr.update(list, isConfirm);
     }
     this.db = num;
-    this.#auto = false;
   }
   clear() {
     this.htmlStr.clear();
@@ -144,23 +157,29 @@ export default class {
        }
     */
     // 自動調用前，從前一次與後端取得的資料若已確認後端沒有新通知了，auto設為false
+    this.#auto = auto;
     if (auto) {
-      this.#auto =
+      // 若已經獲取後端所有unconfirm，此次請求僅再次確認後端是否有unconfirm
+      this.axios.autoLoadingBackdrop = false;
+      this.#checkNews =
         this.db.unconfirm -
           this.htmlStr.rendered.unconfirm -
           this.htmlStr.unRender.unconfirm <=
         0;
     }
     let { errno, data } = await this.axios.post(this.#API, this.status);
+    this.axios.autoLoadingBackdrop = true;
+    this.#checkNews = false;
     if (!errno) {
       this.update(data.news);
       return data;
+    } else {
+      return undefined;
     }
   }
   //  confirm news
   confirmNews = async (event) => {
     event.preventDefault();
-    console.log(this);
     let eventTarget = event.target;
     let $eventTarget = $(event.target);
     let tag = eventTarget.tagName.toUpperCase();
@@ -270,10 +289,13 @@ class HtmlStr {
 }
 //  有關下拉選單的handle
 class Render {
+  // 下拉表單是否展開
+  #show = false;
   first = true;
   count = 0;
   //  單位ms, 5 min
-  LOAD_NEWS = 1000 * 60 * 5;
+  // LOAD_NEWS = 1000 * 60 * 5;
+  LOAD_NEWS = 1000 * 5;
   //  更多通知BTN
   $readMore = $("#readMore");
   //  沒有更多通知BTN
@@ -294,24 +316,31 @@ class Render {
       ms: this.LOAD_NEWS,
     }));
 
-    //  啟動 readMore 自動循環
-    loop.start();
+    document.addEventListener("initPage", () => {
+      !process.env.isProd && console.log("initPage handle ---> loop.start");
+      if (!document.hidden) {
+        //  啟動 readMore 自動循環
+        loop.start();
+      }
+    });
+
     // 頁面不被使用時，停止自動獲取news數據
     document.addEventListener("visibilitychange", (e) => {
       if (document.hidden) {
         loop.stop();
-      } else {
+      } else if (!this.#show) {
         loop.start();
       }
-      console.log("document.hidden", document.hidden);
     });
     //  為 BS5 下拉選單元件 註冊 hide.bs.dropdown handler(選單展開時回調)
     this.$newsDropdown[0].addEventListener("show.bs.dropdown", () => {
+      this.#show = true;
       ////  暫停 readMore自動循環，使用箭頭函數是因為 loop.stop 內部有 this，必須確保this指向loop
       loop.stop();
     });
     //  為 BS5 下拉選單元件 註冊 hide.bs.dropdown handler(選單收起時回調)
     this.$newsDropdown[0].addEventListener("hide.bs.dropdown", () => {
+      this.#show = false;
       ////  開始 readMore自動循環，使用箭頭函數是因為 loop.start 內部有 this，必須確保this指向loop
       loop.start();
     });

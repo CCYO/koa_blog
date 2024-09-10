@@ -54,6 +54,7 @@ module.exports = (function () {
     const isTemplate = !!array_filepath.find((item) => item === "template");
     const isComponent = !!array_filepath.find((item) => item === "components");
     const isWedget = !!array_filepath.find((item) => item === "wedgets");
+    const isNavbar = !!array_filepath.find((item) => item === "navbar");
     const isPageIndex = !isWedget && !isTemplate && !isComponent;
     let index_views = array_filepath.findIndex((item) => item === "views");
     ////  取得絕對路徑形式的新檔案名
@@ -70,7 +71,10 @@ module.exports = (function () {
         let dir_server = resolve(__dirname, `../server/utils/render/template`);
         let dir_src = resolve(__dirname, `../src/js/utils/render/template`);
 
-        newFilename_list = [dir_server, dir_src].map((dir) => {
+        newFilename_list = [dir_src, dir_server].map((dir, index) => {
+          if (isNavbar && isTemplate && index) {
+            return;
+          }
           target_folder = dir;
           if (!fs.existsSync(target_folder)) {
             fs.mkdirSync(target_folder);
@@ -102,7 +106,7 @@ module.exports = (function () {
       ejs_string = ejs_string.replace(/\<%/g, "<%%");
     }
     newFilename_list.forEach((item) => {
-      fs.writeFileSync(item, ejs_string);
+      item && fs.writeFileSync(item, ejs_string);
     });
     ////  生成 HtmlWebpackPlugin
     if (!isPageIndex) {

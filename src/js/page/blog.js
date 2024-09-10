@@ -1,77 +1,51 @@
-/* CSS Module ------------------------------------------------------------------------------- */
+/* CSS        ----------------------------------------------------------------------------- */
 import "@css/blog.scss";
 
-/* Config Module ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
-
-/* NPM Module ------------------------------------------------------------------------------- */
-import { createEditor } from "@wangeditor/editor";
-
-/* Utils Module ----------------------------------------------------------------------------- */
+/* COMMON     ----------------------------------------------------------------------------- */
 import G from "../common";
+
+/* UTILS      ----------------------------------------------------------------------------- */
 import { _Ajv, render, _xss, redir, errorHandle } from "../utils";
 
-/* Runtime ---------------------------------------------------------------------------------- */
+/* NPM        ----------------------------------------------------------------------------- */
+import { createEditor } from "@wangeditor/editor";
+
+/* COMPONENT   ---------------------------------------------------------------------------- */
+import blog_htmlStr from "../component/blog_htmlStr";
+
+/* RUNTIME    ----------------------------------------------------------------------------- */
 try {
-  G.page = "blog";
-  G.constant = FRONTEND.BLOG;
-  await G.main(initMain);
+  G.utils.render = render[G.data.page];
+  await G.initPage(initMain);
 } catch (error) {
   errorHandle(error);
 }
 
 async function initMain() {
-  if (G.data.active === "blog-preview") {
-    document.addEventListener("initPage", preview);
-    return;
-  } else if (G.data.blog.showComment) {
-    initComment();
+  await render_blog();
+  if (G.data.blog.showComment) {
+    init_comment();
   }
-  $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg());
-  return;
-
-  function initComment() {
-    //  若是因為comment通知前來此頁面，可以直接滑動至錨點
+  // 初始化留言功能
+  function init_comment() {
+    //  滑動至指定comment
     document.addEventListener("initPage", scrollToComment);
-    ////  根據使用者身分，顯示/移除刪除紐
-    if (G.data.me?.id) {
-      let isAuthor = G.data.me.id === G.data.blog.author.id;
-      $(`button[data-${G.constant.DATASET.KEY.REMOVE_COMMENT}]`).each(
-        (i, el) => {
-          let $el = $(el);
-          if (isAuthor) {
-            $el.show();
-            return;
-          }
-          let url = $el.parent("div").children("a").attr("href");
-          let res = /\/other\/(?<commenter_id>\d+)/.exec(url);
-          let commenter_id = res.groups.commenter_id * 1;
-          if (G.data.me.id === commenter_id) {
-            $el.show();
-          } else {
-            $el.remove();
-          }
-        }
-      );
-    }
 
-    /* ------------------------------------------------------------------------------------------ */
-    /* JQ Ele in Closure -------------------------------------------------------------------- */
-    /* ------------------------------------------------------------------------------------------ */
-    const $root_comment_list_container = $(
-      `.${G.constant.CLASS.COMMENT_LIST_CONTAINER}`
-    ).first();
-    const $root_editor_container = $(
-      `.${G.constant.CLASS.COMMENT_EDITOR_CONTAINER}`
-    ).first();
-    /* ------------------------------------------------------------------------------------------ */
-    /* Public Var in Closure -------------------------------------------------------------------- */
-    /* ------------------------------------------------------------------------------------------ */
-    //  初始化根評論editor
-    init_editor($root_editor_container.get(0));
-    $root_comment_list_container.on("click", handle_click);
+    //  顯示/移除刪除紐
+    init_removeBtn();
 
-    function handle_click(e) {
+    //  初始化根評論editor功能
+    init_editor(
+      document.querySelector(`.${G.constant.CLASS.COMMENT_EDITOR_CONTAINER}`)
+    );
+
+    // 初始化所有回覆鈕&刪除鈕功能
+    document
+      .querySelector(`.${G.constant.CLASS.COMMENT_LIST_CONTAINER}`)
+      .addEventListener("click", create_or_remove_comment);
+
+    // 回覆/刪除留言功能
+    function create_or_remove_comment(e) {
       let target = e.target;
       if (target.tagName !== "BUTTON") {
         return;
@@ -126,7 +100,7 @@ async function initMain() {
           }
         );
         //  data { commenter, time, isDeleted, ... }
-        let htmlStr = render.blog.commentItem({ ...data });
+        let htmlStr = G.utils.render.commentItem({ ...data });
         $btn_remove
           .parents(`.${G.constant.CLASS.COMMENT_ITEM_CONTENT}`)
           .first()
@@ -201,10 +175,10 @@ async function initMain() {
           } else {
             $(`[data-${G.constant.DATASET.KEY.PID}=0]`).prepend(html);
           }
-          let selector = `#comment_${comment_id}`;
-          $(selector)
-            .find(`button[data-${G.constant.DATASET.KEY.REMOVE_COMMENT}]`)
-            .show();
+          // 顯示刪除鈕
+          $(
+            `button[data-${G.constant.DATASET.KEY.REMOVE_COMMENT}=${comment_id}]`
+          ).removeAttr("style");
           scrollToComment(comment_id);
         };
         //  為container綁定判斷登入狀態的handle
@@ -280,9 +254,9 @@ async function initMain() {
             //  updatedAt
             let template_values = {
               tree: [{ ...new_comment }],
-              ejs_render: render,
+              ejs_render: G.utils.render,
             };
-            let html_str = render.blog.commentTree(template_values);
+            let html_str = G.utils.render.commentTree(template_values);
             //  創建評論htmlStr，data: { id, html, time, pid, commenter: { id, email, nickname}}
             //  渲染
             editor.render(html_str, new_comment.id);
@@ -311,76 +285,110 @@ async function initMain() {
         }
       }
     }
+
+    //  顯示/移除刪除紐
+    function init_removeBtn() {
+      if (G.data.me?.id) {
+        let isAuthor = G.data.me.id === G.data.blog.author.id;
+        $(`button[data-${G.constant.DATASET.KEY.REMOVE_COMMENT}]`).each(
+          (i, el) => {
+            let $el = $(el);
+            if (isAuthor) {
+              $el.show();
+              return;
+            }
+            let url = $el.parent("div").children("a").attr("href");
+            let res = /\/other\/(?<commenter_id>\d+)/.exec(url);
+            let commenter_id = res.groups.commenter_id * 1;
+            if (G.data.me.id === commenter_id) {
+              $el.show();
+            } else {
+              $el.remove();
+            }
+          }
+        );
+      }
+    }
+
+    //  滑動至指定comment
+    function scrollToComment(comment_id) {
+      if (!comment_id || comment_id instanceof Event) {
+        let res = /#comment_(?<comment_id>\d+)/.exec(location.href);
+        if (!res) {
+          return;
+        }
+        comment_id = res.groups.comment_id;
+      }
+
+      let selector = `#comment_${comment_id}`;
+      let viewpointH = window.innerHeight;
+      let scrollY = window.scrollY;
+      let { height: navHeight } = document
+        .querySelector("nav.navbar")
+        .getBoundingClientRect();
+      let $comment = $(selector).eq(0);
+      let $container = $comment.parent();
+      let commentRect = $container.get(0).getBoundingClientRect();
+
+      let commentY = Math.floor(commentRect.y);
+      let commentH_half = Math.floor(Math.floor(commentRect.height) / 2);
+      let navH = Math.floor(navHeight);
+      let viewpointH_half = Math.floor(Math.floor(viewpointH) / 2);
+      let targetY_1 = scrollY + commentY - navH;
+      let up = viewpointH_half - navH;
+      let targetY = targetY_1 - up + commentH_half;
+      document.body.scrollTop = targetY;
+
+      $comment.css({ backgroundColor: "rgb(219, 159, 159)" });
+      // 配合 .comment-item-content { transition: background-color 4s ease-out; }
+      setTimeout(() => {
+        $comment.removeAttr("style");
+      }, 4000);
+    }
   }
 
-  function preview() {
-    let preview_key = new URL(location.href).searchParams.get(
-      G.constant.PREVIEW_KEY
-    );
-    // 取消登入全縣的各個功能
-    G.utils.news.loop.stop();
-    let { title, html } = JSON.parse(localStorage.getItem(preview_key));
-    $(`.card-header > h1`).text(title);
-    $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(_parseHtmlStr_XImgToImg(html));
-    localStorage.clear();
-    G.utils.loading_backdrop.show({ blockPage: false });
-  }
+  // 渲染文章
+  async function render_blog() {
+    let active = G.data.active;
 
-  //  若是因為comment通知前來此頁面，可以直接滑動至錨點
-  function scrollToComment(comment_id) {
-    if (!comment_id || comment_id instanceof Event) {
-      let res = /#comment_(?<comment_id>\d+)/.exec(location.href);
-      if (!res) {
+    if (active === "blog") {
+      let { htmlStr, checkImgLoad } = blog_htmlStr(G);
+      G.utils.checkImgLoad = checkImgLoad;
+      $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(htmlStr);
+    } else if (active === "blog-preview") {
+      _preview();
+    }
+    await G.utils.checkImgLoad();
+
+    // 渲染文章預覽
+    function _preview() {
+      //  讀取localStorage數據
+      let preview_key = new URL(location.href).searchParams.get(
+        G.constant.PREVIEW_KEY
+      );
+      let preview_data = localStorage.getItem(preview_key);
+      if (!preview_data) {
+        alert(`請回到文章編輯頁，重新點擊預覽頁，此視窗將自動關閉`);
+        window.close();
         return;
       }
-      comment_id = res.groups.comment_id;
+      let { title, html } = JSON.parse(preview_data);
+      G.data.blog.html = html;
+      $(`.card-header > h1`).text(title);
+      let { htmlStr, checkImgLoad } = blog_htmlStr(G);
+      G.utils.checkImgLoad = checkImgLoad;
+      $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(htmlStr);
+      //  刪除localStorage數據
+      localStorage.removeItem(preview_key);
+
+      // 使用loadBackdrop，但鼠標不使用讀取樣式
+      document.addEventListener("initPage", () => {
+        !process.env.isProd &&
+          console.log("initPage handle ---> loading_backdrop.show");
+        G.utils.loading_backdrop.show({ blockPage: false });
+        // 移除loading_backdrop導致的滑鼠讀取狀態
+        $("body").removeClass("wait");
+      });
     }
-
-    let selector = `#comment_${comment_id}`;
-    let viewpointH = window.innerHeight;
-    let scrollY = window.scrollY;
-    let { height: navHeight } = document
-      .querySelector("nav.navbar")
-      .getBoundingClientRect();
-    let $comment = $(selector).eq(0);
-    let $container = $comment.parent();
-    let commentRect = $container.get(0).getBoundingClientRect();
-
-    let commentY = Math.floor(commentRect.y);
-    let commentH_half = Math.floor(Math.floor(commentRect.height) / 2);
-    let navH = Math.floor(navHeight);
-    let viewpointH_half = Math.floor(Math.floor(viewpointH) / 2);
-    let targetY_1 = scrollY + commentY - navH;
-    let up = viewpointH_half - navH;
-    let targetY = targetY_1 - up + commentH_half;
-    document.body.scrollTop = targetY;
-
-    $comment.css({ backgroundColor: "rgb(219, 159, 159)" });
-    setTimeout(() => {
-      $comment.removeAttr("style");
-    }, 4000);
-  }
-
-  function _parseHtmlStr_XImgToImg(htmlStr = G.data.blog.html) {
-    /* 將 <x-img> 數據轉回 <img> */
-    //  複製一份htmlStr
-    let reg = G.constant.REG.X_IMG_PARSE_TO_IMG;
-    let res;
-    //  存放 reg 匹配後 的 img src 數據
-    while ((res = reg.exec(htmlStr))) {
-      let { alt_id, style } = res.groups;
-      //  MAP: alt_id → { alt, blogImg: {id, name}, img: {id, hash, url}}
-      let {
-        alt,
-        img: { url },
-      } = G.data.blog.map_imgs.get(alt_id * 1);
-      let imgEle = `<img src="${url}?alt_id=${alt_id}" alt="${alt}" title="${alt}"`;
-      let replaceStr = style ? `${imgEle} style="${style}"/>` : `${imgEle}/>`;
-      //  修改 _html 內對應的 img相關字符
-      htmlStr = htmlStr.replace(res[0], replaceStr);
-      !process.env.isProd &&
-        console.log(`html內blogImgAlt/${alt_id}的tag數據-----parse完成`);
-    }
-    return htmlStr;
   }
 }

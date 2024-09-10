@@ -1,11 +1,13 @@
-/* CSS Module ------------------------------------------------------------------------------- */
+/* CSS        ----------------------------------------------------------------------------- */
 import "@css/blog-edit.scss";
 
-/* Config Module ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
+/* COMMON     ----------------------------------------------------------------------------- */
+import G from "../common";
+
+/* CONFIG     ----------------------------------------------------------------------------- */
 import localeTw from "@config/const/wangeditor_locale_tw.json";
 
-/* NPM Module ------------------------------------------------------------------------------- */
+/* NPM        ----------------------------------------------------------------------------- */
 import SparkMD5 from "spark-md5";
 import {
   i18nAddResources,
@@ -14,8 +16,7 @@ import {
   createEditor,
 } from "@wangeditor/editor";
 
-/* Utils Module ----------------------------------------------------------------------------- */
-import G from "../common";
+/* UTILS      ----------------------------------------------------------------------------- */
 import {
   _Ajv,
   Debounce,
@@ -25,18 +26,20 @@ import {
   errorHandle,
 } from "../utils";
 
-/* Runtime ---------------------------------------------------------------------------------- */
+/* COMPONENT   ---------------------------------------------------------------------------- */
+import blog_htmlStr from "../component/blog_htmlStr";
+
+/* RUNTIME    ----------------------------------------------------------------------------- */
 try {
-  const $$ajv = new _Ajv(G.utils.axios);
-  G.page = "blog_edit";
-  G.constant = FRONTEND.BLOG_EDIT;
+  G.utils.checkImgLoad = async function () {};
   G.utils._xss = _xss;
+  const $$ajv = new _Ajv(G.utils.axios);
   G.utils.validate = {
     img_alt: $$ajv._validate.img_alt,
     blog_img: $$ajv._validate.blog_img,
     blog: $$ajv._validate.blog,
   };
-  await G.main(initMain);
+  await G.initPage(initMain);
 } catch (error) {
   errorHandle(error);
 }
@@ -57,14 +60,15 @@ async function initMain() {
   //  初始化 頁面各功能
   G.utils.lock = initLock();
   G.utils.editor = create_editor();
+  await G.utils.checkImgLoad();
   G.utils.loading_backdrop.insertEditors([G.utils.editor]);
   //  整理圖片數據
   await initImgData();
   //  focus editor
   G.utils.editor.focus();
-  let noBeforeunload = false;
+  G.data.saveWarn = true;
   window.addEventListener("beforeunload", (e) => {
-    if (!noBeforeunload && G.utils.lock.check_submit()) {
+    if (G.data.saveWarn && G.utils.lock.check_submit()) {
       e.preventDefault();
       // 過去有些browser必須給予e.returnValue字符值，才能使beforeunload有效運作
       e.returnValue = "mark";
@@ -72,13 +76,14 @@ async function initMain() {
       return "1";
     }
   });
+
   $("#leave").on("click", beforeLeave);
   async function beforeLeave() {
     if (confirm("真的要放棄編輯?")) {
       if (G.utils.lock.check_submit() && confirm("放棄編輯前是否儲存?")) {
         await handle_updateBlog();
       }
-      noBeforeunload = true;
+      G.data.saveWarn = false;
       location.replace("/self");
     }
   }
@@ -194,15 +199,17 @@ async function initMain() {
         },
       },
     };
+    let { htmlStr, checkImgLoad } = blog_htmlStr(G);
+    G.utils.checkImgLoad = checkImgLoad;
     //  editor 編輯欄 創建
     const editor = createEditor({
       //  插入後端取得的 html
-      html: parseHtmlStr_XImgToImg() || "",
+      html: htmlStr || "",
       selector: `#${G.constant.ID.EDITOR_CONTAINER}`,
       config: editorConfig,
     });
     //  editor 工具欄 創建
-    const toolbar = createToolbar({
+    createToolbar({
       editor,
       selector: `#${G.constant.ID.EDITOR_TOOLBAR_CONTAINER}`,
       mode: "simple",
@@ -316,11 +323,15 @@ async function initMain() {
         let { message } = result.find(({ field_name }) => field_name === "alt");
         return message;
       }
-      await G.utils.axios.patch(G.constant.API.UPDATE_ALBUM, {
+      let { errno } = await G.utils.axios.patch(G.constant.API.UPDATE_ALBUM, {
         alt_id,
         blog_id: G.data.blog.id,
         alt: _xss.trim(new_alt),
       });
+      if (errno) {
+        location.href = `/permission/${errno}`;
+        return;
+      }
       //  尋找相同 alt_id
       let imgData = G.data.blog.map_imgs.get(alt_id);
       imgData.alt = alt;
@@ -334,6 +345,10 @@ async function initMain() {
       }
       //  取得 name ext
       let _res = G.constant.REG.IMG_NAME_AND_EXT.exec(img.name);
+      if (!_res) {
+        alert("圖檔格式必須為PNG或JPG");
+        return false;
+      }
       let [_ = "", alt = "", ext] = _res;
       let validated_list = await G.utils.validate.blog_img({
         alt,
@@ -440,29 +455,6 @@ async function initMain() {
       return true;
     }
 
-    function parseHtmlStr_XImgToImg() {
-      /* 將 <x-img> 數據轉回 <img> */
-      let htmlStr = G.data.blog.html;
-      //  複製一份htmlStr
-      let reg = G.constant.REG.X_IMG_PARSE_TO_IMG;
-      let res;
-      //  存放 reg 匹配後 的 img src 數據
-      while ((res = reg.exec(htmlStr))) {
-        let { alt_id, style } = res.groups;
-        //  MAP: alt_id → { alt, blogImg: {id, name}, img: {id, hash, url}}
-        let {
-          alt,
-          img: { url },
-        } = G.data.blog.map_imgs.get(alt_id * 1);
-        let imgEle = `<img src="${url}?alt_id=${alt_id}" alt="${alt}"`;
-        let replaceStr = style ? `${imgEle} style="${style}"/>` : `${imgEle}/>`;
-        //  修改 _html 內對應的 img相關字符
-        htmlStr = htmlStr.replace(res[0], replaceStr);
-        !process.env.isProd &&
-          console.log(`html內blogImgAlt/${alt_id}的tag數據-----parse完成`);
-      }
-      return htmlStr;
-    }
     //  handle：editor選區改變、內容改變時觸發
     async function handle_editorChange() {
       if (first) {
@@ -595,8 +587,15 @@ async function initMain() {
     const data = {
       blogList: [G.data.blog.id],
     };
-    await G.utils.axios.delete(G.constant.API.UPDATE_BLOG, { data });
+    let { errno } = await G.utils.axios.delete(G.constant.API.UPDATE_BLOG, {
+      data,
+    });
+    if (errno) {
+      location.href = `/permission/${errno}`;
+      return;
+    }
     alert("已成功刪除此篇文章，現在將跳往個人頁面");
+    G.data.saveWarn = false;
     location.href = "/self";
   }
 
@@ -617,14 +616,18 @@ async function initMain() {
     if (!result.valid) {
       throw new Error(JSON.stringify(result));
     }
+    // 作為event_handle才詢問預覽
+    if (e instanceof Event && confirm("儲存成功！是否預覽？（新開視窗）")) {
+      window.open(`/blog/preview/${G.data.blog.id}`);
+    }
     payload.blog_id = G.data.blog.id;
-    let { data } = await G.utils.axios.patch(
+    let { errno, data } = await G.utils.axios.patch(
       G.constant.API.UPDATE_BLOG,
       payload
     );
-    // 由click觸發，才詢問是否預覽
-    if (e && confirm("儲存成功！是否預覽？（新開視窗）")) {
-      preview();
+    if (errno) {
+      location.href = `/permission/${errno}`;
+      return;
     }
     let { title, html, show, time } = data;
     let newData = { title, html, show, time };
@@ -653,6 +656,7 @@ async function initMain() {
     }
     G.utils.lock.clear();
     G.utils.lock.check_submit();
+    alert("文章已更新");
     return;
   }
   //  關於 設定文章公開/隱藏時的操作

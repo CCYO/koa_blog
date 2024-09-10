@@ -52,13 +52,14 @@ async function addUserAvatar(ctx) {
   }
 
   let data = {};
+  let ref;
   if (avatar_ext && avatar_hash) {
     avatar_ext = avatar_ext.toUpperCase();
     if (!USER.AVATAR.EXT.some((ext) => avatar_ext === ext)) {
       throw new MyErr(USER.UPDATE.AVATAR_FORMAT_ERR);
     }
     //  創建GFB的存放路徑
-    let ref = storage
+    ref = storage
       .bucket()
       .file(`${GFB.AVATAR_REF}/${avatar_hash}.${avatar_ext}`);
     //  確認是否已存
@@ -75,7 +76,7 @@ async function addUserAvatar(ctx) {
     throw e;
   });
   if (
-    !Object.getOwnPropertyNames(data).length &&
+    !Object.getOwnPropertyNames(files).length &&
     !Object.getOwnPropertyNames(fields).length
   ) {
     throw new MyErr(ERR_RES.SERVER.FORMIDABLE.NO_PAYLOAD);

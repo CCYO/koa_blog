@@ -1,5 +1,5 @@
 const router = require("koa-router")();
-const { ERR_RES } = require("../../config");
+const { FRONTEND_CONST, ERR_RES } = require("../../config");
 const { ErrModel } = require("../../utils/model");
 
 //  預判過的錯誤
@@ -18,8 +18,14 @@ router.get("/permission/:errno", async (ctx) => {
     case ERR_RES.NEWS.READ.NOT_EXIST.errno:
       opts.errModel = new ErrModel(ERR_RES.NEWS.READ.NOT_EXIST);
       break;
+    case ERR_RES.USER.READ.NO_DATA.errno:
+      opts.errModel = new ErrModel(ERR_RES.USER.READ.NO_DATA);
+      break;
     case ERR_RES.BLOG.READ.NOT_EXIST.errno:
       opts.errModel = new ErrModel(ERR_RES.BLOG.READ.NOT_EXIST);
+      break;
+    case ERR_RES.BLOG.READ.NOT_AUTHOR.errno:
+      opts.errModel = new ErrModel(ERR_RES.BLOG.READ.NOT_AUTHOR);
       break;
     case ERR_RES.COMMENT.READ.NOT_EXIST.errno:
       opts.errModel = new ErrModel(ERR_RES.COMMENT.READ.NOT_EXIST);
@@ -28,7 +34,7 @@ router.get("/permission/:errno", async (ctx) => {
       opts.errModel = new ErrModel(ERR_RES.BLOG.READ.NO_ALBUM);
   }
   opts = {
-    page: "errPage",
+    page: FRONTEND_CONST.ERR_PAGE.PAGE_NAME,
     login: Boolean(ctx.session.user),
     active: "permission",
     ...opts,

@@ -1,15 +1,15 @@
 <div style="display: none;">
   <%
       let whiteList = ({
-        albumList: ['album'],
-        album: ['blog', 'imgs'],
-        blog: ['blog'],
-        errPage: ['errModel'],
-        square: ['blog'],
-        user: ['currentUser', "relationShip", 'blogs'],
-        register_login: [],
-        setting: ['currentUser'],
-        
+        ALBUM_LIST: ['album'],
+        ALBUM: ['blog', 'imgs'],
+        BLOG: ['blog'],
+        BLOG_EDIT: ['blog'],
+        ERR_PAGE: ['errModel'],
+        SQUARE: ['blog'],
+        USER: ['currentUser', "relationShip", 'blogs'],
+        REGISTER_LOGIN: [],
+        SETTING: ['currentUser'],
       })[locals.page].concat(['active', 'login', 'page'])
   %>
   <% for(let type in locals){ %>

@@ -1,5 +1,9 @@
 {
+  "ERR_PAGE": {
+    "PAGE_NAME": "ERR_PAGE"
+  },
   "ALBUM_LIST": {
+    "PAGE_NAME": "ALBUM_LIST",
     "API": {
       "GET_PAGINATION": "/api/album/list"
     },
@@ -23,6 +27,7 @@
     }
   },
   "ALBUM": {
+    "PAGE_NAME": "ALBUM",
     "ID": {
       "MODAL": "modal_album"
     },
@@ -33,6 +38,7 @@
     }
   },
   "BLOG_EDIT": {
+    "PAGE_NAME": "BLOG_EDIT",
     "EDITOR": {},
     "API": {
       "UPDATE_ALBUM": "/api/album",
@@ -51,6 +57,7 @@
     }
   },
   "BLOG": {
+    "PAGE_NAME": "BLOG",
     "API": {
       "REMOVE_COMMENT": "/api/comment",
       "CREATE_COMMENT": "/api/comment"
@@ -69,6 +76,7 @@
     }
   },
   "REGISTER_LOGIN": {
+    "PAGE_NAME": "REGISTER_LOGIN",
     "NAME": {
       "EMAIL": "email"
     },
@@ -90,6 +98,7 @@
     }
   },
   "SETTING": {
+    "PAGE_NAME": "SETTING",
     "API": {
       "CHECK_PASSWORD": "/api/user/confirmPassword",
       "SETTING": "/api/user"
@@ -102,6 +111,7 @@
     }
   },
   "USER": {
+    "PAGE_NAME": "USER",
     "API": {
       "EDIT_BLOG": "/blog/edit",
       "CREATE_BLOG": "/api/blog",
@@ -143,6 +153,7 @@
     }
   },
   "SQUARE": {
+    "PAGE_NAME": "SQUARE",
     "API": {
       "GET_PAGINATION": "/api/square/list"
     },

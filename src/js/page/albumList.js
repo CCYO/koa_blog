@@ -1,20 +1,18 @@
-/* CSS Module ------------------------------------------------------------------------------- */
+/* CSS        ----------------------------------------------------------------------------- */
 import "@css/albumList.scss";
 
-/* Config Module ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
-
-/* Utils Module ----------------------------------------------------------------------------- */
+/* COMMON     ----------------------------------------------------------------------------- */
 import G from "../common";
-import initPagination from "../component/pagination";
-import { render, errorHandle } from "../utils";
 
-/* Runtime ---------------------------------------------------------------------------------- */
+/* UTILS      ----------------------------------------------------------------------------- */
+import { errorHandle } from "../utils";
+
+/* COMPONENT   ---------------------------------------------------------------------------- */
+import initPagination from "../component/pagination";
+
+/* RUNTIME    ----------------------------------------------------------------------------- */
 try {
-  G.page = "albumList";
-  G.constant = FRONTEND.ALBUM_LIST;
-  G.utils.render = render;
-  await G.main(initMain);
+  await G.initPage(initMain);
 } catch (error) {
   errorHandle(error);
 }

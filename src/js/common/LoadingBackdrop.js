@@ -1,6 +1,11 @@
-/* CSS Module ------------------------------------------------------------------------------- */
+/**
+ * @description 頁面遮罩
+ */
+
+/* CSS        ----------------------------------------------------------------------------- */
 import "@css/wedgets/loadingBackdrop";
-/* EXPORT MODULE ---------------------------------------------------------------------------- */
+
+/* EXPORT     ----------------------------------------------------------------------------- */
 export default class {
   ID = "loadingBackdrop";
   //  可互動的元素selector
@@ -10,6 +15,7 @@ export default class {
   editors = [];
   el_backdrop = undefined;
   $backdrop = undefined;
+
   constructor() {
     this.el_backdrop = document.querySelector(`#${this.ID}`);
     this.$backdrop = $(this.el_backdrop);
@@ -22,6 +28,7 @@ export default class {
     $("form button[type=submit]").removeAttr("disabled");
     $("form button[type=submit]").prop("disabled", true);
     this.$backdrop.removeAttr("style");
+    !process.env.isProd && console.log("loadingBackdrop ---> init");
     //  使backdrop的focus自動blur
     this.el_backdrop.addEventListener("focus", function (e) {
       e.preventDefault();
@@ -37,7 +44,8 @@ export default class {
         return resolve();
       });
     });
-    !process.env.isProd && console.log("loadingBackdrop hidden");
+    $("body").removeClass("wait");
+    !process.env.isProd && console.log("loadingBackdrop ---> hidden");
   }
   //  顯示
   show(config) {
@@ -50,12 +58,13 @@ export default class {
     if (editors.length) {
       this.insertEditors(editors);
     }
+    $("body").addClass("wait");
     this.#turnOffInteraction();
     if (!blockPage) {
       this.$backdrop.css("opacity", 0);
     }
     this.$backdrop.fadeIn();
-    !process.env.isProd && console.log("LoadingBackdrop show");
+    !process.env.isProd && console.log("LoadingBackdrop ---> show");
   }
   //  存入this.editors
   insertEditors(editors) {
@@ -77,8 +86,10 @@ export default class {
       //  關閉所有editor作用
       editor.disable();
     }
-    ////  focus事件綁定(且用上jq語法糖，賦予綁定事件一個指定名稱，方便後續取消綁定)
-    ////  handle 讓所有 blockList 發生聚焦時，統一將聚焦轉移至 backdrop
+    /**
+     * 綁定focus handle 當blockList發生focus，統一將focus轉移至 backdrop
+     * （用上jq語法糖，賦予綁定事件一個指定名稱，作為取消綁定的標記）
+     */
     $(this.targetSelector)
       .addClass(this.blockClassName)
       .on(`focus.${this.backdropClassName}`, (e) => this.#focusBackdrop(e));

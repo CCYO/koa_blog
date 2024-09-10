@@ -6,9 +6,8 @@ const { MyErr } = require("../utils/model");
 const { ERR_RES } = require("../config");
 
 async function restore(opts) {
-  // RV ROW
-
   try {
+    // RV ROW
     return await IdolFans.restore(opts);
   } catch (error) {
     throw new MyErr({ ...ERR_RES.IDOL_FANS.RESTORE.ERR, error });

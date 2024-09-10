@@ -32,7 +32,7 @@
   "READ": {
     "NOT_AUTHOR": {
       "errno": 40201,
-      "msg": "非作者本人"
+      "msg": "非作者本人，無此權限"
     },
     "NOT_EXIST": {
       "errno": 40202,

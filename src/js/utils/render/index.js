@@ -27,18 +27,18 @@ export default {
     login_collapseList: (active) =>
       lodash_template(navbar_login_collapseList)({ active }),
   },
-  blog: {
+  BLOG: {
     commentTree: lodash_template(blog_commentTree),
     commentItem: lodash_template(blog_commentItem),
   },
-  user: {
+  USER: {
     relationshipItem: lodash_template(user_relationshipItem),
     blogList: lodash_template(user_blogList),
   },
-  square: {
+  SQUARE: {
     blogList: lodash_template(square_blogList),
   },
-  albumList: {
+  ALBUM_LIST: {
     blogList: lodash_template(albumList_blogList),
   },
 };

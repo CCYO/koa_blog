@@ -27,6 +27,7 @@
     "better-scroll": "^2.5.1",
     "bootstrap": "^5.3.3",
     "cls-hooked": "^4.2.2",
+    "consola": "^3.2.3",
     "core-js": "^3.37.1",
     "cross-env": "^7.0.3",
     "date-and-time": "^2.4.2",

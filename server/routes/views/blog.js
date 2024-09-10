@@ -3,8 +3,9 @@
  */
 const router = require("koa-router")();
 const Blog = require("../../controller/blog");
-const ejs_render = require("../../utils/render");
+const render = require("../../utils/render");
 const {
+  FRONTEND_CONST,
   CACHE: { TYPE },
 } = require("../../config");
 const { CACHE } = require("../../middleware/views");
@@ -13,6 +14,8 @@ const commonCache = CACHE.genCommon(TYPE.PAGE.BLOG);
 const {
   BLOG: { PREVIEW_KEY },
 } = require("../../config");
+
+const ejs_render = render.blog;
 
 //  preview blog page
 router.get("/blog/preview/:id", privateCache, async (ctx) => {
@@ -29,7 +32,7 @@ router.get("/blog/preview/:id", privateCache, async (ctx) => {
     //  將 data 賦予 ctx.cache，稍後 privateCache 會視情況處理緩存
     ctx.cache.data = data;
     await ctx.render("blog", {
-      page: "blog",
+      page: FRONTEND_CONST.BLOG.PAGE_NAME,
       login: true,
       active: "blog-preview",
       title: new URL(ctx.href).searchParams.get(PREVIEW_KEY)
@@ -54,7 +57,7 @@ router.get("/blog/edit/:id", privateCache, async (ctx, next) => {
     //  將 data 賦予 ctx.cache，稍後 privateCache 會視情況處理緩存
     ctx.cache.data = data;
     await ctx.render("blog-edit", {
-      page: "blog",
+      page: FRONTEND_CONST.BLOG_EDIT.PAGE_NAME,
       login: true,
       active: "blog-edit",
       title: data.title,
@@ -68,7 +71,6 @@ router.get("/blog/:id", commonCache, async (ctx) => {
     //  來自 privateCache
     cache: ctx.cache,
     blog_id: ctx.params.id * 1,
-    user_id: ctx.session.user?.id,
   };
   let { errno, data } = await Blog.findInfoForCommonPage(opts);
   if (errno) {
@@ -77,7 +79,7 @@ router.get("/blog/:id", commonCache, async (ctx) => {
     //  將 data 賦予 ctx.cache，稍後 privateCache 會視情況處理緩存
     ctx.cache.data = data;
     await ctx.render("blog", {
-      page: "blog",
+      page: FRONTEND_CONST.BLOG.PAGE_NAME,
       login: Boolean(ctx.session.user),
       active: "blog",
       title: data.title,

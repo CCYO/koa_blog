@@ -287,7 +287,7 @@ async function remove({ user_id, comment_id }) {
 async function findInfoForNews(comment_id) {
   let info = await Comment.read(Opts.COMMENT.FIND._wholeInfo(comment_id));
   if (!info) {
-    throw new ErrModel(ERR_RES.COMMENT.READ.NOT_EXIST);
+    return new ErrModel(ERR_RES.COMMENT.READ.NOT_EXIST);
   }
   let { createdAt, pid, article } = info;
 
@@ -365,7 +365,61 @@ async function confirmNews({ receiver_id, msgReceiver_id }) {
   return new SuccModel(opts);
 }
 
+async function removeListInBlog(article_id) {
+  let comments = await Comment.readList(
+    Opts.COMMENT.FIND._removeListInBlog(article_id)
+  );
+  let comment_id_list = comments.map((comment) => comment.id);
+  let receivers = comments
+    .map((comment) => {
+      if (comment.receivers?.length) {
+        return comment.receivers;
+      } else {
+        return undefined;
+      }
+    })
+    .filter(Boolean)
+    .flat();
+  let msgReceiver_id_list = receivers.map(
+    (receiver) => receiver.MsgReceiver.id
+  );
+  if (comment_id_list.length) {
+    await Comment.destroyList(Opts.COMMENT.REMOVE.list(comment_id_list));
+  }
+  if (msgReceiver_id_list) {
+    await C_MsgReceiver.removeList(msgReceiver_id_list);
+  }
+  return new SuccModel();
+}
+
+async function destoryReceiver(article_id) {
+  let comment_list = await Comment.readList(
+    Opts.COMMENT.FIND._receiverListForDestory(article_id)
+  );
+  let receiver_list = comment_list.map((item) => item.receivers).flat();
+  let msgReceiver_id_list = receiver_list.map(
+    (receiver) => receiver.MsgReceiver.id
+  );
+  await C_MsgReceiver.removeList(msgReceiver_id_list);
+  return new SuccModel();
+}
+
+async function restoryReceiver(article_id) {
+  let comment_list = await Comment.readList(
+    Opts.COMMENT.FIND._receiverListForRestory(article_id)
+  );
+  let receiver_list = comment_list.map((item) => item.receivers).flat();
+  let msgReceiver_id_list = receiver_list.map(
+    (receiver) => receiver.MsgReceiver.id
+  );
+  await C_MsgReceiver.restoryList(msgReceiver_id_list);
+  return new SuccModel();
+}
+
 module.exports = {
+  restoryReceiver,
+  destoryReceiver,
+  removeListInBlog,
   confirmNews,
   findInfoForNews,
   remove,
@@ -379,7 +433,7 @@ async function _findLastItemOfPidAndNotSelf(
   pid
 ) {
   let comment = await Comment.read(
-    Opts.COMMENT._findLastItemOfPidAndNotSelf(
+    Opts.COMMENT.FIND._lastItemOfPidAndNotSelf(
       article_id,
       commenter_id,
       time,

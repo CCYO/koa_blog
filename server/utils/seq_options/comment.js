@@ -2,6 +2,42 @@ const { Op } = require("sequelize");
 const xss = require("xss");
 const _REMOVE = require("./_remove");
 const FIND = {
+  _removeListInBlog: (article_id) => ({
+    where: { article_id },
+    attributes: ["id"],
+    include: {
+      association: "receivers",
+      attributes: ["id"],
+      through: {
+        attributes: ["id"],
+      },
+    },
+  }),
+  _receiverListForDestory: (article_id) => ({
+    where: { article_id },
+    attributes: ["id"],
+    include: {
+      association: "receivers",
+      attributes: ["id"],
+      through: {
+        attributes: ["id"],
+        required: true,
+      },
+    },
+  }),
+  _receiverListForRestory: (article_id) => ({
+    where: { article_id },
+    attributes: ["id"],
+    include: {
+      association: "receivers",
+      attributes: ["id"],
+      through: {
+        where: { deletedAt: { [Op.not]: null } },
+        attributes: ["id"],
+        paranoid: false,
+      },
+    },
+  }),
   _infoAboutItem: (id, paranoid = true) => ({
     where: { id },
     paranoid,
@@ -56,6 +92,25 @@ const FIND = {
       attributes: ["id"],
       where: { id: author_id },
     },
+  }),
+  _lastItemOfPidAndNotSelf: (article_id, commenter_id, time, pid) => ({
+    attributes: [
+      "id",
+      "html",
+      "article_id",
+      "commenter_id",
+      "updatedAt",
+      "createdAt",
+      "deletedAt",
+      "pid",
+    ],
+    where: {
+      article_id,
+      commenter_id: { [Op.not]: commenter_id },
+      createdAt: { [Op.lte]: time },
+      pid,
+    },
+    order: [["createdAt", "DESC"]],
   }),
   lastItemOfNotSelf: (article_id, commenter_id, time) => ({
     attributes: [

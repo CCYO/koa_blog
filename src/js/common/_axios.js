@@ -1,28 +1,32 @@
-/* Config Module ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
+/**
+ * _AXIOS
+ * @description 針對特定的response設定處理方式，統一處理錯誤
+ */
 
-/* NPM Module -------------------------------------------------------------------------------- */
-import axios from "axios";
-
-/* Utils Module ------------------------------------------------------------------------------ */
+/* UTILS      ----------------------------------------------------------------------------- */
 import errorHandle from "../utils/errorHandle";
 
-/* Utils Module ------------------------------------------------------------------------------ */
+/* CONFIG     ----------------------------------------------------------------------------- */
+import FRONTEND from "@config/frontend_esm";
+
+/* NPM        ----------------------------------------------------------------------------- */
+import axios from "axios";
+
+/* EXPORT     ----------------------------------------------------------------------------- */
 export default class {
+  // 無登入權限也可訪問的白名單頁面
   #ACTIVE_WHITE_LIST = [
+    //  不允許登入權限的頁面
     "register",
     "login",
+    //  不需要登入權限的頁面
     "square",
     "other",
-    "blog-preview",
+    "blog",
     "permission",
   ];
-  IGNORE_NEWS = undefined;
 
-  constructor({ backdrop = undefined, G }) {
-    this.IGNORE_NEWS = this.#ACTIVE_WHITE_LIST.some(
-      (item) => item === G.data.active
-    );
+  constructor({ backdrop = undefined, active }) {
     let instance = axios.create();
     instance.backdrop = backdrop;
 
@@ -47,35 +51,30 @@ export default class {
     /* 配置 axios 的 響應攔截器，統一處理報錯 */
     instance.interceptors.response.use(
       (response) => {
-        let resolve = true;
-        let {
-          config: { url },
-          data: { errno, msg },
-        } = response;
-        //  res { errno, data }
-        let res = response.data;
+        let ok = true;
+        //  resData { errno, data }
+        let resData = response.data;
 
         if (
-          errno === FRONTEND._AXIOS.ERR_RES.NEWS_NO_LOGIN.errno &&
-          !this.IGNORE_NEWS
+          resData.errno === FRONTEND._AXIOS.ERR_RES.NEWS_NO_LOGIN.errno &&
+          !this.#ACTIVE_WHITE_LIST.some((item) => item === active)
         ) {
-          ////  response 為 news請求的 noLogin 提醒
-          resolve = false;
-        } else if (errno === FRONTEND._AXIOS.ERR_RES.NO_LOGIN.errno) {
-          ////  response 為 非news請求的 noLogin 提醒
-          resolve = false;
+          //  response 為 news請求的 noLogin 提醒
+          ok = false;
+        } else if (resData.errno === FRONTEND._AXIOS.ERR_RES.NO_LOGIN.errno) {
+          //  response 為 非news請求的 noLogin 提醒
+          ok = false;
         }
         if (instance.autoLoadingBackdrop) {
           instance.backdrop.hidden();
         }
-        if (!resolve) {
-          return Promise.reject(new Error(JSON.stringify(res)));
+        if (!ok) {
+          return Promise.reject(new Error(JSON.stringify(resData)));
         }
-        return Promise.resolve(res);
+        return Promise.resolve(resData);
       },
       (axiosError) => {
-        !process.env.isProd &&
-          console.log("_axios 捕獲到錯誤，交給 $M_common.error_handle 處理");
+        !process.env.isProd && console.log("_axios捕獲到Server Error");
         // axiosError.response.data { model: { errno, data }}
         errorHandle(axiosError.response.data);
       }
