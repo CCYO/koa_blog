@@ -1,13 +1,13 @@
+/* NPM        ----------------------------------------------------------------------------- */
 import lodash_template from "lodash/template";
 
-//  使用 template-ejs-loader 將 偶像粉絲列表的項目ejs檔 轉譯為 純字符
+//  藉row-loader將ejs轉純字符
 import navbar_logout_uncollapseList from "!!raw-loader!./template/navbar/logout_uncollapseList.ejs";
 import navbar_login_uncollapseList from "!!raw-loader!./template/navbar/login_uncollapseList.ejs";
 import navbar_login_collapseList from "!!raw-loader!./template/navbar/login_collapseList.ejs";
 import navbar_fansIdol from "!!raw-loader!./template/navbar/idolFans.ejs";
 import navbar_articleReader from "!!raw-loader!./template/navbar/articleReader.ejs";
 import navbar_msgReceiver from "!!raw-loader!./template/navbar/msgReceiver.ejs";
-
 import blog_commentTree from "!!raw-loader!./template/blog/commentTree.ejs";
 import blog_commentItem from "!!raw-loader!./template/blog/commentItem.ejs";
 import user_relationshipItem from "!!raw-loader!./template/user/relationshipItem.ejs";
@@ -15,6 +15,7 @@ import user_blogList from "!!raw-loader!./template/user/blogList.ejs";
 import square_blogList from "!!raw-loader!./template/square/blogList.ejs";
 import albumList_blogList from "!!raw-loader!./template/albumList/blogList.ejs";
 
+/* EXPORT     ----------------------------------------------------------------------------- */
 export default {
   navbar: {
     fansIdol: lodash_template(navbar_fansIdol),

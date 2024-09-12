@@ -5,7 +5,6 @@ const TYPE = {
   REGISTER: "register",
   IS_EMAIL_EXIST: "is_email_exist",
   PASSOWRD_AGAIN: "password_again",
-  //	register&login/login
   LOGIN: "login",
   //	user/self
   BLOG_TITLE: "blog_title",

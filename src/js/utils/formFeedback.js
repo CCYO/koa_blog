@@ -1,7 +1,16 @@
+/* CSS        ----------------------------------------------------------------------------- */
 import "@css/utils/form_feedback.scss";
 
+/* EXPORT     ----------------------------------------------------------------------------- */
+export default {
+  loading,
+  validated,
+  clear,
+  reset,
+};
+
+//  input校驗中
 function loading(el_input, msg = "") {
-  //  input 讀取中
   $(el_input)
     // .next("div")
     .siblings("div")
@@ -10,8 +19,9 @@ function loading(el_input, msg = "") {
     .text(msg || "loading...");
   return undefined;
 }
+
+//  input的校驗結果
 function validated(el_input, valid, msg = "") {
-  //  input 有效 || 無效
   $(el_input)
     .removeClass(valid ? "is-invalid" : "is-valid")
     .addClass(valid ? "is-valid" : "is-invalid")
@@ -23,11 +33,11 @@ function validated(el_input, valid, msg = "") {
     .text(msg);
   return valid;
 }
-//  清空inp
+
+//  清空指定inp
 function clear(el_input) {
   $(el_input)
     .removeClass("is-invalid is-valid")
-    // .next("div")
     .siblings("div")
     .first()
     .removeClass("invalid-feedback valid-feedback loading")
@@ -35,7 +45,7 @@ function clear(el_input) {
   return undefined;
 }
 
-//  清空form
+//  清空整個form
 function reset(el_form) {
   el_form.reset();
   for (let inp of el_form) {
@@ -50,10 +60,3 @@ function reset(el_form) {
   }
   return undefined;
 }
-
-export default {
-  loading,
-  validated,
-  clear,
-  reset,
-};

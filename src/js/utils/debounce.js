@@ -1,10 +1,19 @@
+/* UTILS      ----------------------------------------------------------------------------- */
 import error_handle from "./errorHandle";
+
+/* EXPORT     ----------------------------------------------------------------------------- */
 export default class {
+  //  防抖動的間距時間
   ms = 250;
+  //  防抖動的過度函數
   loading = undefined;
-  error_handle = error_handle;
+  //  實際要防抖動的CB
+  callback = undefined;
+  //  保存實例debounce
+  debounce = undefined;
   timeSet = undefined;
-  /* 防抖動的函數工廠 */
+  //  紀錄當次debounce的Promise resolv
+  resolve = undefined;
   constructor(callback, config) {
     if (!callback) {
       throw new Error("創建Debounce Ins必須提供callback參數");
@@ -15,14 +24,9 @@ export default class {
       this.name = config.name ? config.name : callback.name;
       this.ms = config.ms ? config.ms : this.ms;
       this.loading = config.loading ? config.loading : this.loading;
-      this.error_handle = config.error_handle
-        ? config.error_handle
-        : this.error_handle;
     }
     this.callback = callback;
     this.debounce = this.#debounce.bind(this);
-    //  紀錄當前Promise resolv
-    this.resolve = undefined;
   }
 
   //  setTimeout 標記
@@ -39,6 +43,8 @@ export default class {
       }
 
       this.timeSet = setTimeout(async () => {
+        // 及時保存當前數據
+        let _args = args;
         let _timeSet = this.timeSet;
         try {
           !process.env.isProd &&
@@ -46,7 +52,7 @@ export default class {
               `debounce ----- \nsetTimeout\n【timer:${_timeSet}】\n【CB:${this.name}】\n---------- runing`
             );
           //  延遲調用fn
-          let result = await this.callback(...args);
+          let result = await this.callback(..._args);
           if (this.timeSet === _timeSet) {
             !process.env.isProd &&
               console.log(
@@ -67,7 +73,7 @@ export default class {
               `debounce ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- catch error, and call error_handle`
             );
           this._clearTimeout(_timeSet);
-          this.error_handle(e);
+          error_handle(e);
           reject();
         }
       }, this.ms);

@@ -1,14 +1,17 @@
-/* -------------------- NPM MODULE -------------------- */
-import Ajv2019 from "ajv/dist/2019";
-import addFormats from "ajv-formats";
-import ajvErrors from "ajv-errors";
-/* -------------------- Utils MODULE -------------------- */
+/* UTILS      ----------------------------------------------------------------------------- */
 import list_ajv_keyword from "./keyword";
 import check from "./validate";
 import AJV_CONFIG from "./config";
-/* -------------------- RUN -------------------- */
+
+/* NPM        ----------------------------------------------------------------------------- */
+import Ajv2019 from "ajv/dist/2019";
+import addFormats from "ajv-formats";
+import ajvErrors from "ajv-errors";
+
+/* CUSTOM     ----------------------------------------------------------------------------- */
 import schema_list from "./schema";
 
+/* EXPORT     ----------------------------------------------------------------------------- */
 export default class extends Ajv2019 {
   constructor(axios) {
     //  建立ajv instance

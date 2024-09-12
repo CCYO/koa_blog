@@ -20,6 +20,9 @@ const _whiteList = {
   ],
 };
 
+/* EXPORT     ----------------------------------------------------------------------------- */
+export default { _xss, trim, blog };
+
 //  針對html格式內容設計
 function _xss(html) {
   return xss(html, {
@@ -64,5 +67,3 @@ function blog(data) {
   curHtml = curHtml.replace(reg_end, "");
   return curHtml;
 }
-
-export default { _xss, trim, blog };

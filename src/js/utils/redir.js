@@ -1,6 +1,13 @@
+/* CONFIG     ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
+
+/* VAR        ----------------------------------------------------------------------------- */
 const API_LOGIN = "/login";
 
+/* EXPORT     ----------------------------------------------------------------------------- */
+export default { from, check_login };
+
+//  確認是否已轉址需求
 function from(url) {
   let searchParams = new URLSearchParams(location.search);
   if (searchParams.size) {
@@ -10,6 +17,7 @@ function from(url) {
   location.replace(url);
 }
 
+//  確認是否有登入權限
 function check_login(G) {
   const loginStatus = G?.data?.me;
   if (!loginStatus) {
@@ -21,5 +29,3 @@ function check_login(G) {
   }
   return loginStatus;
 }
-
-export default { from, check_login };
