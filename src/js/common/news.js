@@ -98,10 +98,6 @@ export default class {
             excepts: { ...this.#id_list },
           };
         }
-        // else {
-        //   !process.env.isProd && console.log("請求news ---> 手動調用");
-        //   return { status: FRONTEND.NAVBAR.NEWS.STATUS.CHECK };
-        // }
       },
     });
   }
@@ -294,8 +290,7 @@ class Render {
   first = true;
   count = 0;
   //  單位ms, 5 min
-  // LOAD_NEWS = 1000 * 60 * 5;
-  LOAD_NEWS = 1000 * 5;
+  LOAD_NEWS = 1000 * 60 * 5;
   //  更多通知BTN
   $readMore = $("#readMore");
   //  沒有更多通知BTN
