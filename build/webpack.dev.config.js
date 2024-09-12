@@ -1,10 +1,12 @@
-////  NPM MODULE
+/* NPM        ----------------------------------------------------------------------------- */
 const webpack = require("webpack");
 const { merge } = require("webpack-merge");
-////  MY MODULE
+
+/* CONFIG     ----------------------------------------------------------------------------- */
 const webpackBaseConfig = require("./webpack.base.config");
 const WEBPACK_CONFIG = require("./config");
 
+/* EXPORT     ----------------------------------------------------------------------------- */
 module.exports = merge(webpackBaseConfig, {
   cache: {
     type: "filesystem",

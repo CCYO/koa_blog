@@ -1,42 +1,25 @@
-////  NODE MODULE
+/* NODEJS     ----------------------------------------------------------------------------- */
 const { resolve } = require("path");
 const os = require("node:os");
-////  NPM MODULE
+
+/* NPM        ----------------------------------------------------------------------------- */
 const webpack = require("webpack");
 const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
 const BundleAnalyzerPlugin =
   require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const WebpackBar = require("webpackbar");
-////  MY MODULE
+
+/* CUSTOM     ----------------------------------------------------------------------------- */
 const htmlWebpackPlugins = require("./_htmlWebpackPlugins");
 const entry = require("./_entry");
+
+/* CONFIG     ----------------------------------------------------------------------------- */
 const WEBPACK_CONFIG = require("./config");
 
-// const isProd = process.env.NODE_ENV === "production";
-const isProd = false;
+/* VAR        ----------------------------------------------------------------------------- */
+const isProd = process.env.NODE_ENV === "production";
 
-const plugins = [
-  ...htmlWebpackPlugins,
-  new FaviconsWebpackPlugin({
-    devMode: "webapp",
-    cache: true,
-    logo: resolve(__dirname, "../src/assets/imgs/favicon.png"),
-    //  與自動填入html內的favicon連結有關，結果會是 webpack.base.config.output.publicPath + FaviconsWebpackPlugin.prefix + favicon檔名
-    // publicPath: "/public",
-    prefix: "imgs/favicon/",
-    // outputPath: resolve(__dirname, "../server/assets/imgs/favicon"),
-    inject: true,
-  }),
-  new webpack.ProvidePlugin({
-    $: "jquery",
-  }),
-  new BundleAnalyzerPlugin(),
-  new webpack.DefinePlugin({
-    "process.env.isProd": JSON.stringify(isProd),
-  }),
-  new WebpackBar(),
-];
-
+/* EXPORT     ----------------------------------------------------------------------------- */
 module.exports = {
   context: resolve(__dirname),
   entry,
@@ -46,7 +29,6 @@ module.exports = {
     filename: isProd
       ? `${WEBPACK_CONFIG.BUILD.SCRIPT}/[name].[contenthash:5].js`
       : `${WEBPACK_CONFIG.BUILD.SCRIPT}/[name].js`,
-    // chunkFilename: `${WEBPACK_CONFIG.BUILD.SCRIPT}/chunk.[name].[contenthash:5].js`,
     clean: true,
   },
   resolve: {
@@ -81,10 +63,11 @@ module.exports = {
           },
           {
             loader: "babel-loader",
-            options: {
-              cacheDirectory: !isProd, //	cacheDirectory 緩存
-              cacheCompression: false, //  cacheCompression 緩存壓縮,
-            },
+            // webpack.dev.config 已開啟 cache.type: "filesystem"，故不需要開啟babel cache
+            // options: {
+            //   cacheDirectory: !isProd, //	cacheDirectory 緩存
+            //   cacheCompression: false, //  cacheCompression 緩存壓縮,
+            // },
           },
         ],
         exclude: /(node_modules|lib|libs)/,
@@ -115,5 +98,25 @@ module.exports = {
       },
     ],
   },
-  plugins,
+  plugins: [
+    ...htmlWebpackPlugins,
+    new FaviconsWebpackPlugin({
+      devMode: "webapp",
+      cache: true,
+      logo: resolve(__dirname, "../src/assets/imgs/favicon.png"),
+      //  與自動填入html內的favicon連結有關，結果會是 webpack.base.config.output.publicPath + FaviconsWebpackPlugin.prefix + favicon檔名
+      // publicPath: "/public",
+      prefix: "imgs/favicon/",
+      // outputPath: resolve(__dirname, "../server/assets/imgs/favicon"),
+      inject: true,
+    }),
+    new webpack.ProvidePlugin({
+      $: "jquery",
+    }),
+    new BundleAnalyzerPlugin(),
+    new webpack.DefinePlugin({
+      "process.env.isProd": JSON.stringify(isProd),
+    }),
+    new WebpackBar(),
+  ],
 };

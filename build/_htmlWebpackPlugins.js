@@ -1,37 +1,24 @@
-////  NODE MODULE
+/**
+ * @description  取得webpack.base.config內，plugins中的htmlWebpackPlugins
+ */
+
+/* NODEJS     ----------------------------------------------------------------------------- */
 const glob = require("glob");
 const fs = require("fs");
 const { resolve } = require("path");
-////  NPM MODULE
+
+/* NPM        ----------------------------------------------------------------------------- */
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-////  MY MODULE
-const WEBPACK_CONFIG = require("./config");
+
+/* CONFIG     ----------------------------------------------------------------------------- */
 const FRONTEND_CONST = require("../src/config/frontend_cjs");
+const WEBPACK_CONFIG = require("./config");
 
-//  將ejs內被標註的字符替換為指定常量
-let _replaceFrontendConst = (function () {
-  //  ejs 須被替換為常量的標記
-  const PREFIX = "CONS";
-  const REG_REPLACE = new RegExp(`[-]{2}${PREFIX}\\.(\\S+?)[-]{2}`, "g");
-  //  存放ejs內需要替換的常量
-  let cache_ejs_const = new Map();
-  return function (filepath) {
-    ////  替換 ejs_string 內的變量常數 "--CONS.[PAGE_NAME]--"
-    let ejs_string = fs.readFileSync(filepath, "utf-8");
-    return ejs_string.replace(REG_REPLACE, (match, target_string) => {
-      //  匹配的常量變數若已存在，直接取得
-      if (cache_ejs_const.has(match)) {
-        return cache_ejs_const.get(match);
-      }
-      //  JSON.stringify result雖然已經是string，但此時ejs_string也是string，所以必須在result外在加上' '
-      let json_string = `'${JSON.stringify(FRONTEND_CONST[target_string])}'`;
-      cache_ejs_const.set(match, json_string);
-      // }
-      return json_string;
-    });
-  };
-})();
+/* VAR        ----------------------------------------------------------------------------- */
+//  ejs 須被替換為常量的標記
+const PREFIX = "CONS";
 
+/* EXPORT     ----------------------------------------------------------------------------- */
 module.exports = (function () {
   const result = [];
   //  所有 ejs 檔案的路徑
@@ -41,7 +28,7 @@ module.exports = (function () {
     /**
      * ~/.../views/pages/[TypeName]
      * ~/.../views/wedgets/[wedgetType]/component
-     * * ~/.../views/wedgets/[wedgetType]/component/[TypeName]
+     * ~/.../views/wedgets/[wedgetType]/component/[TypeName]
      * /index.ejs -------------------- TypeName下的基礎模塊
      * /components/*.ejs ------------- TypeName下的components
      * /template/*.ejs --------------- 當前後端需要生成TypeName部分template，時，被作為 genTemplateFn 的參數使用
@@ -126,3 +113,22 @@ module.exports = (function () {
   });
   return result;
 })();
+
+//  將ejs內被標註的字符，替換為指定常量
+function _replaceFrontendConst(filepath) {
+  const REG_REPLACE = new RegExp(`[-]{2}${PREFIX}\\.(\\S+?)[-]{2}`, "g");
+  //  存放ejs內需要替換的常量
+  let cache_ejs_const = new Map();
+  ////  替換 ejs_string 內的變量常數 "--CONS.[PAGE_NAME]--"
+  let ejs_string = fs.readFileSync(filepath, "utf-8");
+  return ejs_string.replace(REG_REPLACE, (match, target_string) => {
+    //  匹配的常量變數若已存在，直接取得
+    if (cache_ejs_const.has(match)) {
+      return cache_ejs_const.get(match);
+    }
+    //  JSON.stringify result雖然已經是string，但此時ejs_string也是string，所以必須在result外在加上' '
+    let json_string = `'${JSON.stringify(FRONTEND_CONST[target_string])}'`;
+    cache_ejs_const.set(match, json_string);
+    return json_string;
+  });
+}

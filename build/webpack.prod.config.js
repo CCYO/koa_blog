@@ -1,20 +1,23 @@
-////  NODE MODULE
+/* NODEJS     ----------------------------------------------------------------------------- */
 const os = require("node:os");
 const { resolve } = require("path");
-////  NPM MODULE
+
+/* NPM        ----------------------------------------------------------------------------- */
 const pm2 = require("pm2");
 const { merge } = require("webpack-merge");
 const OptimizeCss = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlInlineScriptPlugin = require("html-inline-script-webpack-plugin");
-// 1)必須將MiniCssExtractPlugin額外取出，wrap後再添入
-// 2)會導致HtmlInlineScriptPlugin無作用
-const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+/**
+ * SpeedMeasurePlugin hack
+ * const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+ */
 const TerserPlugin = require("terser-webpack-plugin");
-////  MY MODULE
+const RemovePlugin = require("remove-files-webpack-plugin");
+
+/* CONFIG     ----------------------------------------------------------------------------- */
 const WEBPACK_CONFIG = require("./config");
 const webpackBaseConfig = require("./webpack.base.config");
-const RemovePlugin = require("remove-files-webpack-plugin");
 
 const styleLoaderList = [
   {
@@ -27,9 +30,9 @@ const styleLoaderList = [
     },
   },
   {
-    loader: "thread-loader", // 开启多进程
+    loader: "thread-loader", // 開啟多線程
     options: {
-      workers: os.cpus().length, // 数量
+      workers: os.cpus().length, // 根據CPU數量開啟線程數
     },
   },
   {
@@ -42,57 +45,7 @@ const styleLoaderList = [
   },
 ];
 
-const plugins = (run) =>
-  [
-    // 針對 SpeedMeasurePlugin 的 hack
-    // new MiniCssExtractPlugin({
-    //   filename: `${WEBPACK_CONFIG.BUILD.STYLE}/[name].[contenthash:5].min.css`,
-    // }),
-    new HtmlInlineScriptPlugin({
-      htmlMatchPattern: [/[.]ejs$/],
-      scriptMatchPattern: [/runtime[.]\w+[.]js$/],
-      assetPreservePattern: [/runtime[.]\w+[.]js$/],
-    }),
-    new RemovePlugin({
-      after: { include: [resolve(__dirname, "../src/_views")], trash: true },
-    }),
-    new OptimizeCss(),
-    DONE(run),
-  ].filter(Boolean);
-
-const prod_config = (run) => ({
-  module: {
-    rules: [
-      {
-        test: /\.(png|jpg|jpeg|gif)$/,
-        type: "asset",
-        generator: {
-          filename: `${WEBPACK_CONFIG.BUILD.IMAGE}/[name].[contenthash:5][ext]`,
-        },
-        parser: {
-          dataUrlCondition: {
-            maxSize: 8 * 1024,
-          },
-        },
-      },
-      {
-        test: /\.css$/,
-        use: styleLoaderList,
-      },
-      {
-        test: /\.s[ac]ss$/,
-        use: [...styleLoaderList, "sass-loader"],
-      },
-    ],
-  },
-  plugins: plugins(run),
-
-  optimization,
-
-  // devtool: "cheap-module-source-map",
-  mode: "production",
-});
-var optimization = {
+const optimization = {
   splitChunks: {
     cacheGroups: {
       defaultVendors: {
@@ -146,6 +99,86 @@ var optimization = {
   ],
 };
 
+const plugins = (run) =>
+  [
+    /**
+     * SpeedMeasurePlugin hack
+     * 最後再加入MiniCssExtractPlugin
+     */
+    new MiniCssExtractPlugin({
+      filename: `${WEBPACK_CONFIG.BUILD.STYLE}/[name].[contenthash:5].min.css`,
+    }),
+    new HtmlInlineScriptPlugin({
+      htmlMatchPattern: [/[.]ejs$/],
+      scriptMatchPattern: [/runtime[.]\w+[.]js$/],
+      assetPreservePattern: [/runtime[.]\w+[.]js$/],
+    }),
+    new RemovePlugin({
+      after: { include: [resolve(__dirname, "../src/_views")], trash: true },
+    }),
+    new OptimizeCss(),
+    DONE(run),
+  ].filter(Boolean);
+
+const prod_config = (run) => ({
+  module: {
+    rules: [
+      {
+        test: /\.(png|jpg|jpeg|gif)$/,
+        type: "asset",
+        generator: {
+          filename: `${WEBPACK_CONFIG.BUILD.IMAGE}/[name].[contenthash:5][ext]`,
+        },
+        parser: {
+          dataUrlCondition: {
+            maxSize: 8 * 1024,
+          },
+        },
+      },
+      {
+        test: /\.css$/,
+        use: styleLoaderList,
+      },
+      {
+        test: /\.s[ac]ss$/,
+        use: [...styleLoaderList, "sass-loader"],
+      },
+    ],
+  },
+  plugins: plugins(run),
+
+  optimization,
+
+  // devtool: "cheap-module-source-map",
+  mode: "production",
+});
+
+module.exports = (env) => {
+  /**
+   * SpeedMeasurePlugin 會導致
+   * 1)因為MiniCssExtractPlugin報錯，無法打包
+   * 2)HtmlInlineScriptPlugin無作用
+   * 3)FaviconsWebpackPlugin無作用
+   * 若要使用，需將MiniCssExtractPlugin額外取出，wrap後再添入，
+   * 但除了避免1)，打包後其他問題仍存在
+   */
+  /**
+   * SpeedMeasurePlugin hack
+   * let config = new SpeedMeasurePlugin().wrap(
+   *   merge(webpackBaseConfig, prod_config(env.run))
+   * );
+   * config.plugins.push(
+   *   new MiniCssExtractPlugin({
+   *     filename: `${WEBPACK_CONFIG.BUILD.STYLE}/[name].[contenthash:5].min.css`,
+   *   })
+   * );
+   */
+  let config = merge(webpackBaseConfig, prod_config(env.run));
+  config.module.rules = [{ oneOf: [...config.module.rules] }];
+  return config;
+};
+
+// 自動調用PM2
 function DONE(run) {
   if (!run) {
     return false;
@@ -169,19 +202,3 @@ function DONE(run) {
     },
   };
 }
-
-module.exports = (env) => {
-  // 針對 SpeedMeasurePlugin 的 hack
-  let config = new SpeedMeasurePlugin().wrap(
-    merge(webpackBaseConfig, prod_config(env.run))
-  );
-  config.plugins.push(
-    new MiniCssExtractPlugin({
-      filename: `${WEBPACK_CONFIG.BUILD.STYLE}/[name].[contenthash:5].min.css`,
-    })
-  );
-  // 正式打包
-  // let config = merge(webpackBaseConfig, prod_config(env.run));
-  // config.module.rules = [{ oneOf: [...config.module.rules] }];
-  return config;
-};

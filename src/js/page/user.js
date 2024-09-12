@@ -206,12 +206,11 @@ async function initMain() {
       let html = G.utils.render.relationshipItem({ user: G.data.me });
 
       if (G.data.relationShip.fansList.length === 1) {
-        //  如果追蹤者只有當前的你
-        $fansList.html(`<ul>${html}</ul>`);
+        //  如果追蹤者只有當前的你，撤換掉列表內容
+        $fansList.children("ul").html(html);
       } else {
-        //  如果追蹤者不只當前的你
+        //  如果追蹤者不只當前的你，插在最前面
         $fansList.children("ul").prepend(html);
-        //  插在最前面
       }
       G.utils.betterScroll.refresh();
       //  重整 BetterScroll
@@ -238,15 +237,13 @@ async function initMain() {
       );
       //  在粉絲列表中移除 粉絲htmlStr
       if (G.data.relationShip.fansList.length > 0) {
-        //  如果仍有追蹤者
+        //  如果仍有追蹤者，直接移除
         $fansList
           .find(`li[data-${G.constant.DATASET.KEY.USER_ID}=${G.data.me.id}]`)
           .remove();
-        //  直接移除
       } else {
-        //  如果已無追蹤者
-        $fansList.html(`<p>可憐阿，沒有朋友</p>`);
-        //  撤換掉列表內容
+        //  如果已無追蹤者，撤換掉列表內容
+        $fansList.children("ul").html(`<p>很遺憾，列表裡沒有人</p>`);
       }
       /*  同步 $$fansList 數據 */
       G.utils.betterScroll.refresh();

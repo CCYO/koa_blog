@@ -1,7 +1,12 @@
-////  NODE MODULE
+/**
+ * @description  取得webpack.base.config的entry
+ */
+
+/* NODEJS     ----------------------------------------------------------------------------- */
 const glob = require("glob");
 const { resolve } = require("path");
 
+/* EXPORT     ----------------------------------------------------------------------------- */
 module.exports = ((filepathList) => {
   let res = {};
   filepathList.forEach((filepath) => {
@@ -9,7 +14,7 @@ module.exports = ((filepathList) => {
 
     const chunkName = arr[arr.length - 1].replace(/\.js/g, "");
     res[chunkName] =
-      process.env.NODE_ENV === "development"
+      process.env.NODE_ENV !== "production"
         ? [filepath, "webpack-hot-middleware/client?reload=true"]
         : filepath;
   });

@@ -1,20 +1,18 @@
-<% for( _type in relationShip){ %>
-<% let _list = relationShip[_type] %>
+<% for( _type in relationShip){ %> <% let _list = relationShip[_type] %>
 <div class="card">
   <div class="card-header">
     <h5><%= _type === "fansList" ? "粉絲" : "偶像" %>列表</h5>
   </div>
   <div class="card-body">
     <div class="betterscroll-outer" id="<%= _type %>">
+      <ul class="list-group list-group-horizontal"></ul>
       <% if(_list.length) {%>
-      <ul class="list-group list-group-horizontal">
-        <% _list.forEach( _user => { %>
-        <%- ejs_render.relationshipItem({ user: _user }) %>
-        <% }) %>
-      </ul>
+        <% _list.forEach( _user => { %> <%- ejs_render.relationshipItem({ user:
+        _user }) %> <% }) %>
       <% } else { %>
-      <p>很遺憾，列表裡沒有人</p>
+        <p>很遺憾，列表裡沒有人</p>
       <% } %>
+    </ul>
     </div>
   </div>
 </div>
