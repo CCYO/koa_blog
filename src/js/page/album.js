@@ -31,31 +31,33 @@ async function initMain() {
   const jq_input_alt = jq_modal.find("input").eq(0);
   const el_input_alt = jq_input_alt.get(0);
   const jq_submit = jq_modal.find(".modal-footer > button:last-child").eq(0);
-
-  G.utils.lock = initLock();
+  G.utils.bs5_modal = undefined;
+  G.utils.lock = init_lock();
   let { debounce: handle_debounce_input } = new Debounce(handle_input, {
     loading() {
       formFeedback.loading(el_input_alt);
     },
   });
-  //  校驗blog數據，且決定submit可否點擊
-
+  ////  為修改imgAlt的modal，綁定各種handle
+  //  顯示
   $(".card button").on("click", handle_cueModale);
-  //  modal 顯示前的 handle
+  //  顯示前
   el_modal.addEventListener("show.bs.modal", handle_showModal);
-  //  modal 顯示時的 handle
+  //  顯示後
   el_modal.addEventListener("shown.bs.modal", handle_shownModal);
+  //  圖片名稱input
   el_modal.addEventListener("input", handle_debounce_input);
+  //  Enter觸發
   el_modal.addEventListener("keyup", (e) => {
     e.preventDefault();
     if (e.key.toUpperCase() === "ENTER") {
       jq_submit.get(0).click();
     }
   });
-  /* 點擊更新鈕的handle */
+  //  點擊更新鈕
   jq_submit.on("click", handle_updateImgAlt);
 
-  //  handle 更新 imgAlt
+  //  更新imgAlt
   async function handle_updateImgAlt() {
     if (!redir.check_login(G)) {
       return;
@@ -76,9 +78,11 @@ async function initMain() {
     jq_modal.data(G.constant.DATASET.KEY.ALT_ID, "");
     formFeedback.clear(el_input_alt);
     G.utils.lock.clear();
-    bs5_modal.hide();
+    G.utils.bs5_modal.hide();
     alert("更新完成");
   }
+
+  // modal內部修改imgAlt的input handle
   async function handle_input() {
     const KEY = "alt";
     const alt = _xss.trim(jq_input_alt.val());
@@ -109,12 +113,14 @@ async function initMain() {
     G.utils.lock.check_submit();
     return;
   }
-  /* modal 顯示時的 handle */
+
+  // modal顯示後
   function handle_shownModal(e) {
     //  自動聚焦在input
     el_input_alt.focus();
   }
-  /* modal 顯示前的 handle */
+
+  //  modal顯示前
   function handle_showModal(e) {
     //  由 bs5_modal.show(relatedTarget) 傳遞而來
     let jq_card = e.relatedTarget;
@@ -132,23 +138,24 @@ async function initMain() {
     jq_input_alt.val(alt);
     el_input_alt.placeholder = alt;
   }
-  let bs5_modal;
-  //  顯示 modal 的 handle
+
+  //  顯示modal
   async function handle_cueModale(e) {
-    if (!bs5_modal) {
+    if (!G.utils.bs5_modal) {
       //  生成BS5 Modal
       let { default: BS_Modal } = await import(
         /*webpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
       );
-      bs5_modal = new BS_Modal(el_modal);
+      G.utils.bs5_modal = new BS_Modal(el_modal);
     }
     //  顯示 modal，並將 此照片容器(.card) 作為 e.relatedTarget 傳給 modal show.bs.modal 的 handle
-    bs5_modal.show($(e.target).parents(".card"));
+    G.utils.bs5_modal.show($(e.target).parents(".card"));
     //  show BS5 Modal，並將$card作為e.relatedTarget傳給modal
   }
 
-  function initLock() {
-    return new (class lock extends Map {
+  //  校驗model可否submit
+  function init_lock() {
+    class Lock extends Map {
       setKVpairs(dataObj) {
         //  將kv資料存入
         const entries = Object.entries(dataObj);
@@ -172,6 +179,7 @@ async function initMain() {
         this.clear();
         formFeedback.clear(el_input_alt);
       }
-    })();
+    }
+    return new Lock();
   }
 }

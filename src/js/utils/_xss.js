@@ -1,31 +1,37 @@
+/* NPM        ----------------------------------------------------------------------------- */
 import xss from "xss";
+
+/* VAR        ----------------------------------------------------------------------------- */
+const _whiteList = {
+  ...xss.whiteList,
+  p: ["style"],
+  div: ["data-w-e-type", "data-w-e-is-void"],
+  input: ["type"],
+  img: ["src", "alt", "style", "data-href"],
+  iframe: [
+    "src",
+    "title",
+    "width",
+    "height",
+    "title",
+    "frameborder",
+    "allow",
+    "allowfullscreen",
+  ],
+};
+
 //  表格內容xss
-function myXss(html) {
-  let whiteList = {
-    ...xss.whiteList,
-    p: ["style"],
-    div: ["data-w-e-type", "data-w-e-is-void"],
-    input: ["type"],
-    img: ["src", "alt", "style", "data-href"],
-    iframe: [
-      "src",
-      "title",
-      "width",
-      "height",
-      "title",
-      "frameborder",
-      "allow",
-      "allowfullscreen",
-    ],
-  };
+function _xss(html) {
   return xss(html, {
-    whiteList,
+    whiteList: _whiteList,
     //  若ele的tag符合白名單，會進入此過濾函數
     onTagAttr(tag, attr, attrVal, isWhiteAtt) {
       if (!isWhiteAtt) {
-        //  若attr不在白名單內
+        /**
+         * 若attr不在白名單內
+         * 無返回值的狀況，會再進入onIgnoreTag處理
+         */
         return;
-        //  無返回值的狀況，會再進入onIgnoreTag處理
       }
       attr = attr.trim();
       if (tag !== "img" && typeof attrVal !== "boolean" && !attrVal.length) {

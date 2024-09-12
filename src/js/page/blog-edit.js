@@ -31,7 +31,8 @@ import blog_htmlStr from "../component/blog_htmlStr";
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
-  G.utils.checkImgLoad = async function () {};
+  //  離開頁面前，是否發出提醒
+  G.data.saveWarn = true;
   G.utils._xss = _xss;
   const $$ajv = new _Ajv(G.utils.axios);
   G.utils.validate = {
@@ -45,69 +46,25 @@ try {
 }
 
 async function initMain() {
-  /* ------------------------------------------------------------------------------------------ */
-  /* JQ Ele in Closure -------------------------------------------------------------------- */
-  /* ------------------------------------------------------------------------------------------ */
   let $blog_status = $(`#${G.constant.ID.STATUS}`);
   let $inp_title = $(`#${G.constant.ID.TITLE}`);
   let $btn_updateTitle = $(`#${G.constant.ID.UPDATE_TITLE}`);
   let $btn_updateBlog = $(`#${G.constant.ID.UPDATE_BLOG}`);
   let $btn_removeBlog = $(`#${G.constant.ID.REMOVE_BLOG}`);
   let $span_content_count = $(`#${G.constant.ID.BLOG_HTML_STRING_COUNT}`);
-  /* ------------------------------------------------------------------------------------------ */
-  /* Public Var in Closure -------------------------------------------------------------------- */
-  /* ------------------------------------------------------------------------------------------ */
-  //  初始化 頁面各功能
+  //  校驗可否submit
   G.utils.lock = initLock();
-  G.utils.editor = create_editor();
-  await G.utils.checkImgLoad();
+  //  文章內容編輯器
+  G.utils.editor = init_editor();
+  //  將文章內容編輯器放入loading_backdrop管理
   G.utils.loading_backdrop.insertEditors([G.utils.editor]);
   //  整理圖片數據
   await initImgData();
+  //  確認文章內容圖片皆讀取完畢（G.utils.checkImgLoad由init_editor內部生成）
+  await G.utils.checkImgLoad();
   //  focus editor
   G.utils.editor.focus();
-  G.data.saveWarn = true;
-  window.addEventListener("beforeunload", (e) => {
-    if (G.data.saveWarn && G.utils.lock.check_submit()) {
-      e.preventDefault();
-      // 過去有些browser必須給予e.returnValue字符值，才能使beforeunload有效運作
-      e.returnValue = "mark";
-      // 必須具備RV，beforeunload才有效果
-      return "1";
-    }
-  });
 
-  $("#leave").on("click", beforeLeave);
-  async function beforeLeave() {
-    if (confirm("真的要放棄編輯?")) {
-      if (G.utils.lock.check_submit() && confirm("放棄編輯前是否儲存?")) {
-        await handle_updateBlog();
-      }
-      G.data.saveWarn = false;
-      location.replace("/self");
-    }
-  }
-  $("#preview").on("click", preview);
-
-  async function preview(e) {
-    // 取得當前 title
-    let title = G.utils.lock.get("title");
-    if (!title) {
-      title = G.data.blog.title;
-    }
-    // 取得當前 html
-    let html = G.utils.lock.get("html");
-    if (!html) {
-      html = G.data.blog.html;
-    }
-    let key = JSON.stringify(location.href);
-    let val = JSON.stringify({ title, html });
-    localStorage.clear();
-    localStorage.setItem(key, val);
-    window.open(
-      `/blog/preview/${G.data.blog.id}?${G.constant.PREVIEW_KEY}=${key}`
-    );
-  }
   //  生成 blog title 的 input handle
   let { debounce: handle_debounce_input_for_title } = new Debounce(
     handle_input,
@@ -131,11 +88,210 @@ async function initMain() {
   $btn_updateBlog.on("click", handle_updateBlog);
   //  btn#remove 綁定 click handle => 刪除 blog
   $btn_removeBlog.on("click", handle_removeBlog);
-  /* ------------------------------------------------------------------------------------------ */
-  /* Init ------------------------------------------------------------------------------------ */
-  /* ------------------------------------------------------------------------------------------ */
 
-  function create_editor() {
+  //  離開頁面前的提醒
+  window.addEventListener("beforeunload", (e) => {
+    if (G.data.saveWarn && G.utils.lock.check_submit()) {
+      e.preventDefault();
+      // 過去有些browser必須給予e.returnValue字符值，才能使beforeunload有效運作
+      e.returnValue = "mark";
+      // 必須具備RV，beforeunload才有效果
+      return "1";
+    }
+  });
+  //  取消編輯前的提醒
+  $("#leave").on("click", cancelEdit);
+  //  預覽文章
+  $("#preview").on("click", preview);
+
+  //  預覽文章
+  async function preview(e) {
+    // 取得當前 title
+    let title = G.utils.lock.get("title");
+    if (!title) {
+      title = G.data.blog.title;
+    }
+    // 取得當前 html
+    let html = G.utils.lock.get("html");
+    if (!html) {
+      html = G.data.blog.html;
+    }
+    let key = JSON.stringify(location.href);
+    let val = JSON.stringify({ title, html });
+    localStorage.clear();
+    localStorage.setItem(key, val);
+    window.open(
+      `/blog/preview/${G.data.blog.id}?${G.constant.PREVIEW_KEY}=${key}`
+    );
+  }
+
+  //  取消編輯前的提醒
+  async function cancelEdit() {
+    if (confirm("真的要放棄編輯?")) {
+      if (G.utils.lock.check_submit() && confirm("放棄編輯前是否儲存?")) {
+        await handle_updateBlog();
+      }
+      G.data.saveWarn = false;
+      location.replace("/self");
+    }
+  }
+
+  //  刪除文章
+  async function handle_removeBlog(e) {
+    //  檢查登入狀態
+    if (!redir.check_login(G) || !confirm("真的要刪掉?")) {
+      return;
+    }
+    const data = {
+      blogList: [G.data.blog.id],
+    };
+    let { errno } = await G.utils.axios.delete(G.constant.API.UPDATE_BLOG, {
+      data,
+    });
+    if (errno) {
+      location.href = `/permission/${errno}`;
+      return;
+    }
+    alert("已成功刪除此篇文章，現在將跳往個人頁面");
+    G.data.saveWarn = false;
+    location.href = "/self";
+  }
+
+  //  更新文章
+  async function handle_updateBlog(e) {
+    //  檢查登入狀態
+    if (!redir.check_login(G)) {
+      return;
+    }
+    let payload = G.utils.lock.getPayload();
+    //  整理出「預計刪除BLOG→IMG關聯」的數據
+    let cancelImgs = getBlogImgIdList_needToRemove();
+    if (cancelImgs.length) {
+      //  若cancel有值
+      payload.cancelImgs = cancelImgs; //  放入payload
+    }
+    let result = await G.utils.validate.blog({ ...payload, _old: G.data.blog });
+    if (!result.valid) {
+      throw new Error(JSON.stringify(result));
+    }
+    // 作為event_handle才詢問預覽
+    if (e instanceof Event && confirm("儲存成功！是否預覽？（新開視窗）")) {
+      window.open(`/blog/preview/${G.data.blog.id}`);
+    }
+    payload.blog_id = G.data.blog.id;
+    let { errno, data } = await G.utils.axios.patch(
+      G.constant.API.UPDATE_BLOG,
+      payload
+    );
+    if (errno) {
+      location.href = `/permission/${errno}`;
+      return;
+    }
+    let { title, html, show, time } = data;
+    let newData = { title, html, show, time };
+    //  畫面內容處理
+    if (payload.hasOwnProperty("show")) {
+      let text;
+      if (show) {
+        text = `已於 ${time} 發佈`;
+      } else {
+        text = `最近一次於 ${time} 編輯`;
+      }
+      $("#time").text(text);
+    }
+    //  數據同步
+    if (payload.hasOwnProperty("cancelImgs")) {
+      for (let { blogImgAlt_list } of cancelImgs) {
+        for (let alt_id of blogImgAlt_list) {
+          G.data.blog.map_imgs.delete(alt_id);
+        }
+      }
+    }
+    for (let [key, value] of Object.entries(newData)) {
+      if (G.data.blog.hasOwnProperty(key)) {
+        G.data.blog[key] = value;
+      }
+    }
+    G.utils.lock.clear();
+    G.utils.lock.check_submit();
+    alert("文章已更新");
+    return;
+  }
+
+  //  公開or隱藏文章
+  async function handle_pubOrPri(e) {
+    let KEY = "show";
+    let newData = { [KEY]: e.target.checked };
+    let result = await G.utils.validate.blog({ ...newData, _old: G.data.blog });
+    if (result.valid) {
+      G.utils.lock.setKVpairs(newData);
+    } else {
+      G.utils.lock.del(KEY);
+    }
+    if (!G.utils._xss.blog(G.utils.editor.getHtml())) {
+      return;
+    }
+    G.utils.lock.check_submit();
+  }
+
+  //  更新title
+  async function handle_updateTitle(e) {
+    e.preventDefault();
+    //  檢查登入狀態
+    if (!redir.check_login(G)) {
+      return;
+    }
+    const KEY = "title";
+    const payload = {
+      blog_id: G.data.blog.id,
+      title: G.utils.lock.get(KEY),
+    };
+    let response = await G.utils.axios.patch(
+      G.constant.API.UPDATE_BLOG,
+      payload
+    );
+    //  同步數據
+    G.data.blog[KEY] = response.data[KEY];
+    G.utils.lock.del(KEY);
+    G.utils.lock.check_submit();
+    formFeedback.clear($inp_title.get(0));
+    //  清空提醒
+    alert("標題更新完成");
+    return;
+  }
+
+  //  blur title表格
+  async function handle_blur(e) {
+    const KEY = "title";
+    const target = e.target;
+    if (!G.utils.lock.has(KEY)) {
+      target.value = G.data.blog.title;
+      formFeedback.clear(target);
+    }
+    G.utils.lock.check_submit();
+    return;
+  }
+
+  //  input title表格
+  async function handle_input(e) {
+    const KEY = "title";
+    const target = e.target;
+    let title = _xss.trim(target.value);
+    let newData = { [KEY]: title };
+    let result = await G.utils.validate.blog({ ...newData, _old: G.data.blog });
+    let result_title = result.find(({ field_name }) => field_name === "title");
+    formFeedback.validated(target, result_title.valid, result_title.message);
+    if (result.valid) {
+      G.utils.lock.setKVpairs(newData);
+    } else {
+      G.utils.lock.del(KEY);
+    }
+    G.utils.lock.check_submit();
+    return;
+  }
+
+  //  初始化editor
+  function init_editor() {
     let cache_content = "";
     let first = true;
     //  判斷如何顯示img modal的表格內容
@@ -530,7 +686,7 @@ async function initMain() {
     }
   }
 
-  //  初始化 更新紐的lock
+  //  校驗submit
   function initLock() {
     return new (class Lock extends Map {
       setKVpairs(dataObj) {
@@ -575,161 +731,8 @@ async function initMain() {
       }
     })();
   }
-  /* ------------------------------------------------------------------------------------------ */
-  /* Handle ------------------------------------------------------------------------------------ */
-  /* ------------------------------------------------------------------------------------------ */
-  //  關於 刪除文章的相關操作
-  async function handle_removeBlog(e) {
-    //  檢查登入狀態
-    if (!redir.check_login(G) || !confirm("真的要刪掉?")) {
-      return;
-    }
-    const data = {
-      blogList: [G.data.blog.id],
-    };
-    let { errno } = await G.utils.axios.delete(G.constant.API.UPDATE_BLOG, {
-      data,
-    });
-    if (errno) {
-      location.href = `/permission/${errno}`;
-      return;
-    }
-    alert("已成功刪除此篇文章，現在將跳往個人頁面");
-    G.data.saveWarn = false;
-    location.href = "/self";
-  }
 
-  //  關於 更新文章的相關操作
-  async function handle_updateBlog(e) {
-    //  檢查登入狀態
-    if (!redir.check_login(G)) {
-      return;
-    }
-    let payload = G.utils.lock.getPayload();
-    //  整理出「預計刪除BLOG→IMG關聯」的數據
-    let cancelImgs = getBlogImgIdList_needToRemove();
-    if (cancelImgs.length) {
-      //  若cancel有值
-      payload.cancelImgs = cancelImgs; //  放入payload
-    }
-    let result = await G.utils.validate.blog({ ...payload, _old: G.data.blog });
-    if (!result.valid) {
-      throw new Error(JSON.stringify(result));
-    }
-    // 作為event_handle才詢問預覽
-    if (e instanceof Event && confirm("儲存成功！是否預覽？（新開視窗）")) {
-      window.open(`/blog/preview/${G.data.blog.id}`);
-    }
-    payload.blog_id = G.data.blog.id;
-    let { errno, data } = await G.utils.axios.patch(
-      G.constant.API.UPDATE_BLOG,
-      payload
-    );
-    if (errno) {
-      location.href = `/permission/${errno}`;
-      return;
-    }
-    let { title, html, show, time } = data;
-    let newData = { title, html, show, time };
-    //  畫面內容處理
-    if (payload.hasOwnProperty("show")) {
-      let text;
-      if (show) {
-        text = `已於 ${time} 發佈`;
-      } else {
-        text = `最近一次於 ${time} 編輯`;
-      }
-      $("#time").text(text);
-    }
-    //  數據同步
-    if (payload.hasOwnProperty("cancelImgs")) {
-      for (let { blogImgAlt_list } of cancelImgs) {
-        for (let alt_id of blogImgAlt_list) {
-          G.data.blog.map_imgs.delete(alt_id);
-        }
-      }
-    }
-    for (let [key, value] of Object.entries(newData)) {
-      if (G.data.blog.hasOwnProperty(key)) {
-        G.data.blog[key] = value;
-      }
-    }
-    G.utils.lock.clear();
-    G.utils.lock.check_submit();
-    alert("文章已更新");
-    return;
-  }
-  //  關於 設定文章公開/隱藏時的操作
-  async function handle_pubOrPri(e) {
-    let KEY = "show";
-    let newData = { [KEY]: e.target.checked };
-    let result = await G.utils.validate.blog({ ...newData, _old: G.data.blog });
-    if (result.valid) {
-      G.utils.lock.setKVpairs(newData);
-    } else {
-      G.utils.lock.del(KEY);
-    }
-    if (!G.utils._xss.blog(G.utils.editor.getHtml())) {
-      return;
-    }
-    G.utils.lock.check_submit();
-  }
-  //  關於 更新title 的相關操作
-  async function handle_updateTitle(e) {
-    e.preventDefault();
-    //  檢查登入狀態
-    if (!redir.check_login(G)) {
-      return;
-    }
-    const KEY = "title";
-    const payload = {
-      blog_id: G.data.blog.id,
-      title: G.utils.lock.get(KEY),
-    };
-    let response = await G.utils.axios.patch(
-      G.constant.API.UPDATE_BLOG,
-      payload
-    );
-    //  同步數據
-    G.data.blog[KEY] = response.data[KEY];
-    G.utils.lock.del(KEY);
-    G.utils.lock.check_submit();
-    formFeedback.clear($inp_title.get(0));
-    //  清空提醒
-    alert("標題更新完成");
-    return;
-  }
-  //  關於 title 輸入新值後，又沒立即更新的相關操作
-  async function handle_blur(e) {
-    const KEY = "title";
-    const target = e.target;
-    if (!G.utils.lock.has(KEY)) {
-      target.value = G.data.blog.title;
-      formFeedback.clear(target);
-    }
-    G.utils.lock.check_submit();
-    return;
-  }
-  //  關於 title 輸入新值時的相關操作
-  async function handle_input(e) {
-    const KEY = "title";
-    const target = e.target;
-    let title = _xss.trim(target.value);
-    let newData = { [KEY]: title };
-    let result = await G.utils.validate.blog({ ...newData, _old: G.data.blog });
-    let result_title = result.find(({ field_name }) => field_name === "title");
-    formFeedback.validated(target, result_title.valid, result_title.message);
-    if (result.valid) {
-      G.utils.lock.setKVpairs(newData);
-    } else {
-      G.utils.lock.del(KEY);
-    }
-    G.utils.lock.check_submit();
-    return;
-  }
-
-  /* UTILS ------------------- */
-
+  //  整理圖片數據
   async function initImgData() {
     //  檢查登入狀態
     if (!redir.check_login(G)) {
@@ -759,10 +762,15 @@ async function initMain() {
         cancelImgs
       );
   }
-  /*  取出要移除的 blogImgAlt_id  */
-  ////  移除上一次編輯時，有上傳的圖片卻沒有儲存文章，導致這次編輯時，
-  ////  G.data.blog.map_imgs 內可能存在 G.data.blog.html 所沒有的圖片
+
+  //  針對要移除的圖片，整理出相關數據
   function getBlogImgIdList_needToRemove() {
+    /**
+     * 使用狀況：
+     * (1)上一次編輯，有上傳圖片卻未儲存文章
+     * (2)此次編輯時，有上傳圖片卻又刪除
+     * 會導致G.data.blog.map_imgs存在G.data.blog.html所沒有的圖片
+     */
     let set = new Set(G.data.blog.map_imgs.keys());
     let reg = G.constant.REG.IMG_ALT_ID;
     //  找出editor內的<img>數據，格式為 [{src, alt, href}, ...]

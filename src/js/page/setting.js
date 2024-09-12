@@ -5,20 +5,14 @@ import "@css/setting.scss";
 import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import {
-  _Ajv,
-  Debounce,
-  _xss,
-  formFeedback,
-  redir,
-  errorHandle,
-} from "../utils";
+import { _Ajv, Debounce, formFeedback, redir, errorHandle } from "../utils";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import SparkMD5 from "spark-md5";
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
+  G.data.saveWarn = true;
   G.utils.bs5_modal = undefined;
   const $$ajv = new _Ajv(G.utils.axios);
   G.utils.validate = {
@@ -45,45 +39,16 @@ async function initMain() {
   let $newPassword = $("[name=password]");
   let $checkOrginPassword = $("#checkOrginPassword");
   let jq_settingForm = $("#setting");
-
-  let noBeforeunload = false;
-  // 離開頁面，提醒有數據未儲存
-  window.addEventListener("beforeunload", (e) => {
-    if (!noBeforeunload && G.utils.lock.check_submit()) {
-      e.preventDefault();
-      // 過去有些browser必須給予e.returnValue字符值，才能使beforeunload有效運作
-      e.returnValue = "mark";
-      // 必須具備RV，beforeunload才有效果
-      return "1";
-    }
-  });
-  // 取消修改，提醒有數據未儲存
-  $("#leave").on("click", beforeLeave);
-  async function beforeLeave() {
-    if (confirm("真的要放棄編輯?")) {
-      if (G.utils.lock.check_submit() && confirm("放棄編輯前是否儲存?")) {
-        await handle_submit();
-      }
-      noBeforeunload = true;
-      location.replace("/self");
-    }
-    return;
-  }
-
-  $newPassword.on("focus", async (e) => {
-    if (!G.utils.bs5_modal) {
-      //  生成BS5 Modal
-      let { default: BS_Modal } = await import(
-        /*webpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
-      );
-      G.utils.bs5_modal = new BS_Modal(el_check_origin_password_model);
-      G.utils.bs5_modal.show();
-    }
-  });
   //  初始化 頁面各功能
   G.utils.lock = initLock();
+  //  debounce:表單input
+  let { debounce: handle_debounce_input } = new Debounce(handle_input, {
+    loading: (e) => formFeedback.loading(e.target),
+  });
 
-  // el_check_origin_password_model handle
+  //  顯示驗證舊密碼modal
+  $newPassword.on("focus", createModal);
+  //  modal顯示後
   el_check_origin_password_model.addEventListener(
     "shown.bs.modal",
     //  顯示 modal 時，focus input
@@ -91,6 +56,7 @@ async function initMain() {
       el_origin_password.focus();
     }
   );
+  //  modal隱藏後
   el_check_origin_password_model.addEventListener(
     "hidden.bs.modal",
     //  隱藏 modal 時，focus input
@@ -99,9 +65,11 @@ async function initMain() {
       el_origin_password.value = "";
     }
   );
+  //  modal發生input
   el_check_origin_password_model.addEventListener("input", (e) => {
     formFeedback.clear(e.target);
   });
+  //  modal發生Enter
   el_check_origin_password_model.addEventListener("keyup", (e) => {
     e.preventDefault();
     if (e.key.toUpperCase() !== "ENTER") {
@@ -109,15 +77,42 @@ async function initMain() {
     }
     $checkOrginPassword.get(0).click();
   });
+  //  新密碼與密碼二次輸入focus
   $newPasswordList.on("focus", handle_showModel);
+  //  密碼二次輸入驗證
   $checkOrginPassword.on("click", handle_originPassword);
-  let { debounce: handle_debounce_input } = new Debounce(handle_input, {
-    loading: (e) => formFeedback.loading(e.target),
-  });
+  //  表單input
   jq_settingForm.on("input", handle_debounce_input);
+  //  avatar change
   jq_settingForm.on("change", handle_change);
+  //  avatar click
   $avatar.on("click", handle_resetAvatar);
+  //  發送表單數據
   jq_settingForm.on("submit", handle_submit);
+  // 離開頁面，提醒有數據未儲存
+  window.addEventListener("beforeunload", (e) => {
+    if (G.data.saveWarn && G.utils.lock.check_submit()) {
+      e.preventDefault();
+      // 過去有些browser必須給予e.returnValue字符值，才能使beforeunload有效運作
+      e.returnValue = "mark";
+      // 必須具備RV，beforeunload才有效果
+      return "1";
+    }
+  });
+  // 取消修改，提醒有數據未儲存
+  $("#leave").on("click", cancelModify);
+
+  async function cancelModify() {
+    if (confirm("真的要放棄編輯?")) {
+      if (G.utils.lock.check_submit() && confirm("放棄編輯前是否儲存?")) {
+        await handle_submit();
+      }
+      G.data.saveWarn = false;
+      location.replace("/self");
+    }
+    return;
+  }
+
   async function handle_submit(e) {
     e && e.preventDefault();
     //  檢查登入狀態
@@ -176,6 +171,7 @@ async function initMain() {
       e.preventDefault();
     }
   }
+  //  avatar change
   async function handle_change(e) {
     e.preventDefault();
     if (e.target.name !== "avatar") {
@@ -292,6 +288,61 @@ async function initMain() {
       });
     }
   }
+  //  驗證原密碼
+  async function handle_originPassword(e) {
+    e.preventDefault();
+    //  檢查登入狀態
+    if (!redir.check_login(G)) {
+      return;
+    }
+    const KEY = "origin_password";
+    let payload = { [KEY]: el_origin_password.value };
+    let result = await G.utils.validate.password(payload);
+    let res = result.find(({ field_name }) => field_name === KEY);
+    if (!res.valid) {
+      G.utils.lock.delete(KEY);
+      formFeedback.validated(el_origin_password, false, res.message);
+      return;
+    }
+
+    let { errno, msg } = await G.utils.axios.post(
+      G.constant.API.CHECK_PASSWORD,
+      payload
+    );
+    if (errno) {
+      formFeedback.validated(el_origin_password, false, msg);
+      return;
+    }
+    G.utils.lock.setKVpairs(payload);
+    alert("驗證成功，請輸入新密碼");
+    G.utils.bs5_modal.hide();
+    $newPassword.get(0).focus();
+  }
+  //  顯示 origin_password 的 model
+  function handle_showModel(e) {
+    if (!G.utils.bs5_modal) {
+      return;
+    }
+    const KEY = "origin_password";
+    e.preventDefault();
+    if (G.utils.lock.get(KEY)) {
+      ////  已經驗證過 origin_password，不須再顯示 Model
+      return false;
+    }
+    G.utils.bs5_modal.show();
+  }
+  //  創建驗證舊密碼的modal
+  async function createModal(e) {
+    if (!G.utils.bs5_modal) {
+      //  生成BS5 Modal
+      let { default: BS_Modal } = await import(
+        /*webpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
+      );
+      G.utils.bs5_modal = new BS_Modal(el_check_origin_password_model);
+      G.utils.bs5_modal.show();
+    }
+  }
+  //  表單input
   async function handle_input(e) {
     let input = e.target;
     const KEY = input.name;
@@ -367,56 +418,9 @@ async function initMain() {
       });
     }
   }
-  //  驗證原密碼
-  async function handle_originPassword(e) {
-    e.preventDefault();
-    //  檢查登入狀態
-    if (!redir.check_login(G)) {
-      return;
-    }
-    const KEY = "origin_password";
-    let payload = { [KEY]: el_origin_password.value };
-    let result = await G.utils.validate.password(payload);
-    let res = result.find(({ field_name }) => field_name === KEY);
-    if (!res.valid) {
-      G.utils.lock.delete(KEY);
-      formFeedback.validated(el_origin_password, false, res.message);
-      return;
-    }
-
-    let { errno, msg } = await G.utils.axios.post(
-      G.constant.API.CHECK_PASSWORD,
-      payload
-    );
-    if (errno) {
-      formFeedback.validated(el_origin_password, false, msg);
-      return;
-    }
-    G.utils.lock.setKVpairs(payload);
-    alert("驗證成功，請輸入新密碼");
-    G.utils.bs5_modal.hide();
-    $newPassword.get(0).focus();
-  }
-  //  顯示 origin_password 的 model
-  function handle_showModel(e) {
-    if (!G.utils.bs5_modal) {
-      return;
-    }
-    const KEY = "origin_password";
-    e.preventDefault();
-    if (G.utils.lock.get(KEY)) {
-      ////  已經驗證過 origin_password，不須再顯示 Model
-      return false;
-    }
-    G.utils.bs5_modal.show();
-  }
-
-  /* ------------------------------------------------------------------------------------------ */
-  /* Init ------------------------------------------------------------------------------------ */
-  /* ------------------------------------------------------------------------------------------ */
-
+  //  驗證是否可submit
   function initLock() {
-    return new (class $C_genPayload extends Map {
+    class Payload extends Map {
       #selector_form = "#setting";
       constructor() {
         super();
@@ -452,6 +456,7 @@ async function initMain() {
         this.jq_submit.prop("disabled", disabled);
         return !disabled;
       }
-    })();
+    }
+    return new Payload();
   }
 }

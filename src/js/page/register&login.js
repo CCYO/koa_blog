@@ -5,14 +5,7 @@ import "@css/register&login.scss";
 import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import {
-  _Ajv,
-  Debounce,
-  _xss,
-  formFeedback,
-  redir,
-  errorHandle,
-} from "../utils";
+import { _Ajv, Debounce, formFeedback, redir, errorHandle } from "../utils";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import Tab from "bootstrap/js/dist/tab";
