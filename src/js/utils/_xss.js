@@ -20,7 +20,7 @@ const _whiteList = {
   ],
 };
 
-//  表格內容xss
+//  針對html格式內容設計
 function _xss(html) {
   return xss(html, {
     whiteList: _whiteList,
@@ -32,16 +32,14 @@ function _xss(html) {
          * 無返回值的狀況，會再進入onIgnoreTag處理
          */
         return;
-      }
-      attr = attr.trim();
-      if (tag !== "img" && typeof attrVal !== "boolean" && !attrVal.length) {
+      } else if (!attrVal.length) {
         //  attrVal 無值
         return attr;
       } else {
         return `${attr}="${attrVal}"`;
       }
     },
-    //  應該是在後端應用 --> 若ele的tag不符合白名單，會進入此過濾函數
+    //  tag不符合白名單，進入此過濾函數
     onIgnoreTag(tag, htmlStr) {
       if (tag === "x-img") {
         return htmlStr;
@@ -50,11 +48,12 @@ function _xss(html) {
   });
 }
 
+//  去除前後空格
 function trim(data) {
-  return myXss(data.trim());
+  return _xss(data.trim());
 }
 
-//  去除空格與進行xss
+//  未blog內文設計
 function blog(data) {
   //  移除前後空格
   let curHtml = trim(data.trim());
@@ -66,5 +65,4 @@ function blog(data) {
   return curHtml;
 }
 
-export default { myXss, trim, blog };
-export { myXss, trim, blog };
+export default { _xss, trim, blog };
