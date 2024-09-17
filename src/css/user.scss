@@ -52,7 +52,7 @@ img {
         padding: 0;
         overflow: hidden;
         background-color: rgba(255, 255, 255, 0.3);
-
+        width: 100%;
         > ul {
           display: inline-flex;
           li {
@@ -75,6 +75,10 @@ img {
               text-decoration: none;
             }
           }
+        }
+        div {
+          width: 100%;
+          text-align: center;
         }
       }
     }

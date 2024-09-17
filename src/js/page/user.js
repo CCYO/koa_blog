@@ -207,7 +207,7 @@ async function initMain() {
 
       if (G.data.relationShip.fansList.length === 1) {
         //  如果追蹤者只有當前的你，撤換掉列表內容
-        $fansList.children("ul").html(html);
+        $fansList.children("ul").removeAttr("style").html(html);
       } else {
         //  如果追蹤者不只當前的你，插在最前面
         $fansList.children("ul").prepend(html);
@@ -243,7 +243,10 @@ async function initMain() {
           .remove();
       } else {
         //  如果已無追蹤者，撤換掉列表內容
-        $fansList.children("ul").html(`<p>很遺憾，列表裡沒有人</p>`);
+        $fansList
+          .children("ul")
+          .css("width", "100%")
+          .html(`<div>很遺憾，列表裡沒有人</div>`);
       }
       /*  同步 $$fansList 數據 */
       G.utils.betterScroll.refresh();

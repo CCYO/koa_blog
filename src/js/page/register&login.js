@@ -58,6 +58,7 @@ function initMain() {
     let bs_tab_login = new Tab(card_tab_login);
     let bs_tab_register = new Tab(card_tab_register);
     navTab_register.addEventListener("click", (e) => {
+      Promise.reject(new Error("test"));
       bs_tab_register.show();
     });
     navTab_login.addEventListener("click", (e) => {

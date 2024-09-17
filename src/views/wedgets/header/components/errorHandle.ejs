@@ -1,0 +1,47 @@
+<script>
+  // window.onerror 會快於 window.addEventListener('error')
+  window.onerror = onerrorHandle;
+  window.addEventListener("error", load_src, true);
+
+  //   處理外部資源讀取失敗，再重複嘗試2次
+  function load_src(event) {
+    let target = event.target ? event.target : undefined;
+    if (!target) {
+      return;
+    }
+    let match = ["IMG", "SCRIPT", "LINK"].some((tag) => tag === target.tagName);
+    if (match) {
+      let n = Number(target.dataset.ntime);
+      if (!n) {
+        n = 1;
+      } else if (n < 4) {
+        n += 1;
+      }
+      target.dataset.ntime = n;
+      let src = target.currentSrc;
+      let msg = `${src}讀取失敗,`;
+      if (n < 3) {
+        msg += `進行第${n + 1}次嘗試。`;
+        target.src = src;
+        console.warn(msg);
+      } else {
+        msg += `放棄。`;
+        console.error(msg);
+      }
+      return true;
+    }
+  }
+
+  //  處理錯誤
+  function onerrorHandle(
+    message,
+    source, //  script url
+    lineno, //  行
+    colno, //  列
+    error
+  ) {
+    console.error("window.onerror捕獲錯誤:\n", error);
+    // 瀏覽器默認會將異常進行console.error，RV true則可以阻止此行為
+    return true;
+  }
+</script>

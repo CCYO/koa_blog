@@ -31,7 +31,10 @@ window.addEventListener("unhandledrejection", function (event) {
   event.promise.catch((result) => {
     let msg = "window.addEventListener(unhandledrejection)捕獲錯誤事件\n";
     let { model, _checked } = result;
-
+    /**
+     * _check 與 model 都是由 export 模塊取到的，會在第一二個判斷處理
+     * 其他因為JS代碼中CB所發生的reject，則在最後一個判斷處理
+     */
     if (_checked) {
       //  非來自axios
       // watchError主動引發，目的為了阻止後續代碼發生連鎖錯誤，故這裡無須再作多餘處理
@@ -48,28 +51,28 @@ window.addEventListener("unhandledrejection", function (event) {
         location.reload();
       }
     } else {
-      //  非來自axios，通常是CB內發生的問題
-      let error;
+      /**
+       * 1)取得axios 200響應，但卻是需要以錯誤來處理的數據
+       * 2)CB內的unhandle reject導致
+       */
       try {
-        error = JSON.parse(result.message);
-        error.stack = result.stack;
-      } catch (e) {
-        error = result;
-      }
-      console.error(`${msg}Event.reason:`, error.stack);
-      if (process.env.isProd) {
+        //  處理1)
+        let model = JSON.parse(result.message);
+        let stack = result.stack;
+        console.error(`${msg}model:`, model, `\nstack: ${stack}`);
         // 後端響應請求需要登入權限
-        redir.check_login();
-        // 需再作回報後端處理
+        process.env.isProd && redir.check_login();
+        return;
+      } catch (e) {
+        //  處理2)
+        console.error(`${msg}result:`, result);
+        if (process.env.isProd) {
+          msg = "發生未知錯誤，頁面將自動重整";
+          // 需再作回報後端處理
+          location.reload();
+        }
+        alert(msg);
       }
     }
   });
-});
-
-window.onerror = (e) => {
-  !process.env.isProd && console.log("window.onerror捕獲錯誤\nError:\n", e);
-};
-window.addEventListener("error", (e) => {
-  !process.env.isProd &&
-    console.log("window.addEventListener(error)捕獲錯誤\nError:\n", e);
 });
