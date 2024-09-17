@@ -12,10 +12,15 @@ store.client
   .on("ready", () => log("Redis session ready"))
   .on("error", (e) => console.error("Redis session error ==> \n", e));
 
-module.exports = session({
+const middleware = session({
   //cookie name前綴
   key: "koa_blog.sid",
   //redis key前綴
   prefix: "koa_blog.sid:",
   store,
 });
+
+module.exports = {
+  middleware,
+  store,
+};

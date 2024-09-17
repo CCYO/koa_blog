@@ -101,11 +101,29 @@ export default class {
       },
     });
   }
-  init() {
+  init({ me }) {
     let renderClass = new this.Render(this);
     this.checkNewsMore = renderClass.checkNewsMore.bind(renderClass);
     this.loop = renderClass.loop;
     this.#first = true;
+    if (WebSocket) {
+      let ws = (this.ws = new WebSocket(`ws://ccyo.work:8080`));
+      //開啟後執行的動作，指定一個 function 會在連結 WebSocket 後執行
+      ws.onopen = () => {
+        this.user_id = me.id;
+        this.ws_key = me.ws_key;
+        console.log(`ws/${this.ws_key} open connection`);
+      };
+
+      //關閉後執行的動作，指定一個 function 會在連結中斷後執行
+      ws.onclose = () => {
+        console.log(`ws/${this.ws_key} close connection`);
+      };
+      ws.onmessage = (event) => {
+        alert(event.data);
+      };
+      console.log(`ws/${this.ws_key}:\n`, ws);
+    }
   }
   update({ list, num, hasNews }) {
     if (hasNews) {
@@ -163,6 +181,35 @@ export default class {
           this.htmlStr.unRender.unconfirm <=
         0;
     }
+
+    //  ws版本
+    if (this.ws_key) {
+      return new Promise((resolve, reject) => {
+        this.ws.send(
+          JSON.stringify({
+            ws_key: this.ws_key,
+            user_id: this.user_id,
+            status: this.status,
+          })
+        );
+        document.addEventListener("ws_message_event", handle_message, {
+          once: true,
+        });
+        function handle_message() {
+          let { errno, data } = this.message;
+          this.#checkNews = false;
+          let result;
+          if (!errno) {
+            this.update(data.news);
+            result = data;
+          } else {
+            result = undefined;
+          }
+          resolve(result);
+        }
+      });
+    }
+    //  axios版本
     let { errno, data } = await this.axios.post(this.#API, this.status);
     this.axios.autoLoadingBackdrop = true;
     this.#checkNews = false;

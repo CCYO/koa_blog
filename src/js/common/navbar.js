@@ -42,7 +42,7 @@ export default async function (active, _axios) {
     /*webpackChunkName:'bootstrap-dropdown'*/ "bootstrap/js/dist/dropdown"
   );
   //  初始化News功能
-  news.init();
+  news.init(loginData);
   document.addEventListener("initPage", async () => {
     !process.env.isProd && console.log("initPage handle ---> checkNewsMore");
     await news.checkNewsMore();

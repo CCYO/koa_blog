@@ -1,6 +1,6 @@
-const session = require("./session");
+const { middleware, store } = require("./session");
 const getCache = require("./cache");
 module.exports = {
-  session,
+  session: { middleware, store },
   getCache,
 };

@@ -15,6 +15,7 @@ async function modify(ctx, next) {
     }
     if (type === CACHE.TYPE.NEWS) {
       //  提醒使用者的通知數據有變動，要重新從DB讀取
+      ctx.app._ws.remind(list);
       await C_CacheNews.addList(list);
     } else if (ENV.isNoCache) {
       continue;

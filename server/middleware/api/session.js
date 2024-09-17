@@ -29,9 +29,11 @@ async function set(ctx, next) {
   if (errno) {
     return;
   }
+  let ws_key = "123456";
   if (!ctx.session.user) {
     ctx.session.user = {
       ...data,
+      ws_key,
       news: SESSION_NEWS(),
     };
   }

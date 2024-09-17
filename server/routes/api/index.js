@@ -7,6 +7,9 @@ let comment = require("./comment");
 let news = require("./news");
 let user = require("./user");
 
+router.get("/ttt", async (ctx) => {
+  ctx.body = { data: { text: "這是測試" } };
+});
 router.use(album.routes());
 router.use(square.routes());
 router.use(blog.routes());
