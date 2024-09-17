@@ -328,7 +328,7 @@ async function initMain() {
         location.href = `/permission/${errno}`;
         return;
       }
-      alert("刪除成功");
+      alert("刪除成功，頁面將重新整理...");
       //  刷新頁面
       location.reload();
     }
