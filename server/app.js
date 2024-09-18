@@ -27,7 +27,7 @@ const { session } = require("./db/redis");
 //  middleware:sequelize transaction
 const sequelizeTransaction = require("./middleware/api/seq_transaction");
 const router = require("./routes");
-// const ws_router = require("./ws");
+
 //  避免觸發 ../build/htmlWebpackPlugins.js
 const WEBPACK_CONFIG = require("../build/config");
 const { SESSION_KEY } = require("./_config");
@@ -37,6 +37,7 @@ const app = new Koa();
 
 //  加密 session
 app.keys = [SESSION_KEY];
+
 app.use(middleware_errors);
 //  打印每一次的request與response
 app.use(logger);
@@ -65,10 +66,6 @@ app.use(
 app.use(
   koaMount("/.well-known", koaStatic(resolve(__dirname, "./_config/ssl")))
 );
-
-app.use(async (ctx, next) => {
-  await next();
-});
 
 app.use(router.routes(), router.allowedMethods());
 //  列印錯誤

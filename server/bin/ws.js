@@ -2,53 +2,61 @@ let SocketServer = require("ws").WebSocketServer;
 let cookie = require("cookie");
 let { session } = require("../db/redis");
 
-module.exports = (server, app) => {
-  let ws_list = (app._ws = new Map());
-  const wss = new SocketServer({ server });
-  wss.on("error", console.error);
-  wss.on("connection", async (ws, req) => {
-    let cookies = cookie.parse(req.headers.cookie);
-    let key = `koa_blog.sid:${cookies["koa_blog.sid"]}`;
+async function parseUserId(req) {
+  let cookies = cookie.parse(req.headers.cookie);
+  let key = `koa_blog.sid:${cookies["koa_blog.sid"]}`;
+  let sessionData = await session.store.get(key);
+  return sessionData?.user.id;
+}
 
-    let sessionData = await session.store.get(key);
-    if (!sessionData) {
+module.exports = (server, app) => {
+  let ws_map = (app._ws = new Map());
+
+  ws_map.remind = function (user_id_list) {
+    let { id_list, ws_list } = user_id_list.reduce(
+      (acc, user_id) => {
+        let ws = ws_map.get(user_id);
+        if (ws) {
+          acc.id_list.push(user_id);
+          acc.ws_list.push({ ws, user_id });
+        }
+        return acc;
+      },
+      { id_list: [], ws_list: [] }
+    );
+    ws_list.forEach(({ ws, user_id }) => ws.send(user_id));
+    console.log(`ws_list: ${id_list} send message....`);
+    return true;
+  };
+
+  const wss = new SocketServer({ server });
+
+  wss.on("error", console.error);
+
+  wss.on("connection", async (ws, req) => {
+    let user_id = await parseUserId(req);
+    if (!user_id) {
       ws.close();
       return;
+    } else if (!ws_map.has(user_id)) {
+      ws_map.set(user_id, ws);
     }
-    let user_id = sessionData.user.id;
     console.log(`ws user/${user_id} connecting...`);
-    ws._remind = function () {
-      ws.send("has news");
-    };
-    ws_list.set(user_id, ws);
-    ws_list.remind = function (user_id_list) {
-      let { exist_ws_list, exist, noExist } = user_id_list.reduce(
-        (acc, user_id) => {
-          let _ws = ws_list.get(user_id);
-          if (_ws) {
-            acc.exist.push(user_id);
-            acc.exist_ws_list.push(_ws);
-          } else {
-            acc.noExist.push(user_id);
-          }
-          return acc;
-        },
-        { exist_ws_list: [], exist: [], noExist: [] }
-      );
-      exist_ws_list.forEach((ws) => ws.send("111"));
-      console.log(`ws_list: ${exist} send message....`);
-      return true;
-    };
 
     ws.on("close", () => {
-      app._ws.delete(user_id);
+      ws_map.delete(user_id);
       console.log(`ws user/${user_id} close`);
     });
 
     ws.on("message", (message) => {
-      let utf8 = new Buffer(message).toString("utf-8");
-      let data = JSON.parse(utf8);
-      console.log(ws, data);
+      let utf8 = new Buffer.from(message, "utf-8");
+      let data;
+      try {
+        data = JSON.parse(utf8);
+      } catch (e) {
+        data = utf8;
+      }
+      console.log(data);
     });
   });
 };

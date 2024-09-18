@@ -19,6 +19,7 @@ export default class {
   #auto = false;
   // 上一次請求，是否以獲取後端所有unconfirm
   #checkNews = false;
+  ws_get_message = false;
   db = _count();
   #id_list = Object.defineProperties(
     {},
@@ -107,22 +108,32 @@ export default class {
     this.loop = renderClass.loop;
     this.#first = true;
     if (WebSocket) {
+      let ins_news = this;
       let ws = (this.ws = new WebSocket(`ws://ccyo.work:8080`));
       //開啟後執行的動作，指定一個 function 會在連結 WebSocket 後執行
       ws.onopen = () => {
         this.user_id = me.id;
-        this.ws_key = me.ws_key;
-        console.log(`ws/${this.ws_key} open connection`);
+        console.log(`ws/${me.id} open connection`);
       };
 
       //關閉後執行的動作，指定一個 function 會在連結中斷後執行
       ws.onclose = () => {
-        console.log(`ws/${this.ws_key} close connection`);
+        console.log(`ws/${me.id} close connection`);
       };
-      ws.onmessage = (event) => {
-        alert(event.data);
+      ws.onmessage = async function (event) {
+        let data = Number(event.data);
+        if (data !== me.id) {
+          return;
+        }
+        // 驗證data
+        ins_news.ws_get_message = true;
+        if (!document.hidden) {
+          await ins_news.loop.now();
+          ins_news.ws_get_message = false;
+          ins_news.loop.start();
+        }
       };
-      console.log(`ws/${this.ws_key}:\n`, ws);
+      console.log(`ws/${me.id}:\n`, ws);
     }
   }
   update({ list, num, hasNews }) {
@@ -182,34 +193,6 @@ export default class {
         0;
     }
 
-    //  ws版本
-    if (this.ws_key) {
-      return new Promise((resolve, reject) => {
-        this.ws.send(
-          JSON.stringify({
-            ws_key: this.ws_key,
-            user_id: this.user_id,
-            status: this.status,
-          })
-        );
-        document.addEventListener("ws_message_event", handle_message, {
-          once: true,
-        });
-        function handle_message() {
-          let { errno, data } = this.message;
-          this.#checkNews = false;
-          let result;
-          if (!errno) {
-            this.update(data.news);
-            result = data;
-          } else {
-            result = undefined;
-          }
-          resolve(result);
-        }
-      });
-    }
-    //  axios版本
     let { errno, data } = await this.axios.post(this.#API, this.status);
     this.axios.autoLoadingBackdrop = true;
     this.#checkNews = false;
@@ -367,9 +350,13 @@ class Render {
     });
 
     // 頁面不被使用時，停止自動獲取news數據
-    document.addEventListener("visibilitychange", (e) => {
+    document.addEventListener("visibilitychange", async (e) => {
       if (document.hidden) {
         loop.stop();
+      } else if (this.newsClass.ws_get_message) {
+        await loop.now();
+        this.newsClass.ws_get_message = false;
+        loop.start();
       } else if (!this.#show) {
         loop.start();
       }
@@ -403,6 +390,11 @@ class Render {
     ) {
       this.$newsCount.text(newCount ? newCount : "");
     } else {
+      let unconfirm_count = Number(this.$newsCount.text());
+      if (unconfirm_count && unconfirm_count === newCount) {
+        this.count = newCount;
+        return;
+      }
       let button = this.$newsCount.parent()[0];
       let style = window.getComputedStyle(button);
       let x = `${parseInt(button.getBoundingClientRect().x)}px + ${

@@ -19,6 +19,10 @@ async function reset(ctx, next) {
 //  remove session
 async function remove(ctx) {
   log(`移除 使用者user_id:${ctx.session.user.id} 的 session`);
+  let ws = ctx.app._ws.get(ctx.session.user.id);
+  if (ws) {
+    ws.close();
+  }
   ctx.session = null;
   ctx.body = new SuccModel({ data: "成功登出" });
 }
@@ -29,11 +33,9 @@ async function set(ctx, next) {
   if (errno) {
     return;
   }
-  let ws_key = "123456";
   if (!ctx.session.user) {
     ctx.session.user = {
       ...data,
-      ws_key,
       news: SESSION_NEWS(),
     };
   }
