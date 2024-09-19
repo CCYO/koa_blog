@@ -1,21 +1,16 @@
 /**
  * @description redis methods: set & get
  */
-const redis = require("redis");
+const store = require("./store");
 const crypto = require("../../utils/crypto");
 const { log } = require("../../utils/log");
-const { DB } = require("../../_config");
+
 const {
   CACHE: { TYPE },
 } = require("../../config");
-const client = redis.createClient(DB.REDIS_CONF.port, DB.REDIS_CONF.host);
-client
-  .on("connect", () => {
-    log("Redis cache connect");
-  })
-  .on("ready", () => log("Redis cache ready"))
-  .on("error", (e) => console.error("Redis cache error ==> \n", e));
-client.connect();
+
+// redis資料庫端
+const client = store.client;
 
 //  處理 set 格式的緩存(此專案中，拿來系統紀錄user有無新通知)
 function _set(type) {

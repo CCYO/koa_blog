@@ -109,7 +109,10 @@ export default class {
     this.#first = true;
     if (WebSocket) {
       let ins_news = this;
-      let ws = (this.ws = new WebSocket(`ws://ccyo.work:8080`));
+      let ws_api = process.env.isProd
+        ? "wss://ccyo.work"
+        : "ws://ccyo.work:8080";
+      let ws = (this.ws = new WebSocket(ws_api));
       //開啟後執行的動作，指定一個 function 會在連結 WebSocket 後執行
       ws.onopen = () => {
         this.user_id = me.id;

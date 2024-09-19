@@ -23,7 +23,7 @@ const koaStatic = require("koa-static");
 const middleware_errors = require("./middleware/errorsHandle");
 const { webpackDev, webpackHMR } = require("./middleware/webpackDevAndHMR");
 //  middleware:與redis-session連線
-const { session } = require("./db/redis");
+const { session_middleware } = require("./db/redis");
 //  middleware:sequelize transaction
 const sequelizeTransaction = require("./middleware/api/seq_transaction");
 const router = require("./routes");
@@ -45,7 +45,7 @@ app.use(json);
 app.use(webpackDev);
 app.use(webpackHMR);
 app.use(bodyparser);
-app.use(session.middleware);
+app.use(session_middleware);
 app.use(sequelizeTransaction);
 //  渲染模板
 app.use(
