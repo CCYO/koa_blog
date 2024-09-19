@@ -39,6 +39,7 @@ export default class {
     this.event = {
       // 頁面初始化完成事件
       initPage: new CustomEvent("initPage"),
+      logout: new CustomEvent("logout"),
     };
 
     return this;

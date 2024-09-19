@@ -9,6 +9,7 @@ const { readFileSync } = require("fs");
 
 const app = require("../app");
 const _ws = require("./ws");
+const { log } = require("../utils/log");
 const { ENV } = require("../config");
 
 const port = normalizePort(process.env.NODE_PORT);
@@ -93,6 +94,6 @@ function onError(error) {
 function onListening() {
   let addr = server.address();
   let bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-  console.log(`ENV IS ${process.env.NODE_ENV}`);
-  console.log(`LISTEN on ${bind}`);
+  log(`ENV IS ${process.env.NODE_ENV}`);
+  log(`LISTEN on ${bind}`);
 }

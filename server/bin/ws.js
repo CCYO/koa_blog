@@ -1,12 +1,14 @@
 let SocketServer = require("ws").WebSocketServer;
 let cookie = require("cookie");
-let { session } = require("../db/redis");
+let { store } = require("../db/redis");
+let { log } = require("../utils/log");
 
-async function parseUserId(req) {
+async function genKey(req) {
   let cookies = cookie.parse(req.headers.cookie);
-  let key = `koa_blog.sid:${cookies["koa_blog.sid"]}`;
-  let sessionData = await session.store.get(key);
-  return sessionData?.user.id;
+  let session_id = `koa_blog.sid:${cookies["koa_blog.sid"]}`;
+  let sessionData = await store.get(session_id);
+  let user_id = sessionData?.user.id;
+  return user_id && { user_id, session_id };
 }
 
 module.exports = (server, app) => {
@@ -15,17 +17,20 @@ module.exports = (server, app) => {
   ws_map.remind = function (user_id_list) {
     let { id_list, ws_list } = user_id_list.reduce(
       (acc, user_id) => {
-        let ws = ws_map.get(user_id);
-        if (ws) {
+        let ws_list = ws_map.get(user_id);
+        if (ws_list) {
           acc.id_list.push(user_id);
-          acc.ws_list.push({ ws, user_id });
+          for (let session_id in ws_list) {
+            let ws = ws_list[session_id];
+            acc.ws_list.push({ ws, user_id });
+          }
         }
         return acc;
       },
       { id_list: [], ws_list: [] }
     );
     ws_list.forEach(({ ws, user_id }) => ws.send(user_id));
-    console.log(`ws_list: ${id_list} send message....`);
+    log(`ws send remind has news for: ${id_list}`);
     return true;
   };
 
@@ -34,29 +39,33 @@ module.exports = (server, app) => {
   wss.on("error", console.error);
 
   wss.on("connection", async (ws, req) => {
-    let user_id = await parseUserId(req);
-    if (!user_id) {
+    let key = await genKey(req);
+    if (!key) {
       ws.close();
       return;
-    } else if (!ws_map.has(user_id)) {
-      ws_map.set(user_id, ws);
     }
-    console.log(`ws user/${user_id} connecting...`);
+    let { user_id, session_id } = key;
+    let _ws_list = ws_map.get(user_id);
+    if (!_ws_list) {
+      _ws_list = { [session_id]: ws };
+      ws_map.set(user_id, _ws_list);
+    } else {
+      _ws_list[session_id] = ws;
+    }
 
-    ws.on("close", () => {
-      ws_map.delete(user_id);
-      console.log(`ws user/${user_id} close`);
-    });
+    log(`ws connecting\n【user】${user_id}\n【session_id】${session_id}`);
 
-    ws.on("message", (message) => {
-      let utf8 = new Buffer.from(message, "utf-8");
-      let data;
-      try {
-        data = JSON.parse(utf8);
-      } catch (e) {
-        data = utf8;
+    ws.on("close", (code) => {
+      // 參考MDN:
+      // https://developer.mozilla.org/zh-CN/docs/Web/API/CloseEvent#%E5%B1%9E%E6%80%A7
+      // 自定義 closeEvent code
+      if (code === 4444) {
+        let _ws_list = ws_map.get(user_id);
+        delete _ws_list[session_id];
       }
-      console.log(data);
+      log(
+        `ws close\n【code】${code}\n【user】${user_id}\n【session_id】${session_id}`
+      );
     });
   });
 };

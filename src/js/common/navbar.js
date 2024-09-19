@@ -35,14 +35,8 @@ export default async function (active, _axios) {
   }
   // 登入狀態
   _renderLoginNav(active);
-  await import(
-    /*webpackChunkName:'bootstrap-offcanvas'*/ "bootstrap/js/dist/offcanvas"
-  );
-  await import(
-    /*webpackChunkName:'bootstrap-dropdown'*/ "bootstrap/js/dist/dropdown"
-  );
   //  初始化News功能
-  news.init(loginData);
+  await news.init(loginData);
   document.addEventListener("initPage", async () => {
     !process.env.isProd && console.log("initPage handle ---> checkNewsMore");
     await news.checkNewsMore();

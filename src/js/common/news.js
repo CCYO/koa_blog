@@ -12,14 +12,15 @@ import "dayjs/locale/zh-tw";
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default class {
-  #API = `/api/news`;
+  #API_LOGOUT = "/api/user/logout";
+  #API_NEWS = `/api/news`;
   // 是否第一次調用
   #first = false;
   // 是否自動調用
   #auto = false;
   // 上一次請求，是否以獲取後端所有unconfirm
   #checkNews = false;
-  ws_get_message = false;
+  ws_cb = undefined;
   db = _count();
   #id_list = Object.defineProperties(
     {},
@@ -102,8 +103,15 @@ export default class {
       },
     });
   }
-  init({ me }) {
-    let renderClass = new this.Render(this);
+  async init({ me }) {
+    await import(
+      /*webpackChunkName:'bootstrap-offcanvas'*/ "bootstrap/js/dist/offcanvas"
+    );
+    let { default: BS_dropdown } = await import(
+      /*webpackChunkName:'bootstrap-dropdown'*/ "bootstrap/js/dist/dropdown"
+    );
+    this.BS_dropdown = BS_dropdown;
+    let renderClass = (this.renderClass = new this.Render(this));
     this.checkNewsMore = renderClass.checkNewsMore.bind(renderClass);
     this.loop = renderClass.loop;
     this.#first = true;
@@ -116,27 +124,44 @@ export default class {
       //開啟後執行的動作，指定一個 function 會在連結 WebSocket 後執行
       ws.onopen = () => {
         this.user_id = me.id;
-        console.log(`ws/${me.id} open connection`);
+        process.env.isProd &&
+          console.log(`ws 【user:${me.id}】 open connection`);
       };
 
       //關閉後執行的動作，指定一個 function 會在連結中斷後執行
-      ws.onclose = () => {
-        console.log(`ws/${me.id} close connection`);
-      };
-      ws.onmessage = async function (event) {
-        let data = Number(event.data);
-        if (data !== me.id) {
+      ws.onclose = async (event) => {
+        if (event.code === 4444) {
+          if (!document.hidden) {
+            logout();
+          } else {
+            ins_news.ws_cb = () => {
+              ins_news.ws_cb = undefined;
+              logout();
+            };
+          }
+        }
+        process.env.isProd &&
+          console.log(`ws close \ncode:${event.code}\nreason:${event.reason}`);
+        function logout() {
+          alert("強迫登出，因為你已在其他設備登入");
+          location.href = "/login";
           return;
         }
-        // 驗證data
-        ins_news.ws_get_message = true;
-        if (!document.hidden) {
-          await ins_news.loop.now();
-          ins_news.ws_get_message = false;
-          ins_news.loop.start();
+      };
+      ws.onmessage = async function (event) {
+        if (Number(event.data) === me.id) {
+          if (!document.hidden) {
+            await ins_news.loop.now();
+            ins_news.loop.start();
+          } else {
+            ins_news.ws_cb = async () => {
+              ins_news.ws_cb = undefined;
+              await ins_news.loop.now();
+              ins_news.loop.start();
+            };
+          }
         }
       };
-      console.log(`ws/${me.id}:\n`, ws);
     }
   }
   update({ list, num, hasNews }) {
@@ -157,12 +182,14 @@ export default class {
     this.#newsDropdownClear();
   }
   #newsDropdownClear() {
-    $(`li[id$=-news-title]`).hide();
     //  清空頁面已渲染的通知條目
-    $(".news-item").remove();
+    $(`li[id$=-news-title]`).hide();
     //  清空新聞列表
-    $("[data-my-hr]").remove();
+    $(".news-item").remove();
     //  清空新聞列表分隔線
+    $("[data-my-hr]").remove();
+    //  收起下拉選單
+    this.renderClass.bs_dropdown.hide();
   }
   //  請求 news
   async getLoginData(auto = false) {
@@ -196,7 +223,7 @@ export default class {
         0;
     }
 
-    let { errno, data } = await this.axios.post(this.#API, this.status);
+    let { errno, data } = await this.axios.post(this.#API_NEWS, this.status);
     this.axios.autoLoadingBackdrop = true;
     this.#checkNews = false;
     if (!errno) {
@@ -339,6 +366,8 @@ class Render {
     this.newsClass = newsClass;
     this.getLoginData = newsClass.getLoginData.bind(newsClass);
 
+    // 創建下拉選單
+    this.bs_dropdown = new newsClass.BS_dropdown(this.$newsDropdown[0]);
     //  讓readMore自動循環的類
     let loop = (this.loop = new Loop(this.readMore.bind(this), {
       ms: this.LOAD_NEWS,
@@ -356,10 +385,8 @@ class Render {
     document.addEventListener("visibilitychange", async (e) => {
       if (document.hidden) {
         loop.stop();
-      } else if (this.newsClass.ws_get_message) {
-        await loop.now();
-        this.newsClass.ws_get_message = false;
-        loop.start();
+      } else if (this.newsClass.ws_cb) {
+        await this.newsClass.ws_cb();
       } else if (!this.#show) {
         loop.start();
       }
