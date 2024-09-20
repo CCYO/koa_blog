@@ -315,7 +315,6 @@ async function _findInfoForFollowIdol({ fans_id, idol_id }) {
   let articleReaders = articles.map(({ ArticleReader }) => ArticleReader.id);
   let data = { idolFans, articleReaders };
   return new SuccModel({ data });
-  // return new ErrModel({ ...ERR_RES.USER.READ.NOT_FIRST_FOLLOW, data });
 }
 async function _findIdolList(fans_id) {
   let data = await User.readList(Opts.USER.FIND.idolList(fans_id));

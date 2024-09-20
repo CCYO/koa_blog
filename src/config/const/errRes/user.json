@@ -40,10 +40,6 @@
     }
   },
   "READ": {
-    "NOT_FIRST_FOLLOW": {
-      "errno": 40101,
-      "msg": "非初次 follow"
-    },
     "NO_IDOL": {
       "errno": 40102,
       "msg": "找不到 idol"
@@ -73,7 +69,7 @@
       "msg": "查詢isEmailExist數據不符校驗"
     },
     "AJV_LOGIN": {
-      "errno": 40191,
+      "errno": 40192,
       "msg": "登入數據不符校驗"
     }
   }
