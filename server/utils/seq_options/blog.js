@@ -162,21 +162,21 @@ const FIND = {
     }
   },
   listAndCount({
-    user_id = undefined,
+    author_id = undefined,
     show = true,
     offset = 0,
     limit = BACKEND.BLOG.PAGINATION.BLOG_COUNT,
   }) {
     return {
-      list: genList(user_id, show, limit, offset),
-      count: genCount(user_id, show),
+      list: genList(author_id, show, limit, offset),
+      count: genCount(author_id, show),
     };
     function genList(author_id, show, limit, offset) {
       return `
         SELECT id, title, author_id, \`show\`, showAt, updatedAt
         FROM Blogs
         WHERE
-          author_id${author_id ? "=" + author_id : ">0"} 
+          author_id=${author_id} 
           AND \`show\`=${show}
           AND deletedAt IS NULL
         ORDER BY ${show ? "showAt" : "updatedAt"} DESC
@@ -189,7 +189,7 @@ const FIND = {
         SELECT count(*) AS count
         FROM Blogs
         WHERE
-          author_id${author_id ? "=" + author_id : ">0"} 
+          author_id=${author_id} 
           AND \`show\`=${show}
           AND deletedAt IS NULL
         `;

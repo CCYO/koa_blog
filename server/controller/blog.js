@@ -17,11 +17,10 @@ async function findListForPagination({
   limit = undefined,
   offset = undefined,
 }) {
-  if (!show && (!currentUser_id || currentUser_id !== author_id)) {
+  if (!show && currentUser_id !== author_id) {
     throw new MyErr(ERR_RES.BLOG.READ.NO_PERMISSION);
   }
-  user_id = show ? currentUser_id : author_id;
-  let resModel = await findListAndCount({ user_id, show, offset, limit });
+  let resModel = await findListAndCount({ author_id, show, offset, limit });
   let data;
   if (show) {
     data = { public: resModel.data };
@@ -263,7 +262,7 @@ async function findListAndCountOfAlbum(opts) {
   return new SuccModel({ data });
 }
 async function findListAndCount(opts) {
-  //  opts { user_id, show, offset, limit }
+  //  opts { author_id, show, offset, limit }
   //  data {list, count}
   let data = await Blog.readListAndCountAll(Opts.BLOG.FIND.listAndCount(opts));
   return new SuccModel({ data });
