@@ -6,7 +6,8 @@ const C_BlogImgAlt = require("./blogImgAlt");
 const C_ArticleReader = require("./articleReader");
 const C_Comment = require("./comment");
 const { MyErr, ErrModel, SuccModel } = require("../utils/model");
-const { CACHE, ERR_RES, ENV } = require("../config");
+const { CACHE, ERR_RES, ENV, NEWS } = require("../config");
+const { TYPE } = require("../utils/validator/config");
 
 //  查詢 blog 分頁列表數據
 async function findListForPagination({
@@ -81,11 +82,9 @@ async function modify({ blog_id, author_id, ...blog_data }) {
   }
   //  let { title, cancelImgs = [], html, show } = blog_data
   let map = new Map(Object.entries(blog_data));
-  let cache = undefined;
+  let cache = {};
   if (!ENV.isNoCache) {
-    cache = {
-      [CACHE.TYPE.PAGE.BLOG]: [blog_id],
-    };
+    cache[CACHE.TYPE.PAGE.BLOG] = [blog_id];
   }
   //  存放 blog 要更新的數據
   let newData = {};
@@ -97,13 +96,11 @@ async function modify({ blog_id, author_id, ...blog_data }) {
     if (newData.show) {
       newData.showAt = new Date();
       // 增加reader
-      let { data: list } = await _addReadersFromFans(blog_id);
+      let resModel = await _addReadersFromFans(blog_id);
       // 恢復軟刪除的MsgReceiver
       await C_Comment.restoryReceiver(blog_id);
       // await _restoryMsgReceiverList(blog_id);
-      if (cache && list.length) {
-        cache[CACHE.TYPE.NEWS] = list;
-      }
+      cache[CACHE.TYPE.NEWS] = resModel.cache[CACHE.TYPE.NEWS];
     } else {
       newData.showAt = null;
       // 軟刪除reader
@@ -133,13 +130,10 @@ async function modify({ blog_id, author_id, ...blog_data }) {
     await _removeImgList(cancelImgs);
   }
   let { data } = await _findWholeInfo({ blog_id });
-  let opts = { data };
-  if (cache) {
-    if (map.has("title") || map.has("show")) {
-      cache[CACHE.TYPE.PAGE.USER] = [author_id];
-    }
-    opts.cache = cache;
+  if (map.has("title") || map.has("show")) {
+    cache[CACHE.TYPE.PAGE.USER] = [author_id];
   }
+  let opts = { data, cache };
   return new SuccModel(opts);
 }
 async function addImg({ author_id, ...data }) {
@@ -391,13 +385,18 @@ async function _addReadersFromFans(blog_id) {
   if (!blog) {
     throw new MyErr(ERR_RES.BLOG.READ.NOT_EXIST);
   }
-  let { readers, articleReaders } = blog.readers.reduce(
+  let { unconfirm_list, readers, articleReaders } = blog.readers.reduce(
     (acc, reader) => {
+      // acc.readers.push(reader.id);
       acc.readers.push(reader.id);
-      acc.articleReaders.push(reader.ArticleReader.id);
+      let { id: articleReader_id, confirm } = reader.ArticleReader;
+      if (!confirm) {
+        acc.unconfirm_list.push(reader.id);
+      }
+      acc.articleReaders.push(articleReader_id);
       return acc;
     },
-    { readers: [], articleReaders: [] }
+    { readers: [], articleReaders: [], unconfirm_list: [] }
   );
   let fansList = blog.author.fansList
     .filter(({ id }) => {
@@ -412,7 +411,10 @@ async function _addReadersFromFans(blog_id) {
     await Blog.createReaders(blog_id, fansList);
   }
   let data = [...fansList, ...readers];
-  return new SuccModel({ data });
+  let cache = {
+    [CACHE.TYPE.NEWS]: [...unconfirm_list, ...fansList],
+  };
+  return new SuccModel({ data, cache });
 }
 /** 取得 blog 紀錄
  *

@@ -218,7 +218,7 @@ const FIND = {
         association: "readers",
         attributes: ["id"],
         through: {
-          attributes: ["id"],
+          attributes: ["id", "confirm"],
           where: {
             deletedAt: { [Op.ne]: null },
           },
