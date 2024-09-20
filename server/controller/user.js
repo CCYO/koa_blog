@@ -88,11 +88,11 @@ async function findFansList(idol_id) {
 async function follow({ fans_id, idol_id }) {
   //  若此次 add 不是第一次，代表可能會有軟刪除的 ArticleReader 關係
   //  尋找軟刪除的 IdolFans + ArticleReader 關係
-  let { errno, data } = await _findInfoForFollowIdol({
+  let { data } = await _findInfoForFollowIdol({
     fans_id,
     idol_id,
   });
-  if (errno) {
+  if (data) {
     ////  非初次follow
     let { idolFans, articleReaders } = data;
     //  恢復 idolFans 軟刪除狀態
@@ -103,7 +103,9 @@ async function follow({ fans_id, idol_id }) {
     ////  初次追蹤
     await User.createIdol({ fans_id, idol_id });
   }
-  let cache = { [NEWS]: [idol_id] };
+  // cache = { [NEWS]: [idol_id] };
+  // 初次追蹤才需通知
+  let cache = data ? {} : { [NEWS]: [idol_id] };
   if (!ENV.isNoCache) {
     cache[PAGE.USER] = [fans_id, idol_id];
   }
@@ -312,7 +314,8 @@ async function _findInfoForFollowIdol({ fans_id, idol_id }) {
   let idolFans = idols[0].IdolFans.id;
   let articleReaders = articles.map(({ ArticleReader }) => ArticleReader.id);
   let data = { idolFans, articleReaders };
-  return new ErrModel({ ...ERR_RES.USER.READ.NOT_FIRST_FOLLOW, data });
+  return new SuccModel({ data });
+  // return new ErrModel({ ...ERR_RES.USER.READ.NOT_FIRST_FOLLOW, data });
 }
 async function _findIdolList(fans_id) {
   let data = await User.readList(Opts.USER.FIND.idolList(fans_id));
