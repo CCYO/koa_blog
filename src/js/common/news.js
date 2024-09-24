@@ -124,7 +124,7 @@ export default class {
       //開啟後執行的動作，指定一個 function 會在連結 WebSocket 後執行
       ws.onopen = () => {
         this.user_id = me.id;
-        process.env.isProd &&
+        !process.env.isProd &&
           console.log(`ws 【user:${me.id}】 open connection`);
       };
 
@@ -140,7 +140,7 @@ export default class {
             };
           }
         }
-        process.env.isProd &&
+        !process.env.isProd &&
           console.log(`ws close \ncode:${event.code}\nreason:${event.reason}`);
         function logout() {
           alert("強迫登出，因為你已在其他設備登入");

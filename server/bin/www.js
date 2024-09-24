@@ -6,6 +6,7 @@
 const http = require("http");
 const https = require("https");
 const { readFileSync } = require("fs");
+const { resolve } = require("path");
 
 const app = require("../app");
 const _ws = require("./ws");
@@ -22,9 +23,9 @@ let server;
 if (ENV.isProd) {
   server = https.createServer(
     {
-      key: readFileSync("/etc/letsencrypt/live/ccyo.work/privkey.pem"),
-      cert: readFileSync("/etc/letsencrypt/live/ccyo.work/cert.pem"),
-      ca: readFileSync("/etc/letsencrypt/live/ccyo.work/chain.pem"),
+      key: readFileSync(resolve(__dirname, "../_config/ssh/private.key")),
+      cert: readFileSync(resolve(__dirname, "../_config/ssh/certificate.cert")),
+      ca: readFileSync(resolve(__dirname, "../_config/ssh/ca_bundle.crt")),
     },
     app.callback()
   );
@@ -32,7 +33,7 @@ if (ENV.isProd) {
   server = http.createServer(app.callback());
 }
 
-_ws(server, app);
+_ws.init(server, app);
 /**
  * Listen on provided port, on all network interfaces.
  */

@@ -36,7 +36,7 @@ async function modify(id, newData) {
 }
 
 async function addEmployerBeReader(reader_id) {
-  let x = await ArticleReader.create(
+  await ArticleReader.create(
     Opts.ARTICLE_READER.CREATE.addEmployerBeReader(reader_id)
   );
   return new SuccModel();

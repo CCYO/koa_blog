@@ -62,10 +62,13 @@ app.use(
     })
   )
 );
+
+/*
 // SSL測試
 app.use(
-  koaMount("/.well-known", koaStatic(resolve(__dirname, "./_config/ssl")))
+  koaMount("/.well-known/xxxxxxx", koaStatic(resolve(__dirname, "./_config/ssl")))
 );
+*/
 
 app.use(router.routes(), router.allowedMethods());
 //  列印錯誤

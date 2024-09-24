@@ -8,6 +8,6 @@
     "src/_views/"
   ],
   "verbose": false,
-  "exec": "node server/bin/www",
+  "exec": "node server/bin/www.js",
   "ext": "js,mjs,json,ejs"
 }

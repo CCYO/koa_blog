@@ -1,5 +1,5 @@
+const _ws = require("../../bin/ws");
 const C_CacheNews = require("../../controller/cache_news");
-const { store: redis } = require("../../db/redis");
 const { log } = require("../../utils/log");
 const { SuccModel } = require("../../utils/model");
 const BACKEND = require("../../config");
@@ -20,11 +20,8 @@ async function reset(ctx, next) {
 //  remove session
 async function remove(ctx) {
   let user_id = ctx.session.user.id;
-  let ws_list = ctx.app._ws.get(user_id);
-  let ws = ws_list && ws_list[`koa_blog.sid:${ctx.sessionId}`];
-  if (ws) {
-    ws.close();
-  }
+  // 關閉ws
+  _ws.close(ctx);
   ctx.session = null;
   log(`移除 使用者user_id:${user_id} 的 session`);
   ctx.body = new SuccModel({ data: "成功登出" });
@@ -36,22 +33,7 @@ async function set(ctx, next) {
   if (errno || ctx.session.user) {
     return;
   }
-  let map = ctx.app._ws;
-  let ws_list = map.get(data.id);
-  for (let session_id in ws_list) {
-    // 移除重複登入的session
-    await redis.destroy(session_id);
-    let ws = ws_list[session_id];
-    if (ws) {
-      // 關閉重複登入連接中的ws
-      // 參考MDN:
-      // https://developer.mozilla.org/zh-CN/docs/Web/API/CloseEvent#%E5%B1%9E%E6%80%A7
-      // 自定義 closeEvent code
-      await ws.close(4444);
-      log(`移除user_id:${data.id}的重複登入`);
-    }
-  }
-
+  await _ws.close_same_id(data.id);
   ctx.session.user = {
     ...data,
     news: SESSION_NEWS(),
