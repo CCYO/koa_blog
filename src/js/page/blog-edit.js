@@ -188,7 +188,12 @@ async function initMain() {
       return;
     }
     let { title, html, show, time } = data;
-    let newData = { title, html, show, time };
+    let newData = {
+      title,
+      html: html ? decodeURI(html) : undefined,
+      show,
+      time,
+    };
     //  畫面內容處理
     if (payload.hasOwnProperty("show")) {
       let text;
@@ -672,7 +677,9 @@ async function initMain() {
           copy = copy.replace(
             res[0],
             //  此次匹配到的整條字符串
-            `<x-img data-alt-id='${alt_id}' data-style='${style}'/>`
+            `<x-img data-alt-id='${alt_id}' ${
+              style ? `data-style='${style}'` : ""
+            }/>`
           );
         }
         return copy;
