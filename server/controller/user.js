@@ -161,7 +161,7 @@ async function modifyInfo({ _origin, origin_password, ...newData }) {
   await User.update(Opts.USER.UPDATE.one({ user_id, newData }));
   let { data } = await find(user_id);
   let opts = { data };
-  if (process.env.NODE_ENV !== "nocache") {
+  if (!ENV.isNoCache) {
     //  更新數據，不是新增數據
     let cache = {
       //  個人頁 緩存肯定要刪除

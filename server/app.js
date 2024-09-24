@@ -7,8 +7,6 @@ require("dotenv").config({
   path: resolve(__dirname, `./_config/${ENV.isProd ? ".prod" : ".dev"}.env`),
 });
 const Koa = require("koa");
-//  打印request跟response
-const logger = require("koa-logger")();
 //  針對JSON類型的response提高可讀性
 const json = require("koa-json")();
 //  處理非 multipart/form-data 的請求數據
@@ -39,8 +37,12 @@ const app = new Koa();
 app.keys = [SESSION_KEY];
 
 app.use(middleware_errors);
-//  打印每一次的request與response
-app.use(logger);
+
+if (!ENV.isProd) {
+  //  打印每一次的request與response
+  app.use(require("koa-logger")());
+}
+
 app.use(json);
 app.use(webpackDev);
 app.use(webpackHMR);
@@ -72,20 +74,27 @@ app.use(
 
 app.use(router.routes(), router.allowedMethods());
 //  列印錯誤
-app.on("error", (error) => {
+app.on("error", (error, ctx) => {
+  let msg = [
+    `----- -----\n
+      METHOD:${ctx.method}\n
+      PATH:${ctx.path}\n
+      ERROR TYPE:`,
+  ];
   if (error instanceof MyErr) {
     let { serverError } = error;
-    consola.error(
-      "\n----- -----\nMyErr.model:\n",
+    msg = msg.concat([
+      "【MyErr】\nmodel:\n",
       error.model,
-      "\n+++++ +++++\nnMyErr.stack:\n",
+      "\n+++++ +++++\nstack:\n",
       error.stack,
-      "\n+++++ +++++\nMyErr.serverError.stack:\n",
+      "\n+++++ +++++\norigin stack:\n",
       serverError?.stack,
-      "\n----- -----"
-    );
+    ]);
   } else {
-    consola.error("\n!!!!! !!!!!\nserverError:\n", error);
+    msg = msg.concat(["【SEVER ERROR】\n", error]);
   }
+  msg = msg.concat("\n----- -----");
+  consola.error(...msg);
 });
 module.exports = app;

@@ -11,6 +11,10 @@
     "NO_LOGIN": {
       "errno": 99902,
       "msg": "登入已過期"
+    },
+    "TEST": {
+      "errno": 99999,
+      "msg": "測試抱錯"
     }
   },
   "FORMIDABLE": {

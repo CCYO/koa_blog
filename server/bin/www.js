@@ -10,7 +10,6 @@ const { resolve } = require("path");
 
 const app = require("../app");
 const _ws = require("./ws");
-const { log } = require("../utils/log");
 const { ENV } = require("../config");
 
 const port = normalizePort(process.env.NODE_PORT);
@@ -23,9 +22,9 @@ let server;
 if (ENV.isProd) {
   server = https.createServer(
     {
-      key: readFileSync(resolve(__dirname, "../_config/ssh/private.key")),
-      cert: readFileSync(resolve(__dirname, "../_config/ssh/certificate.cert")),
-      ca: readFileSync(resolve(__dirname, "../_config/ssh/ca_bundle.crt")),
+      key: readFileSync(resolve(__dirname, "../_config/ssl/private.key")),
+      cert: readFileSync(resolve(__dirname, "../_config/ssl/certificate.crt")),
+      ca: readFileSync(resolve(__dirname, "../_config/ssl/ca_bundle.crt")),
     },
     app.callback()
   );
@@ -95,6 +94,6 @@ function onError(error) {
 function onListening() {
   let addr = server.address();
   let bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-  log(`ENV IS ${process.env.NODE_ENV}`);
-  log(`LISTEN on ${bind}`);
+  console.log(`ENV IS ${ENV.MODE}`);
+  console.log(`LISTEN on ${bind}`);
 }
