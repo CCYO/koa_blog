@@ -5,7 +5,9 @@ module.exports = async (ctx, next) => {
   try {
     await next();
     if (ctx.status === 404) {
-      ctx.redirect(`/permission/${ERR_RES.SERVER.RESPONSE.ERR_404.errno}`);
+      if (ctx.header.accept && ~ctx.header.accept.indexOf("html")) {
+        ctx.redirect(`/permission/${ERR_RES.SERVER.RESPONSE.ERR_404.errno}`);
+      }
     }
   } catch (error) {
     ctx.status = 500;
@@ -13,11 +15,11 @@ module.exports = async (ctx, next) => {
       error = new MyErr({ ...ERR_RES.SERVER.RESPONSE.ERR_500, error });
     }
     ctx.app.emit("error", error, ctx);
-    let isAPI = /^\/api\//.test(ctx.path);
-    if (isAPI) {
-      ctx.body = new MyErr(ERR_RES.SERVER.RESPONSE.ERR_500);
-    } else {
+    let accept = ctx.header.accept;
+    if (accept && ~ctx.header.accept.indexOf("html")) {
       ctx.redirect(`/permission/${ERR_RES.SERVER.RESPONSE.ERR_500.errno}`);
+    } else {
+      ctx.body = new MyErr(ERR_RES.SERVER.RESPONSE.ERR_500);
     }
   }
 };
