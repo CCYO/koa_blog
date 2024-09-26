@@ -1,7 +1,7 @@
 const { ENV, CACHE } = require("../../config");
 const C_CacheNews = require("../../controller/cache_news");
 const C_CachePage = require("../../controller/cache_page");
-const _ws = require("../../bin/ws");
+const _ws = require("../../utils/ws");
 
 //  處理 resModel.cache
 async function modify(ctx, next) {

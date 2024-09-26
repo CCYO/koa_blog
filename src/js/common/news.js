@@ -118,8 +118,8 @@ export default class {
     if (WebSocket) {
       let ins_news = this;
       let ws_api = process.env.isProd
-        ? "wss://ccyo.work"
-        : "ws://ccyo.work:8080";
+        ? "wss://ccyo.work/ws"
+        : "ws://ccyo.work:8080/ws";
       let ws = (this.ws = new WebSocket(ws_api));
       //開啟後執行的動作，指定一個 function 會在連結 WebSocket 後執行
       ws.onopen = () => {
@@ -130,7 +130,9 @@ export default class {
 
       //關閉後執行的動作，指定一個 function 會在連結中斷後執行
       ws.onclose = async (event) => {
-        if (event.code === 4444) {
+        !process.env.isProd &&
+          console.log(`ws close \ncode:${event.code}\nreason:${event.reason}`);
+        if (event.code === FRONTEND.NAVBAR.NEWS.WS.CLOSE_CODE) {
           if (!document.hidden) {
             logout();
           } else {
@@ -140,8 +142,6 @@ export default class {
             };
           }
         }
-        !process.env.isProd &&
-          console.log(`ws close \ncode:${event.code}\nreason:${event.reason}`);
         function logout() {
           alert("強迫登出，因為你已在其他設備登入");
           location.href = "/login";

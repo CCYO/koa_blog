@@ -9,7 +9,7 @@ const { readFileSync } = require("fs");
 const { resolve } = require("path");
 
 const app = require("../app");
-const _ws = require("./ws");
+// const _ws = require("./ws");
 const { ENV } = require("../config");
 
 const port = normalizePort(process.env.NODE_PORT);
@@ -32,7 +32,7 @@ if (ENV.isProd) {
   server = http.createServer(app.callback());
 }
 
-_ws.init(server, app);
+// _ws.init(server);
 /**
  * Listen on provided port, on all network interfaces.
  */

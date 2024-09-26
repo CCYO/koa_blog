@@ -6,6 +6,7 @@ const { resolve } = require("path");
 require("dotenv").config({
   path: resolve(__dirname, `./_config/${ENV.isProd ? ".prod" : ".dev"}.env`),
 });
+
 const Koa = require("koa");
 //  針對JSON類型的response提高可讀性
 const json = require("koa-json")();
@@ -16,6 +17,7 @@ const bodyparser = require("koa-bodyparser")({
 const koaViews = require("@ladjs/koa-views");
 const koaMount = require("koa-mount");
 const koaStatic = require("koa-static");
+const websocket = require("koa-easy-ws");
 ////  MY MODULE
 //  錯誤處理
 const middleware_errors = require("./middleware/errorsHandle");
@@ -47,6 +49,7 @@ app.use(json);
 app.use(webpackDev);
 app.use(webpackHMR);
 app.use(bodyparser);
+app.use(websocket());
 app.use(session_middleware);
 app.use(sequelizeTransaction);
 //  渲染模板
@@ -72,7 +75,10 @@ app.use(
 );
 */
 
+// const ws_router = require("./routes/ws");
 app.use(router.routes(), router.allowedMethods());
+// app.use(ws_router.routes(), ws_router.allowedMethods());
+
 //  列印錯誤
 app.on("error", (error, ctx) => {
   let msg = [

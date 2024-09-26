@@ -105,5 +105,8 @@
   },
   "UTILS": {
     "REDIR_FROM": "from"
+  },
+  "WS": {
+    "CLOSE_CODE": 4444
   }
 }

@@ -1,4 +1,4 @@
-const _ws = require("../../bin/ws");
+const _ws = require("../../utils/ws");
 const C_CacheNews = require("../../controller/cache_news");
 const { log } = require("../../utils/log");
 const { SuccModel } = require("../../utils/model");
