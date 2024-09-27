@@ -1,19 +1,27 @@
-let SocketServer = require("ws").WebSocketServer;
+const ws_middleware = require("koa-easy-ws")();
 let { store } = require("../db/redis");
 let { log } = require("./log");
 const { WS } = require("../config");
 const ws_map = new Map();
 
 const token_prefix = "koa_blog.sid";
+
+const wss = ws_middleware.server;
+
 module.exports = {
+  ws_middleware,
   init,
   close,
   close_same_id,
   broadcast_news,
 };
 
+wss.on("connection", () => {
+  log("ws connecting....");
+});
+
 function init(ctx) {
-  let ws = ctx._ws_instance;
+  let ws = ctx.ws;
   let user_id = ctx.session.user.id;
   let token = `${token_prefix}:${ctx.sessionId}`;
   let ws_list_of_user = ws_map.get(user_id);
@@ -25,7 +33,7 @@ function init(ctx) {
   }
   log(
     `ws connecting\n【user_id】${user_id}\n【token】${token}\n【ws_list_of_user】`,
-    ws_list_of_user
+    Object.keys(ws_list_of_user)
   );
 
   ws.on("close", (code) => {
@@ -40,7 +48,7 @@ function init(ctx) {
 
     log(
       `ws close\n【code】${code}\n【user_id】${user_id}\n【token】${token}\n【ws_list_of_user】`,
-      ws_list_of_user
+      Object.keys(ws_list_of_user)
     );
   });
 }

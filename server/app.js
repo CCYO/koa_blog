@@ -17,7 +17,7 @@ const bodyparser = require("koa-bodyparser")({
 const koaViews = require("@ladjs/koa-views");
 const koaMount = require("koa-mount");
 const koaStatic = require("koa-static");
-const websocket = require("koa-easy-ws");
+
 ////  MY MODULE
 //  錯誤處理
 const middleware_errors = require("./middleware/errorsHandle");
@@ -26,6 +26,8 @@ const { webpackDev, webpackHMR } = require("./middleware/webpackDevAndHMR");
 const { session_middleware } = require("./db/redis");
 //  middleware:sequelize transaction
 const sequelizeTransaction = require("./middleware/api/seq_transaction");
+//  middleware:ws
+const ws_middleware = require("./middleware/ws");
 const router = require("./routes");
 
 //  避免觸發 ../build/htmlWebpackPlugins.js
@@ -49,7 +51,7 @@ app.use(json);
 app.use(webpackDev);
 app.use(webpackHMR);
 app.use(bodyparser);
-app.use(websocket());
+app.use(ws_middleware);
 app.use(session_middleware);
 app.use(sequelizeTransaction);
 //  渲染模板
