@@ -6,8 +6,6 @@ const ws_map = new Map();
 
 const token_prefix = "koa_blog.sid";
 
-const wss = ws_middleware.server;
-
 module.exports = {
   ws_middleware,
   init,
@@ -16,9 +14,13 @@ module.exports = {
   broadcast_news,
 };
 
+/*
+//  設定wss
+const wss = ws_middleware.server;
 wss.on("connection", () => {
   log("ws connecting....");
 });
+ */
 
 function init(ctx) {
   let ws = ctx.ws;
@@ -37,10 +39,6 @@ function init(ctx) {
   );
 
   ws.on("close", (code) => {
-    // 參考MDN:
-    // https://developer.mozilla.org/zh-CN/docs/Web/API/CloseEvent#%E5%B1%9E%E6%80%A7
-    // 自定義 closeEvent code
-
     let ws_list_of_user = ws_map.get(user_id);
     if (ws_list_of_user[token]) {
       delete ws_list_of_user[token];
@@ -70,16 +68,15 @@ async function close_same_id(user_id) {
     await store.destroy(token);
     let ws = ws_list_of_user[token];
     if (ws) {
-      // 關閉重複登入連接中的ws
+      // 關閉重複登入連接中的ws，並傳入自定義 closeEvent code，讓前端判斷操作
       // 參考MDN:
       // https://developer.mozilla.org/zh-CN/docs/Web/API/CloseEvent#%E5%B1%9E%E6%80%A7
-      // 自定義 closeEvent code
       await ws.close(WS.CLOSE_CODE);
       log(`移除user_id:${user_id}的重複登入`);
     }
   }
 }
-
+// 以特定且登入狀態的user為對象，提醒有新通知
 function broadcast_news(user_id_list) {
   let { id_list, cb_list } = user_id_list.reduce(
     (acc, user_id) => {
@@ -98,5 +95,5 @@ function broadcast_news(user_id_list) {
     { id_list: [], cb_list: [] }
   );
   cb_list.forEach((cb) => cb());
-  log(`ws send broadcast has news for: ${id_list}`);
+  log(`ws send broadcast has news,\n【user_list】${id_list}`);
 }

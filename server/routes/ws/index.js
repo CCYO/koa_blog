@@ -4,7 +4,7 @@ const _ws = require("../../utils/ws");
 
 router.prefix("/ws");
 
-router.get("/", async (ctx, next) => {
+router.get("/", async (ctx) => {
   if (!ctx.ws) {
     ctx.status = 404;
     return;

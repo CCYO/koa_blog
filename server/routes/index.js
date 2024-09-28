@@ -9,17 +9,17 @@ router.use(api.routes());
 router.use(views.routes());
 router.use(ws.routes());
 
-router.get("/", (ctx, next) => {
+router.get("/", (ctx) => {
   ctx.redirect("/square");
 });
 
 if (!ENV.isProd) {
   const { MyErr } = require("../utils/model");
   const { ERR_RES } = require("../config/index");
-  router.get("/api/error", (ctx, next) => {
+  router.get("/api/error", () => {
     throw new MyErr(ERR_RES.SERVER.RESPONSE.TEST);
   });
-  router.get("/view/error", (ctx, next) => {
+  router.get("/view/error", () => {
     throw new MyErr(ERR_RES.SERVER.RESPONSE.TEST);
   });
 }
