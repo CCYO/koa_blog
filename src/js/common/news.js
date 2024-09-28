@@ -118,8 +118,8 @@ export default class {
     if (WebSocket) {
       let ins_news = this;
       let ws_api = process.env.isProd
-        ? "wss://ccyo.work/ws"
-        : "ws://ccyo.work:8080/ws";
+        ? `wss://${location.host}/ws`
+        : `ws://${location.host}/ws`;
       let ws = (this.ws = new WebSocket(ws_api));
       //開啟後執行的動作，指定一個 function 會在連結 WebSocket 後執行
       ws.onopen = () => {
