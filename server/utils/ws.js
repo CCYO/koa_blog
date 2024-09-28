@@ -84,7 +84,7 @@ function broadcast_news(user_id_list) {
       if (ws_list_of_user) {
         acc.id_list.push(user_id);
         for (let token in ws_list_of_user) {
-          let ws = ws_list[token];
+          let ws = ws_list_of_user[token];
           acc.cb_list.push(function () {
             ws.send(user_id);
           });
