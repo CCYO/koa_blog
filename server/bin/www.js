@@ -4,14 +4,9 @@
  */
 
 const http = require("http");
-const https = require("https");
-const { readFileSync } = require("fs");
-const { resolve } = require("path");
-
 const app = require("../app");
-// const _ws = require("./ws");
-const { ENV } = require("../config");
 
+const { ENV } = require("../config");
 const port = normalizePort(process.env.NODE_PORT);
 
 /**
@@ -19,20 +14,21 @@ const port = normalizePort(process.env.NODE_PORT);
  */
 
 let server;
-if (ENV.isProd) {
-  server = https.createServer(
-    {
-      key: readFileSync(resolve(__dirname, "../_config/ssl/private.key")),
-      cert: readFileSync(resolve(__dirname, "../_config/ssl/certificate.crt")),
-      ca: readFileSync(resolve(__dirname, "../_config/ssl/ca_bundle.crt")),
-    },
-    app.callback()
-  );
-} else {
-  server = http.createServer(app.callback());
-}
 
-// _ws.init(server);
+// SSL交由NGINX負責
+// if (ENV.isProd) {
+//   server = https.createServer(
+//     {
+//       key: readFileSync(resolve(__dirname, "../_config/ssl/private.key")),
+//       cert: readFileSync(resolve(__dirname, "../_config/ssl/certificate.crt")),
+//       ca: readFileSync(resolve(__dirname, "../_config/ssl/ca_bundle.crt")),
+//     },
+//     app.callback()
+//   );
+// } else {
+server = http.createServer(app.callback());
+// }
+
 /**
  * Listen on provided port, on all network interfaces.
  */

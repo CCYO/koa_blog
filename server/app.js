@@ -60,26 +60,18 @@ app.use(
     extension: "ejs",
   })
 );
-//  靜態檔案
-app.use(
-  koaMount(
-    WEBPACK_CONFIG.PUBLIC_PATH,
-    koaStatic(WEBPACK_CONFIG.BUILD.DIST, {
-      maxage: 60 * 60 * 1000,
-    })
-  )
-);
 
-/*
-// SSL測試
-app.use(
-  koaMount("/.well-known/xxxxxxx", koaStatic(resolve(__dirname, "./_config/ssl")))
-);
-*/
+//  靜態檔案交由NGINX負責
+// app.use(
+//   koaMount(
+//     WEBPACK_CONFIG.PUBLIC_PATH,
+//     koaStatic(WEBPACK_CONFIG.BUILD.DIST, {
+//       maxage: 60 * 60 * 1000,
+//     })
+//   )
+// );
 
-// const ws_router = require("./routes/ws");
 app.use(router.routes(), router.allowedMethods());
-// app.use(ws_router.routes(), ws_router.allowedMethods());
 
 //  列印錯誤
 app.on("error", (error, ctx) => {
@@ -105,4 +97,5 @@ app.on("error", (error, ctx) => {
   msg = msg.concat("\n----- -----");
   consola.error(...msg);
 });
+
 module.exports = app;
