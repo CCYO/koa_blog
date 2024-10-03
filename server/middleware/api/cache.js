@@ -1,4 +1,4 @@
-const { ENV, CACHE } = require("../../config");
+const { WS, ENV, CACHE } = require("../../config");
 const C_CacheNews = require("../../controller/cache_news");
 const C_CachePage = require("../../controller/cache_page");
 const _ws = require("../../utils/ws");
@@ -14,10 +14,12 @@ async function modify(ctx, next) {
     if (!list.length) {
       continue;
     }
-    if (type === CACHE.TYPE.NEWS) {
+    if (type === CACHE.TYPE.WS) {
+      _ws.broadcast_news(list, WS.HAS_CONFIRM);
+    } else if (type === CACHE.TYPE.NEWS) {
       //  提醒使用者的通知數據有變動，要重新從DB讀取
-      _ws.broadcast_news(list);
       await C_CacheNews.addList(list);
+      _ws.broadcast_news(list, WS.HAS_UNCONFRIM);
     } else if (ENV.isNoCache) {
       continue;
     } else {

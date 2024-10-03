@@ -76,8 +76,9 @@ async function close_same_id(user_id) {
     }
   }
 }
+
 // 以特定且登入狀態的user為對象，提醒有新通知
-function broadcast_news(user_id_list) {
+function broadcast_news(user_id_list, hasNews) {
   let { id_list, cb_list } = user_id_list.reduce(
     (acc, user_id) => {
       let ws_list_of_user = ws_map.get(user_id);
@@ -86,7 +87,7 @@ function broadcast_news(user_id_list) {
         for (let token in ws_list_of_user) {
           let ws = ws_list_of_user[token];
           acc.cb_list.push(function () {
-            ws.send(user_id);
+            ws.send(hasNews);
           });
         }
       }
@@ -95,5 +96,5 @@ function broadcast_news(user_id_list) {
     { id_list: [], cb_list: [] }
   );
   cb_list.forEach((cb) => cb());
-  log(`ws send broadcast has news,\n【user_list】${id_list}`);
+  log(`ws send broadcast has news,\n【user_list】[${id_list}]`);
 }

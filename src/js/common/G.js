@@ -30,12 +30,18 @@ export default class {
      * G.init期間，LoadingBackdrop已開啟，故關閉_axios 的LoadingBackdrop auto
      */
     _axios.autoLoadingBackdrop = false;
-    this.data.me = await initNavbar(active, _axios);
+    let login = await initNavbar(active, _axios);
     _axios.autoLoadingBackdrop = true;
     this.utils = {
       loading_backdrop,
       axios: _axios,
     };
+    if (login) {
+      this.utils.news = login.news;
+      this.data.me = login.me;
+    } else {
+      this.data.me = undefined;
+    }
     this.event = {
       // 頁面初始化完成事件
       initPage: new CustomEvent("initPage"),

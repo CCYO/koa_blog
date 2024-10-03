@@ -36,7 +36,7 @@ export default async function (active, _axios) {
   // 登入狀態
   _renderLoginNav(active);
   //  初始化News功能
-  await news.init(loginData);
+  news = await news.init(loginData);
   document.addEventListener("initPage", async () => {
     !process.env.isProd && console.log("initPage handle ---> checkNewsMore");
     await news.checkNewsMore();
@@ -44,7 +44,11 @@ export default async function (active, _axios) {
   //  登出功能
   $("#logout").on("click", logout);
   // 僅返回me
-  return loginData.me;
+  return {
+    me: loginData.me,
+    news,
+  };
+  // return loginData.me;
 
   async function logout() {
     if (!confirm("真的要登出?")) {

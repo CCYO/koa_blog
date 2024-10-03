@@ -84,6 +84,7 @@
   },
   "CACHE": {
     "TYPE": {
+      "WS": "broadcast_for_restory_confirm_news",
       "NEWS": "newNews",
       "PAGE": {
         "USER": "userPage",
@@ -107,6 +108,8 @@
     "REDIR_FROM": "from"
   },
   "WS": {
-    "CLOSE_CODE": 4444
+    "CLOSE_CODE": 4444,
+    "HAS_UNCONFRIM": 0,
+    "HAS_CONFIRM": 1
   }
 }

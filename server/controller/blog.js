@@ -100,6 +100,7 @@ async function modify({ blog_id, author_id, ...blog_data }) {
       await C_Comment.restoryReceiver(blog_id);
       // await _restoryMsgReceiverList(blog_id);
       cache[CACHE.TYPE.NEWS] = resModel.cache[CACHE.TYPE.NEWS];
+      cache[CACHE.TYPE.WS] = resModel.cache[CACHE.TYPE.WS];
     } else {
       newData.showAt = null;
       // 軟刪除reader
@@ -384,19 +385,22 @@ async function _addReadersFromFans(blog_id) {
   if (!blog) {
     throw new MyErr(ERR_RES.BLOG.READ.NOT_EXIST);
   }
-  let { unconfirm_list, readers, articleReaders } = blog.readers.reduce(
-    (acc, reader) => {
-      // acc.readers.push(reader.id);
-      acc.readers.push(reader.id);
-      let { id: articleReader_id, confirm } = reader.ArticleReader;
-      if (!confirm) {
-        acc.unconfirm_list.push(reader.id);
-      }
-      acc.articleReaders.push(articleReader_id);
-      return acc;
-    },
-    { readers: [], articleReaders: [], unconfirm_list: [] }
-  );
+  let { confirm_list, unconfirm_list, readers, articleReaders } =
+    blog.readers.reduce(
+      (acc, reader) => {
+        // acc.readers.push(reader.id);
+        acc.readers.push(reader.id);
+        let { id: articleReader_id, confirm } = reader.ArticleReader;
+        if (!confirm) {
+          acc.unconfirm_list.push(reader.id);
+        } else {
+          acc.confirm_list.push(reader.id);
+        }
+        acc.articleReaders.push(articleReader_id);
+        return acc;
+      },
+      { readers: [], articleReaders: [], unconfirm_list: [], confirm_list: [] }
+    );
   let fansList = blog.author.fansList
     .filter(({ id }) => {
       return !readers.some((reader_id) => reader_id === id);
@@ -412,6 +416,7 @@ async function _addReadersFromFans(blog_id) {
   let data = [...fansList, ...readers];
   let cache = {
     [CACHE.TYPE.NEWS]: [...unconfirm_list, ...fansList],
+    [CACHE.TYPE.WS]: confirm_list,
   };
   return new SuccModel({ data, cache });
 }

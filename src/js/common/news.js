@@ -93,7 +93,8 @@ export default class {
             status: FRONTEND.NAVBAR.NEWS.STATUS.AGAIN,
             excepts: { ...this.#id_list },
           };
-        } else if (this.db.total > this.#id_list.total) {
+          // } else if (this.db.total > this.#id_list.total) {
+        } else {
           !process.env.isProd && console.log("news ---> 手動|獲取通知");
           return {
             status: FRONTEND.NAVBAR.NEWS.STATUS.AGAIN,
@@ -149,8 +150,16 @@ export default class {
           return;
         }
       };
+
       ws.onmessage = async function (event) {
-        if (Number(event.data) === me.id) {
+        switch (Number(event.data)) {
+          case FRONTEND.NAVBAR.NEWS.WS.HAS_UNCONFIRM:
+            await getNews();
+            break;
+          case FRONTEND.NAVBAR.NEWS.WS.HAS_CONFIRM:
+            ins_news.renderClass.showReadMore(true);
+        }
+        async function getNews() {
           if (!document.hidden) {
             await ins_news.loop.now();
             ins_news.loop.start();
@@ -164,6 +173,7 @@ export default class {
         }
       };
     }
+    return this;
   }
   update({ list, num, hasNews }) {
     if (hasNews) {
@@ -492,12 +502,12 @@ class Render {
       }, 1000);
     });
   }
-  _showReadMore() {
+  showReadMore(show = false) {
     let { db, htmlStr } = this.newsClass;
     //  未渲染的 news count
     let more = db.total - htmlStr.rendered.total > 0;
     //  顯示/隱藏「讀取更多」
-    if (more) {
+    if (show || more) {
       this.$readMore.show(0);
       this.$noNews.hide(0);
     } else {
@@ -516,7 +526,7 @@ class Render {
       $btn.removeAttr("style").prop("disabled", false);
     }
     //  顯示/隱藏「讀取更多」
-    this._showReadMore();
+    this.showReadMore();
 
     async function _showNewsCount(hasNews, insert) {
       if (this.first) {
