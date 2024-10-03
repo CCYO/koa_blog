@@ -8,8 +8,8 @@
     "prod": " npm run build -- --env=run",
     "start": "pm2 start ecosystem.config.js",
     "build": "npm run _clean && cross-env NODE_ENV=production webpack --config ./build/webpack.prod.config.js",
-    "re_prod": "npm run rm_pm2 && npm run prod",
-    "rm_pm2": "pm2 delete all && pm2 flush && npm run _clean",
+    "prod_re": "npm run pm2_rm && npm run prod",
+    "pm2_rm": "pm2 delete all && pm2 flush && npm run _clean",
     "_clean": "rm -rf ./src/_views ./src/js/utils/render/template ./server/views ./server/assets ./server/utils/render/template ",
     "syncDB": "node ./server/db/mysql/sync"
   },

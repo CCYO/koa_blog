@@ -117,7 +117,7 @@ const plugins = (run) =>
       after: { include: [resolve(__dirname, "../src/_views")], trash: true },
     }),
     new OptimizeCss(),
-    DONE(run),
+    run_pm2(run),
   ].filter(Boolean);
 
 const prod_config = (run) => ({
@@ -179,26 +179,24 @@ module.exports = (env) => {
 };
 
 // 自動調用PM2
-function DONE(run) {
-  if (!run) {
-    return false;
+function run_pm2(run) {
+  if (run) {
+    return { apply };
   }
-  return {
-    apply: (compiler) => {
-      compiler.hooks.done.tap("_", (compilation) => {
-        pm2.connect((connect_err) => {
-          if (connect_err) {
-            throw connect_err;
+
+  function apply(compiler) {
+    compiler.hooks.done.tap("_", (compilation) => {
+      pm2.connect((connect_err) => {
+        if (connect_err) {
+          throw connect_err;
+        }
+        pm2.start(resolve(__dirname, "../ecosystem.config.js"), (start_err) => {
+          if (start_err) {
+            throw start_err;
           }
-          console.log("PM2 CONNECT");
-          const config = resolve(__dirname, "../ecosystem.config.js");
-          pm2.start(config, (start_err) => {
-            if (start_err) {
-              throw connect_err;
-            }
-          });
+          process.env.NODE_ENV !== "production" && console.log("PM2 START");
         });
       });
-    },
-  };
+    });
+  }
 }
