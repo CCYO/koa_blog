@@ -4,12 +4,11 @@
   "private": true,
   "scripts": {
     "nocache": "npm run _clean && cross-env NODE_ENV=nocache nodemon",
-    "dev": "npm run _clean && cross-env NODE_ENV=development nodemon",
-    "prod": " npm run build -- --env=run",
+    "dev": "npm run pm2_rm && cross-env NODE_ENV=development nodemon",
+    "prod": "npm run pm2_rm && npm run build -- --env=run",
     "start": "pm2 start ecosystem.config.js",
     "build": "npm run _clean && cross-env NODE_ENV=production webpack --config ./build/webpack.prod.config.js",
-    "prod_re": "npm run pm2_rm && npm run prod",
-    "pm2_rm": "pm2 delete all && pm2 flush && npm run _clean",
+    "pm2_rm": "pm2 delete all 2 > /dev/null || true && pm2 flush && npm run _clean",
     "_clean": "rm -rf ./src/_views ./src/js/utils/render/template ./server/views ./server/assets ./server/utils/render/template ",
     "syncDB": "node ./server/db/mysql/sync"
   },
