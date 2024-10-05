@@ -19,7 +19,7 @@ async function modify(ctx, next) {
     } else if (type === CACHE.TYPE.NEWS) {
       //  提醒使用者的通知數據有變動，要重新從DB讀取
       await C_CacheNews.addList(list);
-      _ws.broadcast_news(list, WS.HAS_UNCONFRIM);
+      _ws.broadcast_news(list, WS.HAS_UNCONFIRM);
     } else if (ENV.isNoCache) {
       continue;
     } else {

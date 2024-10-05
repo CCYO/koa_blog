@@ -50,7 +50,7 @@ const FIND = {
         required: false, //  找不到也顯示 []
         through: {
           //  idolFans Table
-          attributes: ["id"],
+          attributes: ["id", "confirm"],
           paranoid: false, //  無視軟刪除
         },
       },

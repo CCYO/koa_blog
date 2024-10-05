@@ -109,7 +109,7 @@
   },
   "WS": {
     "CLOSE_CODE": 4444,
-    "HAS_UNCONFRIM": 0,
+    "HAS_UNCONFIRM": 0,
     "HAS_CONFIRM": 1
   }
 }

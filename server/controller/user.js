@@ -11,10 +11,11 @@ const {
   ENV,
   ERR_RES,
   CACHE: {
-    TYPE: { PAGE, NEWS },
+    TYPE: { PAGE, NEWS, WS },
     STATUS,
   },
 } = require("../config");
+const { ArticleReader } = require("../db/mysql/model");
 
 /** 確認信箱是否已被註冊
  * @param {string} email 信箱
@@ -92,24 +93,27 @@ async function findFansList(idol_id) {
 async function follow({ fans_id, idol_id }) {
   //  若此次 add 不是第一次，代表可能會有軟刪除的 ArticleReader 關係
   //  尋找軟刪除的 IdolFans + ArticleReader 關係
-  let { data } = await _findInfoForFollowIdol({
+  let info = await _findInfoForFollowIdol({
     fans_id,
     idol_id,
   });
-  if (data) {
+  let cache;
+  if (info.data) {
     ////  非初次follow
-    let { idolFans, articleReaders } = data;
+    let { idolFans, articleReaders } = info.data;
     //  恢復 idolFans 軟刪除狀態
     await C_IdolFans.restoringList([idolFans]);
     //  恢復 articleReader 軟刪除狀態
     await C_ArticleReader.restoringList(articleReaders);
+    cache = info.cache;
   } else {
     ////  初次追蹤
     await User.createIdol({ fans_id, idol_id });
+    cache = { [NEWS]: [idol_id] };
   }
   // cache = { [NEWS]: [idol_id] };
   // 初次追蹤才需通知
-  let cache = data ? {} : { [NEWS]: [idol_id] };
+  // let cache = data ? {} : { [NEWS]: [idol_id] };
   if (!ENV.isNoCache) {
     cache[PAGE.USER] = [fans_id, idol_id];
   }
@@ -206,16 +210,15 @@ async function confirmNews({ idol_id, idolFans_id }) {
   if (!idol) {
     //  idol不存在
     //  譬如fans已退追，但newsCache不會針對退追做更新，故idol可能在session.news中取得已被刪除的idolFans_id
-    let opts = ERR_RES.NEWS.READ.NOT_EXIST;
-    if (!ENV.isNoCache) {
-      opts.cache = { [NEWS]: [idol_id] };
-    }
-    return new ErrModel(opts);
+    return new ErrModel({
+      ...ERR_RES.NEWS.READ.NOT_EXIST,
+      [NEWS]: [idol_id],
+    });
   }
   let fans = idol.fansList[0];
   let opts = { data: { url: `/other/${fans.id}` } };
-  if (!ENV.isNoCache && !fans.IdolFans.confirm) {
-    //  更新 articleReader
+  if (!fans.IdolFans.confirm) {
+    // 更新 IdolFans
     await C_IdolFans.modify(idolFans_id, { confirm: true });
     opts.cache = { [NEWS]: [idol_id] };
   }
@@ -315,10 +318,26 @@ async function _findInfoForFollowIdol({ fans_id, idol_id }) {
   if (!idols.length) {
     return new SuccModel();
   }
+  let cache = { [WS]: [], [NEWS]: [] };
   let idolFans = idols[0].IdolFans.id;
-  let articleReaders = articles.map(({ ArticleReader }) => ArticleReader.id);
+  if (idols[0].IdolFans.confirm) {
+    cache[WS].push(idol_id);
+  } else {
+    cache[NEWS].push(idol_id);
+  }
+  // let articleReaders = articles.map(({ ArticleReader }) => ArticleReader.id);
+
+  let articleReaders = [];
+  for (let article of articles) {
+    let { id } = article.ArticleReader;
+    //  無論有沒有讀過，僅已[WS]通知，不納入[NEWS]通知
+    if (!cache[WS].length) {
+      cache[WS].push(idol_id);
+    }
+    articleReaders.push(id);
+  }
   let data = { idolFans, articleReaders };
-  return new SuccModel({ data });
+  return new SuccModel({ data, cache });
 }
 async function _findIdolList(fans_id) {
   let data = await User.readList(Opts.USER.FIND.idolList(fans_id));

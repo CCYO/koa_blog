@@ -15,7 +15,7 @@ export default class {
   #API_LOGOUT = "/api/user/logout";
   #API_NEWS = `/api/news`;
   // 是否第一次調用
-  #first = false;
+  #first = true;
   // 是否自動調用
   #auto = false;
   // 上一次請求，是否以獲取後端所有unconfirm
@@ -78,7 +78,7 @@ export default class {
     });
     Object.defineProperty(this, "status", {
       get() {
-        if (!this.#first) {
+        if (this.#first) {
           !process.env.isProd && console.log("news ---> 首次");
           return { status: FRONTEND.NAVBAR.NEWS.STATUS.FIRST };
         } else if (this.#checkNews) {
@@ -104,7 +104,7 @@ export default class {
       },
     });
   }
-  async init({ me }) {
+  async init({ me, news: newsData }) {
     await import(
       /*webpackChunkName:'bootstrap-offcanvas'*/ "bootstrap/js/dist/offcanvas"
     );
@@ -115,7 +115,8 @@ export default class {
     let renderClass = (this.renderClass = new this.Render(this));
     this.checkNewsMore = renderClass.checkNewsMore.bind(renderClass);
     this.loop = renderClass.loop;
-    this.#first = true;
+    this.#first = false;
+    this.update(newsData);
     if (WebSocket) {
       let ins_news = this;
       let ws_api =
@@ -238,7 +239,7 @@ export default class {
     this.axios.autoLoadingBackdrop = true;
     this.#checkNews = false;
     if (!errno) {
-      this.update(data.news);
+      !this.#first && this.update(data.news);
       return data;
     } else {
       return undefined;
