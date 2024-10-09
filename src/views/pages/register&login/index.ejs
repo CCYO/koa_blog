@@ -1,7 +1,13 @@
 <% let G_PAGE = JSON.parse(--CONS.REGISTER_LOGIN--) %>
-<%- include('../wedgets/header/index', {title}) %>
+<!DOCTYPE html>
+<html lang="zh-tw">
+
+<head>
+  <%- include('../wedgets/header/index', {title}) %>
+</head>
 <%- include('../wedgets/pageLoading/index') %>
 <%- include('../wedgets/navbar/index') %>
+
 <main style="display: none;">
   <!-- 註冊/登入 互動卡片-->
   <div class="card w-75 mx-auto">
