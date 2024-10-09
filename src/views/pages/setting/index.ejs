@@ -1,5 +1,7 @@
 <% let G_PAGE = JSON.parse(--CONS.SETTING--) %>
 <%- include('../wedgets/header/index', {title}) %>
+<%- include('../wedgets/pageLoading/index') %>
+<%- include('../wedgets/navbar/index') %>
 <main class="container-md" style="display: none;">
   <div class="modal fade" id="<%= G_PAGE.ID.MODAL_ORIGIN_PASSWORD %>" tabindex="-1" aria-labelledby="<%= G_PAGE.ID.MODAL_ORIGIN_PASSWORD %>" aria-hidden="true">
     <div class="modal-dialog">

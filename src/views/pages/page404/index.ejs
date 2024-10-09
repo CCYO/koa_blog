@@ -1,4 +1,6 @@
 <%- include('../wedgets/header/index', {title:  locals.title ? title : errModel.msg }) %>
+<%- include('../wedgets/pageLoading/index') %>
+<%- include('../wedgets/navbar/index') %>
 <main class="container-md" style="display: none;">
   <h1><%= errModel.errno %></h1>
   <div>
