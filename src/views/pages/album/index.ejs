@@ -4,33 +4,35 @@
 <head>
   <%- include('../wedgets/header/index', {title}) %>
 </head>
-<%- include('../wedgets/pageLoading/index') %>
-<%- include('../wedgets/navbar/index') %>
-<main class="container-md" style="display: none;">
-  <div class="card">
-    <div class="card-header">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/album/list">文章相簿</a></li>
-        <li class="breadcrumb-item active" aria-current="page">
-          <a href="<%= blog.show ? "/blog/" : "/blog/edit/" %><%= blog.id %>">
-            <%= blog.title %>
-          </a>的照片列表
-        </li>
-      </ol>
-    </div>
-    <div class="card-body">
-      <%- include('./components/imgList', {imgs}) %>
-      <%- include('./components/modal') %>
-    </div>
-    <div class="card-footer">
-      <div>
-        <a id="leave" class="btn btn-outline-primary btn-sm" href="/album/list">回到相簿列表</a>
+
+<body>
+  <%- include('../wedgets/pageLoading/index') %>
+  <%- include('../wedgets/navbar/index') %>
+  <main class="container-md" style="display: none;">
+    <div class="card">
+      <div class="card-header">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/album/list">文章相簿</a></li>
+          <li class="breadcrumb-item active" aria-current="page">
+            <a href="<%= blog.show ? "/blog/" : "/blog/edit/" %><%= blog.id %>">
+              <%= blog.title %>
+            </a>的照片列表
+          </li>
+        </ol>
+      </div>
+      <div class="card-body">
+        <%- include('./components/imgList', {imgs}) %>
+        <%- include('./components/modal') %>
+      </div>
+      <div class="card-footer">
+        <div>
+          <a id="leave" class="btn btn-outline-primary btn-sm" href="/album/list">回到相簿列表</a>
+        </div>
       </div>
     </div>
-  </div>
 
-</main>
-<%- include('../wedgets/footer/index') %>
+  </main>
+  <%- include('../wedgets/footer/index') %>
 </body>
 
 </html>

@@ -4,15 +4,17 @@
 <head>
   <%- include('../wedgets/header/index', {title:  locals.title ? title : errModel.msg }) %>
 </head>
-<%- include('../wedgets/pageLoading/index') %>
-<%- include('../wedgets/navbar/index') %>
-<main class="container-md" style="display: none;">
-  <h1><%= errModel.errno %></h1>
-  <div>
-    <%= errModel.msg %>
-  </div>
-</main>
-<%- include('../wedgets/footer/index') %>
+
+<body>
+  <%- include('../wedgets/pageLoading/index') %>
+  <%- include('../wedgets/navbar/index') %>
+  <main class="container-md" style="display: none;">
+    <h1><%= errModel.errno %></h1>
+    <div>
+      <%= errModel.msg %>
+    </div>
+  </main>
+  <%- include('../wedgets/footer/index') %>
 </body>
 
 </html>
