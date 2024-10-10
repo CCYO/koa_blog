@@ -100,14 +100,13 @@ module.exports = {
   },
   plugins: [
     ...htmlWebpackPlugins,
+    //  要加入favicon的template，必須有<head>
     new FaviconsWebpackPlugin({
       devMode: "webapp",
       cache: true,
       logo: resolve(__dirname, "../src/assets/imgs/favicon.png"),
       //  與自動填入html內的favicon連結有關，結果會是 webpack.base.config.output.publicPath + FaviconsWebpackPlugin.prefix + favicon檔名
-      // publicPath: "/public",
       prefix: "imgs/favicon/",
-      // outputPath: resolve(__dirname, "../server/assets/imgs/favicon"),
       inject: true,
     }),
     new webpack.ProvidePlugin({

@@ -15,6 +15,8 @@ export default class {
   editors = [];
   el_backdrop = undefined;
   $backdrop = undefined;
+  //  啟動狀態
+  #active = false;
 
   constructor() {
     this.el_backdrop = document.querySelector(`#${this.ID}`);
@@ -28,6 +30,7 @@ export default class {
     $("form button[type=submit]").removeAttr("disabled");
     $("form button[type=submit]").prop("disabled", true);
     this.$backdrop.removeAttr("style");
+    this.#active = true;
     !process.env.isProd && console.log("loadingBackdrop ---> init");
     //  使backdrop的focus自動blur
     this.el_backdrop.addEventListener("focus", function (e) {
@@ -38,6 +41,10 @@ export default class {
   }
   //  隱藏
   async hidden() {
+    if (!this.#active) {
+      //  避免錯誤關閉
+      return;
+    }
     this.#turnOnInteraction();
     await new Promise((resolve) => {
       this.$backdrop.fadeOut(() => {
@@ -45,10 +52,16 @@ export default class {
       });
     });
     $("body").removeClass("wait");
+    this.#active = false;
     !process.env.isProd && console.log("loadingBackdrop ---> hidden");
   }
   //  顯示
   show(config) {
+    if (this.#active) {
+      //  避免重複啟動
+      return;
+    }
+    this.#active = true;
     const {
       //  畫面是否顯示頁面遮罩
       blockPage = false,

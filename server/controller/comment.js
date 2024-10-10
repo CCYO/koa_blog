@@ -408,12 +408,28 @@ async function restoryReceiver(article_id) {
   let comment_list = await Comment.readList(
     Opts.COMMENT.FIND._receiverListForRestory(article_id)
   );
+  //  找出unconfirm，讓ws通知
   let receiver_list = comment_list.map((item) => item.receivers).flat();
-  let msgReceiver_id_list = receiver_list.map(
-    (receiver) => receiver.MsgReceiver.id
-  );
+
+  let { msgReceiver_id_list, confirm_list, unconfirm_list } =
+    receiver_list.reduce(
+      (acc, { id: receiver_id, MsgReceiver }) => {
+        if (MsgReceiver.confirm) {
+          acc.confirm_list.push(receiver_id);
+        } else {
+          acc.unconfirm_list.push(receiver_id);
+        }
+        acc.msgReceiver_id_list.push(MsgReceiver.id);
+        return acc;
+      },
+      { msgReceiver_id_list: [], confirm_list: [], unconfirm_list: [] }
+    );
   await C_MsgReceiver.restoryList(msgReceiver_id_list);
-  return new SuccModel();
+  let cache = {
+    [CACHE.TYPE.NEWS]: unconfirm_list,
+    [CACHE.TYPE.WS]: confirm_list,
+  };
+  return new SuccModel({ cache });
 }
 
 module.exports = {

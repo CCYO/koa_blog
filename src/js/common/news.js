@@ -161,16 +161,24 @@ export default class {
             ins_news.renderClass.showReadMore(true);
         }
         async function getNews() {
-          if (!document.hidden) {
+          ins_news.ws_cb = async () => {
             await ins_news.loop.now();
+            ins_news.ws_cb = undefined;
             ins_news.loop.start();
-          } else {
-            ins_news.ws_cb = async () => {
-              ins_news.ws_cb = undefined;
-              await ins_news.loop.now();
-              ins_news.loop.start();
-            };
+          };
+
+          if (!document.hidden) {
+            // await ins_news.loop.now();
+            // ins_news.loop.start();
+            await ins_news.ws_cb();
           }
+          // else {
+          //   ins_news.ws_cb = async () => {
+          //     ins_news.ws_cb = undefined;
+          //     await ins_news.loop.now();
+          //     ins_news.loop.start();
+          //   };
+          // }
         }
       };
     }
@@ -227,7 +235,9 @@ export default class {
     this.#auto = auto;
     if (auto) {
       // 若已經獲取後端所有unconfirm，此次請求僅再次確認後端是否有unconfirm
-      this.axios.autoLoadingBackdrop = false;
+      if (!this.ws_cb) {
+        this.axios.autoLoadingBackdrop = false;
+      }
       this.#checkNews =
         this.db.unconfirm -
           this.htmlStr.rendered.unconfirm -

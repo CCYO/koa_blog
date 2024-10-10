@@ -33,7 +33,7 @@ const FIND = {
       attributes: ["id"],
       through: {
         where: { deletedAt: { [Op.not]: null } },
-        attributes: ["id"],
+        attributes: ["id", "confirm"],
         paranoid: false,
       },
     },

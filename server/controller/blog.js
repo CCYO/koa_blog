@@ -95,12 +95,28 @@ async function modify({ blog_id, author_id, ...blog_data }) {
     if (newData.show) {
       newData.showAt = new Date();
       // 增加reader
-      let resModel = await _addReadersFromFans(blog_id);
+      let res_reader = await _addReadersFromFans(blog_id);
       // 恢復軟刪除的MsgReceiver
-      await C_Comment.restoryReceiver(blog_id);
+      let res_comment = await C_Comment.restoryReceiver(blog_id);
+      cache[CACHE.TYPE.NEWS] = new Set([
+        ...res_reader.cache[CACHE.TYPE.NEWS],
+        ...res_comment.cache[CACHE.TYPE.NEWS],
+      ]);
+      cache[CACHE.TYPE.WS] = new Set([
+        ...res_reader.cache[CACHE.TYPE.NEWS],
+        ...res_comment.cache[CACHE.TYPE.NEWS],
+      ]);
+      for (let id of cache[CACHE.TYPE.WS]) {
+        if (cache[CACHE.TYPE.NEWS].has(id)) {
+          cache[CACHE.TYPE.WS].delete(id);
+        }
+      }
+      cache[CACHE.TYPE.NEWS] = Array.from(cache[CACHE.TYPE.NEWS]);
+      cache[CACHE.TYPE.WS] = Array.from(cache[CACHE.TYPE.WS]);
+
       // await _restoryMsgReceiverList(blog_id);
-      cache[CACHE.TYPE.NEWS] = resModel.cache[CACHE.TYPE.NEWS];
-      cache[CACHE.TYPE.WS] = resModel.cache[CACHE.TYPE.WS];
+      // cache[CACHE.TYPE.NEWS] = resModel.cache[CACHE.TYPE.NEWS];
+      // cache[CACHE.TYPE.WS] = resModel.cache[CACHE.TYPE.WS];
     } else {
       newData.showAt = null;
       // 軟刪除reader
