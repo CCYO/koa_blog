@@ -17,9 +17,9 @@ module.exports = {
       $ref: `${DEFAULT_URL}/img_ext`,
     },
   },
-  _notEmpty: ["hash", "name", "ext"],
-  _noSpace: ["hash", "name", "ext"],
-  required: ["blog_id", "hash", "ext"],
+  _notEmpty: ["hash", "ext"],
+  _noSpace: ["hash", "ext"],
+  required: ["blog_id", "ext"],
   errorMessage: {
     type: "驗證數據必須是 object 格式",
   },
