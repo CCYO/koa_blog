@@ -13,15 +13,13 @@ const { GFB } = require("../../config");
  */
 async function blogImg(ctx, next) {
   //  找blogImg_id
-  let { blog_id, hash, img_id, blogImg_id, blog_img, name } = ctx.query;
+  let { blog_id, hash, img_id, blogImg_id } = ctx.query;
   let res = {
     blog_id,
     hash,
     img_id,
     blogImg_id,
-    blog_img,
   };
-  name = decodeURIComponent(name);
   if (!blogImg_id) {
     //  查找img紀錄
     let img = await C_Img.find(hash);
@@ -36,9 +34,6 @@ async function blogImg(ctx, next) {
       res.url = img.data.url;
       res.img_id = img.data.id;
     }
-    res.name = name;
-  } else {
-    res.alt = name;
   }
   ctx.request.body = res;
   await next();

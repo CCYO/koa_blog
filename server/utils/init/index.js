@@ -12,13 +12,13 @@ function blogImgAlt(data) {
   return toJSONAndFns(data, _init);
   function _init(item) {
     //  ----------------------------------------------------------------------------------------
-    //  item { id, alt, BlogImg: {id, name, Blog: { id, author_id}, Img: {id, url, hash} }}
+    //  item { id, alt, BlogImg: {id, Blog: { id, author_id}, Img: {id, url, hash} }}
     let { id, alt, ...otherData } = item;
     let res = { id, alt };
     if (otherData.hasOwnProperty("BlogImg")) {
       res.blogImg = otherData.BlogImg;
       if (!res.alt) {
-        res.alt = res.blogImg.name;
+        res.alt = otherData.BlogImg.Img.hash;
       }
       if (res.blogImg.hasOwnProperty("Blog")) {
         res.blog = { ...res.blogImg.Blog };
@@ -29,7 +29,7 @@ function blogImgAlt(data) {
         delete res.blogImg.Img;
       }
     }
-    //  { id, alt, blog: { id, author_id }, blogImg: { id, name }, img: { id, url, hash }}
+    //  { id, alt, blog: { id, author_id }, blogImg: { id }, img: { id, url, hash }}
     return res;
   }
 }
@@ -146,13 +146,13 @@ function _blogImg(blogImgs) {
   //  正常來說，blogImgs會是arr
   return filterEmptyAndFranferFnsForArray(blogImgs, _init);
   function _init(datas) {
-    //  blogImg { id, name, Img: { id, url, hash }, BlogImgAlts: [{ id, alt }, ...] }
+    //  blogImg { id, Img: { id, url, hash }, BlogImgAlts: [{ id, alt }, ...] }
     let blogImgs = new Map();
     let alts = new Map();
     let imgs = new Map();
-    for (let { id, name, ...data } of datas) {
+    for (let { id, ...data } of datas) {
       let blogImg_id = id;
-      blogImgs.set(id, { id, name });
+      blogImgs.set(id, { id });
       if (data.hasOwnProperty("Img")) {
         let { id, url, hash } = data.Img;
         let img = { id };
@@ -166,7 +166,7 @@ function _blogImg(blogImgs) {
       }
       if (data.hasOwnProperty("BlogImgAlts")) {
         for (let { id, alt } of data.BlogImgAlts) {
-          alt = !alt ? blogImgs.get(blogImg_id).name : alt;
+          alt = !alt ? data.Img.hash : alt;
           alts.set(id, {
             alt,
             blogImg: blogImgs.get(blogImg_id),
@@ -179,7 +179,7 @@ function _blogImg(blogImgs) {
       acc[alt_id] = alt_data;
       return acc;
     }, {});
-    //  { [alt_id]: { alt, blogImg: { id, name }, img: { id, hash, url } }}
+    //  { [alt_id]: { alt, blogImg: { id }, img: { id, hash, url } }}
     return alts;
   }
 }

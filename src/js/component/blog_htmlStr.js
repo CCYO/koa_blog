@@ -12,7 +12,7 @@ export default function parseHtmlStr_XImgToImg(G) {
   //  存放 reg 匹配後 的 img src 數據
   while ((regRes = reg.exec(htmlStr))) {
     let { alt_id, style } = regRes.groups;
-    //  MAP: alt_id → { alt, blogImg: {id, name}, img: {id, hash, url}}
+    //  MAP: alt_id => { alt, blogImg: { id }, img: {id, hash, url}}
     let {
       alt,
       img: { url },

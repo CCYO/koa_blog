@@ -6,10 +6,9 @@ const REMOVE = {
 };
 
 const CREATE = {
-  one: ({ blog_id, name, img_id }) => ({
+  one: ({ blog_id, img_id }) => ({
     blog_id,
     img_id,
-    name: xss(name),
   }),
 };
 

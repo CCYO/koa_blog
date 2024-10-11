@@ -24,7 +24,7 @@ const FIND = {
       },
       {
         model: BlogImg,
-        attributes: ["id", "name"],
+        attributes: ["id"],
         include: [
           {
             model: Img,
@@ -244,7 +244,7 @@ const FIND = {
     include: [
       {
         model: BlogImg,
-        attributes: ["id", "name"],
+        attributes: ["id"],
         include: [
           {
             model: Img,

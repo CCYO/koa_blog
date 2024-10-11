@@ -101,13 +101,10 @@ function initBlog(blog) {
 
 //  將 img 數據 map化
 function initImg(imgs) {
-  let map = new Map();
-  /*  alt_id => {
-   *    alt,
-   *    blogImg: { id: blogImg_id, name },
-   *    img: { id: img_id, url }
-   *  }
+  /**
+   * imgs { [alt_id]: { alt, blogImg: { id }, img: { id, hash, url } }, ...}
    */
+  let map = new Map();
   for (let alt_id in imgs) {
     map.set(alt_id * 1, imgs[alt_id]);
   }

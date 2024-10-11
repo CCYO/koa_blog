@@ -11,7 +11,7 @@ const FIND = {
     attributes: ["id", "alt"],
     include: {
       model: BlogImg,
-      attributes: ["id", "name"],
+      attributes: ["id"],
       required: true,
       include: [
         {

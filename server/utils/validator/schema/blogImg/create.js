@@ -13,17 +13,13 @@ module.exports = {
       type: "string",
       $ref: `${DEFAULT_URL}/hash`,
     },
-    name: {
-      type: "string",
-      $ref: `${DEFAULT_URL}/alt`,
-    },
     ext: {
       $ref: `${DEFAULT_URL}/img_ext`,
     },
   },
   _notEmpty: ["hash", "name", "ext"],
   _noSpace: ["hash", "name", "ext"],
-  required: ["blog_id", "hash", "name", "ext"],
+  required: ["blog_id", "hash", "ext"],
   errorMessage: {
     type: "驗證數據必須是 object 格式",
   },

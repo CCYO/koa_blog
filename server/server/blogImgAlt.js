@@ -13,7 +13,7 @@ async function create(data) {
 }
 async function find(opts) {
   let alt = await BlogImgAlt.findOne(opts);
-  //  { id, alt, blog: { id, author_id }, blogImg: { id, name }, img: { id, url, hash }}
+  //  { id, alt, blog: { id, author_id }, blogImg: { id }, img: { id, url, hash }}
   return Init.blogImgAlt(alt);
 }
 async function destoryList(opts) {

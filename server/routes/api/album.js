@@ -18,7 +18,8 @@ router.post("/list", CHECK.login, async (ctx) => {
 });
 // update alt of blog's img
 router.patch("/", CHECK.login, CACHE.modify, VALIDATE.ALT, async (ctx) => {
-  // 經過VALIDATE.ALT後, ctx.request.body { author_id, blog_id, alt_id, alt}
+  // 經過VALIDATE.ALT後, ctx.request.body 有被新添入 author_id
+  // ctx.request.body { _old, author_id, blog_id, alt_id, alt }
   ctx.body = await BlogImgAlt.modify(ctx.request.body);
 });
 

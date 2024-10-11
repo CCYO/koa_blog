@@ -15,11 +15,7 @@ export default {
       type: "string",
       $ref: `${DEFAULT_URL}/img_ext`,
     },
-    alt: {
-      type: "string",
-      $ref: `${DEFAULT_URL}/alt`,
-    },
   },
-  required: ["size", "ext", "alt"],
-  _noSpace: ["ext", "alt"],
+  required: ["size", "ext"],
+  _noSpace: ["ext"],
 };

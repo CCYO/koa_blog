@@ -510,9 +510,8 @@ async function initMain() {
         alert("圖檔格式必須為PNG或JPG");
         return false;
       }
-      let [_ = "", alt = "", ext] = _res;
+      let [match = "", ext] = _res;
       let validated_list = await G.utils.validate.blog_img({
-        alt,
         ext,
         size: img.size,
       });
@@ -532,13 +531,11 @@ async function initMain() {
       }
       //  取得 img 的 MD5 Hash(hex格式)
       let hash = await _getMD5Hash(img);
-      // exist = { blogImg_id, url, hash, img_id };
+      // exist = { blogImg_id, img_id };
       let exist = await _isImgExist(hash);
       let api = `${G.constant.API.CREATE_IMG}?hash=${hash}&blog_id=${G.data.blog.id}`;
       let formdata = new FormData();
-      //  imgName要作為query參數傳送，必須先作百分比編碼
-      alt = encodeURIComponent(alt);
-      api += `&name=${alt}&ext=${ext}`;
+      api += `&ext=${ext}`;
       formdata.append("blogImg", img);
       if (exist) {
         //  img為重覆的舊圖，傳給後端新建一個blogImgAlt
@@ -546,20 +543,11 @@ async function initMain() {
         api += `&blogImg_id=${blogImg_id}&img_id=${img_id}`;
       }
       let res = await G.utils.axios.post(api, formdata);
-      //  blogImgAlt { id, alt, blog: { id, author_id }, blogImg: { id, name }, img: { id, url, hash }}
+      //  res.data { id, alt, blogImg: { id }, img: { id, url, hash }}
       let { data: blogImgAlt } = res;
-      let { id, blog, ...alt_data } = blogImgAlt;
-      //  上傳成功
-      /*  newImg {
-            "alt_id": 16,
-            "alt": "IMG_6362",
-            "blogImg_id": 8,
-            "name": "IMG_6362",
-            "img_id": 7,
-            "url": xxxxx }
-      */
+      let { id, ...alt_data } = blogImgAlt;
       //  同步數據
-      //  { [alt_id]: { alt, blogImg: { id, name }, img: { id, hash, url } }}
+      //  { [alt_id]: { alt, blogImg: { id }, img: { id, hash, url } }}
       G.data.blog.map_imgs.set(id, alt_data);
       //  將圖片插入 editor
       insertFn(`${alt_data.img.url}?alt_id=${id}`, alt_data.alt);
@@ -570,14 +558,12 @@ async function initMain() {
         let { map_imgs } = G.data.blog;
         if (map_imgs.size) {
           ////  確認此時要上傳的img是否為舊圖
-          //  map_imgs: { MAP [alt_id] -> { alt, blogImg: { id, name }, img: { id, hash, url } } }
+          // map_item { [alt_id] => { alt, blogImg: { id, name }, img: { id, hash, url } }, ...}
           let values = [...map_imgs.values()];
-          //  img { alt_id, alt, blogImg_id, name, img_id, hash, url }
           let target = values.find(({ img }) => img.hash === hash);
           if (target) {
-            // let { alt_id, alt, blogImg_id, name, img_id, hash, url } = target;
             res = {
-              blogImg: target.blogImg.id,
+              blogImg: target.blogImg_id,
               img: target.img.id,
             };
           }

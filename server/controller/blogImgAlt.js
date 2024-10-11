@@ -16,7 +16,7 @@ async function findWholeInfo({ author_id, blog_id, alt_id }) {
   if (!author_id || !blog_id || !alt_id) {
     throw new MyErr(ERR_RES.BLOG_IMG.READ.NO_ARGS);
   }
-  //  data { id, alt, blog: { id, author_id }, blogImg: { id, name }, img: { id, url, hash }}
+  //  data { id, alt, blog: { id, author_id }, blogImg: { id }, img: { id, url, hash }}
   let data = await BlogImgAlt.find(Opts.BLOG_IMG_ALT.FIND.wholeInfo(alt_id));
   if (!data) {
     throw new MyErr(ERR_RES.BLOG_IMG_ALT.READ.NOT_EXIST);

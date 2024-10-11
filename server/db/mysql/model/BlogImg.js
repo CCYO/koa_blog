@@ -1,29 +1,24 @@
 /**
  * @description Sequelize Model
  */
-const seq = require('../seq')
-const { STRING, INTEGER } = require('../types')
+const seq = require("../seq");
+const { STRING, INTEGER } = require("../types");
 
+const BlogImg = seq.define("BlogImg", {
+  id: {
+    type: INTEGER,
+    primaryKey: true,
+    allowNull: false,
+    autoIncrement: true,
+  },
+  img_id: {
+    type: INTEGER,
+    allowNull: false,
+  },
+  blog_id: {
+    type: INTEGER,
+    allowNull: false,
+  },
+});
 
-const BlogImg = seq.define('BlogImg', {
-    id: {
-        type: INTEGER,
-        primaryKey: true,
-        allowNull: false,
-        autoIncrement: true
-    },
-    img_id: {
-        type: INTEGER,
-        allowNull: false,
-    },
-    blog_id: {
-        type: INTEGER,
-        allowNull: false,
-    },
-    name: {
-        type: STRING,
-        allowNull: true
-    }
-})
-
-module.exports = BlogImg
+module.exports = BlogImg;

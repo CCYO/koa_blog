@@ -160,38 +160,35 @@ async function addImg({ author_id, ...data }) {
     blog_id,
     alt_id,
   });
-  // let  { blog_id, alt_id, alt, blogImg_id, name, img_id, url, hash } = resModel.data
-  let opts = { data: resModel.data };
+  //  resModel.data { id, alt, blog: { id, author_id }, blogImg: { id }, img: { id, url, hash }}
+  let { blog, ...newData } = resModel.data;
+  let opts = { data: newData };
   if (!ENV.isNoCache) {
     opts.cache = { [CACHE.TYPE.PAGE.BLOG]: [blog_id] };
   }
   return new SuccModel(opts);
 
   async function _getAltId(data) {
-    //  固定參數 :  blog_id, hash, url, name, ext, img_id
-    //  無blogImg_id ->  加   img開始
-    //  有blogImg_id ->  直接加 blogImgAlt
-    // -------------------------------------------------------------------------------------------------------------------
-    let { blog_id, img_id, name, blogImg_id, alt, url, hash } = data;
-    // let map = new Map(Object.entries(data));
+    //  data { blog_id, hash, url, [img_id, blogImg_id]}
+    let { blog_id, img_id, blogImg_id, url, hash } = data;
     if (blogImg_id) {
       let {
         data: { id: alt_id },
-      } = await C_BlogImgAlt.add(blogImg_id, alt);
+      } = await C_BlogImgAlt.add(blogImg_id);
       return alt_id;
       //  data { blog_id, name, img_id }
       // } else if (map.get("img_id")) {
     } else if (img_id) {
-      //  data { blog_id, name, img_id }
+      //  data { blog_id, img_id }
       let {
         data: { id: blogImg_id },
-      } = await C_BlogImg.add({ blog_id, name, img_id });
+      } = await C_BlogImg.add({ blog_id, img_id });
       return await _getAltId({ blogImg_id });
     } else {
       let {
         data: { id: img_id },
       } = await C_Img.add({ url, hash });
-      return await _getAltId({ blog_id, img_id, name });
+      return await _getAltId({ blog_id, img_id });
     }
   }
 }

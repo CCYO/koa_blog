@@ -3,9 +3,9 @@ const Opts = require("../utils/seq_options");
 const { MyErr, ErrModel, SuccModel } = require("../utils/model");
 const { ERR_RES } = require("../config");
 
-async function add({ blog_id, name, img_id }) {
+async function add({ blog_id, img_id }) {
   let data = await BlogImg.create(
-    Opts.BLOG_IMG.CREATE.one({ blog_id, name, img_id })
+    Opts.BLOG_IMG.CREATE.one({ blog_id, img_id })
   );
   return new SuccModel({ data });
 }
