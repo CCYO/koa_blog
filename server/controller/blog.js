@@ -103,8 +103,8 @@ async function modify({ blog_id, author_id, ...blog_data }) {
         ...res_comment.cache[CACHE.TYPE.NEWS],
       ]);
       cache[CACHE.TYPE.WS] = new Set([
-        ...res_reader.cache[CACHE.TYPE.NEWS],
-        ...res_comment.cache[CACHE.TYPE.NEWS],
+        ...res_reader.cache[CACHE.TYPE.WS],
+        ...res_comment.cache[CACHE.TYPE.WS],
       ]);
       for (let id of cache[CACHE.TYPE.WS]) {
         if (cache[CACHE.TYPE.NEWS].has(id)) {

@@ -81,21 +81,19 @@ export default class {
         if (this.#first) {
           !process.env.isProd && console.log("news ---> 首次");
           return { status: FRONTEND.NAVBAR.NEWS.STATUS.FIRST };
-        } else if (this.#checkNews) {
+          // } else if (this.#checkNews) {
+        } else if (this.#auto && this.#checkNews) {
           !process.env.isProd && console.log("news ---> 自動|check");
           return {
             status: FRONTEND.NAVBAR.NEWS.STATUS.CHECK,
-            // excepts: { ...this.#id_list },
           };
-        } else if (this.#auto) {
-          !process.env.isProd && console.log("news ---> 自動|獲取新通知");
-          return {
-            status: FRONTEND.NAVBAR.NEWS.STATUS.AGAIN,
-            excepts: { ...this.#id_list },
-          };
-          // } else if (this.db.total > this.#id_list.total) {
-        } else {
-          !process.env.isProd && console.log("news ---> 手動|獲取通知");
+        } else if (!this.#auto) {
+          // 到這邊的原因
+          // 1)自動，!this.$checkNews
+          // 2)手動，!this.$checkNews
+          // 3)手動，this.$checkNews但ws.code(1)開啟readMore
+          !process.env.isProd &&
+            console.log(`news ---> ${this.#auto ? "自動" : "手動"}|獲取通知`);
           return {
             status: FRONTEND.NAVBAR.NEWS.STATUS.AGAIN,
             excepts: { ...this.#id_list },
@@ -158,7 +156,8 @@ export default class {
             await getNews();
             break;
           case FRONTEND.NAVBAR.NEWS.WS.HAS_CONFIRM:
-            ins_news.renderClass.showReadMore(true);
+            ins_news.db.confirm += 1;
+            ins_news.renderClass.showReadMore();
         }
         async function getNews() {
           ins_news.ws_cb = async () => {
@@ -168,17 +167,8 @@ export default class {
           };
 
           if (!document.hidden) {
-            // await ins_news.loop.now();
-            // ins_news.loop.start();
             await ins_news.ws_cb();
           }
-          // else {
-          //   ins_news.ws_cb = async () => {
-          //     ins_news.ws_cb = undefined;
-          //     await ins_news.loop.now();
-          //     ins_news.loop.start();
-          //   };
-          // }
         }
       };
     }
@@ -194,7 +184,8 @@ export default class {
       //  更新htmlStr
       this.htmlStr.update(list, isConfirm);
     }
-    this.db = num;
+    this.db.confirm = num.confirm;
+    this.db.unconfirm = num.unconfirm;
   }
   clear() {
     this.htmlStr.clear();
@@ -513,12 +504,12 @@ class Render {
       }, 1000);
     });
   }
-  showReadMore(show = false) {
+  showReadMore() {
     let { db, htmlStr } = this.newsClass;
     //  未渲染的 news count
     let more = db.total - htmlStr.rendered.total > 0;
     //  顯示/隱藏「讀取更多」
-    if (show || more) {
+    if (more) {
       this.$readMore.show(0);
       this.$noNews.hide(0);
     } else {
