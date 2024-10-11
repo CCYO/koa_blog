@@ -170,6 +170,7 @@ async function modifyInfo({ _origin, origin_password, ...newData }) {
     let cache = {
       //  個人頁 緩存肯定要刪除
       [PAGE.USER]: [user_id],
+      [PAGE.BLOG]: [],
     };
 
     if (newData.nickname || newData.email || newData.avatar) {

@@ -152,6 +152,7 @@ async function initMain() {
       el_input.validated = false;
       el_input.placeholder = data[prop];
     }
+    G.utils.lock.check_submit();
     alert("資料更新完成");
   }
   //  重新選擇要上傳的頭像
