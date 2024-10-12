@@ -558,13 +558,13 @@ async function initMain() {
         let { map_imgs } = G.data.blog;
         if (map_imgs.size) {
           ////  確認此時要上傳的img是否為舊圖
-          // map_item { [alt_id] => { alt, blogImg: { id, name }, img: { id, hash, url } }, ...}
+          // map_item { [alt_id] => { alt, blogImg: { id }, img: { id, hash, url } }, ...}
           let values = [...map_imgs.values()];
           let target = values.find(({ img }) => img.hash === hash);
           if (target) {
             res = {
-              blogImg: target.blogImg_id,
-              img: target.img.id,
+              blogImg_id: target.blogImg.id,
+              img_id: target.img.id,
             };
           }
         }
