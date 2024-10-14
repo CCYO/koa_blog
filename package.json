@@ -3,14 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "nocache": "npm run _clean && cross-env NODE_ENV=nocache nodemon",
+    "nocache": "npm run _rm_dir && cross-env NODE_ENV=nocache nodemon",
     "dev": "npm run pm2_rm && cross-env NODE_ENV=development nodemon",
     "prod": "npm run pm2_rm && npm run build -- --env=run",
     "start": "pm2 start ecosystem.config.js",
-    "build": "npm run _clean && cross-env NODE_ENV=production webpack --config ./build/webpack.prod.config.js",
-    "pm2_rm": "pm2 delete all 2 > /dev/null || true && pm2 flush && npm run _clean",
-    "_clean": "rm -rf ./src/_views ./src/js/utils/render/template ./server/views ./server/assets ./server/utils/render/template ",
-    "syncDB": "node ./server/db/mysql/sync"
+    "build": "npm run _rm_dir && cross-env NODE_ENV=production webpack --config ./build/webpack.prod.config.js",
+    "pm2_rm": "pm2 delete all 2 > /dev/null || true && pm2 flush && npm run _rm_dir",
+    "_rm_dir": "npm run _rm_server_dir && npm run _rm_src_dir",
+    "_rm_server_dir": "rm -rf ./server/views ./server/utils/render/template",
+    "_rm_src_dir": "rm -rf ./src/_views ./src/js/utils/render/template",
+    "sync_db": "node ./server/db/mysql/sync"
   },
   "dependencies": {
     "@babel/runtime": "^7.22.6",

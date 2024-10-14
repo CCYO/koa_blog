@@ -29,7 +29,10 @@ module.exports = {
     filename: isProd
       ? `${WEBPACK_CONFIG.BUILD.SCRIPT}/[name].[contenthash:5].js`
       : `${WEBPACK_CONFIG.BUILD.SCRIPT}/[name].js`,
-    clean: true,
+    clean: {
+      //  相對 output.path
+      keep: /html\//,
+    },
   },
   resolve: {
     modules: [resolve(__dirname, "../node_modules")],
@@ -112,7 +115,7 @@ module.exports = {
     new webpack.ProvidePlugin({
       $: "jquery",
     }),
-    new BundleAnalyzerPlugin(),
+    // new BundleAnalyzerPlugin(),
     new webpack.DefinePlugin({
       "process.env.isProd": JSON.stringify(isProd),
     }),
