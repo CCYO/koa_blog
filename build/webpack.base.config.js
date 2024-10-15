@@ -1,6 +1,7 @@
 /* NODEJS     ----------------------------------------------------------------------------- */
 const { resolve } = require("path");
 const os = require("node:os");
+const fs = require("fs");
 
 /* NPM        ----------------------------------------------------------------------------- */
 const webpack = require("webpack");
@@ -8,6 +9,7 @@ const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
 const BundleAnalyzerPlugin =
   require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const WebpackBar = require("webpackbar");
+const ejs = require("ejs");
 
 /* CUSTOM     ----------------------------------------------------------------------------- */
 const htmlWebpackPlugins = require("./_htmlWebpackPlugins");
@@ -15,6 +17,7 @@ const entry = require("./_entry");
 
 /* CONFIG     ----------------------------------------------------------------------------- */
 const WEBPACK_CONFIG = require("./config");
+const FRONTEND_CONST = require("../src/config/const/frontend.json");
 
 /* VAR        ----------------------------------------------------------------------------- */
 const isProd = process.env.NODE_ENV === "production";
@@ -29,10 +32,8 @@ module.exports = {
     filename: isProd
       ? `${WEBPACK_CONFIG.BUILD.SCRIPT}/[name].[contenthash:5].js`
       : `${WEBPACK_CONFIG.BUILD.SCRIPT}/[name].js`,
-    clean: {
-      //  相對 output.path
-      keep: /html\//,
-    },
+    //  可設定 { keep: regex },regex是相對output.path的路徑，且若是folder則不可為空
+    clean: true,
   },
   resolve: {
     modules: [resolve(__dirname, "../node_modules")],
@@ -58,12 +59,13 @@ module.exports = {
       {
         test: /\.js$/,
         use: [
-          {
-            loader: "thread-loader", // 开启多进程
-            options: {
-              workers: os.cpus().length, // 数量
-            },
-          },
+          // 據說效果不佳，反而會拖慢度，使用cache.type: "filesystem"即可
+          // {
+          //   loader: "thread-loader", // 开启多进程
+          //   options: {
+          //     workers: os.cpus().length, // 数量
+          //   },
+          // },
           {
             loader: "babel-loader",
             // webpack.dev.config 已開啟 cache.type: "filesystem"，故不需要開啟babel cache
@@ -120,5 +122,48 @@ module.exports = {
       "process.env.isProd": JSON.stringify(isProd),
     }),
     new WebpackBar(),
+    {
+      apply(compiler) {
+        compiler.hooks.afterEmit.tap("create_error_page", (compilation) => {
+          // compiler.hooks.done.tap("_", (compilation) => {
+
+          let template = fs.readFileSync(
+            resolve(__dirname, "../server/views/page404/index.ejs"),
+            "utf-8"
+          );
+          template = template.replace(
+            /include\('\.\.\//g,
+            `include('./server/views/`
+          );
+          let list = [
+            {
+              code: 500,
+              errModel: { errno: 99900, msg: "伺服器錯誤" },
+            },
+            {
+              code: 504,
+              errModel: { errno: 99901, msg: "伺服器回應超時" },
+            },
+          ];
+          let folder = resolve(__dirname, "../server/assets/html");
+          if (!fs.existsSync(folder)) {
+            fs.mkdirSync(folder);
+          }
+          for (let { code, errModel } of list) {
+            fs.writeFileSync(
+              resolve(__dirname, `../server/assets/html/${code}.html`),
+              ejs.render(template, {
+                filename: `${code}.html`,
+                page: FRONTEND_CONST.ERR_PAGE.PAGE_NAME,
+                // login: Boolean(ctx.session.user),
+                login: false,
+                active: "nginx_error_page",
+                errModel,
+              })
+            );
+          }
+        });
+      },
+    },
   ],
 };

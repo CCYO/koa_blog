@@ -8,6 +8,8 @@ const { merge } = require("webpack-merge");
 const OptimizeCss = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlInlineScriptPlugin = require("html-inline-script-webpack-plugin");
+const BundleAnalyzerPlugin =
+  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 /**
  * SpeedMeasurePlugin hack
  * const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
@@ -29,12 +31,14 @@ const styleLoaderList = [
       importLoaders: 2,
     },
   },
-  {
-    loader: "thread-loader", // 開啟多線程
-    options: {
-      workers: os.cpus().length, // 根據CPU數量開啟線程數
-    },
-  },
+  // 據說效果不佳，反而會拖慢度，使用cache.type: "filesystem"即可
+  // 不時出現的 loaderContext.getLogger is not a function 問題，似乎也是因為使用此loader的原因
+  // {
+  //   loader: "thread-loader", // 開啟多線程
+  //   options: {
+  //     workers: os.cpus().length, // 根據CPU數量開啟線程數
+  //   },
+  // },
   {
     loader: "postcss-loader",
     options: {
@@ -117,6 +121,11 @@ const plugins = (run) =>
       after: { include: [resolve(__dirname, "../src/_views")], trash: true },
     }),
     new OptimizeCss(),
+    ((run) => {
+      if (!run) {
+        return new BundleAnalyzerPlugin();
+      }
+    })(run),
     run_pm2(run),
   ].filter(Boolean);
 
@@ -185,6 +194,7 @@ function run_pm2(run) {
   }
 
   function apply(compiler) {
+    // compiler.hooks.afterEmit.tap("_", (compilation) => {
     compiler.hooks.done.tap("_", (compilation) => {
       pm2.connect((connect_err) => {
         if (connect_err) {

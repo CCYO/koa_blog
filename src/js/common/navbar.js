@@ -18,6 +18,8 @@ const noNewsPage = [
   "register",
   // 不需要news數據
   "blog-preview",
+  // NGINX 回應的錯誤頁面
+  "nginx_error_page",
 ];
 
 /* EXPORT     ----------------------------------------------------------------------------- */
