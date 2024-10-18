@@ -11,7 +11,7 @@ const ejs = require("ejs");
 
 /* CUSTOM     ----------------------------------------------------------------------------- */
 const htmlWebpackPlugins = require("./utils/_htmlWebpackPlugins");
-const entry = require("./_entry");
+const entry = require("./utils/_entry");
 
 /* CONFIG     ----------------------------------------------------------------------------- */
 const WEBPACK_CONFIG = require("./config");
