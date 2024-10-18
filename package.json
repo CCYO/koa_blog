@@ -10,8 +10,8 @@
     "build": "npm run _rm_dir && cross-env NODE_ENV=production webpack --config ./build/webpack.prod.config.js",
     "pm2_rm": "pm2 delete all || true && pm2 flush && npm run _rm_dir",
     "_rm_dir": "npm run _rm_server_dir && npm run _rm_src_dir",
-    "_rm_server_dir": "rm -rf ./server/views ./server/utils/render/template",
-    "_rm_src_dir": "rm -rf ./src/_views ./src/js/utils/render/template",
+    "_rm_server_dir": "rm -rf ./server/views ./server/utils/render/template/*",
+    "_rm_src_dir": "rm -rf ./src/_views ./src/js/utils/render/template/*",
     "sync_db": "node ./server/db/mysql/sync"
   },
   "dependencies": {

@@ -6,13 +6,11 @@ const fs = require("fs");
 /* NPM        ----------------------------------------------------------------------------- */
 const webpack = require("webpack");
 const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
-const BundleAnalyzerPlugin =
-  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const WebpackBar = require("webpackbar");
 const ejs = require("ejs");
 
 /* CUSTOM     ----------------------------------------------------------------------------- */
-const htmlWebpackPlugins = require("./_htmlWebpackPlugins");
+const htmlWebpackPlugins = require("./utils/_htmlWebpackPlugins");
 const entry = require("./_entry");
 
 /* CONFIG     ----------------------------------------------------------------------------- */
@@ -117,16 +115,14 @@ module.exports = {
     new webpack.ProvidePlugin({
       $: "jquery",
     }),
-    // new BundleAnalyzerPlugin(),
     new webpack.DefinePlugin({
       "process.env.isProd": JSON.stringify(isProd),
     }),
     new WebpackBar(),
+    //  生成NGINX靜態錯誤頁面
     {
       apply(compiler) {
         compiler.hooks.afterEmit.tap("create_error_page", (compilation) => {
-          // compiler.hooks.done.tap("_", (compilation) => {
-
           let template = fs.readFileSync(
             resolve(__dirname, "../server/views/page404/index.ejs"),
             "utf-8"
@@ -155,7 +151,6 @@ module.exports = {
               ejs.render(template, {
                 filename: `${code}.html`,
                 page: FRONTEND_CONST.ERR_PAGE.PAGE_NAME,
-                // login: Boolean(ctx.session.user),
                 login: false,
                 active: "nginx_error_page",
                 errModel,
