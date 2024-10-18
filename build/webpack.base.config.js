@@ -137,6 +137,14 @@ module.exports = {
               errModel: { errno: 99900, msg: "伺服器錯誤" },
             },
             {
+              code: 502,
+              errModel: { errno: 99900, msg: "伺服器502錯誤" },
+            },
+            {
+              code: 503,
+              errModel: { errno: 99901, msg: "伺服器503超時" },
+            },
+            {
               code: 504,
               errModel: { errno: 99901, msg: "伺服器回應超時" },
             },

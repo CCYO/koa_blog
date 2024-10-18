@@ -2,4 +2,6 @@ node_modules/
 server/_config
 server/assets
 server/views
+server/utils/render/template/*
 src/_views
+src/js/utils/render/template/*

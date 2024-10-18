@@ -3,7 +3,7 @@
 <li class="dropdown-item position-relative news-item transition-bg" <%= confirm ?`style=""` : `style="background-color: rgb(120 180 255);"` %>>
   <a href="/api/blog/confirm/<%= id %>" class="stretched-link text-wrap">
     <div class="news-item-content">
-      <span><%= blog.author.nickname %>發布了新文章！<%= blog.title %></span>
+      <span><%= blog.author.nickname %>發布了新文章！<br />【<%= blog.title %>】</span>
     </div>
   </a>
   <p><%= timestamp %></p>
