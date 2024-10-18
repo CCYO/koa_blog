@@ -5,4 +5,5 @@ server/utils/render/template/*
 !server/utils/render/template/.gitkeep
 server/views
 src/_views
-src/js/utils/render/template
+src/js/utils/render/template/*
+!src/js/utils/render/template/.gitkeep
