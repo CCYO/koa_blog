@@ -1,7 +1,8 @@
 node_modules/
 server/_config
 server/assets
+server/utils/render/template
+!server/utils/render/template/.gitkeep
 server/views
-server/utils/render/template/*
 src/_views
-src/js/utils/render/template/*
+src/js/utils/render/template
