@@ -5,6 +5,7 @@ import xss from "xss";
 const _whiteList = {
   ...xss.whiteList,
   p: ["style"],
+  span: ["style"],
   div: ["data-w-e-type", "data-w-e-is-void"],
   input: ["type"],
   img: ["src", "alt", "style", "data-href"],

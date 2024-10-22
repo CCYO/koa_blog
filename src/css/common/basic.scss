@@ -39,17 +39,20 @@ main {
   }
 }
 footer {
-  background: rgb(219, 159, 159);
+  background: rgba(255, 255, 255, 0.3);
   margin-top: 1rem;
   flex-wrap: wrap;
   align-items: center;
-  max-height: 25vh;
+  // max-height: 25vh;
   ul {
     padding: 0;
     margin: 0;
     list-style: none;
     display: flex;
     flex-direction: column;
+  }
+  .col:nth-child(2) {
+    flex: 3 1;
   }
 }
 
