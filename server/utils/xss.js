@@ -2,6 +2,7 @@ const xss = require("xss");
 const whiteList = {
   ...xss.whiteList,
   p: ["style"],
+  span: ["style"],
   div: ["data-w-e-type", "data-w-e-is-void"],
   input: ["type"],
   img: ["src", "alt", "style", "data-href"],
