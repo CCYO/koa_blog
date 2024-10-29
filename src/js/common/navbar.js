@@ -6,20 +6,23 @@
 import "@css/wedgets/navbar.scss";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import { render } from "@js/utils";
+import { render } from "../utils";
 import News from "./news";
+
+/* CONFIG     ----------------------------------------------------------------------------- */
+import FRONTEND from "@config/frontend_esm";
 
 /* VAR        ----------------------------------------------------------------------------- */
 const API_LOGOUT = "/api/user/logout";
 // 不需要news數據的頁面
 const noNewsPage = [
-  // 不允許登入權限的頁面
-  "login",
-  "register",
+  //  不允許登入權限的頁面
+  FRONTEND.REGISTER_LOGIN.ACTIVE.REGISTER,
+  FRONTEND.REGISTER_LOGIN.ACTIVE.LOGIN,
   // 不需要news數據
-  "blog-preview",
+  FRONTEND.BLOG.ACTIVE.PREVIEW,
   // NGINX 回應的錯誤頁面
-  "nginx_error_page",
+  FRONTEND.ERR_PAGE.ACTIVE.NGINX,
 ];
 
 /* EXPORT     ----------------------------------------------------------------------------- */

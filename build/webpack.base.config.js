@@ -1,21 +1,17 @@
 /* NODEJS     ----------------------------------------------------------------------------- */
 const { resolve } = require("path");
-const os = require("node:os");
-const fs = require("fs");
 
 /* NPM        ----------------------------------------------------------------------------- */
 const webpack = require("webpack");
 const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
 const WebpackBar = require("webpackbar");
-const ejs = require("ejs");
 
 /* CUSTOM     ----------------------------------------------------------------------------- */
-const htmlWebpackPlugins = require("./utils/_htmlWebpackPlugins");
-const entry = require("./utils/_entry");
-
+const htmlWebpackPlugins = require("./utils/ins_htmlWebpackPlugins");
+const entry = require("./utils/entry");
+const done_hook = require("./utils/done_hook");
 /* CONFIG     ----------------------------------------------------------------------------- */
 const WEBPACK_CONFIG = require("./config");
-const FRONTEND_CONST = require("../src/config/const/frontend.json");
 
 /* VAR        ----------------------------------------------------------------------------- */
 const isProd = process.env.NODE_ENV === "production";
@@ -36,19 +32,10 @@ module.exports = {
   resolve: {
     modules: [resolve(__dirname, "../node_modules")],
     alias: {
-      jquery: resolve(__dirname, "../node_modules/jquery/dist/jquery.min.js"),
-      "~": resolve(__dirname, "../"),
-      "~build": resolve(__dirname, "../build"),
-      "~server": resolve(__dirname, "../server"),
-      "@src": resolve(__dirname, "../src"),
       "@config": resolve(__dirname, "../src/config"),
-      "@js": resolve(__dirname, "../src/js"),
       "@css": resolve(__dirname, "../src/css"),
-      "@less": resolve(__dirname, "../src/less"),
-      "@views": resolve(__dirname, "../src/views"),
-      "@_views": resolve(__dirname, "../src/_views"),
     },
-    extensions: [".js", ".json", ".css", ".scss"],
+    extensions: [".js", ".json", ".scss"],
   },
 
   module: {
@@ -56,23 +43,9 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        use: [
-          // 據說效果不佳，反而會拖慢度，使用cache.type: "filesystem"即可
-          // {
-          //   loader: "thread-loader", // 开启多进程
-          //   options: {
-          //     workers: os.cpus().length, // 数量
-          //   },
-          // },
-          {
-            loader: "babel-loader",
-            // webpack.dev.config 已開啟 cache.type: "filesystem"，故不需要開啟babel cache
-            // options: {
-            //   cacheDirectory: !isProd, //	cacheDirectory 緩存
-            //   cacheCompression: false, //  cacheCompression 緩存壓縮,
-            // },
-          },
-        ],
+        // thread-loader 效果不佳
+        // webpack.dev.config 已開啟 cache.type: "filesystem"，可取代babel cache
+        use: ["babel-loader"],
         exclude: /(node_modules|lib|libs)/,
       },
       {
@@ -86,18 +59,7 @@ module.exports = {
       },
       {
         test: /\.ejs$/,
-        use: [
-          {
-            loader: "raw-loader",
-          },
-          {
-            //	用來<%% → <%
-            loader: "template-ejs-loader",
-            options: {
-              rmWhitespace: true,
-            },
-          },
-        ],
+        use: ["raw-loader"],
       },
     ],
   },
@@ -120,53 +82,6 @@ module.exports = {
     }),
     new WebpackBar(),
     //  生成NGINX靜態錯誤頁面
-    {
-      apply(compiler) {
-        compiler.hooks.afterEmit.tap("create_error_page", (compilation) => {
-          let template = fs.readFileSync(
-            resolve(__dirname, "../server/views/page404/index.ejs"),
-            "utf-8"
-          );
-          template = template.replace(
-            /include\('\.\.\//g,
-            `include('./server/views/`
-          );
-          let list = [
-            {
-              code: 500,
-              errModel: { errno: 99900, msg: "伺服器錯誤" },
-            },
-            {
-              code: 502,
-              errModel: { errno: 99900, msg: "伺服器502錯誤" },
-            },
-            {
-              code: 503,
-              errModel: { errno: 99901, msg: "伺服器503超時" },
-            },
-            {
-              code: 504,
-              errModel: { errno: 99901, msg: "伺服器回應超時" },
-            },
-          ];
-          let folder = resolve(__dirname, "../server/assets/html");
-          if (!fs.existsSync(folder)) {
-            fs.mkdirSync(folder);
-          }
-          for (let { code, errModel } of list) {
-            fs.writeFileSync(
-              resolve(__dirname, `../server/assets/html/${code}.html`),
-              ejs.render(template, {
-                filename: `${code}.html`,
-                page: FRONTEND_CONST.ERR_PAGE.PAGE_NAME,
-                login: false,
-                active: "nginx_error_page",
-                errModel,
-              })
-            );
-          }
-        });
-      },
-    },
+    done_hook,
   ],
 };

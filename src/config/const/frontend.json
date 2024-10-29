@@ -1,8 +1,15 @@
 {
   "ERR_PAGE": {
+    "ACTIVE": {
+      "NODE_JS": "nodeJS_error_page",
+      "NGINX": "nginx_error_page"
+    },
     "PAGE_NAME": "ERR_PAGE"
   },
   "ALBUM_LIST": {
+    "ACTIVE": {
+      "_": "albumList"
+    },
     "PAGE_NAME": "ALBUM_LIST",
     "API": {
       "GET_PAGINATION": "/api/album/list"
@@ -27,6 +34,9 @@
     }
   },
   "ALBUM": {
+    "ACTIVE": {
+      "_": "album"
+    },
     "PAGE_NAME": "ALBUM",
     "ID": {
       "MODAL": "modal_album"
@@ -38,6 +48,9 @@
     }
   },
   "BLOG_EDIT": {
+    "ACTIVE": {
+      "_": "blog-edit"
+    },
     "PAGE_NAME": "BLOG_EDIT",
     "EDITOR": {},
     "API": {
@@ -57,6 +70,10 @@
     }
   },
   "BLOG": {
+    "ACTIVE": {
+      "_": "blog",
+      "PREVIEW": "blog-preview"
+    },
     "PAGE_NAME": "BLOG",
     "API": {
       "REMOVE_COMMENT": "/api/comment",
@@ -76,6 +93,10 @@
     }
   },
   "REGISTER_LOGIN": {
+    "ACTIVE": {
+      "REGISTER": "register",
+      "LOGIN": "login"
+    },
     "PAGE_NAME": "REGISTER_LOGIN",
     "NAME": {
       "EMAIL": "email"
@@ -98,6 +119,9 @@
     }
   },
   "SETTING": {
+    "ACTIVE": {
+      "_": "setting"
+    },
     "PAGE_NAME": "SETTING",
     "API": {
       "CHECK_PASSWORD": "/api/user/confirmPassword",
@@ -111,6 +135,10 @@
     }
   },
   "USER": {
+    "ACTIVE": {
+      "SELF": "self",
+      "OTEHR": "other"
+    },
     "PAGE_NAME": "USER",
     "API": {
       "EDIT_BLOG": "/blog/edit",
@@ -153,6 +181,9 @@
     }
   },
   "SQUARE": {
+    "ACTIVE": {
+      "_": "square"
+    },
     "PAGE_NAME": "SQUARE",
     "API": {
       "GET_PAGINATION": "/api/square/list"

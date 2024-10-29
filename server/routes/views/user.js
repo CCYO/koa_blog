@@ -21,16 +21,16 @@ router.get("/register", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
   await ctx.render("register&login", {
     page: FRONTEND_CONST.REGISTER_LOGIN.PAGE_NAME,
     login: false,
-    active: "register",
+    active: FRONTEND_CONST.REGISTER_LOGIN.ACTIVE.REGISTER,
     title: "註冊",
   });
 });
 //  login page
 router.get("/login", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
   await ctx.render("register&login", {
+    active: FRONTEND_CONST.REGISTER_LOGIN.ACTIVE.LOGIN,
     page: FRONTEND_CONST.REGISTER_LOGIN.PAGE_NAME,
     login: false,
-    active: "login",
     title: "登入",
   });
 });
@@ -48,9 +48,9 @@ router.get("/self", privateCache, async (ctx) => {
   //  將 DB 數據賦予給 ctx.cache
   let { currentUser, relationShip, blogs } = (ctx.cache.data = data);
   await ctx.render("user", {
+    active: FRONTEND_CONST.USER.ACTIVE.SELF,
     page: FRONTEND_CONST.USER.PAGE_NAME,
     login: true,
-    active: "self",
     ejs_render,
     pagination: BLOG.PAGINATION,
     isSelf: true,
@@ -85,9 +85,9 @@ router.get("/other/:id", CHECK.isSelf, commonCache, async (ctx) => {
   //  非文章作者，所以不傳入未公開的文章
   blogs = { public: blogs.public };
   await ctx.render("user", {
+    active: FRONTEND_CONST.USER.ACTIVE.OTEHR,
     page: FRONTEND_CONST.USER.PAGE_NAME,
     login: Boolean(ctx.session.user),
-    active: "other",
     ejs_render,
     pagination: BLOG.PAGINATION,
     isSelf: false,
@@ -101,12 +101,12 @@ router.get("/other/:id", CHECK.isSelf, commonCache, async (ctx) => {
 router.get("/setting", CACHE.noCache, CHECK.login, async (ctx, next) => {
   let currentUser = ctx.session.user;
   await ctx.render("setting", {
+    active: FRONTEND_CONST.SETTING.ACTIVE._,
     page: FRONTEND_CONST.SETTING.PAGE_NAME,
     login: true,
-    active: "setting",
     title: `${currentUser.nickname}個人資料設置`,
     currentUser,
   });
 });
-//  0504
+
 module.exports = router;

@@ -18,9 +18,9 @@ router.get("/list", CACHE.noCache, CHECK.login, async (ctx) => {
     author_id: author.id,
   });
   await ctx.render("albumList", {
+    active: FRONTEND_CONST.ALBUM_LIST.ACTIVE._,
     page: FRONTEND_CONST.ALBUM_LIST.PAGE_NAME,
     login: true,
-    active: "albumList",
     title: "文章相簿",
     author,
     album,
@@ -40,9 +40,9 @@ router.get("/:blog_id", CACHE.noCache, CHECK.login, async (ctx) => {
   } else {
     let { imgs, ...blog } = data;
     await ctx.render("album", {
+      active: FRONTEND_CONST.ALBUM.ACTIVE._,
       page: FRONTEND_CONST.ALBUM.PAGE_NAME,
       login: true,
-      active: "album",
       title: `${blog.title}的相簿`,
       blog,
       imgs,

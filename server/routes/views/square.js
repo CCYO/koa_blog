@@ -14,9 +14,9 @@ router.get("/square", async (ctx) => {
     user_id: ctx.session.user?.id,
   });
   await ctx.render("square", {
+    active: FRONTEND_CONST.SQUARE.ACTIVE._,
     page: FRONTEND_CONST.SQUARE.PAGE_NAME,
     login: Boolean(ctx.session.user),
-    active: "square",
     title: "廣場頁",
     blog,
     pagination: SQUARE.PAGINATION,

@@ -1,7 +1,10 @@
 import SERVER_CONST from "./const/server.json";
 import FRONTEND_CONST from "./const/frontend.json";
 import PATTERN from "./const/pattern.json";
-import ERR_RES from "./const/errRes.json";
+import ERR_SERVER_RES from "./const/errRes/server.json";
+import ERR_NEWS_RES from "./const/errRes/news.json";
+
+const ERR_RES = { SERVER: ERR_SERVER_RES, NEWS: ERR_NEWS_RES };
 
 export default genFRONTEND_CONFIG(
   FRONTEND_CONST,
@@ -113,13 +116,5 @@ function genFRONTEND_CONFIG(FRONTEND_CONST, SERVER_CONST, PATTERN, ERR_RES) {
     },
   };
 
-  // FRONTEND_CONST.INIT_EJS = {
-  //   ALBUM_LIST: {
-  //     PAGINATION: {
-  //       BLOG_COUNT: SERVER_CONST.ALBUM_LIST.PAGINATION.BLOG_COUNT,
-  //       PAGE_COUNT: SERVER_CONST.ALBUM_LIST.PAGINATION.PAGE_COUNT,
-  //     },
-  //   },
-  // };
   return FRONTEND_CONST;
 }

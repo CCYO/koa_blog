@@ -32,9 +32,9 @@ router.get("/blog/preview/:id", privateCache, async (ctx) => {
     //  將 data 賦予 ctx.cache，稍後 privateCache 會視情況處理緩存
     ctx.cache.data = data;
     await ctx.render("blog", {
+      active: FRONTEND_CONST.BLOG.ACTIVE.PREVIEW,
       page: FRONTEND_CONST.BLOG.PAGE_NAME,
       login: true,
-      active: "blog-preview",
       title: new URL(ctx.href).searchParams.get(PREVIEW_KEY)
         ? "文章預覽"
         : data.title,
@@ -57,9 +57,9 @@ router.get("/blog/edit/:id", privateCache, async (ctx, next) => {
     //  將 data 賦予 ctx.cache，稍後 privateCache 會視情況處理緩存
     ctx.cache.data = data;
     await ctx.render("blog-edit", {
+      active: FRONTEND_CONST.BLOG_EDIT.ACTIVE._,
       page: FRONTEND_CONST.BLOG_EDIT.PAGE_NAME,
       login: true,
-      active: "blog-edit",
       title: data.title,
       blog: { ...data, showComment: false },
     });
@@ -79,9 +79,9 @@ router.get("/blog/:id", commonCache, async (ctx) => {
     //  將 data 賦予 ctx.cache，稍後 privateCache 會視情況處理緩存
     ctx.cache.data = data;
     await ctx.render("blog", {
+      active: FRONTEND_CONST.BLOG.ACTIVE._,
       page: FRONTEND_CONST.BLOG.PAGE_NAME,
       login: Boolean(ctx.session.user),
-      active: "blog",
       title: data.title,
       ejs_render,
       blog: { ...data, showComment: true },

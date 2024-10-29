@@ -17,13 +17,15 @@ export default class {
   // 無登入權限也可訪問的白名單頁面
   #ACTIVE_WHITE_LIST = [
     //  不允許登入權限的頁面
-    "register",
-    "login",
+    FRONTEND.REGISTER_LOGIN.ACTIVE.REGISTER,
+    FRONTEND.REGISTER_LOGIN.ACTIVE.LOGIN,
     //  不需要登入權限的頁面
-    "square",
-    "other",
-    "blog",
-    "permission",
+    FRONTEND.SQUARE.ACTIVE._,
+    FRONTEND.USER.ACTIVE.OTEHR,
+    FRONTEND.BLOG.ACTIVE._,
+    FRONTEND.BLOG.ACTIVE.PREVIEW,
+    FRONTEND.ERR_PAGE.ACTIVE.NODE_JS,
+    FRONTEND.ERR_PAGE.ACTIVE.NGINX,
   ];
 
   constructor({ backdrop = undefined, active }) {

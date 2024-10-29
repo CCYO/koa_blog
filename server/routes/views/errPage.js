@@ -40,7 +40,7 @@ router.get("/permission/:errno", async (ctx) => {
   opts = {
     page: FRONTEND_CONST.ERR_PAGE.PAGE_NAME,
     login: Boolean(ctx.session.user),
-    active: "permission",
+    active: FRONTEND_CONST.ERR_PAGE.ACTIVE.NODE_JS,
     ...opts,
   };
   await ctx.render("page404", opts);

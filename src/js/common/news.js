@@ -1,6 +1,6 @@
 /* COMMON     ----------------------------------------------------------------------------- */
 import Loop from "./loop";
-import { render } from "@js/utils";
+import { render } from "../utils";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";

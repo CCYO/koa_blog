@@ -101,9 +101,6 @@ module.exports = (function () {
     }
     //  替換ejs內的標記
     let ejs_string = _replaceFrontendConst(filepath);
-    if (isPageIndex) {
-      ejs_string = ejs_string.replace(/\<%/g, "<%%");
-    }
     newFilename_list.forEach((item) => {
       item && fs.writeFileSync(item, ejs_string);
     });

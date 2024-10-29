@@ -8,7 +8,6 @@ import redir from "./redir";
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default function (error) {
   let msg = "發生未知錯誤，已回報伺服器，且頁面將重新整理";
-
   if (error.model) {
     // 來自axios
     if (!process.env.isProd) {
@@ -28,6 +27,7 @@ export default function (error) {
 
 window.addEventListener("unhandledrejection", function (event) {
   event.preventDefault();
+  console.log(event.reason);
   event.promise.catch((result) => {
     let msg = "window.addEventListener(unhandledrejection)捕獲錯誤事件\n";
     let { model, _checked } = result;
