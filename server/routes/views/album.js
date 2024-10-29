@@ -1,17 +1,22 @@
 /**
- * @description Router/Views album
+ * @description album view
  */
+/* NPM        ----------------------------------------------------------------------------- */
 let router = require("koa-router")();
+/* UTILS      ----------------------------------------------------------------------------- */
 const { CHECK, CACHE } = require("../../middleware/views");
 const Blog = require("../../controller/blog");
-const { FRONTEND_CONST, ALBUM_LIST } = require("../../config");
 const render = require("../../utils/render");
-
+/* Config      ----------------------------------------------------------------------------- */
+const { FRONTEND_CONST, ALBUM_LIST } = require("../../config");
+/* Var         ----------------------------------------------------------------------------- */
 const ejs_render = render.albumList;
 
 router.prefix("/album");
 
-//  album list page
+/**
+ * @description album list
+ */
 router.get("/list", CACHE.noCache, CHECK.login, async (ctx) => {
   let author = ctx.session.user;
   let { data: album } = await Blog.findListAndCountOfAlbum({
@@ -28,7 +33,10 @@ router.get("/list", CACHE.noCache, CHECK.login, async (ctx) => {
     ejs_render,
   });
 });
-//  album page of blog_id
+
+/**
+ * @description album
+ */
 router.get("/:blog_id", CACHE.noCache, CHECK.login, async (ctx) => {
   let opts = {
     blog_id: ctx.params.blog_id * 1,

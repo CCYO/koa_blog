@@ -1,5 +1,4 @@
 /* NODEJS     ----------------------------------------------------------------------------- */
-////  NODE.JS MODULE
 const { resolve } = require("path");
 
 /* CONFIG     ----------------------------------------------------------------------------- */
@@ -8,13 +7,11 @@ const WEBPACK_CONFIG = require("../build/config");
 const { SESSION_KEY } = require("./_config");
 
 /* NPM        ----------------------------------------------------------------------------- */
-//  設定環境變量，以 ~/.env 作為設定檔
+//  設定環境變量
 require("dotenv").config({
   path: resolve(__dirname, `./_config/${ENV.isProd ? ".prod" : ".dev"}.env`),
 });
 const Koa = require("koa");
-//  針對JSON類型的response提高可讀性
-const json = require("koa-json")();
 //  處理非 multipart/form-data 的請求數據
 const bodyparser = require("koa-bodyparser")({
   enableTypes: ["json", "form", "text"],
@@ -44,8 +41,10 @@ app.use(middleware_errors);
 if (!ENV.isProd) {
   //  打印每一次的request與response
   app.use(require("koa-logger")());
+  //  針對JSON類型的response，提高可讀性
+  app.use(require("koa-json")());
 }
-app.use(json);
+
 app.use(webpackDev);
 app.use(webpackHMR);
 app.use(bodyparser);

@@ -1,22 +1,26 @@
 /**
- * @description Router/Views user
+ * @description user view
  */
+/* NPM        ----------------------------------------------------------------------------- */
 const router = require("koa-router")();
+/* UTILS      ----------------------------------------------------------------------------- */
 const { CHECK, CACHE } = require("../../middleware/views");
 const User = require("../../controller/user");
 const render = require("../../utils/render");
+/* Config      ----------------------------------------------------------------------------- */
 const {
   FRONTEND_CONST,
   BLOG,
   CACHE: { TYPE },
 } = require("../../config");
-
+/* Var         ----------------------------------------------------------------------------- */
 const privateCache = CACHE.genPrivate(TYPE.PAGE.USER);
 const commonCache = CACHE.genCommon(TYPE.PAGE.USER);
-
 const ejs_render = render.user;
 
-//  register page
+/**
+ * @description register
+ */
 router.get("/register", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
   await ctx.render("register&login", {
     page: FRONTEND_CONST.REGISTER_LOGIN.PAGE_NAME,
@@ -25,7 +29,10 @@ router.get("/register", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
     title: "註冊",
   });
 });
-//  login page
+
+/**
+ * @description login
+ */
 router.get("/login", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
   await ctx.render("register&login", {
     active: FRONTEND_CONST.REGISTER_LOGIN.ACTIVE.LOGIN,
@@ -34,7 +41,10 @@ router.get("/login", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
     title: "登入",
   });
 });
-//  個人頁
+
+/**
+ * @description self
+ */
 router.get("/self", privateCache, async (ctx) => {
   //  middleware/privateCache 取得的緩存數據
   //  ctx.cache[TYPE.PAGE.USER]
@@ -60,7 +70,10 @@ router.get("/self", privateCache, async (ctx) => {
     relationShip,
   });
 });
-//  他人頁
+
+/**
+ * @description otehr
+ */
 router.get("/other/:id", CHECK.isSelf, commonCache, async (ctx) => {
   //  從 middleware 取得的緩存數據 ctx.cache[PAGE.USER]
   /**
@@ -97,7 +110,10 @@ router.get("/other/:id", CHECK.isSelf, commonCache, async (ctx) => {
     relationShip,
   });
 });
-//  設置頁
+
+/**
+ * @description setting
+ */
 router.get("/setting", CACHE.noCache, CHECK.login, async (ctx, next) => {
   let currentUser = ctx.session.user;
   await ctx.render("setting", {

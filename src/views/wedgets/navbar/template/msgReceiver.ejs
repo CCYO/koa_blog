@@ -5,7 +5,7 @@
 <% let nicknames = count > 1 ? `${comment.commenter.nickname} ${other_nicknames}` :  other_nicknames %>
 <% let query = confirm ? "" : `?type=3&id=${id}` %>
 <li class="dropdown-item  position-relative news-item transition-bg" <%= confirm ? `style=""` : `style="background-color: rgb(120 180 255);"` %>>
-  <a href="/api/comment/confirm/<%= id %>" class="stretched-link text-wrap">
+  <a href="/api/msgReceiver/<%= id %>" class="stretched-link text-wrap">
     <div class="news-item-content">
       <span><%= nicknames %>在「<%= comment.article.title %>」留言囉！</span>
     </div>

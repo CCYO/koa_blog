@@ -1,13 +1,17 @@
 /**
- * @description API commond相關
+ * @description comment api
  */
+/* NPM        ----------------------------------------------------------------------------- */
 const router = require("koa-router")();
+/* UTILS      ----------------------------------------------------------------------------- */
 const { CHECK, CACHE } = require("../../middleware/api");
 const Comment = require("../../controller/comment");
 
 router.prefix("/api/comment");
 
-//  delete comment
+/**
+ * @description remove comment
+ */
 router.delete("/", CHECK.login, CACHE.modify, async (ctx) => {
   let opts = {
     comment_id: ctx.request.body.comment_id,
@@ -15,20 +19,10 @@ router.delete("/", CHECK.login, CACHE.modify, async (ctx) => {
   };
   ctx.body = await Comment.remove(opts);
 });
-//  confirm msgReceiver
-router.get(
-  "/confirm/:msgReceiver_id",
-  CHECK.login,
-  CACHE.modify,
-  async (ctx) => {
-    let opts = {
-      receiver_id: ctx.session.user.id,
-      msgReceiver_id: ctx.params.msgReceiver_id * 1,
-    };
-    ctx.body = await Comment.confirmNews(opts);
-  }
-);
-//  add comment
+
+/**
+ * @description add comment
+ */
 router.post("/", CHECK.login, CACHE.modify, async (ctx) => {
   ctx.body = await Comment.add(ctx.request.body);
 });

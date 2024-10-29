@@ -1,3 +1,6 @@
+/**
+ * @description 彙整api routes
+ */
 let router = require("koa-router")();
 
 let album = require("./album");

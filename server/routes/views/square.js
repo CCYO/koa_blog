@@ -1,14 +1,19 @@
 /**
- * @description Router/Views Square
+ * @description square view
  */
+/* NPM        ----------------------------------------------------------------------------- */
 const router = require("koa-router")();
+/* UTILS      ----------------------------------------------------------------------------- */
 const Square = require("../../controller/square");
-const { FRONTEND_CONST, SQUARE } = require("../../config");
 const render = require("../../utils/render");
-
+/* Config      ----------------------------------------------------------------------------- */
+const { FRONTEND_CONST, SQUARE } = require("../../config");
+/* Var         ----------------------------------------------------------------------------- */
 const ejs_render = render.square;
 
-//  square page
+/**
+ * @description square
+ */
 router.get("/square", async (ctx) => {
   let { data: blog } = await Square.findListForPagination({
     user_id: ctx.session.user?.id,

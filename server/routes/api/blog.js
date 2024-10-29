@@ -1,13 +1,17 @@
 /**
- * @description API blog 相關
+ * @description blog api
  */
+/* NPM        ----------------------------------------------------------------------------- */
 const router = require("koa-router")();
+/* UTILS      ----------------------------------------------------------------------------- */
 const { CHECK, CACHE, FIREBASE, VALIDATE } = require("../../middleware/api");
 const Blog = require("../../controller/blog");
 
 router.prefix("/api/blog");
 
-//  get data for userPage then turn pagination of blogList
+/**
+ * @description find pagination of blog list
+ */
 router.post("/list", async (ctx) => {
   let opts = {
     currentUser_id: ctx.session.user?.id,
@@ -16,20 +20,9 @@ router.post("/list", async (ctx) => {
   ctx.body = await Blog.findListForPagination(opts);
 });
 
-//  confirm articleReader
-router.get(
-  "/confirm/:articleReader_id",
-  CHECK.login,
-  CACHE.modify,
-  async (ctx) => {
-    let opts = {
-      reader_id: ctx.session.user.id,
-      articleReader_id: ctx.params.articleReader_id * 1,
-    };
-    ctx.body = await Blog.confirmNews(opts);
-  }
-);
-//  delete blogs
+/**
+ * @description remove blog
+ */
 router.delete("/", CHECK.login, CACHE.modify, async (ctx) => {
   let opts = {
     author_id: ctx.session.user.id,
@@ -37,18 +30,10 @@ router.delete("/", CHECK.login, CACHE.modify, async (ctx) => {
   };
   ctx.body = await Blog.removeList(opts);
 });
-//  add blog
-router.post(
-  "/",
-  CHECK.login,
-  VALIDATE.BLOG,
-  CACHE.modify,
-  async (ctx, next) => {
-    const { title } = ctx.request.body;
-    ctx.body = await Blog.add(title, ctx.session.user.id);
-  }
-);
-//  update blog img
+
+/**
+ * @description upload blog img
+ */
 router.post(
   "/img",
   CHECK.login,
@@ -63,7 +48,10 @@ router.post(
     ctx.body = await Blog.addImg(opts);
   }
 );
-//  update blog
+
+/**
+ * @description modify blog
+ */
 router.patch("/", CHECK.login, CACHE.modify, VALIDATE.BLOG, async (ctx) => {
   let opts = {
     author_id: ctx.session.user.id,
@@ -71,5 +59,19 @@ router.patch("/", CHECK.login, CACHE.modify, VALIDATE.BLOG, async (ctx) => {
   };
   ctx.body = await Blog.modify(opts);
 });
+
+/**
+ * @description add blog
+ */
+router.post(
+  "/",
+  CHECK.login,
+  VALIDATE.BLOG,
+  CACHE.modify,
+  async (ctx, next) => {
+    const { title } = ctx.request.body;
+    ctx.body = await Blog.add(title, ctx.session.user.id);
+  }
+);
 
 module.exports = router;

@@ -360,81 +360,10 @@ async function initMain() {
     };
     let { htmlStr, checkImgLoad } = blog_htmlStr(G);
     G.utils.checkImgLoad = checkImgLoad;
-    var x = `<p style="text-align: left;">您好：</p>
-    <p style="text-align: left;">我是一位自學網頁設計的求職者，關於我的個人履歷，請前往我的<a href="/other/1" target="_blank">個人頁面</a>查看。</p>
-    <p style="text-align: left;">作為自學者，畢竟沒有實際經歷，希望此網站能作為一份自薦的作品，原始碼已經存放在<a href="https://github.com/CCYO/koa_blog" target="_blank">Github</a>，歡迎前往查看。</p>
-    <p style="text-align: left;">此站希望藉由模擬『部落格網站』，表現我具有基本的網站設計能力，針對網站的大略配置、基本功能與實現方式，下方整理了粗略的說明：</p>
-    <h5>－網站配置－</h5>
-    <p style="text-align: left;">此網站以NodeJS搭建伺服器服務，後端採<a href="https://www.npmjs.com/package/koa" target="_blank">KOA框架</a>，前端樣式以Bootstrap為基礎來設計，前端功能使用JQuery、搭配部分<a href="https://www.npmjs.com/" target="_blank">NPM包</a>以及基本JS編寫，開發全程都以Webpack作為前後端程式的打包統整工具。</p>
-    <p style="text-align: left;">伺服器架設在<a href="https://cloud.google.com/products/compute?hl=zh-TW" target="_blank">GCE平台</a>，使用<a href="https://www.npmjs.com/package/pm2" target="_blank">PM2</a>維持伺服器自動重啟與更新，並搭配Nginx作反向代理。</p>
-    <p style="text-align: left;">資料庫共使用以下三種：</p>
-    <ul>
-      <li><span>Redis</span></li>
-    </ul>
-    <p> &nbsp; &nbsp;管理登入狀態（Session）以及常用公開數據緩存。</p>
-    <ul>
-      <li><span>MySQL</span></li>
-    </ul>
-    <p> &nbsp; &nbsp;負責管理網站主要數據，為了方便配合NodeJS使用JS操作，基本上都是利用<a href="https://sequelize.org/" target="_blank">NPM_Sequelize</a>進行操作。</p>
-    <ul>
-      <li><a href="https://firebase.google.com/products/storage" target="_blank">Google FireBase/Cloud Stroage</a></li>
-    </ul>
-    <p> &nbsp; &nbsp;負責管理圖片資源。</p>
-    <h5>－基本功能與實現－</h5>
-    <ul>
-      <li><span>註冊/登入系統</span></li>
-    </ul>
-    <p> &nbsp; &nbsp;前端表格資料校驗，符合後再以AJAX傳至後端，進行MySql建立/驗證會員數據，並以Redis登記Session資料。</p>
-    <ul>
-      <li><span>追蹤/退追偶像</span></li>
-    </ul>
-    <p> &nbsp; &nbsp;<span>［需登入］</span>將MySQL內的使用者資料建立關聯，往後若偶像（被追蹤者）發布文章時，追蹤者就能接收到通知；反之取消追蹤時，便將MySQL內的使用者資料關聯取消。</p>
-    <ul>
-      <li><span>通知功能</span></li>
-    </ul>
-    <p> &nbsp; &nbsp;<span>［需登入］</span>新粉絲追蹤、偶像發布文章、你的文章有新留言、你的留言有新回覆，以上『與你有關的通知』，都能接收到通知提醒。</p>
-    <ul>
-      <li><span>即時通知提示</span></li>
-    </ul>
-    <p> &nbsp; &nbsp;<span style="color: red;">［需登入］</span>運用<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/WebSocket" target="_blank">websocket</a>保持前後端會話，當後端產生了『與你有關的通知』（請參考<span>通知功能</span>的說明），此時若你正在使用此站頁面、且是登入狀態，頁面會顯示飛入動畫、提醒你讀取新通知。</p>
-    <ul>
-      <li><span>撰寫文章</span></li>
-    </ul>
-    <p> &nbsp; &nbsp;<span>［需登入］</span>使用<a href="https://www.npmjs.com/package/wangeditor" target="_blank">NPM_wangEditor</a>建立文本編輯器，並添加編輯文章必要的各項功能，包含<u>修改標題</u>、<u>圖片上傳</u>、<u>文章內容校驗</u>、<u>隱藏/公開文章</u>、<u>預覽</u>、<u>儲存</u>、<u>刪除</u>、<u>提醒尚未儲存</u>。</p>
-    <ul>
-      <li><span>文章相簿編輯</span></li>
-    </ul>
-    <p> &nbsp; &nbsp;<span>［需登入］</span>以分頁的方式展示出含有照片的個人文章列表，選擇指定文章進入後，可為該文章照片重新命名，此命名會在觀看文章時，成為&lt;img alt="xxx"&gt;展示。</p>
-    <ul>
-      <li><span>文章留言</span></li>
-    </ul>
-    <p> &nbsp; &nbsp;<span>［需登入］</span>可在公開文章的底下留言，除了文章作者會接收到通知，每則留言都會被認列入一個『留言串』（id），同一個留言串有其他人回覆新留言時，此留言串裡的所有人都會接收到通知。</p>
-    <ul>
-      <li><span>個人資訊編輯</span></li>
-    </ul>
-    <p> &nbsp; &nbsp;<span>［需登入］</span>可修改個人資訊，包含Email、暱稱、密碼、年齡、大頭照，與更新資訊有關的頁面，顯示的資料也會一併更新。</p>
-    <ul>
-      <li><span>靜態資源緩存</span></li>
-    </ul>
-    <p> &nbsp; &nbsp;前端頁面可複用的靜態資源(JS,CSS,favicon)，依靠NGINX實現緩存，且藉由webpack的contentHash命名機制，避免使用過期資源。</p>
-    <ul>
-      <li><span>動態數據緩存</span></li>
-    </ul>
-    <p> &nbsp; &nbsp;網站頁面都是藉由後端EJS渲染，其中無須登入也可瀏覽的頁面（<a href="/other/1" target="_blank">他人頁面</a>、<a href="/square" target="_blank">文章廣場</a>、<a href="/blog/1" target="_blank">公開文章</a>），針對這些頁面模板（EJS Template）所需傳入的數據，使用Redis進行緩存，並依據請求時的If-None-Match/Etag判斷是否為有效緩存，減少後端操作MySQL的負擔。</p>
-    <ul>
-      <li><span>資料校驗</span></li>
-    </ul>
-    <p> &nbsp; &nbsp;填寫前端所有表格時，都會提示資料是否符合校驗規則；點擊資料發送鈕時，無論前後端都會再次進行校驗（依靠<a href="https://www.npmjs.com/package/ajv" target="_blank">NPM_Ajv</a>實現），確認通過才會進行AJAX請求、操作MySQL。</p>
-    <p><br></p>
-    <p>以上，是此站配置與功能實現的大略介紹，感謝進入此站、並觀看至文末，若貴司仍有職缺，且我的條件符合需求，懇請傳送面試邀約，無論<a href="mailto:tume20938@gmail.com" target="_blank">Email</a>、<a href="tel:+886-981237800" target="_blank">來電</a>、<a href="https://line.me/ti/p/XGQyPIxqxt" target="_blank">LINE</a>形，或是在此篇文章回覆，我得到訊息後將隨即與貴司聯繫，再次感謝抽空閱讀至此的您。</p>`;
-    // var x = `<p> &nbsp; &nbsp;<span style="color: red">［需登入］</span>運用保持前後端會話，當後端產生了『與你有關的通知』（請參考<span>通知功能</span>的說明），此時若你正在使用此站頁面、且是登入狀態，頁面會顯示飛入動畫、提醒你讀取新通知。</p>`;
-    var html = decodeURI(htmlStr);
-    // var html = x;
     //  editor 編輯欄 創建
     const editor = createEditor({
       //  插入後端取得的 html
-      // html: htmlStr || "",
-      html,
+      html: htmlStr || "",
       selector: `#${G.constant.ID.EDITOR_CONTAINER}`,
       config: editorConfig,
     });

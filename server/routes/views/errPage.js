@@ -1,8 +1,16 @@
+/**
+ * @description error view
+ */
+/* NPM        ----------------------------------------------------------------------------- */
 const router = require("koa-router")();
-const { FRONTEND_CONST, ERR_RES } = require("../../config");
+/* UTILS      ----------------------------------------------------------------------------- */
 const { ErrModel } = require("../../utils/model");
+/* Config      ----------------------------------------------------------------------------- */
+const { FRONTEND_CONST, ERR_RES } = require("../../config");
 
-//  預判過的錯誤
+/**
+ * @description error page
+ */
 router.get("/permission/:errno", async (ctx) => {
   let opts = {};
   switch (ctx.params.errno * 1) {

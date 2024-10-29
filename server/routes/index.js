@@ -1,5 +1,10 @@
-const { ENV } = require("../config");
+/**
+ * @description 彙整routes
+ */
+/* NPM        ----------------------------------------------------------------------------- */
 let router = require("koa-router")();
+/* Config     ----------------------------------------------------------------------------- */
+const { ENV } = require("../config");
 
 const api = require("./api");
 const views = require("./views");
@@ -9,10 +14,16 @@ router.use(api.routes());
 router.use(views.routes());
 router.use(ws.routes());
 
+/**
+ * @description index -> square
+ */
 router.get("/", (ctx) => {
   ctx.redirect("/square");
 });
 
+/**
+ * @description test error
+ */
 if (!ENV.isProd) {
   const { MyErr } = require("../utils/model");
   const { ERR_RES } = require("../config/index");

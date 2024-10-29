@@ -1,23 +1,26 @@
 /**
- * @description Router/Views blog
+ * @description blog view
  */
+/* NPM        ----------------------------------------------------------------------------- */
 const router = require("koa-router")();
+/* UTILS      ----------------------------------------------------------------------------- */
 const Blog = require("../../controller/blog");
 const render = require("../../utils/render");
+const { CACHE } = require("../../middleware/views");
+/* Config      ----------------------------------------------------------------------------- */
 const {
   FRONTEND_CONST,
+  BLOG: { PREVIEW_KEY },
   CACHE: { TYPE },
 } = require("../../config");
-const { CACHE } = require("../../middleware/views");
+/* Var         ----------------------------------------------------------------------------- */
 const privateCache = CACHE.genPrivate(TYPE.PAGE.BLOG);
 const commonCache = CACHE.genCommon(TYPE.PAGE.BLOG);
-const {
-  BLOG: { PREVIEW_KEY },
-} = require("../../config");
-
 const ejs_render = render.blog;
 
-//  preview blog page
+/**
+ * @description blog preview
+ */
 router.get("/blog/preview/:id", privateCache, async (ctx) => {
   let opts = {
     //  來自 privateCache
@@ -42,7 +45,10 @@ router.get("/blog/preview/:id", privateCache, async (ctx) => {
     });
   }
 });
-//  blog editor pge
+
+/**
+ * @description edit blog
+ */
 router.get("/blog/edit/:id", privateCache, async (ctx, next) => {
   let opts = {
     //  來自 privateCache
@@ -65,7 +71,10 @@ router.get("/blog/edit/:id", privateCache, async (ctx, next) => {
     });
   }
 });
-//  blog page
+
+/**
+ * @description blog
+ */
 router.get("/blog/:id", commonCache, async (ctx) => {
   let opts = {
     //  來自 privateCache
