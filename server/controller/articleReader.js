@@ -1,8 +1,19 @@
+/**
+ * @description controller articleReader
+ */
+/* SERVER     ----------------------------------------------------------------------------- */
 const ArticleReader = require("../server/articleReader");
+/* UTILS      ----------------------------------------------------------------------------- */
 const Opts = require("../utils/seq_options");
 const { MyErr, SuccModel } = require("../utils/model");
+/* CONFIG     ----------------------------------------------------------------------------- */
 const { ERR_RES } = require("../config");
 
+/**
+ * @description restory articleReader list
+ * @param {Array<number>} id_list articelReader id list
+ * @returns {Promise<SuccModel>}SuccModel || throw MyErr
+ */
 async function restoringList(id_list) {
   let row = await ArticleReader.restore(
     Opts.ARTICLE_READER.RESTORE.list(id_list)
@@ -13,7 +24,11 @@ async function restoringList(id_list) {
   return new SuccModel();
 }
 
-//  soft remove list
+/**
+ * @description soft remove articleReader list
+ * @param {Array<number>} id_list articleReader id list
+ * @returns SuccModel || throw MyErr
+ */
 async function removeList(id_list) {
   let row = await ArticleReader.destroyList(
     Opts.ARTICLE_READER.REMOVE.list(id_list)
@@ -24,6 +39,12 @@ async function removeList(id_list) {
   return new SuccModel();
 }
 
+/**
+ * @description modify articleReader
+ * @param {Number} id articleReader id
+ * @param {Object} newData articleReader data
+ * @returns SuccModel || throw MyErr
+ */
 async function modify(id, newData) {
   let row = await ArticleReader.update(id, newData);
   if (!row) {
@@ -35,6 +56,11 @@ async function modify(id, newData) {
   return new SuccModel();
 }
 
+/**
+ * @description add employer be reader
+ * @param {Number} reader_id user id
+ * @returns SuccModel
+ */
 async function addEmployerBeReader(reader_id) {
   await ArticleReader.create(
     Opts.ARTICLE_READER.CREATE.addEmployerBeReader(reader_id)

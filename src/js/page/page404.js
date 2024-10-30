@@ -9,19 +9,16 @@ import { errorHandle } from "../utils";
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
-  alert("not start");
   await G.initPage(initMain);
 } catch (error) {
   errorHandle(error);
 }
 
 async function initMain() {
-  alert("in initMain");
   // 網址自動跳轉
   document.addEventListener("initPage", redir);
 
   function redir() {
-    alert("in initPage");
     let target = document.referrer;
     // 由同域轉至此錯誤頁面
     let someOrigin = target && new URL(target).origin === location.origin;
@@ -39,7 +36,6 @@ async function initMain() {
     } else {
       alertMsg += ",五秒後將自動回到上一頁。";
     }
-
     alert(alertMsg);
     process.env.isProd &&
       !errorFromNginx &&

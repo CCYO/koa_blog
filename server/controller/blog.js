@@ -1,15 +1,30 @@
-const Opts = require("../utils/seq_options");
-const Blog = require("../server/blog");
+/**
+ * @description controller blog
+ */
+/* Controller ----------------------------------------------------------------------------- */
 const C_Img = require("./img");
 const C_BlogImg = require("./blogImg");
 const C_BlogImgAlt = require("./blogImgAlt");
 const C_ArticleReader = require("./articleReader");
 const C_Comment = require("./comment");
+/* SERVER     ----------------------------------------------------------------------------- */
+const Blog = require("../server/blog");
+/* UTILS      ----------------------------------------------------------------------------- */
+const Opts = require("../utils/seq_options");
 const { MyErr, ErrModel, SuccModel } = require("../utils/model");
-const { CACHE, ERR_RES, ENV, NEWS } = require("../config");
-const { TYPE } = require("../utils/validator/config");
+/* CONFIG     ----------------------------------------------------------------------------- */
+const { CACHE, ERR_RES, ENV } = require("../config");
 
-//  查詢 blog 分頁列表數據
+/**
+ * @description find pagination for blog
+ * @param {Object} param0
+ * @param {Number} param0.currentUser_id 查詢者user id
+ * @param {Number} param0.author_id author id of blog list
+ * @param {Boolean} param0.show blog status
+ * @param {Number} param0.limit how many item in one page of pagination
+ * @param {Number} param0.offset page number of pagination
+ * @return {Promise<SuccModel>} { data: { public: obj | private: obj }} || throw MyErr
+ */
 async function findListForPagination({
   currentUser_id,
   author_id,
@@ -29,6 +44,15 @@ async function findListForPagination({
   }
   return new SuccModel({ data });
 }
+
+/**
+ * @description find private blog info for page
+ * @param {Objet} param0
+ * @param {Object} param0.cache { exist, data }
+ * @param {Number} param0.blog_id blog id
+ * @param {Number} param0.author_id author id
+ * @returns {Promise<SuccModel|ErrModel>}
+ */
 async function findInfoForPrivatePage({ cache, blog_id, author_id }) {
   let { exist, data } = cache;
   let resModel;
@@ -41,6 +65,14 @@ async function findInfoForPrivatePage({ cache, blog_id, author_id }) {
   }
   return resModel;
 }
+
+/**
+ * @description find public blog info for page
+ * @param {Objet} param0
+ * @param {Object} param0.cache { exist, data }
+ * @param {Number} param0.blog_id blog id
+ * @returns {Promise<SuccModel|ErrModel>}
+ */
 async function findInfoForCommonPage({ cache, blog_id }) {
   let { exist, data } = cache;
   if (exist === CACHE.STATUS.NO_CACHE) {
@@ -54,10 +86,11 @@ async function findInfoForCommonPage({ cache, blog_id }) {
   }
 }
 
-/** 建立 blog
- * @param { string } title 標題
- * @param { number } userId 使用者ID
- * @returns SuccModel for { data: { id, title, html, show, showAt, createdAt, updatedAt }} || ErrModel
+/**
+ * @description add blog
+ * @param { String } title blog title
+ * @param { Number } author_id author_id
+ * @returns {Promise<SuccModel>}
  */
 async function add(title, author_id) {
   const data = await Blog.create(Opts.BLOG.CREATE.one({ title, author_id }));
@@ -67,11 +100,14 @@ async function add(title, author_id) {
   }
   return new SuccModel(opts);
 }
-/** 更新 blog
- *
- * @param {number} blog_id blog id
- * @param {object} blog_data 要更新的資料
- * @returns {object} SuccModel || ErrModel
+
+/**
+ * @description modify blog
+ * @param {Object} param0
+ * @param {Number} param0.blog_id blog id
+ * @param {Number} param0.author_id author id
+ * @param {Object} param0.blog_data new blog data
+ * @returns {Promise<SuccModel|ErrModel>}
  */
 async function modify({ blog_id, author_id, ...blog_data }) {
   //  確認權限
@@ -113,17 +149,12 @@ async function modify({ blog_id, author_id, ...blog_data }) {
       }
       cache[CACHE.TYPE.NEWS] = Array.from(cache[CACHE.TYPE.NEWS]);
       cache[CACHE.TYPE.WS] = Array.from(cache[CACHE.TYPE.WS]);
-
-      // await _restoryMsgReceiverList(blog_id);
-      // cache[CACHE.TYPE.NEWS] = resModel.cache[CACHE.TYPE.NEWS];
-      // cache[CACHE.TYPE.WS] = resModel.cache[CACHE.TYPE.WS];
     } else {
       newData.showAt = null;
       // 軟刪除reader
       await _destoryReaders(blog_id);
       // 軟刪除MsgReceiver
       await C_Comment.destoryReceiver(blog_id);
-      // await _removeMsgReceiverList(blog_id);
     }
     go = true;
   }
@@ -176,10 +207,7 @@ async function addImg({ author_id, ...data }) {
         data: { id: alt_id },
       } = await C_BlogImgAlt.add(blogImg_id);
       return alt_id;
-      //  data { blog_id, name, img_id }
-      // } else if (map.get("img_id")) {
     } else if (img_id) {
-      //  data { blog_id, img_id }
       let {
         data: { id: blogImg_id },
       } = await C_BlogImg.add({ blog_id, img_id });
@@ -192,9 +220,13 @@ async function addImg({ author_id, ...data }) {
     }
   }
 }
-/** 刪除 blogs
- * @param {number} blog_id
- * @returns {object} SuccModel || ErrModel
+
+/**
+ * @description remove blog
+ * @param {Object} param0
+ * @param {Number} param0.blog_id
+ * @param {Number} param0.author_id
+ * @returns {Promise<SuccModel|ErrModel|MyErr>}
  */
 async function removeList({ blogList, author_id }) {
   if (!Array.isArray(blogList) || !blogList.length) {
