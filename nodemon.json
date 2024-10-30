@@ -1,13 +1,16 @@
 {
   "ignore": [
+    "server/assets/",
     "server/views/",
     "server/utils/render/template/",
-    "server/assets/",
+    "server/dev_assets/",
+    "server/dev_views/",
+    "server/utils/render/dev_template/",
     "src/js/",
     "src/css/",
     "src/_views/"
   ],
-  "verbose": false,
+  "//verbose": false,
   "exec": "node server/bin/www.js",
   "ext": "js,mjs,json,ejs"
 }

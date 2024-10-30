@@ -2,6 +2,8 @@ const fs = require("fs");
 const { resolve } = require("path");
 const ejs = require("ejs");
 const FRONTEND_CONST = require("../../src/config/const/frontend.json");
+const WEBPACK_CONFIG = require("../config");
+const isProd = process.env.NODE_ENV === "production";
 const NGINX_ERR_RES = [
   {
     code: 500,
@@ -23,17 +25,24 @@ const NGINX_ERR_RES = [
 //   生成NGINX響應的ERROR PAGE
 function create_nginx_error_pages() {
   let template = fs.readFileSync(
-    resolve(__dirname, "../../server/views/page404/index.ejs"),
+    `${WEBPACK_CONFIG.BUILD.VIEW}/page404/index.ejs`,
+    // resolve(__dirname, "../../server/views/page404/index.ejs"),
     "utf-8"
   );
-  template = template.replace(/include\('\.\.\//g, `include('./server/views/`);
-  let folder = resolve(__dirname, "../../server/assets/html");
+  // template = template.replace(/include\('\.\.\//g, `include('./server/views/`);
+  template = template.replace(
+    /include\('\.\.\//g,
+    `include('./server/${isProd ? "views/" : "dev_views/"}`
+  );
+  // let folder = resolve(__dirname, `../../server/assets/html`);
+  let folder = resolve(WEBPACK_CONFIG.BUILD.DIST, "./html");
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);
   }
   for (let { code, errModel } of NGINX_ERR_RES) {
     fs.writeFileSync(
-      resolve(__dirname, `../../server/assets/html/${code}.html`),
+      // resolve(__dirname, `../../server/assets/html/${code}.html`),
+      resolve(folder, `./${code}.html`),
       ejs.render(template, {
         filename: `${code}.html`,
         active: FRONTEND_CONST.ERR_PAGE.ACTIVE.NGINX,

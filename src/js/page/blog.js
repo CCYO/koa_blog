@@ -5,13 +5,16 @@ import "@css/blog.scss";
 import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import { _Ajv, render, redir, errorHandle } from "../utils";
+import { _Ajv, async_render, redir, errorHandle } from "../utils";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import { createEditor } from "@wangeditor/editor";
 
 /* COMPONENT   ---------------------------------------------------------------------------- */
 import blog_htmlStr from "../component/blog_htmlStr";
+
+/* VAR        ----------------------------------------------------------------------------- */
+let render = await async_render();
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {

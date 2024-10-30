@@ -6,10 +6,13 @@
 import "@css/component/pagination";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import { render } from "../utils";
+import { async_render } from "../utils";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
+
+/* VAR        ----------------------------------------------------------------------------- */
+let render = await async_render();
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default function (G) {

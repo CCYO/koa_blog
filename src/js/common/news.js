@@ -1,6 +1,6 @@
 /* COMMON     ----------------------------------------------------------------------------- */
 import Loop from "./loop";
-import { render } from "../utils";
+import { async_render } from "../utils";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
@@ -9,6 +9,9 @@ import FRONTEND from "@config/frontend_esm";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/zh-tw";
+
+/* VAR        ----------------------------------------------------------------------------- */
+let render = await async_render();
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default class {

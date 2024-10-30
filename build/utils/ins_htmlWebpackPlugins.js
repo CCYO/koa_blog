@@ -15,17 +15,20 @@ const FRONTEND_CONST = require("../../src/config/frontend_cjs");
 const WEBPACK_CONFIG = require("../config");
 
 /* VAR        ----------------------------------------------------------------------------- */
+const isProd = process.env.NODE_ENV === "production";
 //  ejs 須被替換為常量的標記
 const PREFIX = "CONS";
 //  server/utils/render/template位置
 const dir_template_server = resolve(
   __dirname,
-  `../../server/utils/render/template`
+  `../../server/utils/render`,
+  isProd ? `./template` : `./dev_template`
 );
 //  src/js/utils/render/template位置
 const dir_template_src = resolve(
   __dirname,
-  `../../src/js/utils/render/template`
+  `../../src/js/utils/render`,
+  isProd ? `./template` : `./dev_template`
 );
 
 /* EXPORT     ----------------------------------------------------------------------------- */
@@ -58,6 +61,9 @@ module.exports = (function () {
       array_filepath[index_views] = "_views";
     } else if (!isTemplate) {
       array_filepath[index_views - 1] = "server";
+      if (!isProd) {
+        array_filepath[index_views] = "dev_views";
+      }
     }
 
     //  1)生成要放入ejs_string的文件路徑

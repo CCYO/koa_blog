@@ -8,7 +8,7 @@ import G from "../common";
 import {
   _Ajv,
   Debounce,
-  render,
+  async_render,
   _xss,
   formFeedback,
   redir,
@@ -20,6 +20,9 @@ import BetterScroll from "better-scroll";
 
 /* COMPONENT   ---------------------------------------------------------------------------- */
 import initPagination from "../component/pagination";
+
+/* VAR        ----------------------------------------------------------------------------- */
+let render = await async_render();
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
