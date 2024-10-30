@@ -27,8 +27,9 @@ export default function (error) {
 
 window.addEventListener("unhandledrejection", function (event) {
   event.preventDefault();
-  console.log(event.reason);
   event.promise.catch((result) => {
+    // webpack sourcemap似乎沒辦法對result映射，必須使用event.reason
+    const reason = event.reason;
     let msg = "window.addEventListener(unhandledrejection)捕獲錯誤事件\n";
     let { model, _checked } = result;
     /**
@@ -41,12 +42,14 @@ window.addEventListener("unhandledrejection", function (event) {
       if (process.env.isProd) {
         location.reload();
       } else {
-        console.error(`${msg}Event.reason:`, event.reason);
+        alert(`${msg}請參考console.error`);
+        console.error(`${msg}Event.reason:\n`, reason);
       }
     } else if (model) {
       //  來自axios Error
       if (!process.env.isProd) {
-        console.error(`${msg}error.model:`, model);
+        alert(`${msg}請參考console.error`);
+        console.error(`${msg}error.model:\n`, model);
       } else {
         location.reload();
       }
@@ -57,21 +60,24 @@ window.addEventListener("unhandledrejection", function (event) {
        */
       try {
         //  處理1)
-        let model = JSON.parse(result.message);
-        let stack = result.stack;
-        console.error(`${msg}model:`, model, `\nstack: ${stack}`);
-        // 後端響應請求需要登入權限
-        process.env.isProd && redir.check_login();
-        return;
+        if (!process.env.isProd) {
+          let model = JSON.parse(result.message);
+          console.error(`${msg}model:\n`, model, `\nEvent.reason:\n`, reason);
+          alert(`${msg}請參考console.error`);
+        } else {
+          // 後端響應請求需要登入權限
+          process.env.isProd && redir.check_login();
+        }
       } catch (e) {
         //  處理2)
-        console.error(`${msg}result:`, result);
-        if (process.env.isProd) {
-          msg = "發生未知錯誤，頁面將自動重整";
+        if (!process.env.isProd) {
+          console.error(`${msg}\nEvent.reason:\n`, reason);
+          alert(`${msg}請參考console.error`);
+        } else {
+          alert("發生未知錯誤，頁面將自動重整");
           // 需再作回報後端處理
           location.reload();
         }
-        alert(msg);
       }
     }
   });

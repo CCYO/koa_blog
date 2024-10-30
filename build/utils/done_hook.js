@@ -36,7 +36,7 @@ function create_nginx_error_pages() {
       resolve(__dirname, `../../server/assets/html/${code}.html`),
       ejs.render(template, {
         filename: `${code}.html`,
-        active: FRONTEND_CONST.ERR_PAGE.ACTIVE._,
+        active: FRONTEND_CONST.ERR_PAGE.ACTIVE.NGINX,
         page: FRONTEND_CONST.ERR_PAGE.PAGE_NAME,
         login: false,
         errModel,
