@@ -136,7 +136,7 @@ async function initMain() {
     const { alt } = G.data.map_imgs.get(alt_id);
     //  使 modal 的 input 呈現當前照片名稱
     jq_input_alt.val(alt);
-    el_input_alt.placeholder = alt;
+    el_input_alt.placeholder = alt ? alt : "";
   }
 
   //  顯示modal
