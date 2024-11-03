@@ -139,21 +139,26 @@ async function initMain() {
       let data = payload[prop];
       formData.append(prop, data);
     }
-    let { data } = await G.utils.axios.patch(api, formData);
+    let { errno, data, msg } = await G.utils.axios.patch(api, formData);
+    if (!errno) {
+      for (let prop in data) {
+        G.data.me[prop] = data[prop];
+        let el_input = document.querySelector(`[name=${prop}]`);
+        if (!el_input || !data[prop]) {
+          continue;
+        }
+        el_input.validated = false;
+        el_input.placeholder = data[prop];
+      }
+      // G.utils.lock.check_submit();
+      alert("資料更新完成");
+    } else {
+      alert(msg);
+    }
     el_origin_password.value = "";
     formFeedback.reset(jq_settingForm[0]);
     G.utils.lock.clear();
-    for (let prop in data) {
-      G.data.me[prop] = data[prop];
-      let el_input = document.querySelector(`[name=${prop}]`);
-      if (!el_input || !data[prop]) {
-        continue;
-      }
-      el_input.validated = false;
-      el_input.placeholder = data[prop];
-    }
     G.utils.lock.check_submit();
-    alert("資料更新完成");
   }
   //  重新選擇要上傳的頭像
   function handle_resetAvatar(e) {

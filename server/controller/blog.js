@@ -183,6 +183,14 @@ async function modify({ blog_id, author_id, ...blog_data }) {
   let opts = { data, cache };
   return new SuccModel(opts);
 }
+
+/**
+ * @description add blog img
+ * @param {Object} param0
+ * @param {Number} param0.author_id author id
+ * @param {Object} param0.data { blog_id, hash, url, [img_id, blogImg_id]}
+ * @returns {Promise<SuccModel>}
+ */
 async function addImg({ author_id, ...data }) {
   let { blog_id } = data;
   let alt_id = await _getAltId(data);
@@ -270,6 +278,14 @@ async function removeList({ blogList, author_id }) {
   return new SuccModel(opts);
 }
 
+/**
+ * @description find data of square pagination
+ * @param {Object} opts
+ * @param {Number} opts.user_id blog author_id
+ * @param {Number} opts.offset pagination offset
+ * @param {Number} opts.limit how many blogs in per pagination
+ * @returns {Promise<SuccModel>}
+ */
 async function findListAndCountOfSquare(opts) {
   //  opts { user_id, offset, limit }
   //  data {list, count}
@@ -282,6 +298,15 @@ async function findListAndCountOfSquare(opts) {
   return new SuccModel({ data });
 }
 
+/**
+ * @description find data of album pagination
+ * @param {Object} opts
+ * @param {Number} opts.author_id blog author_id
+ * @param {Boolean} opts.show blog status
+ * @param {Number} opts.offset pagination offset
+ * @param {Number} opts.limit how many albums in per pagination
+ * @returns {Promise<SuccModel>}
+ */
 async function findListAndCountOfAlbum(opts) {
   // opts {author_id, show, offset, limit}
   let public = false;
@@ -307,6 +332,16 @@ async function findListAndCountOfAlbum(opts) {
   }
   return new SuccModel({ data });
 }
+
+/**
+ * @description find data of blog list
+ * @param {Object} opts
+ * @param {Number} opts.author_id blog author_id
+ * @param {Boolean} opts.show blog status
+ * @param {Number} opts.offset pagination offset
+ * @param {Number} opts.limit how many blogs in per pagination
+ * @returns {Promise<SuccModel>}
+ */
 async function findListAndCount(opts) {
   //  opts { author_id, show, offset, limit }
   //  data {list, count}
@@ -383,15 +418,9 @@ module.exports = {
 };
 async function _removeImgList(cancelImgs) {
   //  cancelImgs [ { blogImg_id, blogImgAlt_list: [alt_id, ...] }, ...]
-  // try {
-  //  確認blog_id是否真為author_id所有
   await Promise.all(cancelImgs.map(_removeImg));
-  // let opts = undefined;
-  // if (!ENV.isNoCache) {
-  //   opts = { [CACHE.TYPE.PAGE.BLOG]: [blog_id] };
-  // }
-  // return new SuccModel(opts);
   return new SuccModel();
+
   async function _removeImg({ blogImg_id, blogImgAlt_list }) {
     //  找到blog內，指定的blogImgAlt有幾筆
     let resModel = await C_BlogImg.countBlogImgAlt(blogImg_id);

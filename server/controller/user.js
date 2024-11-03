@@ -15,7 +15,6 @@ const {
     STATUS,
   },
 } = require("../config");
-const { ArticleReader } = require("../db/mysql/model");
 
 /** 確認信箱是否已被註冊
  * @param {string} email 信箱
@@ -111,9 +110,7 @@ async function follow({ fans_id, idol_id }) {
     await User.createIdol({ fans_id, idol_id });
     cache = { [NEWS]: [idol_id] };
   }
-  // cache = { [NEWS]: [idol_id] };
   // 初次追蹤才需通知
-  // let cache = data ? {} : { [NEWS]: [idol_id] };
   if (!ENV.isNoCache) {
     cache[PAGE.USER] = [fans_id, idol_id];
   }
@@ -326,7 +323,6 @@ async function _findInfoForFollowIdol({ fans_id, idol_id }) {
   } else {
     cache[NEWS].push(idol_id);
   }
-  // let articleReaders = articles.map(({ ArticleReader }) => ArticleReader.id);
 
   let articleReaders = [];
   for (let article of articles) {

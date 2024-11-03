@@ -36,7 +36,6 @@ async function readMore({ user_id, excepts }) {
   if (!excepts) {
     excepts = { idolFans: [], articleReader: [], msgReceiver: [], total: 0 };
   }
-  // let list = { confirm: [], unconfirm: [] };
   let list = [];
   //  目前news總數，其中有無確認過的又各有多少
   //  num { unconfirm, confirm, total }

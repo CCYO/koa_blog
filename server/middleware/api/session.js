@@ -1,8 +1,9 @@
 const _ws = require("../../utils/ws");
 const C_CacheNews = require("../../controller/cache_news");
 const { log } = require("../../utils/log");
-const { SuccModel } = require("../../utils/model");
+const { SuccModel, ErrModel } = require("../../utils/model");
 const BACKEND = require("../../config");
+const { ERR_RES } = require("../../config");
 
 const SESSION_NEWS = () => ({
   //  若是設定 undefined，經過JSON.stringify會被刪除
@@ -12,6 +13,10 @@ const SESSION_NEWS = () => ({
 });
 //  reset session
 async function reset(ctx, next) {
+  if (ctx.session.user.id === 3) {
+    ctx.body = new ErrModel(ERR_RES.USER.UPDATE.NOT_ALLOW_FOR_EMPLOYER);
+    return;
+  }
   await next();
   let { data } = ctx.body;
   log(`重設 user/${data.id} 的 session`);

@@ -37,6 +37,10 @@
     "AJV_SETTING": {
       "errno": 30191,
       "msg": "setting數據不符校驗"
+    },
+    "NOT_ALLOW_FOR_EMPLOYER": {
+      "errno": 30106,
+      "msg": "感謝您的測試，但測試用帳號不會真的修改您填入的資訊唷：)"
     }
   },
   "READ": {
