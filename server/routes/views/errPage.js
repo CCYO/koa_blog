@@ -40,6 +40,7 @@ router.get("/permission/:errno", async (ctx) => {
       break;
     case ERR_RES.BLOG.READ.NO_ALBUM.errno:
       opts.errModel = new ErrModel(ERR_RES.BLOG.READ.NO_ALBUM);
+      break;
     default:
       return ctx.redirect(
         `/permission/${ERR_RES.SERVER.RESPONSE.ERR_404.errno}`

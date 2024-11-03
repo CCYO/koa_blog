@@ -319,7 +319,7 @@ async function findAlbum({ author_id, blog_id }) {
     return resModel;
   }
   let data = await Blog.read(Opts.BLOG.FIND.album(blog_id));
-  if (data) {
+  if (data && data.imgs.length) {
     return new SuccModel({ data });
   } else {
     return new ErrModel(ERR_RES.BLOG.READ.NO_ALBUM);

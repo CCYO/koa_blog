@@ -7,6 +7,9 @@ import G from "../common";
 /* UTILS      ----------------------------------------------------------------------------- */
 import { errorHandle } from "../utils";
 
+/* Config     ----------------------------------------------------------------------------- */
+// import { ERR_PAGE } from "@config/frontend_esm";
+import FRONTEND from "@config/frontend_esm";
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
   await G.initPage(initMain);
@@ -15,6 +18,7 @@ try {
 }
 
 async function initMain() {
+  showErrorCode();
   // 網址自動跳轉
   document.addEventListener("initPage", redir);
 
@@ -40,5 +44,12 @@ async function initMain() {
     process.env.isProd &&
       !errorFromNginx &&
       setTimeout(() => location.replace(target), 5000);
+  }
+  function showErrorCode() {
+    let { code, msg } = new Map(Object.entries(FRONTEND.ERR_PAGE.ERRNO)).get(
+      G.data.errModel.errno.toString()
+    );
+    $("#code").text(code);
+    $("#msg").text(msg);
   }
 }

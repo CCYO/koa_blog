@@ -3,8 +3,17 @@ import FRONTEND_CONST from "./const/frontend.json";
 import PATTERN from "./const/pattern.json";
 import ERR_SERVER_RES from "./const/errRes/server.json";
 import ERR_NEWS_RES from "./const/errRes/news.json";
+import ERR_USER_RES from "./const/errRes/user.json";
+import ERR_BLOG_RES from "./const/errRes/blog.json";
+import ERR_COMMENT_RES from "./const/errRes/comment.json";
 
-const ERR_RES = { SERVER: ERR_SERVER_RES, NEWS: ERR_NEWS_RES };
+const ERR_RES = {
+  SERVER: ERR_SERVER_RES,
+  NEWS: ERR_NEWS_RES,
+  USER: ERR_USER_RES,
+  BLOG: ERR_BLOG_RES,
+  COMMENT: ERR_COMMENT_RES,
+};
 
 export default genFRONTEND_CONFIG(
   FRONTEND_CONST,
@@ -14,6 +23,45 @@ export default genFRONTEND_CONFIG(
 );
 
 function genFRONTEND_CONFIG(FRONTEND_CONST, SERVER_CONST, PATTERN, ERR_RES) {
+  // ERR_PAGE
+  FRONTEND_CONST.ERR_PAGE.ERRNO = {
+    [ERR_RES.SERVER.RESPONSE.ERR_500.errno]: {
+      code: 500,
+      msg: ERR_RES.SERVER.RESPONSE.ERR_500.msg,
+    },
+    [ERR_RES.SERVER.RESPONSE.ERR_504.errno]: {
+      code: 504,
+      msg: ERR_RES.SERVER.RESPONSE.ERR_504.msg,
+    },
+    [ERR_RES.SERVER.RESPONSE.ERR_404.errno]: {
+      code: 404,
+      msg: ERR_RES.SERVER.RESPONSE.ERR_404.msg,
+    },
+    [ERR_RES.NEWS.READ.NOT_EXIST.errno]: {
+      code: "...",
+      msg: ERR_RES.NEWS.READ.NOT_EXIST.msg,
+    },
+    [ERR_RES.USER.READ.NO_DATA.errno]: {
+      code: "...",
+      msg: ERR_RES.USER.READ.NO_DATA.msg,
+    },
+    [ERR_RES.BLOG.READ.NOT_EXIST.errno]: {
+      code: "...",
+      msg: ERR_RES.BLOG.READ.NOT_EXIST.msg,
+    },
+    [ERR_RES.BLOG.READ.NOT_AUTHOR.errno]: {
+      code: "...",
+      msg: ERR_RES.BLOG.READ.NOT_AUTHOR.msg,
+    },
+    [ERR_RES.COMMENT.READ.NOT_EXIST.errno]: {
+      code: "...",
+      msg: ERR_RES.COMMENT.READ.NOT_EXIST.msg,
+    },
+    [ERR_RES.BLOG.READ.NO_ALBUM.errno]: {
+      code: "...",
+      msg: ERR_RES.BLOG.READ.NO_ALBUM.msg,
+    },
+  };
   // NAVBAR
   FRONTEND_CONST.NAVBAR = {
     NEWS: {

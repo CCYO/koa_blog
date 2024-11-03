@@ -5,20 +5,19 @@ const FRONTEND_CONST = require("../../src/config/const/frontend.json");
 const WEBPACK_CONFIG = require("../config");
 const isProd = process.env.NODE_ENV === "production";
 const NGINX_ERR_RES = [
+  // 404
   {
-    code: 500,
+    status: "notFound",
+    errModel: { errno: 99902, msg: "頁面不存在" },
+  },
+  // 500 - 503
+  {
+    status: "serverErr",
     errModel: { errno: 99900, msg: "伺服器錯誤" },
   },
+  // 504
   {
-    code: 502,
-    errModel: { errno: 99900, msg: "伺服器502錯誤" },
-  },
-  {
-    code: 503,
-    errModel: { errno: 99901, msg: "伺服器503超時" },
-  },
-  {
-    code: 504,
+    status: "timeout",
     errModel: { errno: 99901, msg: "伺服器回應超時" },
   },
 ];
@@ -39,12 +38,12 @@ function create_nginx_error_pages() {
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);
   }
-  for (let { code, errModel } of NGINX_ERR_RES) {
+  for (let { status, errModel } of NGINX_ERR_RES) {
     fs.writeFileSync(
       // resolve(__dirname, `../../server/assets/html/${code}.html`),
-      resolve(folder, `./${code}.html`),
+      resolve(folder, `./${status}.html`),
       ejs.render(template, {
-        filename: `${code}.html`,
+        filename: `${status}.html`,
         active: FRONTEND_CONST.ERR_PAGE.ACTIVE.NGINX,
         page: FRONTEND_CONST.ERR_PAGE.PAGE_NAME,
         login: false,
