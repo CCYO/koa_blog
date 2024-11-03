@@ -103,7 +103,7 @@ async function initMain() {
   $("#preview").on("click", preview);
 
   //  預覽文章
-  async function preview(e) {
+  async function preview() {
     // 取得當前 title
     let title = G.utils.lock.get("title");
     if (!title) {
@@ -172,10 +172,6 @@ async function initMain() {
     if (!result.valid) {
       throw new Error(JSON.stringify(result));
     }
-    // 作為event_handle才詢問預覽
-    if (e instanceof Event && confirm("儲存成功！是否預覽？（新開視窗）")) {
-      window.open(`/blog/preview/${G.data.blog.id}`);
-    }
     payload.blog_id = G.data.blog.id;
     let { errno, data } = await G.utils.axios.patch(
       G.constant.API.UPDATE_BLOG,
@@ -217,7 +213,14 @@ async function initMain() {
     }
     G.utils.lock.clear();
     G.utils.lock.check_submit();
-    alert("文章已更新");
+
+    if (
+      e &&
+      e.type === "click" &&
+      confirm("儲存成功！是否預覽？（新開視窗）")
+    ) {
+      preview();
+    }
     return;
   }
 
