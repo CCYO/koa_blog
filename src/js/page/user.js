@@ -231,9 +231,17 @@ async function initMain() {
       if (!redir.check_login(G)) {
         return;
       }
-      await G.utils.axios.post(G.constant.API.CANCEL_FOLLOW, {
-        id: G.data.currentUser.id,
-      });
+      let { errno, msg } = await G.utils.axios.post(
+        G.constant.API.CANCEL_FOLLOW,
+        {
+          id: G.data.currentUser.id,
+        }
+      );
+      if (errno) {
+        // 針對employer，限制取消
+        alert(msg);
+        return;
+      }
       G.data.relationShip.fansList.splice(
         G.data.relationShip.fansList.indexOf(G.data.me.id),
         1

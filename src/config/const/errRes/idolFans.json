@@ -7,6 +7,10 @@
       "ROW_ERR": {
           "errno": 20701,
           "msg": "刪除 IdolFans 的數量不完全"
+      },
+      "NOT_ALLOW_FOR_EMPLOYER": {
+        "errno": 20702,
+        "msg": "感謝您的測試，但礙於測試目的，限制了對我的取消追蹤：）"
       }
   },
   "UPDATE": {

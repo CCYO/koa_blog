@@ -136,18 +136,18 @@ export default class {
       ws.onclose = async (event) => {
         !process.env.isProd &&
           console.log(`ws close \ncode:${event.code}\nreason:${event.reason}`);
-        if (event.code === FRONTEND.NAVBAR.NEWS.WS.CLOSE_CODE) {
+        if (event.code >= FRONTEND.NAVBAR.NEWS.WS.CLOSE.EMPLOYER_ID.CODE) {
           if (!document.hidden) {
-            logout();
+            logout(event.reason);
           } else {
             ins_news.ws_cb = () => {
               ins_news.ws_cb = undefined;
-              logout();
+              logout(event.reason);
             };
           }
         }
-        function logout() {
-          alert("強迫登出，因為你已在其他設備登入");
+        function logout(reason) {
+          alert(reason);
           location.href = "/login";
           return;
         }

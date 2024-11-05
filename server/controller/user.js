@@ -8,6 +8,7 @@ const C_ArticleReader = require("./articleReader");
 const Opts = require("../utils/seq_options");
 const { ErrModel, SuccModel, MyErr } = require("../utils/model");
 const {
+  ME,
   ENV,
   ERR_RES,
   CACHE: {
@@ -45,7 +46,7 @@ async function register({ email, password }) {
   const data = await User.create(Opts.USER.CREATE.one({ email, password }));
   let opts = { data };
   let { id: user_id } = data;
-  if (user_id !== 1) {
+  if (user_id !== ME.ID) {
     // 註冊為我的求職文章追蹤者
     await C_ArticleReader.addEmployerBeReader(user_id);
     // 註冊為我的偶像

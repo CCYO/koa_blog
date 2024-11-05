@@ -1,9 +1,7 @@
-const _ws = require("../../utils/ws");
 const C_CacheNews = require("../../controller/cache_news");
 const { log } = require("../../utils/log");
-const { SuccModel, ErrModel } = require("../../utils/model");
+const { SuccModel } = require("../../utils/model");
 const BACKEND = require("../../config");
-const { ERR_RES } = require("../../config");
 
 const SESSION_NEWS = () => ({
   //  若是設定 undefined，經過JSON.stringify會被刪除
@@ -13,20 +11,15 @@ const SESSION_NEWS = () => ({
 });
 //  reset session
 async function reset(ctx, next) {
-  if (ctx.session.user.id === 3) {
-    ctx.body = new ErrModel(ERR_RES.USER.UPDATE.NOT_ALLOW_FOR_EMPLOYER);
-    return;
-  }
   await next();
   let { data } = ctx.body;
   log(`重設 user/${data.id} 的 session`);
   ctx.session.user = { ...data, news: ctx.session.user.news };
 }
 //  remove session
-async function remove(ctx) {
+async function remove(ctx, next) {
+  await next();
   let user_id = ctx.session.user.id;
-  // 關閉ws
-  _ws.close(ctx);
   ctx.session = null;
   log(`移除 使用者user_id:${user_id} 的 session`);
   ctx.body = new SuccModel({ data: "成功登出" });
@@ -38,7 +31,6 @@ async function set(ctx, next) {
   if (errno || ctx.session.user) {
     return;
   }
-  await _ws.close_same_id(data.id);
   ctx.session.user = {
     ...data,
     news: SESSION_NEWS(),

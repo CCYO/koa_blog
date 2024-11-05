@@ -28,7 +28,7 @@ const { session_middleware } = require("./db/redis");
 //  middleware:sequelize transaction
 const sequelizeTransaction = require("./middleware/api/seq_transaction");
 //  middleware:ws
-const ws_middleware = require("./middleware/ws");
+const { ws_middleware } = require("./middleware/ws");
 const router = require("./routes");
 const { MyErr } = require("./utils/model");
 

@@ -10,7 +10,9 @@ const {
   CHECK,
   CACHE,
   FIREBASE,
+  EMPLOYER,
 } = require("../../middleware/api");
+const WS = require("../../middleware/ws");
 const User = require("../../controller/user");
 
 router.prefix("/api/user");
@@ -21,6 +23,7 @@ router.prefix("/api/user");
 router.patch(
   "/",
   CHECK.login,
+  EMPLOYER.prohibit_setting,
   SESSION.reset,
   CACHE.modify,
   FIREBASE.userAvatar,
@@ -44,13 +47,19 @@ router.post("/confirmPassword", CHECK.login, async (ctx) => {
 /**
  * @description cancel follow idol
  */
-router.post("/cancelFollow", CHECK.login, CACHE.modify, async (ctx) => {
-  let opts = {
-    idol_id: ctx.request.body.id,
-    fans_id: ctx.session.user.id,
-  };
-  ctx.body = await User.cancelFollow(opts);
-});
+router.post(
+  "/cancelFollow",
+  CHECK.login,
+  EMPLOYER.prohibit_cancel_Follow_me,
+  CACHE.modify,
+  async (ctx) => {
+    let opts = {
+      idol_id: ctx.request.body.id,
+      fans_id: ctx.session.user.id,
+    };
+    ctx.body = await User.cancelFollow(opts);
+  }
+);
 
 /**
  * @description follow idol
@@ -80,13 +89,20 @@ router.post("/register", VALIDATE.USER, async (ctx) => {
 /**
  * @description  login
  */
-router.post("/", SESSION.set, VALIDATE.USER, async (ctx) => {
-  ctx.body = await User.login(ctx.request.body);
-});
+router.post(
+  "/",
+  EMPLOYER.resetNews,
+  SESSION.set,
+  WS.close_same_id,
+  VALIDATE.USER,
+  async (ctx) => {
+    ctx.body = await User.login(ctx.request.body);
+  }
+);
 
 /**
  * @description  logout
  */
-router.get("/logout", CHECK.login, SESSION.remove);
+router.get("/logout", CHECK.login, SESSION.remove, WS.close);
 
 module.exports = router;

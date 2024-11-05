@@ -108,8 +108,29 @@
     "REDIR_FROM": "from"
   },
   "WS": {
-    "CLOSE_CODE": 4444,
+    "CLOSE": {
+      "EMPLOYER_ID": {
+        "CODE": 4000,
+        "REASON": "不好意思，有其他測試帳號登入，請您稍後再試，或是直接註冊/登入，謝謝您。"
+      },
+      "SOME_ID": {
+        "CODE": 4001,
+        "REASON": "強迫登出，因為其他設備有重複登入。"
+      }
+    },
     "HAS_UNCONFIRM": 0,
     "HAS_CONFIRM": 1
+  },
+  "DB": {
+    "COOKIE_KEY": "koa_blog.sid",
+    "REDIS_PREFIX": "koa_blog.sid:"
+  },
+  "EMPLOYER": {
+    "ID": 3,
+    "ARICLE_READER_ID": 12,
+    "IDOL_FANS_ID": 3
+  },
+  "ME": {
+    "ID": 1
   }
 }
