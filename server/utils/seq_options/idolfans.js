@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const _RESTORE = require("./_restore");
 const _REMOVE = require("./_remove");
 
@@ -9,7 +10,18 @@ const REMOVE = {
   list: _REMOVE.list,
 };
 
+const UPDATE = {
+  modify: (id) => ({
+    where: { id },
+  }),
+  reFollow: (id_list) => ({
+    where: { id: { [Op.in]: id_list } },
+    paranoid: false, //  無視軟刪除
+  }),
+};
+
 module.exports = {
+  UPDATE,
   REMOVE,
   RESTORE,
 };

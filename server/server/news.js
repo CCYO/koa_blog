@@ -25,9 +25,9 @@ async function readList({ user_id, excepts }) {
         "";
     }
     return `
-    SELECT type, id, target_id, follow_id, confirm, createdAt
+    SELECT type, id, target_id, follow_id, confirm, createdAt, updatedAt
     FROM (
-        SELECT ${QUERY_NEWS.TYPE.IDOL_FANS} as type, id , idol_id as target_id , fans_id as follow_id, confirm, createdAt
+        SELECT ${QUERY_NEWS.TYPE.IDOL_FANS} as type, id , idol_id as target_id , fans_id as follow_id, confirm, createdAt, updatedAt
         FROM IdolFans
         WHERE 
             idol_id=${user_id}
@@ -36,7 +36,7 @@ async function readList({ user_id, excepts }) {
   
         UNION
   
-        SELECT ${QUERY_NEWS.TYPE.ARTICLE_READER} as type, id, article_id as target_id, reader_id as follow_id, confirm, createdAt 
+        SELECT ${QUERY_NEWS.TYPE.ARTICLE_READER} as type, id, article_id as target_id, reader_id as follow_id, confirm, createdAt, updatedAt 
         FROM ArticleReaders
         WHERE 
             reader_id=${user_id}
@@ -45,7 +45,7 @@ async function readList({ user_id, excepts }) {
   
         UNION
   
-        SELECT ${QUERY_NEWS.TYPE.MSG_RECEIVER} as type, id, msg_id as target_id, receiver_id as follow_id, confirm, createdAt 
+        SELECT ${QUERY_NEWS.TYPE.MSG_RECEIVER} as type, id, msg_id as target_id, receiver_id as follow_id, confirm, createdAt, updatedAt 
         FROM MsgReceivers
         WHERE 
             receiver_id=${user_id}
@@ -53,7 +53,7 @@ async function readList({ user_id, excepts }) {
             ${list.msgReceiver}
   
     ) AS table_dual
-    ORDER BY confirm, createdAt DESC
+    ORDER BY confirm, updatedAt DESC
     LIMIT ${QUERY_NEWS.LIMIT}
     `;
   }

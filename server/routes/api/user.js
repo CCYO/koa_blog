@@ -92,8 +92,8 @@ router.post("/register", VALIDATE.USER, async (ctx) => {
 router.post(
   "/",
   EMPLOYER.resetNews,
-  SESSION.set,
   WS.close_same_id,
+  SESSION.set,
   VALIDATE.USER,
   async (ctx) => {
     ctx.body = await User.login(ctx.request.body);

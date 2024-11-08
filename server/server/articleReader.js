@@ -28,11 +28,9 @@ async function destroyList(opts) {
   }
 }
 
-async function update(id, newData) {
+async function update(opts, newData) {
   try {
-    let [row] = await ArticleReader.update(newData, {
-      where: { id },
-    });
+    let [row] = await ArticleReader.update(newData, opts);
     return row;
   } catch (error) {
     throw new MyErr({ ...ERR_RES.ARTICLE_READER.UPDATE.ERR, error });

@@ -4,20 +4,13 @@
 /* NPM        ----------------------------------------------------------------------------- */
 const router = require("koa-router")();
 /* UTILS      ----------------------------------------------------------------------------- */
-const _ws = require("../../utils/ws");
+const WS = require("../../middleware/ws");
 
 router.prefix("/ws");
 
 /**
  * @description 開啟ws連線
  */
-router.get("/", async (ctx) => {
-  if (!ctx.ws) {
-    ctx.status = 404;
-    return;
-  }
-  ctx.ws = await ctx.ws();
-  _ws.init(ctx);
-});
+router.get("/", WS.close_same_id, WS.init);
 
 module.exports = router;

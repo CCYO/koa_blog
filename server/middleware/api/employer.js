@@ -24,10 +24,10 @@ async function resetNews(ctx, next) {
   if (ctx.body.errno || ctx.session.user.id !== EMPLOYER.ID) {
     return;
   }
-  await C_articleReader.modify(EMPLOYER.ARICLE_READER.ID, {
+  await C_articleReader.modify(EMPLOYER.ARICLE_READER_ID, {
     confirm: false,
   });
-  await C_idolFans.modify(EMPLOYER.IDOL_FANS.ID, {
+  await C_idolFans.modify(EMPLOYER.IDOL_FANS_ID, {
     confirm: false,
   });
 }

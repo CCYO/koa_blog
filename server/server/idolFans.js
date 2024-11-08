@@ -23,11 +23,9 @@ async function deleteList(opts) {
   }
 }
 
-async function update(id, newData) {
+async function update(opts, newData) {
   try {
-    let [row] = await IdolFans.update(newData, {
-      where: { id },
-    });
+    let [row] = await IdolFans.update(newData, opts);
     return row;
   } catch (error) {
     throw new MyErr({ ...ERR_RES.IDOL_FANS.UPDATE.ERR, error });

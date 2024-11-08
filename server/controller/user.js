@@ -12,7 +12,7 @@ const {
   ENV,
   ERR_RES,
   CACHE: {
-    TYPE: { PAGE, NEWS, WS },
+    TYPE: { PAGE, NEWS, NEWS_RESTORY },
     STATUS,
   },
 } = require("../config");
@@ -51,7 +51,7 @@ async function register({ email, password }) {
     await C_ArticleReader.addEmployerBeReader(user_id);
     // 註冊為我的偶像
     await follow({ fans_id: 1, idol_id: user_id });
-    opts.cache = { NEWS: [user_id], [PAGE.USER]: [1] };
+    opts.cache = { [NEWS]: [user_id], [PAGE.USER]: [1] };
   }
 
   return new SuccModel(opts);
@@ -99,13 +99,18 @@ async function follow({ fans_id, idol_id }) {
   });
   let cache;
   if (info.data) {
+    cache = info.cache;
     ////  非初次follow
     let { idolFans, articleReaders } = info.data;
-    //  恢復 idolFans 軟刪除狀態
-    await C_IdolFans.restoringList([idolFans]);
+    if (cache[NEWS_RESTORY].length) {
+      //  恢復 idolFans 軟刪除狀態 + 更新updatedAt
+      await C_IdolFans.reFollow([idolFans]);
+    } else {
+      //  恢復 idolFans 軟刪除狀態
+      await C_IdolFans.restoringList([idolFans]);
+    }
     //  恢復 articleReader 軟刪除狀態
     await C_ArticleReader.restoringList(articleReaders);
-    cache = info.cache;
   } else {
     ////  初次追蹤
     await User.createIdol({ fans_id, idol_id });
@@ -211,7 +216,7 @@ async function confirmNews({ idol_id, idolFans_id }) {
     //  譬如fans已退追，但newsCache不會針對退追做更新，故idol可能在session.news中取得已被刪除的idolFans_id
     return new ErrModel({
       ...ERR_RES.NEWS.READ.NOT_EXIST,
-      [NEWS]: [idol_id],
+      cache: { [NEWS]: [idol_id] },
     });
   }
   let fans = idol.fansList[0];
@@ -317,22 +322,21 @@ async function _findInfoForFollowIdol({ fans_id, idol_id }) {
   if (!idols.length) {
     return new SuccModel();
   }
-  let cache = { [WS]: [], [NEWS]: [] };
+  let cache = { [NEWS_RESTORY]: [], [NEWS]: [] };
   let idolFans = idols[0].IdolFans.id;
   if (idols[0].IdolFans.confirm) {
-    cache[WS].push(idol_id);
+    cache[NEWS_RESTORY].push(idol_id);
   } else {
     cache[NEWS].push(idol_id);
   }
-
   let articleReaders = [];
-  for (let article of articles) {
-    let { id } = article.ArticleReader;
-    //  無論有沒有讀過，僅已[WS]通知，不納入[NEWS]通知
-    if (!cache[WS].length) {
-      cache[WS].push(idol_id);
+  if (articles.length) {
+    //  無論有沒有讀過，僅已[NEWS_RESTORY]通知，不納入[NEWS]通知
+    cache[NEWS_RESTORY].push(fans_id);
+    for (let article of articles) {
+      let { id } = article.ArticleReader;
+      articleReaders.push(id);
     }
-    articleReaders.push(id);
   }
   let data = { idolFans, articleReaders };
   return new SuccModel({ data, cache });

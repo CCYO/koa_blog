@@ -69,9 +69,13 @@ async function _findThroughData(newsList) {
   return res;
 
   async function _findNews(news) {
-    let { type, id, target_id, follow_id, confirm, createdAt } = news;
+    let { type, id, target_id, follow_id, confirm, createdAt, updatedAt } =
+      news;
     //  序列化時間數據
-    let timestamp = dayjs.utc(createdAt).utcOffset(8).format(NEWS.TIME_FORMAT);
+    let timestamp = dayjs
+      .utc(QUERY_NEWS.TYPE.MSG_RECEIVER ? createdAt : updatedAt)
+      .utcOffset(8)
+      .format(NEWS.TIME_FORMAT);
     //  結果的預設值
     let res = { type, id, timestamp, confirm };
     if (type === QUERY_NEWS.TYPE.IDOL_FANS) {

@@ -14,7 +14,7 @@ async function modify(ctx, next) {
     if (!list.length) {
       continue;
     }
-    if (type === CACHE.TYPE.WS) {
+    if (type === CACHE.TYPE.NEWS_RESTORY) {
       _ws.broadcast_news(list, WS.HAS_CONFIRM);
     } else if (type === CACHE.TYPE.NEWS) {
       //  提醒使用者的通知數據有變動，要重新從DB讀取

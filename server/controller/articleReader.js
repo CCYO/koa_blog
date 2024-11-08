@@ -9,6 +9,20 @@ const { MyErr, SuccModel } = require("../utils/model");
 /* CONFIG     ----------------------------------------------------------------------------- */
 const { ERR_RES } = require("../config");
 
+async function reShowArticle(id_list) {
+  let row = await ArticleReader.update(
+    Opts.ARTICLE_READER.UPDATE.reShowArticle(id_list),
+    {
+      deletedAt: null,
+      updatedAt: new Date(),
+    }
+  );
+  if (row !== id_list.length) {
+    throw new MyErr(ERR_RES.ARTICLE_READER.UPDATE.ERR_ROW);
+  }
+  return new SuccModel();
+}
+
 /**
  * @description restory articleReader list
  * @param {Array<number>} id_list articelReader id list
@@ -46,7 +60,10 @@ async function removeList(id_list) {
  * @returns SuccModel || throw MyErr
  */
 async function modify(id, newData) {
-  let row = await ArticleReader.update(id, newData);
+  let row = await ArticleReader.update(
+    Opts.ARTICLE_READER.UPDATE.modify(id),
+    newData
+  );
   if (!row) {
     throw new MyErr({
       ...ERR_RES.ARTICLE_READER.UPDATE.ERR_ROW,
@@ -73,4 +90,5 @@ module.exports = {
   modify,
   removeList,
   restoringList,
+  reShowArticle,
 };

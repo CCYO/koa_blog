@@ -138,17 +138,19 @@ async function modify({ blog_id, author_id, ...blog_data }) {
         ...res_reader.cache[CACHE.TYPE.NEWS],
         ...res_comment.cache[CACHE.TYPE.NEWS],
       ]);
-      cache[CACHE.TYPE.WS] = new Set([
-        ...res_reader.cache[CACHE.TYPE.WS],
-        ...res_comment.cache[CACHE.TYPE.WS],
+      cache[CACHE.TYPE.NEWS_RESTORY] = new Set([
+        ...res_reader.cache[CACHE.TYPE.NEWS_RESTORY],
+        ...res_comment.cache[CACHE.TYPE.NEWS_RESTORY],
       ]);
-      for (let id of cache[CACHE.TYPE.WS]) {
+      for (let id of cache[CACHE.TYPE.NEWS_RESTORY]) {
         if (cache[CACHE.TYPE.NEWS].has(id)) {
-          cache[CACHE.TYPE.WS].delete(id);
+          cache[CACHE.TYPE.NEWS_RESTORY].delete(id);
         }
       }
       cache[CACHE.TYPE.NEWS] = Array.from(cache[CACHE.TYPE.NEWS]);
-      cache[CACHE.TYPE.WS] = Array.from(cache[CACHE.TYPE.WS]);
+      cache[CACHE.TYPE.NEWS_RESTORY] = Array.from(
+        cache[CACHE.TYPE.NEWS_RESTORY]
+      );
     } else {
       newData.showAt = null;
       // 軟刪除reader
@@ -482,7 +484,7 @@ async function _addReadersFromFans(blog_id) {
     .map(({ id }) => id);
 
   if (articleReaders.length) {
-    await C_ArticleReader.restoringList(articleReaders);
+    await C_ArticleReader.reShowArticle(articleReaders);
   }
   if (fansList.length) {
     await Blog.createReaders(blog_id, fansList);
@@ -490,7 +492,7 @@ async function _addReadersFromFans(blog_id) {
   let data = [...fansList, ...readers];
   let cache = {
     [CACHE.TYPE.NEWS]: [...unconfirm_list, ...fansList],
-    [CACHE.TYPE.WS]: confirm_list,
+    [CACHE.TYPE.NEWS_RESTORY]: confirm_list,
   };
   return new SuccModel({ data, cache });
 }

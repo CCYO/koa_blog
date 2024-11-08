@@ -151,10 +151,9 @@ async function initMain() {
         el_input.placeholder = data[prop];
       }
       // G.utils.lock.check_submit();
-      alert("資料更新完成");
-    } else {
-      alert(msg);
+      msg = "資料更新完成";
     }
+    alert(msg);
     el_origin_password.value = "";
     formFeedback.reset(jq_settingForm[0]);
     G.utils.lock.clear();

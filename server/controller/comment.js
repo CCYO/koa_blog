@@ -427,7 +427,7 @@ async function restoryReceiver(article_id) {
   await C_MsgReceiver.restoryList(msgReceiver_id_list);
   let cache = {
     [CACHE.TYPE.NEWS]: unconfirm_list,
-    [CACHE.TYPE.WS]: confirm_list,
+    [CACHE.TYPE.NEWS_RESTORY]: confirm_list,
   };
   return new SuccModel({ cache });
 }

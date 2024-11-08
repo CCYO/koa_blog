@@ -1,9 +1,13 @@
 /* NPM        ----------------------------------------------------------------------------- */
 import xss from "xss";
-
 /* VAR        ----------------------------------------------------------------------------- */
 const _whiteList = {
   ...xss.whiteList,
+  h1: ["style"],
+  h2: ["style"],
+  h3: ["style"],
+  h4: ["style"],
+  h5: ["style"],
   p: ["style"],
   span: ["style"],
   div: ["data-w-e-type", "data-w-e-is-void"],

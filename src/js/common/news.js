@@ -12,6 +12,7 @@ import "dayjs/locale/zh-tw";
 
 /* VAR        ----------------------------------------------------------------------------- */
 let render = await async_render();
+const API_LOGOUT = "/api/user/logout";
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default class {
@@ -146,7 +147,8 @@ export default class {
             };
           }
         }
-        function logout(reason) {
+        async function logout(reason) {
+          await ins_news.axios.get(ins_news.#API_LOGOUT);
           alert(reason);
           location.href = "/login";
           return;
