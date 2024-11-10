@@ -1,6 +1,6 @@
 const ws_middleware = require("koa-easy-ws")();
 
-const { WS, DB, EMPLOYER, ENV } = require("../config");
+const { WS, DB, EMPLOYER } = require("../config");
 let { log } = require("../utils/log");
 
 const ws_clients = ws_middleware.server.clients;
@@ -16,14 +16,13 @@ module.exports = {
 };
 
 async function init(ctx, next) {
-  // console.log("@", ctx.ws);
   if (!ctx.ws) {
     ctx.status = 404;
     return;
   }
   const ws = (ctx.ws = await ctx.ws());
   let user_id = ctx.session.user.id;
-  let token = `${DB.PROD.REDIS_PREFIX}:${ctx.sessionId}`;
+  let token = `${DB.REDIS_PREFIX}:${ctx.sessionId}`;
   ws._user_id = user_id;
   ws._token = token;
   log(`ws connect\n【user_id】${user_id}\n【token】${token}`);
@@ -59,10 +58,9 @@ async function close_same_id(ctx, next) {
   if (!user_id) {
     return;
   }
-  // let ws_list = [...ws_clients].filter((ws) => ws._user_id === user_id);
   let code = WS.CLOSE.SOME_ID.CODE;
   let reason = WS.CLOSE.SOME_ID.REASON;
-  const token = `${DB.PROD.REDIS_PREFIX}:${ctx.sessionId}`;
+  const token = `${DB.REDIS_PREFIX}:${ctx.sessionId}`;
   // 關閉重複登入連接中的ws，並傳入自定義 closeEvent code，讓前端判斷操作
   // 參考MDN:
   // https://developer.mozilla.org/zh-CN/docs/Web/API/CloseEvent#%E5%B1%9E%E6%80%A7
@@ -76,15 +74,4 @@ async function close_same_id(ctx, next) {
       ws.close(code, reason);
     }
   });
-  // ws_list.forEach((ws) => {
-  //   if (ws._token === `${DB.PROD.REDIS_PREFIX}:${ctx.sessionId}`) {
-  //     return;
-  //   }
-
-  //   if (user_id === EMPLOYER.ID) {
-  //     code = WS.CLOSE.EMPLOYER_ID.CODE;
-  //     reason = WS.CLOSE.EMPLOYER_ID.REASON;
-  //   }
-  //   ws.close(code, reason);
-  // });
 }

@@ -126,14 +126,8 @@
     "HAS_CONFIRM": 1
   },
   "DB": {
-    "PROD": {
     "COOKIE_KEY": "koa_blog.sid",
     "REDIS_PREFIX": "koa_blog.sid"
-  },
-    "DEV": {
-    "COOKIE_KEY": "koa_blog.dev.sid",
-    "REDIS_PREFIX": "koa_blog.dev.sid:"
-  }
   },
   "EMPLOYER": {
     "ID": 3,
