@@ -20,6 +20,7 @@ try {
   G.utils.validate = {
     img_alt: $$ajv._validate.img_alt,
   };
+  G.utils._xss = _xss;
   await G.initPage(initMain);
 } catch (e) {
   errorHandle(e);
@@ -85,7 +86,7 @@ async function initMain() {
   // modal內部修改imgAlt的input handle
   async function handle_input() {
     const KEY = "alt";
-    const alt = _xss.trim(jq_input_alt.val());
+    const alt = G.utils._xss.trim(jq_input_alt.val());
     const alt_id = jq_modal.data(G.constant.DATASET.KEY.ALT_ID) * 1;
     const payload = { alt_id, alt, blog_id: G.data.blog.id };
 

@@ -1,4 +1,5 @@
 const xss = require("xss");
+
 const whiteList = {
   ...xss.whiteList,
   h1: ["style"],
@@ -22,7 +23,7 @@ const whiteList = {
     "allowfullscreen",
   ],
 };
-function my_xss(html) {
+function _xss(html) {
   return xss(html, {
     //  這定能放過的 attr
     whiteList,
@@ -32,9 +33,7 @@ function my_xss(html) {
         //  若attr不在白名單內
         return;
         //  無返回值的狀況，會再進入onIgnoreTag處理
-      }
-      attr = attr.trim();
-      if (tag !== "img" && typeof attrVal !== "boolean" && !attrVal.length) {
+      } else if (!attrVal.length) {
         //  attrVal 無值
         return attr;
       } else {
@@ -50,4 +49,25 @@ function my_xss(html) {
   });
 }
 
-module.exports = my_xss;
+//  去除前後空格
+function trim(data) {
+  return _xss(data.trim());
+}
+
+//  去除blog內文多於空格與換行
+function blog(data) {
+  //  移除前後空格
+  let curHtml = trim(data);
+  //  移除開頭、結尾的空格與空行
+  let reg_start = /^((<p><br><\/p>)|(<p>(\s|&nbsp;)*<\/p>))*/g;
+  let reg_end = /((<p><br><\/p>)|(<p>(\s|&nbsp;)*<\/p>))*$/g;
+  curHtml = curHtml.replace(reg_start, "");
+  curHtml = curHtml.replace(reg_end, "");
+  return curHtml;
+}
+
+module.exports = {
+  _xss,
+  trim,
+  blog,
+};

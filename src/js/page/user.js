@@ -31,6 +31,7 @@ try {
     blog_title: $$ajv._validate.blog_title,
   };
   G.utils.render = render[G.data.page];
+  G.utils._xss = _xss;
   await G.initPage(initMain);
 } catch (error) {
   errorHandle(error);
@@ -368,9 +369,8 @@ async function initMain() {
     //  校驗文章標題
     async function check_title() {
       let input = $input_new_blog_title.get(0);
-
       let data = {
-        title: _xss.trim(input.value),
+        title: G.utils._xss.trim(input.value),
       };
       let validated_list = await G.utils.validate.blog_title(data);
       let { valid, message } = validated_list.find(

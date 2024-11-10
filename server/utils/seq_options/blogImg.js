@@ -1,4 +1,3 @@
-const xss = require("../xss");
 const _REMOVE = require("./_remove");
 
 const REMOVE = {

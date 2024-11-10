@@ -1,4 +1,4 @@
-const xss = require("../xss");
+const xss = require("xss");
 const { Blog, BlogImg, Img } = require("../../db/mysql/model");
 const _REMOVE = require("./_remove");
 

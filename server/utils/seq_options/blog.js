@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 const { Img, BlogImg, BlogImgAlt, User } = require("../../db/mysql/model");
 const _REMOVE = require("./_remove");
-const my_xss = require("../xss");
+const { _xss } = require("../xss");
 const BACKEND = require("../../config");
 
 const REMOVE = {
@@ -282,7 +282,7 @@ const FIND = {
 
 const CREATE = {
   one: ({ title, author_id }) => ({
-    title: my_xss(title),
+    title: _xss(title),
     author_id,
   }),
 };
@@ -290,10 +290,10 @@ const UPDATE = {
   one: ({ blog_id, newData }) => {
     let { html, title, ...data } = newData;
     if (newData.hasOwnProperty("html")) {
-      data.html = my_xss(html);
+      data.html = _xss(html);
     }
     if (newData.hasOwnProperty("title")) {
-      data.title = my_xss(title);
+      data.title = _xss(title);
     }
     return { id: blog_id, ...data };
   },
