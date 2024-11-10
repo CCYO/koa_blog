@@ -1,11 +1,12 @@
-const { HOST, TYPE } = require("../../config");
-const DEFAULT_URL = `${HOST}/${TYPE.DEFAULT}.json#/definitions`;
+const AJV_CONFIG = require("../config");
+const DEFAULT_URL = `${AJV_CONFIG.HOST}/${AJV_CONFIG.TYPE.DEFAULT}.json#/definitions`;
 
 module.exports = {
-  $id: `${HOST}/${TYPE.BLOG.CREATE}.json`,
+  $id: `${AJV_CONFIG.HOST}/${AJV_CONFIG.TYPE.BLOG_TITLE}.json`,
   type: "object",
   properties: {
     title: {
+      type: "string",
       $ref: `${DEFAULT_URL}/title`,
     },
   },

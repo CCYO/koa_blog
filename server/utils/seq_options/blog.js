@@ -244,6 +244,7 @@ const FIND = {
     include: [
       {
         model: BlogImg,
+        required: true,
         attributes: ["id"],
         include: [
           {

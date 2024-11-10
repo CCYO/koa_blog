@@ -1,29 +1,43 @@
+const keyword_list = require("./keyword");
+const check = require("./check");
+const AJV_CONFIG = require("./config");
+
 const Ajv2019 = require("ajv/dist/2019");
 const addFormats = require("ajv-formats");
 const AjvErrors = require("ajv-errors");
 
 const schema_list = require("./schema");
-const keyword_list = require("./keyword");
-const handle_error = require("./handle_error");
-const VALIDATE_CONFIG = require("./config");
 
-const ajv = new Ajv2019({
-  strict: false,
-  allErrors: true,
-  $data: true,
-});
+module.exports = class extends Ajv2019 {
+  constructor(axios) {
+    //  建立ajv instance
+    super({
+      allErrors: true,
+      $data: true,
+    });
+    //  添加功能:自定義錯誤提示
+    AjvErrors(this);
+    //  添加format關鍵字
+    addFormats(this);
+    //  添加schema
+    this.addSchema(schema_list);
+    //  添加自定義關鍵字
+    keyword_list.forEach((keyword) => {
+      this.addKeyword(keyword);
+    });
 
-addFormats(ajv);
-//  為 ajv 添加 format 關鍵字，僅適用 string 與 number
-AjvErrors(ajv);
-//  可使用 errorMessage 自定義錯誤提示
-ajv.addSchema(schema_list);
-keyword_list.forEach((keyword) => {
-  ajv.addKeyword(keyword);
-});
+    //  添加axios(async性質的schema需要用到)
+    if (axios) {
+      this.$$axios = axios;
+    }
+    //  自定義校驗函數
+    this._validate = {};
 
-module.exports = (type) => {
-  let id = `${VALIDATE_CONFIG.HOST}/${type}.json`;
-  let validate = ajv.getSchema(id);
-  return handle_error.bind(validate);
+    for (let type in AJV_CONFIG.TYPE) {
+      let key = AJV_CONFIG.TYPE[type];
+      let id = `${AJV_CONFIG.HOST}/${key}.json`;
+      let validate = this.getSchema(id);
+      this._validate[key] = check.bind(validate);
+    }
+  }
 };

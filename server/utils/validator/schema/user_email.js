@@ -1,8 +1,8 @@
-const { HOST, TYPE } = require("../../config");
-const DEFAULT_URL = `${HOST}/${TYPE.DEFAULT}.json#/definitions`;
+const AJV_CONFIG = require("../config");
+const DEFAULT_URL = `${AJV_CONFIG.HOST}/${AJV_CONFIG.TYPE.DEFAULT}.json#/definitions`;
 
 module.exports = {
-  $id: `${HOST}/${TYPE.USER.EMAIL}.json`,
+  $id: `${AJV_CONFIG.HOST}/${AJV_CONFIG.TYPE.USER_EMAIL}.json`,
   type: "object",
   properties: {
     email: {

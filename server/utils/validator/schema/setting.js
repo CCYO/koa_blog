@@ -1,8 +1,8 @@
-const { HOST, TYPE } = require("../../config");
+const { HOST, TYPE } = require("../config");
 const DEFAULT_URL = `${HOST}/${TYPE.DEFAULT}.json#/definitions`;
 
 module.exports = {
-  $id: `${HOST}/${TYPE.USER.SETTING}.json`,
+  $id: `${HOST}/${TYPE.SETTING}.json`,
   type: "object",
   minProperties: 2,
   properties: {

@@ -3,10 +3,11 @@
  */
 const { BLOG_IMG_ALT } = require("../../../config/_errRes");
 const { TYPE } = require("../../../utils/validator/config");
-const validator = require("../../../utils/validator");
+const _ajv = require("../../../utils/validator");
 const C_BlogImgAlt = require("../../../controller/blogImgAlt");
 const { MyErr } = require("../../../utils/model");
 
+const validator = new _ajv();
 /** Middleware - 校驗 USER 資料
  * @param {*} ctx
  * @param {function} next
@@ -26,7 +27,9 @@ module.exports = async (ctx, next) => {
       let { data } = await C_BlogImgAlt.findWholeInfo(ctx.request.body);
       ctx.request.body._old = { alt: data.alt };
       // ctx.request.body { author_id, blog_id, alt_id, alt, _old }
-      validate_result = await validator(TYPE.ALT.UPDATE)(ctx.request.body);
+      validate_result = await validator._validate[TYPE.IMG_ALT](
+        ctx.request.body
+      );
       if (!validate_result.valid) {
         throwErr(validate_result, BLOG_IMG_ALT.UPDATE.AJV_UPDATE, method, to);
       }

@@ -1,8 +1,8 @@
-const { HOST, TYPE } = require("../../config");
-const DEFAULT_URL = `${HOST}/${TYPE.DEFAULT}.json#/definitions`;
+const AJV_CONFIG = require("../config");
+const DEFAULT_URL = `${AJV_CONFIG.HOST}/${AJV_CONFIG.TYPE.DEFAULT}.json#/definitions`;
 
 module.exports = {
-  $id: `${HOST}/${TYPE.ALT.UPDATE}.json`,
+  $id: `${AJV_CONFIG.HOST}/${AJV_CONFIG.TYPE.IMG_ALT}.json`,
   type: "object",
   properties: {
     _old: {
@@ -21,7 +21,7 @@ module.exports = {
       $ref: `${DEFAULT_URL}/alt`,
     },
   },
-  _notOrigin: ["alt"],
+
   _noSpace: ["alt"],
   required: ["_old", "blog_id", "alt", "alt_id"],
   errorMessage: {

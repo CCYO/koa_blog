@@ -2,6 +2,7 @@ import CONFIG from "../config";
 
 const keyword = "_noSpace";
 const message = "不可包含空格";
+
 function validate(schema, data, parentSchema, dataCtx) {
   let error = { keyword: "myKeyword", message };
   let reg = /\s/g;

@@ -1,8 +1,8 @@
-const { HOST, TYPE } = require("../../config");
+const { HOST, TYPE } = require("../config");
 const DEFAULT_URL = `${HOST}/${TYPE.DEFAULT}.json#/definitions`;
 
 module.exports = {
-  $id: `${HOST}/${TYPE.USER.LOGIN}.json`,
+  $id: `${HOST}/${TYPE.REGISTER}.json`,
   type: "object",
   properties: {
     email: {
@@ -13,8 +13,12 @@ module.exports = {
       type: "string",
       $ref: `${DEFAULT_URL}/password`,
     },
+    password_again: {
+      type: "string",
+      $ref: `${DEFAULT_URL}/password_again`,
+    },
   },
-  required: ["email", "password"],
+  required: ["email", "password", "password_again"],
   errorMessage: {
     type: "驗證數據必須是 object 格式",
     required: "必填",

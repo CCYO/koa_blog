@@ -1,7 +1,7 @@
 const definitions = require("../../../config/_ajv_default");
-const { HOST, TYPE } = require("../config");
+const AJV_CONFIG = require("../config");
 
 module.exports = {
-  $id: `${HOST}/${TYPE.DEFAULT}.json`,
+  $id: `${AJV_CONFIG.HOST}/${AJV_CONFIG.TYPE.DEFAULT}.json`,
   definitions,
 };

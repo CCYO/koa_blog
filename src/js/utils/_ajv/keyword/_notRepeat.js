@@ -35,7 +35,9 @@ function validate(schema, data, parentSchema, dataCtx) {
 
 export default {
   keyword,
+  //    data type
   type: "object",
+  //    schema 針對此 keyword 設定的格式限制
   schemaType: "array",
   validate,
   errors: true,

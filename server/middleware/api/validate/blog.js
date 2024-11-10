@@ -3,9 +3,11 @@
  */
 const { BLOG, BLOG_IMG } = require("../../../config/_errRes");
 const { TYPE } = require("../../../utils/validator/config");
-const validator = require("../../../utils/validator");
+const _ajv = require("../../../utils/validator");
 const C_Blog = require("../../../controller/blog");
 const { MyErr } = require("../../../utils/model");
+
+const validator = new _ajv();
 
 /** Middleware - 校驗 USER 資料
  * @param {*} ctx
@@ -21,7 +23,9 @@ module.exports = async (ctx, next) => {
   let condition = `${method}-/${to}`;
   switch (condition) {
     case "POST-/":
-      validate_result = await validator(TYPE.BLOG.CREATE)(ctx.request.body);
+      validate_result = await validator._validate[TYPE.BLOG_TITLE](
+        ctx.request.body
+      );
       if (!validate_result.valid) {
         throwErr(validate_result, BLOG.CREATE.AJV_CREATE, method, to);
       }
@@ -34,7 +38,7 @@ module.exports = async (ctx, next) => {
       if (ctx.request.query.img_id) {
         ctx.request.query.img_id *= 1;
       }
-      validate_result = await validator(TYPE.BLOG_IMG.CREATE)(
+      validate_result = await validator._validate[TYPE.BLOG_IMG](
         ctx.request.query
       );
       if (!validate_result.valid) {
@@ -53,7 +57,9 @@ module.exports = async (ctx, next) => {
       }
       // data { title, html, show };
       ctx.request.body._old = resModel.data;
-      validate_result = await validator(TYPE.BLOG.UPDATE)(ctx.request.body);
+      validate_result = await validator._validate[TYPE.BLOG_UPDATE](
+        ctx.request.body
+      );
       if (!validate_result.valid) {
         throwErr(validate_result, BLOG.UPDATE.AJV_UPDATE, method, to);
       }

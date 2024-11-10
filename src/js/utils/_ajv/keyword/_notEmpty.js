@@ -2,6 +2,7 @@ import CONFIG from "../config";
 
 const keyword = "_notEmpty";
 const message = "必填";
+
 function validate(schema, data, parentSchema, dataCtx) {
   let error = { keyword: "myKeyword", message };
   let params_errors = Object.entries(data).reduce((acc, [prorperty, value]) => {

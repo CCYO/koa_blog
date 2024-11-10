@@ -282,7 +282,7 @@ async function initMain() {
   async function handle_input(e) {
     const KEY = "title";
     const target = e.target;
-    let title = _xss.trim(target.value);
+    let title = G.utils._xss.trim(target.value);
     let newData = { [KEY]: title };
     let result = await G.utils.validate.blog({ ...newData, _old: G.data.blog });
     let result_title = result.find(({ field_name }) => field_name === "title");
@@ -411,9 +411,24 @@ async function initMain() {
       }
       //  $containerList [ 圖片位址表格(src), 圖片說明表格(alt), 圖片連結表格(href)]
       $containerList.hide(0);
+
       //  不能省略focus操作，推估modalOrPanel成型條件需要由focus定位，
-      //  否則會導致稍後任何點擊都導致 handle_editorChange，而讓model自動消失
+      //  否則會導致稍後任何點擊都觸發 handle_editorChange，而讓model自動消失
       $containerList.eq(1).show(0).get(0).focus();
+      let input = $containerList.eq(1).children("input").get(0);
+      let alt = input.value;
+      const reg = /(?<hash>.+?):(?<alt_id>\d+)/;
+      let result = reg.exec(alt);
+      if (!result) {
+        return;
+      }
+      let {
+        groups: { alt_id },
+      } = result;
+      let data = G.data.blog.map_imgs.get(alt_id * 1);
+      if (data && `${data.alt}:${alt_id}` === alt) {
+        input.value = "";
+      }
     }
     //  插入影片後的CB
     function onInsertedVideo() {
@@ -485,29 +500,34 @@ async function initMain() {
         let { message } = result.find(({ field_name }) => field_name === "alt");
         return message;
       }
-      let { errno } = await G.utils.axios.patch(G.constant.API.UPDATE_ALBUM, {
-        alt_id,
-        blog_id: G.data.blog.id,
-        alt: _xss.trim(new_alt),
-      });
+      let { errno, data } = await G.utils.axios.patch(
+        G.constant.API.UPDATE_ALBUM,
+        {
+          alt_id,
+          blog_id: G.data.blog.id,
+          alt: G.utils._xss.trim(new_alt),
+        }
+      );
       if (errno) {
         location.href = `/permission/${errno}`;
         return;
       }
       //  尋找相同 alt_id
       let imgData = G.data.blog.map_imgs.get(alt_id);
-      imgData.alt = alt;
+      imgData.alt = data.alt;
       return true;
     }
     //  自定義上傳圖片方法
     async function customUpload(img, insertFn) {
       //  檢查登入狀態
       if (!redir.check_login(G)) {
+        setImgMode = 0;
         return;
       }
       //  取得 name ext
       let _res = G.constant.REG.IMG_NAME_AND_EXT.exec(img.name);
       if (!_res) {
+        setImgMode = 0;
         alert("圖檔格式必須為PNG或JPG");
         return false;
       }
@@ -527,6 +547,7 @@ async function initMain() {
           }
           return acc;
         }, "");
+        setImgMode = 0;
         alert(message);
         return false;
       }
@@ -551,7 +572,8 @@ async function initMain() {
       //  { [alt_id]: { alt, blogImg: { id }, img: { id, hash, url } }}
       G.data.blog.map_imgs.set(id, alt_data);
       //  將圖片插入 editor
-      insertFn(`${alt_data.img.url}?alt_id=${id}`, alt_data.alt);
+      insertFn(`${alt_data.img.url}?alt_id=${id}`, `${alt_data.alt}:${id}`);
+      setImgMode = 0;
       return;
       //  取得圖片的 hash
       async function _isImgExist(hash) {
@@ -624,7 +646,7 @@ async function initMain() {
       let KEY = "html";
       let content = G.utils.editor.getHtml();
       // xss + 將<img>轉換為自定義<x-img>
-      cache_content = _parseHtmlStr_ImgToXImg(_xss.blog(content));
+      cache_content = _parseHtmlStr_ImgToXImg(G.utils._xss.blog(content));
       let newData = { [KEY]: cache_content };
       //  校證html
       let result = await G.utils.validate.blog({
