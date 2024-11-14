@@ -6,7 +6,7 @@ import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
 import {
-  ajv_init as _Ajv,
+  _Ajv,
   Debounce,
   _xss,
   formFeedback,
@@ -16,7 +16,7 @@ import {
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
-  const $$ajv = new _Ajv(G.utils.axios);
+  const $$ajv = _Ajv(G.utils.axios);
   G.utils.validate = {
     img_alt: $$ajv._validate.img_alt,
   };

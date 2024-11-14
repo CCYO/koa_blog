@@ -283,7 +283,7 @@ const FIND = {
 
 const CREATE = {
   one: ({ title, author_id }) => ({
-    title: _xss(title),
+    title: _xss.filter(title),
     author_id,
   }),
 };
@@ -291,10 +291,10 @@ const UPDATE = {
   one: ({ blog_id, newData }) => {
     let { html, title, ...data } = newData;
     if (newData.hasOwnProperty("html")) {
-      data.html = _xss(html);
+      data.html = _xss.blog(html);
     }
     if (newData.hasOwnProperty("title")) {
-      data.title = _xss(title);
+      data.title = _xss.filter(title);
     }
     return { id: blog_id, ...data };
   },

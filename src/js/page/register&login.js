@@ -5,33 +5,17 @@ import "@css/register&login.scss";
 import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import {
-  ajv_init as _Ajv,
-  Debounce,
-  formFeedback,
-  redir,
-  errorHandle,
-} from "../utils";
+import { _Ajv, Debounce, formFeedback, redir, errorHandle } from "../utils";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import Tab from "bootstrap/js/dist/tab";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
 import FRONTEND from "@config/frontend_esm";
-// import _ajv from "../utils/_ajv";
-// import __ajv from "../utils/_ajv";
-// import ajv2019 from "ajv/dist/2019";
-// const _ajv = __ajv._my;
-// console.log(
-//   "in user page, ajv2019 === Ajv2019_default",
-//   ajv2019 === __ajv.Ajv2019_default
-// );
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
-  // const ajv = new _Ajv(G.utils.axios);
   const ajv = _Ajv(G.utils.axios);
-  console.log("$$ajv", ajv);
   G.utils.validate = {
     login: ajv._validate.login,
     register: ajv._validate.register,

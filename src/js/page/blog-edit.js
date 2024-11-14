@@ -17,7 +17,7 @@ import {
 
 /* UTILS      ----------------------------------------------------------------------------- */
 import {
-  ajv_init as _Ajv,
+  _Ajv,
   Debounce,
   _xss,
   formFeedback,
@@ -33,7 +33,7 @@ try {
   //  離開頁面前，是否發出提醒
   G.data.saveWarn = true;
   G.utils._xss = _xss;
-  const $$ajv = new _Ajv(G.utils.axios);
+  const $$ajv = _Ajv(G.utils.axios);
   G.utils.validate = {
     img_alt: $$ajv._validate.img_alt,
     blog_img: $$ajv._validate.blog_img,

@@ -5,7 +5,7 @@ import "@css/blog.scss";
 import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import { _Ajv, async_render, redir, errorHandle } from "../utils";
+import { async_render, redir, errorHandle } from "../utils";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import { createEditor } from "@wangeditor/editor";

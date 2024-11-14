@@ -5,13 +5,7 @@ import "@css/setting.scss";
 import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import {
-  ajv_init as _Ajv,
-  Debounce,
-  formFeedback,
-  redir,
-  errorHandle,
-} from "../utils";
+import { _Ajv, Debounce, formFeedback, redir, errorHandle } from "../utils";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import SparkMD5 from "spark-md5";
@@ -20,7 +14,7 @@ import SparkMD5 from "spark-md5";
 try {
   G.data.saveWarn = true;
   G.utils.bs5_modal = undefined;
-  const $$ajv = new _Ajv(G.utils.axios);
+  const $$ajv = _Ajv(G.utils.axios);
   G.utils.validate = {
     setting: $$ajv._validate.setting,
     avartar: $$ajv._validate.avatar,

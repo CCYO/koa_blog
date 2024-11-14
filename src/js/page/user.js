@@ -6,7 +6,7 @@ import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
 import {
-  ajv_init as _Ajv,
+  _Ajv,
   Debounce,
   async_render,
   _xss,
@@ -20,22 +20,13 @@ import BetterScroll from "better-scroll";
 
 /* COMPONENT   ---------------------------------------------------------------------------- */
 import initPagination from "../component/pagination";
-// import __ajv from "../utils/_ajv";
-// import ajv2019 from "ajv/dist/2019";
-// const _ajv = __ajv._my;
-// console.log(
-//   "in user page, ajv2019 === Ajv2019_default",
-//   ajv2019 === __ajv.Ajv2019_default
-// );
+
 /* VAR        ----------------------------------------------------------------------------- */
 let render = await async_render();
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
-  // const $$ajv = new _Ajv(G.utils.axios);
-  // const $$ajv = _Ajv(G.utils.axios);
   const $$ajv = _Ajv(G.utils.axios);
-  console.log("$$ajv", $$ajv);
   G.utils.validate = {
     // blog_title: $$ajv._validate.blog_title,
     blog_title: $$ajv._validate.blog_title,

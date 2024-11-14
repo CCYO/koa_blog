@@ -1,5 +1,5 @@
 /* CLASS      ----------------------------------------------------------------------------- */
-import ajv_init from "./_ajv";
+import _Ajv from "./_Ajv";
 import Debounce from "./debounce";
 
 /* OBJ        ----------------------------------------------------------------------------- */
@@ -17,12 +17,4 @@ const async_render = async () => {
 };
 
 /* EXPORT     ----------------------------------------------------------------------------- */
-export {
-  ajv_init,
-  Debounce,
-  async_render,
-  _xss,
-  formFeedback,
-  redir,
-  errorHandle,
-};
+export { _Ajv, Debounce, async_render, _xss, formFeedback, redir, errorHandle };

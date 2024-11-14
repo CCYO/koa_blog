@@ -12,7 +12,6 @@ export default class extends Ajv2019 {
       allErrors: true,
       $data: true,
     });
-    console.log("建立_Ajv ins");
     //  添加功能:自定義錯誤提示
     AjvErrors(this);
     //  添加format關鍵字
