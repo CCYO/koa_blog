@@ -3,11 +3,10 @@
  */
 const { BLOG_IMG_ALT } = require("../../../config/_errRes");
 const { TYPE } = require("../../../utils/validator/config");
-const _ajv = require("../../../utils/validator");
+const validator = require("../../../utils/validator");
 const C_BlogImgAlt = require("../../../controller/blogImgAlt");
 const { MyErr } = require("../../../utils/model");
 
-const validator = new _ajv();
 /** Middleware - 校驗 USER 資料
  * @param {*} ctx
  * @param {function} next

@@ -1,10 +1,8 @@
 import AJV_CONFIG from "../config";
-
-const { HOST, TYPE } = AJV_CONFIG;
-const DEFAULT_URL = `${HOST}/${TYPE.DEFAULT}.json#/definitions`;
+const DEFAULT_URL = `${AJV_CONFIG.HOST}/${AJV_CONFIG.TYPE.DEFAULT}.json#/definitions`;
 
 export default {
-  $id: `${HOST}/${TYPE.BLOG}.json`,
+  $id: `${AJV_CONFIG.HOST}/${AJV_CONFIG.TYPE.BLOG}.json`,
   type: "object",
   properties: {
     _old: {

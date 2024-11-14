@@ -24,12 +24,12 @@ const ERROR_PARAMS = {
   additionalProperties: "additionalProperty",
   _notEmpty: "_notEmpty",
   _notRepeat: "_notRepeat",
-  _noSpace: "noSpace",
+  _noSpace: "_noSpace",
   _keyword: "field",
 };
 
 export default {
   HOST,
   TYPE,
-  ERROR_PARAMS,
+  // ERROR_PARAMS,
 };

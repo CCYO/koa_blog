@@ -1,10 +1,9 @@
+// 前後端相同
 import AJV_CONFIG from "../config";
-
-const { HOST, TYPE } = AJV_CONFIG;
-const DEFAULT_URL = `${HOST}/${TYPE.DEFAULT}.json#/definitions`;
+const DEFAULT_URL = `${AJV_CONFIG.HOST}/${AJV_CONFIG.TYPE.DEFAULT}.json#/definitions`;
 
 export default {
-  $id: `${HOST}/${TYPE.BLOG_TITLE}.json`,
+  $id: `${AJV_CONFIG.HOST}/${AJV_CONFIG.TYPE.BLOG_TITLE}.json`,
   type: "object",
   properties: {
     title: {
@@ -16,7 +15,8 @@ export default {
   _notEmpty: ["title"],
   additionalProperties: false,
   errorMessage: {
-    required: "少傳了某些數據",
-    additionalProperties: "多了額外數據",
+    type: "驗證數據必須是 object 格式",
+    required: "必填",
+    additionalProperties: "混入了非正規數據",
   },
 };

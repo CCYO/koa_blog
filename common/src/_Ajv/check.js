@@ -1,10 +1,10 @@
-const Ajv2019 = require("ajv/dist/2019");
-const AJV_CONFIG = require("./keyword/");
-const { log } = require("../log");
+import Ajv2019 from "ajv/dist/2019";
+import { ERROR_PARAMS } from "./ERROR_PARAMS";
+// const { log } = require("../log");
 
 const TOP_FIELD = "all";
 
-module.exports = async function (data, ignore_list = []) {
+export default async function (data, ignore_list = []) {
   let validated_errors = {};
   try {
     let validate = this;
@@ -25,14 +25,16 @@ module.exports = async function (data, ignore_list = []) {
   }
   ignore_list = [...new Set(ignore_list).add("_old")];
   return _parseErrorsToForm(validated_errors, data, ignore_list);
-};
+}
 //  將校驗錯誤初始化為
 //  {
 //    all: { [keyword]: { list, message } },
 //    [property]: [ { [keyword], [message] }, ... ], ...
 //  }
 function _init_errors(invalid_errors) {
-  log("@整理前的validateErrors => ", invalid_errors);
+  // log("@整理前的validateErrors => ", invalid_errors);
+  !process.env.isProd &&
+    console.log("@整理前的validateErrors => ", invalid_errors);
 
   let acc = { [TOP_FIELD]: [] };
   let res = invalid_errors.reduce((acc, invalid_error) => {
@@ -58,7 +60,9 @@ function _init_errors(invalid_errors) {
     } = invalid_error;
     //  ↓ 忽略未自定義message的校驗錯誤
     if (!["errorMessage", "myKeyword"].some((item) => item === keyword)) {
-      log(`@keyword: ${keyword} 沒有預定義錯誤訊息，故忽略`);
+      // log(`@keyword: ${keyword} 沒有預定義錯誤訊息，故忽略`);
+      !process.env.isProd &&
+        console.log(`@keyword: ${keyword} 沒有預定義錯誤訊息，故忽略`);
       return acc;
     }
     let { errors } = params;
@@ -66,7 +70,7 @@ function _init_errors(invalid_errors) {
     if (!instancePath) {
       errors.reduce((_acc, error) => {
         let { keyword: origin_keyword, params: origin_params } = error;
-        let key = AJV_CONFIG.ERROR_PARAMS[origin_keyword];
+        let key = ERROR_PARAMS[origin_keyword];
         let field_name = origin_params[key];
         let item = _acc.find(({ keyword }) => keyword === origin_keyword);
         if (!item) {
@@ -91,7 +95,8 @@ function _init_errors(invalid_errors) {
     }
     return acc;
   }, acc);
-  log("@整理後的validateErrors => ", res);
+  // log("@整理後的validateErrors => ", res);
+  !process.env.isProd && console.log("@整理後的validateErrors => ", res);
   return res;
 }
 //  將轉化後的校驗錯誤再轉化為
@@ -174,6 +179,7 @@ function _parseErrorsToForm(invalid_errors, data, ignore_list = []) {
     res_list.push({ field_name, valid: true, value: data[field_name] });
   }
 
-  log("整理後的驗證結果 res_list => ", res_list);
+  // log("整理後的驗證結果 res_list => ", res_list);
+  !process.env.isProd && console.log("整理後的驗證結果 res_list => ", res_list);
   return res_list;
 }

@@ -23,5 +23,5 @@ const ERROR_PARAMS = {
 module.exports = {
   HOST,
   TYPE,
-  ERROR_PARAMS,
+  // ERROR_PARAMS,
 };

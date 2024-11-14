@@ -16,7 +16,7 @@ export default {
       $ref: `${DEFAULT_URL}/password`,
     },
   },
-  required: ["email", "password"],
+  // required: ["email", "password"],
   _notEmpty: ["email", "password"],
   additionalProperties: false,
   errorMessage: {

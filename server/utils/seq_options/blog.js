@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 const { Img, BlogImg, BlogImgAlt, User } = require("../../db/mysql/model");
 const _REMOVE = require("./_remove");
-const { _xss } = require("../xss");
+const _xss = require("../_xss");
 const BACKEND = require("../../config");
 
 const REMOVE = {

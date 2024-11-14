@@ -17,7 +17,7 @@ import {
 
 /* UTILS      ----------------------------------------------------------------------------- */
 import {
-  _Ajv,
+  ajv_init as _Ajv,
   Debounce,
   _xss,
   formFeedback,
