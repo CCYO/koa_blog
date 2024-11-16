@@ -26,7 +26,6 @@ __webpack_require__.r(__webpack_exports__);
       allErrors: true,
       $data: true,
     });
-    console.log("建立_Ajv ins");
     //  添加功能:自定義錯誤提示
     ajv_errors__WEBPACK_IMPORTED_MODULE_4___default()(this);
     //  添加format關鍵字
