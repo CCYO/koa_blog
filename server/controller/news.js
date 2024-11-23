@@ -4,13 +4,15 @@
 const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
 require("dayjs/locale/zh-tw");
+const relativeTime = require("dayjs/plugin/relativeTime");
 dayjs.extend(utc);
+dayjs.extend(relativeTime);
 dayjs.locale("zh-tw");
 const C_User = require("../controller/user");
 const C_Blog = require("../controller/blog");
 const C_Comment = require("../controller/comment");
 const News = require("../server/news");
-const { NEWS, QUERY_NEWS } = require("../config");
+const { NEWS } = require("../const");
 const { MyErr, SuccModel } = require("../utils/model");
 
 async function readMore({ user_id, excepts }) {
@@ -73,24 +75,27 @@ async function _findThroughData(newsList) {
       news;
     //  序列化時間數據
     let timestamp = dayjs
-      .utc(QUERY_NEWS.TYPE.MSG_RECEIVER ? createdAt : updatedAt)
+      .utc(NEWS.TYPE.MSG_RECEIVER ? createdAt : updatedAt)
       .utcOffset(8)
       .format(NEWS.TIME_FORMAT);
+
+    timestamp = dayjs(timestamp).fromNow();
+    // .format(NEWS.TIME_FORMAT);
     //  結果的預設值
     let res = { type, id, timestamp, confirm };
-    if (type === QUERY_NEWS.TYPE.IDOL_FANS) {
+    if (type === NEWS.TYPE.IDOL_FANS) {
       let resModel = await C_User.find(follow_id);
       if (resModel.errno) {
         throw new MyErr({ ...resModel, error: `user/${follow_id} 不存在` });
       }
       return { ...res, fans: resModel.data };
-    } else if (type === QUERY_NEWS.TYPE.ARTICLE_READER) {
+    } else if (type === NEWS.TYPE.ARTICLE_READER) {
       let resModel = await C_Blog.findItemForNews(target_id);
       if (resModel.errno) {
         throw new MyErr({ ...resModel, error: `blog/${target_id} 不存在` });
       }
       return { ...res, blog: resModel.data };
-    } else if (type === QUERY_NEWS.TYPE.MSG_RECEIVER) {
+    } else if (type === NEWS.TYPE.MSG_RECEIVER) {
       let resModel = await C_Comment.findInfoForNews(target_id);
       if (resModel.errno) {
         throw new MyErr({ ...resModel, error: `comment/${target_id} 不存在` });

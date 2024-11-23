@@ -10,7 +10,7 @@ import { async_render } from "../utils";
 import News from "./news";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
+import { COMMON } from "../../const";
 
 /* VAR        ----------------------------------------------------------------------------- */
 let render = await async_render();
@@ -18,12 +18,12 @@ const API_LOGOUT = "/api/user/logout";
 // 不需要news數據的頁面
 const noNewsPage = [
   //  不允許登入權限的頁面
-  FRONTEND.REGISTER_LOGIN.ACTIVE.REGISTER,
-  FRONTEND.REGISTER_LOGIN.ACTIVE.LOGIN,
+  COMMON.PAGE.REGISTER_LOGIN.ACTIVE.REGISTER,
+  COMMON.PAGE.REGISTER_LOGIN.ACTIVE.LOGIN,
   // 不需要news數據
-  FRONTEND.BLOG.ACTIVE.PREVIEW,
+  COMMON.PAGE.BLOG.ACTIVE.PREVIEW,
   // NGINX 回應的錯誤頁面
-  FRONTEND.ERR_PAGE.ACTIVE.NGINX,
+  COMMON.PAGE.ERR_PAGE.ACTIVE.NGINX,
 ];
 
 /* EXPORT     ----------------------------------------------------------------------------- */

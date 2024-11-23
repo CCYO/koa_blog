@@ -7,7 +7,10 @@ const router = require("koa-router")();
 const Square = require("../../controller/square");
 const render = require("../../utils/render");
 /* Config      ----------------------------------------------------------------------------- */
-const { FRONTEND_CONST, SQUARE } = require("../../config");
+const {
+  COMMON: { PAGE },
+  PAGINATION,
+} = require("../../const");
 /* Var         ----------------------------------------------------------------------------- */
 const ejs_render = render.square;
 
@@ -19,12 +22,12 @@ router.get("/square", async (ctx) => {
     user_id: ctx.session.user?.id,
   });
   await ctx.render("square", {
-    active: FRONTEND_CONST.SQUARE.ACTIVE._,
-    page: FRONTEND_CONST.SQUARE.PAGE_NAME,
+    active: PAGE.SQUARE.ACTIVE._,
+    page: PAGE.SQUARE.PAGE_NAME,
     login: Boolean(ctx.session.user),
     title: "廣場頁",
     blog,
-    pagination: SQUARE.PAGINATION,
+    pagination: PAGINATION.SQUARE,
     ejs_render,
   });
 });

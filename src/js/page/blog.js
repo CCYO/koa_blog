@@ -4,8 +4,11 @@ import "@css/blog.scss";
 /* COMMON     ----------------------------------------------------------------------------- */
 import G from "../common";
 
+/* CONFIG     ----------------------------------------------------------------------------- */
+import { COMMON } from "../../const";
+
 /* UTILS      ----------------------------------------------------------------------------- */
-import { async_render, redir, errorHandle } from "../utils";
+import { async_render, redir, errorHandle, _xss } from "../utils";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import { createEditor } from "@wangeditor/editor";
@@ -15,7 +18,10 @@ import blog_htmlStr from "../component/blog_htmlStr";
 
 /* VAR        ----------------------------------------------------------------------------- */
 let render = await async_render();
-
+const API = {
+  REMOVE_COMMENT: "/api/comment",
+  CREATE_COMMENT: "/api/comment",
+};
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
   G.utils.render = render[G.data.page];
@@ -96,12 +102,9 @@ async function initMain() {
         let payload = {
           comment_id: $remove_comment_id,
         };
-        let { data } = await G.utils.axios.delete(
-          G.constant.API.REMOVE_COMMENT,
-          {
-            data: payload,
-          }
-        );
+        let { data } = await G.utils.axios.delete(API.REMOVE_COMMENT, {
+          data: payload,
+        });
         //  data { commenter, time, isDeleted, ... }
         let htmlStr = G.utils.render.commentItem({ ...data });
         $btn_remove
@@ -224,9 +227,10 @@ async function initMain() {
           }
 
           let htmlStr = editor.getHtml();
-          let html = htmlStr.replace(G.constant.REG.BLOG_CONTENT_TRIM, "");
+          let html = _xss.blog(htmlStr);
+
           //  撇除空留言
-          if (!html.trim()) {
+          if (!html) {
             editor.setHtml();
             alert("請填入留言");
             return;
@@ -280,10 +284,7 @@ async function initMain() {
               html,
               pid: $$comment_pid,
             };
-            return await G.utils.axios.post(
-              G.constant.API.CREATE_COMMENT,
-              payload
-            );
+            return await G.utils.axios.post(API.CREATE_COMMENT, payload);
           }
         }
       }
@@ -340,7 +341,14 @@ async function initMain() {
       let targetY_1 = scrollY + commentY - navH;
       let up = viewpointH_half - navH;
       let targetY = targetY_1 - up + commentH_half;
-      document.body.scrollTop = targetY;
+      // 使用scrollTop進行視窗滾動，各瀏覽器有不同的綁定對象
+      // 然而僅有被綁定的對象能改變scollTop值，利用此特性來做判斷
+      document.body.scrollTop = 1;
+      document.documentElement.scrollTop = 1;
+      let ele = document.body.scrollTop
+        ? document.body
+        : document.documentElement;
+      ele.scrollTop = targetY;
 
       $comment.css({ backgroundColor: "rgb(219, 159, 159)" });
       // 配合 .comment-item-content { transition: background-color 4s ease-out; }
@@ -353,7 +361,6 @@ async function initMain() {
   // 渲染文章
   async function render_blog() {
     let active = G.data.active;
-
     if (active === "blog") {
       let { htmlStr, checkImgLoad } = blog_htmlStr(G);
       G.utils.checkImgLoad = checkImgLoad;
@@ -361,17 +368,17 @@ async function initMain() {
     } else if (active === "blog-preview") {
       _preview();
     }
-    await G.utils.checkImgLoad();
+    G.utils.checkImgLoad && (await G.utils.checkImgLoad());
 
     // 渲染文章預覽
     function _preview() {
       //  讀取localStorage數據
       let preview_key = new URL(location.href).searchParams.get(
-        G.constant.PREVIEW_KEY
+        COMMON.BLOG.PREVIEW_KEY
       );
       let preview_data = localStorage.getItem(preview_key);
       if (!preview_data) {
-        alert(`請回到文章編輯頁，重新點擊預覽頁，此視窗將自動關閉`);
+        alert(`請回到文章編輯頁，重新點擊預覽\n此視窗將自動關閉`);
         window.close();
         return;
       }
@@ -392,6 +399,8 @@ async function initMain() {
         // 移除loading_backdrop導致的滑鼠讀取狀態
         $("body").removeClass("wait");
       });
+
+      return true;
     }
   }
 }

@@ -26,7 +26,7 @@ router.get("/", (ctx) => {
  */
 if (!ENV.isProd) {
   const { MyErr } = require("../utils/model");
-  const { ERR_RES } = require("../config/index");
+  const { ERR_RES } = require("../const");
   router.get("/api/error", () => {
     throw new MyErr(ERR_RES.SERVER.RESPONSE.TEST);
   });

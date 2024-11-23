@@ -11,8 +11,15 @@ import { _Ajv, Debounce, formFeedback, redir, errorHandle } from "../utils";
 import Tab from "bootstrap/js/dist/tab";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
+import { COMMON } from "../../const";
 
+/* VAR        ----------------------------------------------------------------------------- */
+const API = {
+  REGISTER_SUCCESS: "/login",
+  REGISTER: "/api/user/register",
+  LOGIN_SUCCESS: "/self",
+  LOGIN: "/api/user",
+};
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
   const ajv = _Ajv(G.utils.axios);
@@ -38,7 +45,7 @@ function initMain() {
   //  提示需登入權限
   document.addEventListener("initPage", () => {
     let params = new URL(location.href).searchParams;
-    if (params.has(FRONTEND.REDIR.FROM)) {
+    if (params.has(COMMON.UTILS.REDIR_FROM)) {
       alert("需要登入才能使用頁面功能");
     }
   });
@@ -93,10 +100,7 @@ function initMain() {
       let status = validated_list.valid;
       if (validated_list.valid) {
         /* 送出請求 */
-        let { errno, msg } = await G.utils.axios.post(
-          G.constant.API.LOGIN,
-          axios_payload
-        );
+        let { errno, msg } = await G.utils.axios.post(API.LOGIN, axios_payload);
         status = !errno;
         alert_message = msg;
       }
@@ -111,7 +115,7 @@ function initMain() {
       } else {
         ////  請求成功
         alert(G.constant.MESSAGE.LOGIN_SUCCESS);
-        redir.from(G.constant.API.LOGIN_SUCCESS);
+        redir.from(API.LOGIN_SUCCESS);
       }
       return;
     }
@@ -158,10 +162,7 @@ function initMain() {
       let status = validated_list.valid;
       if (validated_list.valid) {
         ////  校驗成功
-        let { errno } = await G.utils.axios.post(
-          G.constant.API.REGISTER,
-          axios_payload
-        );
+        let { errno } = await G.utils.axios.post(API.REGISTER, axios_payload);
         //  更新進度狀態
         status = !errno;
         //  更新提醒內容
@@ -172,7 +173,7 @@ function initMain() {
       if (status) {
         ////  請求成功
         alert(alert_message);
-        location.href = G.constant.API.REGISTER_SUCCESS;
+        location.href = API.REGISTER_SUCCESS;
       } else {
         ////  校驗失敗or請求失敗
         //  重置 payload

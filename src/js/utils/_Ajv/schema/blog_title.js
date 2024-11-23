@@ -1,22 +1,22 @@
-// 前後端相同
-import AJV_CONFIG from "../config";
-const DEFAULT_URL = `${AJV_CONFIG.HOST}/${AJV_CONFIG.TYPE.DEFAULT}.json#/definitions`;
-
-export default {
-  $id: `${AJV_CONFIG.HOST}/${AJV_CONFIG.TYPE.BLOG_TITLE}.json`,
-  type: "object",
-  properties: {
-    title: {
-      type: "string",
-      $ref: `${DEFAULT_URL}/title`,
+import TYPE from "../type";
+export default function (HOST, DEFAULT) {
+  const DEFAULT_URL = `${HOST}/${DEFAULT}.json#/definitions`;
+  return {
+    $id: `${HOST}/${TYPE.BLOG_TITLE}.json`,
+    type: "object",
+    properties: {
+      title: {
+        type: "string",
+        $ref: `${DEFAULT_URL}/title`,
+      },
     },
-  },
-  required: ["title"],
-  _notEmpty: ["title"],
-  additionalProperties: false,
-  errorMessage: {
-    type: "驗證數據必須是 object 格式",
-    required: "必填",
-    additionalProperties: "混入了非正規數據",
-  },
-};
+    required: ["title"],
+    _notEmpty: ["title"],
+    additionalProperties: false,
+    errorMessage: {
+      type: "驗證數據必須是 object 格式",
+      required: "必填",
+      additionalProperties: "混入了非正規數據",
+    },
+  };
+}

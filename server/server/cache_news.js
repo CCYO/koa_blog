@@ -3,7 +3,7 @@ const {
   CACHE: {
     TYPE: { NEWS },
   },
-} = require("../config");
+} = require("../const");
 
 async function has(id) {
   let news = getCache(NEWS);

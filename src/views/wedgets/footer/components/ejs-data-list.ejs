@@ -1,13 +1,13 @@
 <div style="display: none;">
   <%
       let whiteList = ({
-        ALBUM_LIST: ['album'],
+        ALBUM_LIST: ['album', 'pagination'],
         ALBUM: ['blog', 'imgs'],
         BLOG: ['blog'],
         BLOG_EDIT: ['blog'],
         ERR_PAGE: ['errModel'],
-        SQUARE: ['blog'],
-        USER: ['currentUser', "relationShip", 'blogs'],
+        SQUARE: ['blog', 'pagination'],
+        USER: ['currentUser', "relationShip", 'blogs', 'pagination'],
         REGISTER_LOGIN: [],
         SETTING: ['currentUser'],
       })[locals.page].concat(['active', 'login', 'page'])

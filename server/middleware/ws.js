@@ -1,6 +1,9 @@
 const ws_middleware = require("koa-easy-ws")();
 
-const { WS, DB, EMPLOYER } = require("../config");
+const {
+  SERVER: { EMPLOYER, DB },
+  COMMON: { WS },
+} = require("../const");
 let { log } = require("../utils/log");
 
 const ws_clients = ws_middleware.server.clients;

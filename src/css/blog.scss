@@ -26,6 +26,11 @@
     max-width: 600px;
     border-radius: 0.25rem;
   }
+  ul,
+  ol {
+    list-style-position: inside;
+    padding-left: 2rem;
+  }
 }
 
 [data-w-e-type="video"] {

@@ -1,4 +1,8 @@
-const { WS, ENV, CACHE } = require("../../config");
+const { ENV } = require("../../config");
+const {
+  CACHE,
+  COMMON: { WS },
+} = require("../../const");
 const C_CacheNews = require("../../controller/cache_news");
 const C_CachePage = require("../../controller/cache_page");
 const _ws = require("../../utils/ws");

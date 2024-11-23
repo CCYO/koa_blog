@@ -1,7 +1,7 @@
 const { Blog } = require("../db/mysql/model");
 const Init = require("../utils/init");
 const { MyErr } = require("../utils/model");
-const { ERR_RES } = require("../config");
+const { ERR_RES } = require("../const");
 
 /** 創建Blog
  * @param {string} title 文章表提

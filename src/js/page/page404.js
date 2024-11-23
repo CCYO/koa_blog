@@ -8,8 +8,7 @@ import G from "../common";
 import { errorHandle } from "../utils";
 
 /* Config     ----------------------------------------------------------------------------- */
-// import { ERR_PAGE } from "@config/frontend_esm";
-import FRONTEND from "@config/frontend_esm";
+
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
   await G.initPage(initMain);
@@ -46,9 +45,7 @@ async function initMain() {
       setTimeout(() => location.replace(target), 5000);
   }
   function showErrorCode() {
-    let { code, msg } = new Map(Object.entries(FRONTEND.ERR_PAGE.ERRNO)).get(
-      G.data.errModel.errno.toString()
-    );
+    let { code, msg } = G.data.errModel;
     $("#code").text(code);
     $("#msg").text(msg);
   }

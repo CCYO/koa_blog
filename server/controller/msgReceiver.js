@@ -1,7 +1,7 @@
 const MsgReceiver = require("../server/msgReceiver");
 const Opts = require("../utils/seq_options");
 const { MyErr, SuccModel } = require("../utils/model");
-const { ERR_RES } = require("../config");
+const { ERR_RES } = require("../const");
 
 async function setList(newDatas) {
   let data = await MsgReceiver.bulkCreate(

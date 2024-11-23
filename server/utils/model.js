@@ -22,8 +22,9 @@ class SuccModel extends _Model {
 }
 
 class ErrModel extends _Model {
-  constructor({ errno, msg, data, cache }) {
+  constructor({ errno, msg, data, cache, code }) {
     super({ errno, msg, data, cache });
+    this.code = code ? code : 500;
   }
 }
 

@@ -7,11 +7,21 @@ import G from "../common";
 /* UTILS      ----------------------------------------------------------------------------- */
 import { _Ajv, Debounce, formFeedback, redir, errorHandle } from "../utils";
 
+/* CONFIG     ----------------------------------------------------------------------------- */
+import { COMMON } from "../../const";
+
 /* NPM        ----------------------------------------------------------------------------- */
 import SparkMD5 from "spark-md5";
 
+/* VAR        ----------------------------------------------------------------------------- */
+const API = {
+  CHECK_PASSWORD: "/api/user/confirmPassword",
+  SETTING: "/api/user",
+};
+
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
+  //  離開頁面前，是否發出提醒
   G.data.saveWarn = true;
   G.utils.bs5_modal = undefined;
   const $$ajv = _Ajv(G.utils.axios);
@@ -119,7 +129,7 @@ async function initMain() {
     if (!redir.check_login(G)) {
       return;
     }
-    let api = G.constant.API.SETTING;
+    let api = API.SETTING;
     let payload = G.utils.lock.getPayload();
     let formData = new FormData();
     if (payload.hasOwnProperty("avatar_hash")) {
@@ -224,27 +234,26 @@ async function initMain() {
       }
       let file = files[0];
       //  file.size 單位byte
-      if (file.size > G.constant.AVATAR.MAX_SIZE) {
-        //  移除files
+      if (file.size > COMMON.AJV.SETTING.AVATAR.MAX_SIZE) {
         //  發出警告
         return {
           valid,
-          message: `大頭貼容量限${G.constant.AVATAR.MAX_SIZE / 1024 / 1024}Mb`,
+          message: `大頭貼容量限${
+            COMMON.AJV.SETTING.AVATAR.MAX_SIZE / 1024 / 1024
+          }Mb`,
         };
       }
+      let pattern = `\\.(?<ext>${COMMON.AJV.IMG_EXT.map(
+        (ext) => `(${ext})`
+      ).join("|")})$`;
+      let reg = new RegExp(pattern, "i");
       //  確認副檔名
-      let regRes = G.constant.REG.AVATAR_EXT.exec(file.name);
-      if (!regRes) {
+      let regRes = reg.exec(file.name);
+      ext = regRes ? regRes.groups.ext.toUpperCase() : undefined;
+      if (!ext) {
         return {
           valid,
-          message: `限${G.constant.AVATAR.EXT}格式`,
-        };
-      }
-      ext = regRes.groups.ext.toUpperCase();
-      if (!G.constant.AVATAR.EXT.some((EXT) => EXT === ext)) {
-        return {
-          valid,
-          message: `限${G.constant.AVATAR.EXT}格式`,
+          message: `限${COMMON.AJV.IMG_EXT.join("或")}格式`,
         };
       }
       //  是否與當前 avatar 相同
@@ -310,10 +319,7 @@ async function initMain() {
       return;
     }
 
-    let { errno, msg } = await G.utils.axios.post(
-      G.constant.API.CHECK_PASSWORD,
-      payload
-    );
+    let { errno, msg } = await G.utils.axios.post(API.CHECK_PASSWORD, payload);
     if (errno) {
       formFeedback.validated(el_origin_password, false, msg);
       return;

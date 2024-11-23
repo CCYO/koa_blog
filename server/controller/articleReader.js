@@ -7,7 +7,7 @@ const ArticleReader = require("../server/articleReader");
 const Opts = require("../utils/seq_options");
 const { MyErr, SuccModel } = require("../utils/model");
 /* CONFIG     ----------------------------------------------------------------------------- */
-const { ERR_RES } = require("../config");
+const { ERR_RES } = require("../const");
 
 async function reShowArticle(id_list) {
   let row = await ArticleReader.update(

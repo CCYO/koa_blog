@@ -32,6 +32,7 @@ module.exports = {
   resolve: {
     modules: [resolve(__dirname, "../node_modules")],
     alias: {
+      "@const": resolve(__dirname, "../src/const"),
       "@config": resolve(__dirname, "../src/config"),
       "@css": resolve(__dirname, "../src/css"),
     },

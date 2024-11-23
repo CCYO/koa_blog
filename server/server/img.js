@@ -1,6 +1,6 @@
 const { Img } = require("../db/mysql/model");
 const { MyErr } = require("../utils/model");
-const { ERR_RES } = require("../config");
+const { ERR_RES } = require("../const");
 const init = require("../utils/init");
 
 async function create(data) {

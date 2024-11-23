@@ -4,7 +4,7 @@ dayjs.extend(utc);
 const { deepCopy } = require("./_deepCopy");
 const {
   COMMENT: { TIME_FORMAT },
-} = require("../../config");
+} = require("../../const");
 
 //  適合前端渲染comment的嵌套格式
 function toNest(list) {

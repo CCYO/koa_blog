@@ -1,9 +1,10 @@
 /**
  * @description middleware validate
  */
-const { BLOG, BLOG_IMG } = require("../../../config/_errRes");
-const { TYPE } = require("../../../utils/validator/config");
-const validator = require("../../../utils/validator");
+const {
+  ERR_RES: { BLOG, BLOG_IMG },
+} = require("../../../const");
+const _ajv = require("../../../utils/_ajv");
 const C_Blog = require("../../../controller/blog");
 const { MyErr } = require("../../../utils/model");
 
@@ -21,7 +22,7 @@ module.exports = async (ctx, next) => {
   let condition = `${method}-/${to}`;
   switch (condition) {
     case "POST-/":
-      validate_result = await validator._validate[TYPE.BLOG_TITLE](
+      validate_result = await _ajv._validate[_ajv._type.BLOG_TITLE](
         ctx.request.body
       );
       if (!validate_result.valid) {
@@ -36,7 +37,7 @@ module.exports = async (ctx, next) => {
       if (ctx.request.query.img_id) {
         ctx.request.query.img_id *= 1;
       }
-      validate_result = await validator._validate[TYPE.BLOG_IMG](
+      validate_result = await _ajv._validate[_ajv._type.BLOG_IMG](
         ctx.request.query
       );
       if (!validate_result.valid) {
@@ -55,7 +56,7 @@ module.exports = async (ctx, next) => {
       }
       // data { title, html, show };
       ctx.request.body._old = resModel.data;
-      validate_result = await validator._validate[TYPE.BLOG_UPDATE](
+      validate_result = await _ajv._validate[_ajv._type.BLOG_UPDATE](
         ctx.request.body
       );
       if (!validate_result.valid) {

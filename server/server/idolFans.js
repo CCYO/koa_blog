@@ -3,7 +3,7 @@
  */
 const { IdolFans } = require("../db/mysql/model");
 const { MyErr } = require("../utils/model");
-const { ERR_RES } = require("../config");
+const { ERR_RES } = require("../const");
 
 async function restore(opts) {
   try {

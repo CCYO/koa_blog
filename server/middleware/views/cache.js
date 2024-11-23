@@ -1,11 +1,10 @@
 const Redir = require("../../utils/redir");
 const C_CachePage = require("../../controller/cache_page");
 const { log } = require("../../utils/log");
+const { ENV } = require("../../config");
 const {
   CACHE: { STATUS },
-  ENV,
-} = require("../../config");
-
+} = require("../../const");
 async function noCache(ctx, next) {
   await next();
   //  不允許前端緩存

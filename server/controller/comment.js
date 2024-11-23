@@ -3,9 +3,14 @@ const Comment = require("../server/comment");
 const Opts = require("../utils/seq_options");
 const Init = require("../utils/init");
 const { SuccModel, ErrModel, MyErr } = require("../utils/model");
-const { CACHE, ENV, ERR_RES } = require("../config");
-
+const { ENV } = require("../config");
+const { CACHE, ERR_RES } = require("../const");
+const _xss = require("../utils/_xss");
 async function add({ commenter_id, article_id, html, pid, author_id }) {
+  html = _xss.blog(html);
+  if (!html) {
+    throw new MyErr(ERR_RES.COMMENT.CREATE.ERR_EMPTY);
+  }
   //  創建 comment
   let newComment = await Comment.create(
     Opts.COMMENT.CREATE.one({ commenter_id, article_id, html, pid })

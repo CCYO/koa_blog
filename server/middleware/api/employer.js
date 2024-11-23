@@ -1,5 +1,8 @@
 const { ErrModel } = require("../../utils/model");
-const { ERR_RES, EMPLOYER, ME } = require("../../config");
+const {
+  ERR_RES,
+  SERVER: { EMPLOYER, ME },
+} = require("../../const");
 const C_articleReader = require("../../controller/articleReader");
 const C_idolFans = require("../../controller/idolFans");
 

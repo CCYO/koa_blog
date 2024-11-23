@@ -11,7 +11,7 @@ const { resolve } = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-const FRONTEND_CONST = require("../../src/config/frontend_cjs");
+const COMMON = require("../_common_const");
 const WEBPACK_CONFIG = require("../config");
 
 /* VAR        ----------------------------------------------------------------------------- */
@@ -142,7 +142,7 @@ function _replaceFrontendConst(filepath) {
       return cache_ejs_const.get(match);
     }
     //  JSON.stringify result雖然已經是string，但此時ejs_string也是string，所以必須在result外在加上' '
-    let json_string = `'${JSON.stringify(FRONTEND_CONST[target_string])}'`;
+    let json_string = `'${JSON.stringify(COMMON.SELECTOR[target_string])}'`;
     cache_ejs_const.set(match, json_string);
     return json_string;
   });

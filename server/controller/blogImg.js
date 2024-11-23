@@ -1,7 +1,7 @@
 const BlogImg = require("../server/blogImg");
 const Opts = require("../utils/seq_options");
 const { MyErr, ErrModel, SuccModel } = require("../utils/model");
-const { ERR_RES } = require("../config");
+const { ERR_RES } = require("../const");
 
 async function add({ blog_id, img_id }) {
   let data = await BlogImg.create(

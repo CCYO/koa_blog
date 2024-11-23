@@ -9,27 +9,31 @@ import "@css/component/pagination";
 import { async_render } from "../utils";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
+import { COMMON } from "../../const";
 
 /* VAR        ----------------------------------------------------------------------------- */
 let render = await async_render();
+const API = {
+  GET_PAGINATION: "/api/album/list",
+};
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default function (G) {
   const pageConst = G.constant;
+  pageConst.PAGINATION = G.data.pagination;
   const template_blogList = render[G.data.page].blogList;
   let author_id = undefined;
   let pageData = undefined;
   switch (G.data.page) {
-    case FRONTEND.USER.PAGE_NAME:
+    case COMMON.PAGE.USER.PAGE_NAME:
       author_id = G.data.currentUser.id;
       pageData = G.data.blogs;
       break;
-    case FRONTEND.ALBUM_LIST.PAGE_NAME:
+    case COMMON.PAGE.ALBUM_LIST.PAGE_NAME:
       author_id = G.data.me.id;
       pageData = G.data.album;
       break;
-    case FRONTEND.SQUARE.PAGE_NAME:
+    case COMMON.PAGE.SQUARE.PAGE_NAME:
       pageData = G.data.blog;
       break;
   }
@@ -113,7 +117,7 @@ export default function (G) {
           data: {
             [$$status]: { blogs },
           },
-        } = await G.utils.axios.post(pageConst.API.GET_PAGINATION, {
+        } = await G.utils.axios.post(API.GET_PAGINATION, {
           author_id,
           limit: pageConst.PAGINATION.BLOG_COUNT,
           //  前端分頁index從1開始，後端分頁index從0開始，所以要-1

@@ -14,6 +14,11 @@ import {
   errorHandle,
 } from "../utils";
 
+/* VAR         ---------------------------------------------------------------------------- */
+const API = {
+  UPDATE_ALBUM: "/api/album",
+};
+
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
   const $$ajv = _Ajv(G.utils.axios);
@@ -64,7 +69,7 @@ async function initMain() {
       return;
     }
     let payload = G.utils.lock.getPayload();
-    await G.utils.axios.patch("/api/album", payload);
+    await G.utils.axios.patch(API.UPDATE_ALBUM, payload);
     /* 同步頁面數據 */
     let { alt_id, alt } = payload;
     G.data.map_imgs.get(alt_id).alt = alt;

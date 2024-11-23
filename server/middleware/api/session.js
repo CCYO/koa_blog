@@ -1,7 +1,7 @@
 const C_CacheNews = require("../../controller/cache_news");
 const { log } = require("../../utils/log");
 const { SuccModel } = require("../../utils/model");
-const BACKEND = require("../../config");
+const { CACHE, COMMON } = require("../../const");
 
 const SESSION_NEWS = () => ({
   //  若是設定 undefined，經過JSON.stringify會被刪除
@@ -50,7 +50,7 @@ async function news(ctx, next) {
   let hasNews = resModel.errno ? false : true;
   //  若有新通知
   if (hasNews) {
-    log(`根據 cache/${BACKEND.CACHE.TYPE.NEWS} 得知，user/${id} 有新通知`);
+    log(`根據 cache/${CACHE.TYPE.NEWS} 得知，user/${id} 有新通知`);
     //  清除請求數據
     ctx.request.body = {};
     await C_CacheNews.removeList([id]);
@@ -58,7 +58,7 @@ async function news(ctx, next) {
     ctx.session.user.news = sessionNews = SESSION_NEWS();
     // ctx.session.user.news.hasNews = true
     // sessionNews = ctx.session.user.news
-  } else if (status === BACKEND.NEWS.FRONT_END_STATUS.CHECK) {
+  } else if (status === COMMON.NEWS.STATUS.CHECK) {
     log(`user/${id} 前端請求，確認後端有無更新news`);
     default_news.hasNews = false;
     let { news, ...me } = ctx.session.user;
@@ -66,7 +66,7 @@ async function news(ctx, next) {
     ctx.body = new SuccModel({ data });
     return;
   } else if (
-    status === BACKEND.NEWS.FRONT_END_STATUS.FIRST &&
+    status === COMMON.NEWS.STATUS.FIRST &&
     ctx.session.user.news.hasNews !== null
   ) {
     log(`user/${id} 直接使用緩存 session.news`);

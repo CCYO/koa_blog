@@ -9,8 +9,7 @@ import initNavbar from "./navbar";
 import initEJSData from "./initEJSData";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
-
+import { COMMON } from "../../const";
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default class {
   data;
@@ -20,7 +19,7 @@ export default class {
   async init() {
     this.data = initEJSData();
     let { page, active } = this.data;
-    this.constant = FRONTEND[page];
+    this.constant = COMMON.SELECTOR[page];
     let loading_backdrop = new Loading_backdrop();
     let _axios = new _Axios({
       backdrop: loading_backdrop,

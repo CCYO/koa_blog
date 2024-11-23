@@ -6,8 +6,11 @@ const router = require("koa-router")();
 /* UTILS      ----------------------------------------------------------------------------- */
 const { ErrModel } = require("../../utils/model");
 /* Config      ----------------------------------------------------------------------------- */
-const { FRONTEND_CONST, ERR_RES } = require("../../config");
 
+const {
+  ERR_RES,
+  COMMON: { PAGE },
+} = require("../../const");
 /**
  * @description error page
  */
@@ -15,8 +18,8 @@ router.get("/permission/:errno", async (ctx) => {
   let opts = {};
   switch (ctx.params.errno * 1) {
     //  意料外的錯誤
-    case ERR_RES.SERVER.RESPONSE.ERR_500.errno:
-      opts.errModel = new ErrModel(ERR_RES.SERVER.RESPONSE.ERR_500);
+    case ERR_RES.SERVER.RESPONSE.ERR_50x.errno:
+      opts.errModel = new ErrModel(ERR_RES.SERVER.RESPONSE.ERR_50x);
       break;
     //  無此頁面
     case ERR_RES.SERVER.RESPONSE.ERR_404.errno:
@@ -47,9 +50,9 @@ router.get("/permission/:errno", async (ctx) => {
       );
   }
   opts = {
-    page: FRONTEND_CONST.ERR_PAGE.PAGE_NAME,
+    active: PAGE.ERR_PAGE.ACTIVE.NODE_JS,
+    page: PAGE.ERR_PAGE.PAGE_NAME,
     login: Boolean(ctx.session.user),
-    active: FRONTEND_CONST.ERR_PAGE.ACTIVE.NODE_JS,
     ...opts,
   };
   await ctx.render("page404", opts);

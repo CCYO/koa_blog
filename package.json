@@ -28,6 +28,7 @@
     "ajv": "^8.10.0",
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^2.1.1",
+    "ajv-keywords": "^5.1.0",
     "axios": "^0.26.1",
     "better-scroll": "^2.5.1",
     "bootstrap": "^5.3.3",

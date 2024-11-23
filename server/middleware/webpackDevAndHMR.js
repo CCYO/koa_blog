@@ -1,8 +1,8 @@
-let SERVER_CONFIG = require("../config");
+let { ENV } = require("../config");
 
 let webpackDev;
 let webpackHMR;
-if (SERVER_CONFIG.ENV.isProd) {
+if (ENV.isProd) {
   webpackDev = webpackHMR = async (ctx, next) => {
     await next();
   };

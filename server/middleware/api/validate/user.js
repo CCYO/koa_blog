@@ -1,9 +1,10 @@
 /**
  * @description middleware validate
  */
-const { USER } = require("../../../config/_errRes");
-const { TYPE } = require("../../../utils/validator/config");
-const validator = require("../../../utils/validator");
+const {
+  ERR_RES: { USER },
+} = require("../../../const");
+const _ajv = require("../../../utils/_ajv");
 const { MyErr } = require("../../../utils/model");
 
 /** Middleware - 校驗 USER 資料
@@ -20,7 +21,7 @@ module.exports = async (ctx, next) => {
   let condition = `${method}-/${to}`;
   switch (condition) {
     case "POST-/isEmailExist":
-      validate_result = await validator._validate[TYPE.USER_EMAIL](
+      validate_result = await _ajv._validate[_ajv._type.USER_EMAIL](
         ctx.request.body
       );
       if (!validate_result.valid) {
@@ -28,7 +29,7 @@ module.exports = async (ctx, next) => {
       }
       break;
     case "POST-/register":
-      validate_result = await validator._validate[TYPE.REGISTER](
+      validate_result = await _ajv._validate[_ajv._type.REGISTER](
         ctx.request.body
       );
       if (!validate_result.valid) {
@@ -36,7 +37,9 @@ module.exports = async (ctx, next) => {
       }
       break;
     case "POST-/":
-      validate_result = await validator._validate[TYPE.LOGIN](ctx.request.body);
+      validate_result = await _ajv._validate[_ajv._type.LOGIN](
+        ctx.request.body
+      );
       if (!validate_result.valid) {
         throwErr(validate_result, USER.READ.AJV_LOGIN, method, to);
       }
@@ -49,7 +52,7 @@ module.exports = async (ctx, next) => {
       if (ctx.request.body.hasOwnProperty("age")) {
         ctx.request.body.age = Number.parseInt(ctx.request.body.age);
       }
-      validate_result = await validator._validate[TYPE.SETTING](
+      validate_result = await _ajv._validate[_ajv._type.SETTING](
         ctx.request.body
       );
       if (!validate_result.valid) {

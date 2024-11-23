@@ -7,8 +7,7 @@
 import errorHandle from "../utils/errorHandle";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
-
+import { COMMON } from "../../const";
 /* NPM        ----------------------------------------------------------------------------- */
 import axios from "axios";
 
@@ -17,15 +16,15 @@ export default class {
   // 無登入權限也可訪問的白名單頁面
   #ACTIVE_WHITE_LIST = [
     //  不允許登入權限的頁面
-    FRONTEND.REGISTER_LOGIN.ACTIVE.REGISTER,
-    FRONTEND.REGISTER_LOGIN.ACTIVE.LOGIN,
+    COMMON.PAGE.REGISTER_LOGIN.ACTIVE.REGISTER,
+    COMMON.PAGE.REGISTER_LOGIN.ACTIVE.LOGIN,
     //  不需要登入權限的頁面
-    FRONTEND.SQUARE.ACTIVE._,
-    FRONTEND.USER.ACTIVE.OTEHR,
-    FRONTEND.BLOG.ACTIVE._,
-    FRONTEND.BLOG.ACTIVE.PREVIEW,
-    FRONTEND.ERR_PAGE.ACTIVE.NODE_JS,
-    FRONTEND.ERR_PAGE.ACTIVE.NGINX,
+    COMMON.PAGE.SQUARE.ACTIVE._,
+    COMMON.PAGE.USER.ACTIVE.OTEHR,
+    COMMON.PAGE.BLOG.ACTIVE._,
+    COMMON.PAGE.BLOG.ACTIVE.PREVIEW,
+    COMMON.PAGE.ERR_PAGE.ACTIVE.NODE_JS,
+    COMMON.PAGE.ERR_PAGE.ACTIVE.NGINX,
   ];
 
   constructor({ backdrop = undefined, active }) {
@@ -58,12 +57,14 @@ export default class {
         let resData = response.data;
 
         if (
-          resData.errno === FRONTEND._AXIOS.ERR_RES.NEWS_NO_LOGIN.errno &&
+          resData.errno === COMMON.ERR_RES.AXIOS.NEWS_NO_LOGIN.errno &&
           !this.#ACTIVE_WHITE_LIST.some((item) => item === active)
         ) {
           //  response 為 news請求的 noLogin 提醒
           ok = false;
-        } else if (resData.errno === FRONTEND._AXIOS.ERR_RES.NO_LOGIN.errno) {
+        } else if (
+          resData.errno === COMMON.ERR_RES.AXIOS.RESPONSE_NO_LOGIN.errno
+        ) {
           //  response 為 非news請求的 noLogin 提醒
           ok = false;
         }

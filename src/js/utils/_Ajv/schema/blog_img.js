@@ -1,21 +1,21 @@
-import AJV_CONFIG from "../config";
-
-const { HOST, TYPE } = AJV_CONFIG;
-const DEFAULT_URL = `${HOST}/${TYPE.DEFAULT}.json#/definitions`;
-
-export default {
-  $id: `${HOST}/${TYPE.BLOG_IMG}.json`,
-  type: "object",
-  properties: {
-    size: {
-      type: "number",
-      $ref: `${DEFAULT_URL}/blogImg_size`,
+import TYPE from "../type";
+export default function (HOST, DEFAULT) {
+  const DEFAULT_URL = `${HOST}/${DEFAULT}.json#/definitions`;
+  return {
+    $id: `${HOST}/${TYPE.BLOG_IMG}.json`,
+    type: "object",
+    properties: {
+      size: {
+        type: "number",
+        $ref: `${DEFAULT_URL}/blogImg_size`,
+      },
+      ext: {
+        type: "string",
+        $ref: `${DEFAULT_URL}/img_ext`,
+      },
     },
-    ext: {
-      type: "string",
-      $ref: `${DEFAULT_URL}/img_ext`,
-    },
-  },
-  required: ["size", "ext"],
-  _noSpace: ["ext"],
-};
+    required: ["size", "ext"],
+    _noSpace: ["ext"],
+    _notEmpty: ["ext"],
+  };
+}

@@ -7,15 +7,16 @@ const C_IdolFans = require("./idolFans");
 const C_ArticleReader = require("./articleReader");
 const Opts = require("../utils/seq_options");
 const { ErrModel, SuccModel, MyErr } = require("../utils/model");
+const { ENV } = require("../config");
 const {
-  ME,
-  ENV,
-  ERR_RES,
   CACHE: {
     TYPE: { PAGE, NEWS, NEWS_RESTORY },
     STATUS,
   },
-} = require("../config");
+  ERR_RES,
+  SERVER,
+  COMMON,
+} = require("../const");
 
 /** 確認信箱是否已被註冊
  * @param {string} email 信箱
@@ -35,7 +36,7 @@ async function isEmailExist(email) {
  */
 async function register({ email, password }) {
   if (!password) {
-    return new ErrModel(ERR_RES.USER.READNO_PASSWORD);
+    return new ErrModel(ERR_RES.USER.READ.NO_PASSWORD);
   } else if (!email) {
     return new ErrModel(ERR_RES.USER.READ.NO_EMAIL);
   }
@@ -46,7 +47,7 @@ async function register({ email, password }) {
   const data = await User.create(Opts.USER.CREATE.one({ email, password }));
   let opts = { data };
   let { id: user_id } = data;
-  if (user_id !== ME.ID) {
+  if (user_id !== SERVER.ME.ID) {
     // 註冊為我的求職文章追蹤者
     await C_ArticleReader.addEmployerBeReader(user_id);
     // 註冊為我的偶像
@@ -203,7 +204,7 @@ async function modifyInfo({ _origin, origin_password, ...newData }) {
 async function find(user_id) {
   const data = await User.read(Opts.USER.FIND.one(user_id));
   if (!data) {
-    return new ErrModel(ERR_RES.USER.READ.NO_DATA);
+    return new ErrModel(ERR_RES.USER.READ.NO_EXIST);
   }
   return new SuccModel({ data });
 }
@@ -263,22 +264,23 @@ async function _findInfoForUserPage(user_id, limit, offset) {
     currentUser_id: user_id,
     author_id: user_id,
   };
-  let {
-    data: { public },
-  } = await C_Blog.findListForPagination({
+  let public_resModel = await C_Blog.findListForPagination({
     ...options,
     show: true,
   });
-  let {
-    data: { private },
-  } = await C_Blog.findListForPagination({
+  let private_resModel = await C_Blog.findListForPagination({
     ...options,
     show: false,
   });
   let data = {
     currentUser,
     relationShip: { fansList, idolList },
-    blogs: { public, private },
+    blogs: {
+      [COMMON.BLOG.STATUS.PUBLIC]:
+        public_resModel.data[COMMON.BLOG.STATUS.PUBLIC],
+      [COMMON.BLOG.STATUS.PRIVATE]:
+        private_resModel.data[COMMON.BLOG.STATUS.PRIVATE],
+    },
   };
   return new SuccModel({ data });
 }

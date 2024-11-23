@@ -1,6 +1,6 @@
 const { Comment } = require("../db/mysql/model");
 const { MyErr } = require("../utils/model");
-const { ERR_RES } = require("../config");
+const { ERR_RES } = require("../const");
 const Init = require("../utils/init");
 
 async function read(opts) {

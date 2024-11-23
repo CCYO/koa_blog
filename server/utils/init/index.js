@@ -1,7 +1,10 @@
 const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
 dayjs.extend(utc);
-const BACKEND = require("../../config");
+const {
+  COMMON: { BLOG },
+  SETTING,
+} = require("../../const");
 const _comment = require("./_comment");
 const {
   filterEmptyAndFranferFns,
@@ -89,7 +92,7 @@ function blog(data) {
       blog.time = dayjs
         .utc(map.get(prop))
         .utcOffset(8)
-        .format(BACKEND.BLOG.TIME_FORMAT);
+        .format(BLOG.TIME_FORMAT);
     }
     return blog;
   }
@@ -113,8 +116,8 @@ function user(data) {
     }
     //  設置默認的avatar
     if (map.has("avatar") && !map.get("avatar")) {
-      data.avatar = BACKEND.USER.AVATAR.URL;
-      data.avatar_hash = BACKEND.USER.AVATAR.HASH;
+      data.avatar = SETTING.AVATAR.URL;
+      data.avatar_hash = SETTING.AVATAR.HASH;
     }
     if (map.has("fansList")) {
       data.fansList = user(data.fansList);

@@ -9,10 +9,9 @@ const render = require("../../utils/render");
 const { CACHE } = require("../../middleware/views");
 /* Config      ----------------------------------------------------------------------------- */
 const {
-  FRONTEND_CONST,
-  BLOG: { PREVIEW_KEY },
   CACHE: { TYPE },
-} = require("../../config");
+  COMMON: { PAGE, BLOG },
+} = require("../../const");
 /* Var         ----------------------------------------------------------------------------- */
 const privateCache = CACHE.genPrivate(TYPE.PAGE.BLOG);
 const commonCache = CACHE.genCommon(TYPE.PAGE.BLOG);
@@ -35,10 +34,10 @@ router.get("/blog/preview/:id", privateCache, async (ctx) => {
     //  將 data 賦予 ctx.cache，稍後 privateCache 會視情況處理緩存
     ctx.cache.data = data;
     await ctx.render("blog", {
-      active: FRONTEND_CONST.BLOG.ACTIVE.PREVIEW,
-      page: FRONTEND_CONST.BLOG.PAGE_NAME,
+      active: PAGE.BLOG.ACTIVE.PREVIEW,
+      page: PAGE.BLOG.PAGE_NAME,
       login: true,
-      title: new URL(ctx.href).searchParams.get(PREVIEW_KEY)
+      title: new URL(ctx.href).searchParams.get(BLOG.PREVIEW_KEY)
         ? "文章預覽"
         : data.title,
       blog: { ...data, showComment: false },
@@ -63,8 +62,8 @@ router.get("/blog/edit/:id", privateCache, async (ctx, next) => {
     //  將 data 賦予 ctx.cache，稍後 privateCache 會視情況處理緩存
     ctx.cache.data = data;
     await ctx.render("blog-edit", {
-      active: FRONTEND_CONST.BLOG_EDIT.ACTIVE._,
-      page: FRONTEND_CONST.BLOG_EDIT.PAGE_NAME,
+      active: PAGE.BLOG_EDIT.ACTIVE._,
+      page: PAGE.BLOG_EDIT.PAGE_NAME,
       login: true,
       title: data.title,
       blog: { ...data, showComment: false },
@@ -88,8 +87,8 @@ router.get("/blog/:id", commonCache, async (ctx) => {
     //  將 data 賦予 ctx.cache，稍後 privateCache 會視情況處理緩存
     ctx.cache.data = data;
     await ctx.render("blog", {
-      active: FRONTEND_CONST.BLOG.ACTIVE._,
-      page: FRONTEND_CONST.BLOG.PAGE_NAME,
+      active: PAGE.BLOG.ACTIVE._,
+      page: PAGE.BLOG.PAGE_NAME,
       login: Boolean(ctx.session.user),
       title: data.title,
       ejs_render,

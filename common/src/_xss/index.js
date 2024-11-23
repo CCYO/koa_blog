@@ -7,6 +7,9 @@ const _whiteList = {
   h3: ["style"],
   h4: ["style"],
   h5: ["style"],
+  ol: ["style"],
+  ul: ["style"],
+  li: ["style"],
   p: ["style"],
   span: ["style"],
   div: ["data-w-e-type", "data-w-e-is-void"],
@@ -30,16 +33,17 @@ function filter(html) {
     whiteList: _whiteList,
     //  通過在白名單上後的attr filter
     onTagAttr(tag, attr, attrVal, isWhiteAtt) {
+      let res = "";
       if (!isWhiteAtt) {
         //  若attr不在白名單內
-        return;
         //  無返回值的狀況，會再進入onIgnoreTag處理
-      } else if (!attrVal.length) {
-        //  attrVal 無值
-        return attr;
-      } else {
-        return `${attr}="${attrVal}"`;
+        return;
+      } else if (attrVal.length) {
+        res = `${attr}="${attrVal}"`;
+      } else if (attr !== "style") {
+        res = attr;
       }
+      return res;
     },
     //  不符合白名單，會進入此過濾函數
     onIgnoreTag(tag, html) {

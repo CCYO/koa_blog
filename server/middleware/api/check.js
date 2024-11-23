@@ -1,5 +1,5 @@
 const { ErrModel } = require("../../utils/model");
-const { ERR_RES } = require("../../config");
+const { ERR_RES } = require("../../const");
 
 /** Middleware 針對 API 請求，驗證是否登入
  * @param {*} ctx

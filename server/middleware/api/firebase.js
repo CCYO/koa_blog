@@ -4,7 +4,9 @@
 const { log } = require("../../utils/log");
 const C_GFB = require("../../controller/firebase");
 const C_Img = require("../../controller/img");
-const { GFB } = require("../../config");
+const {
+  SERVER: { GFB },
+} = require("../../const");
 
 /**
  * 上傳圖檔至GFB

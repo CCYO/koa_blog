@@ -23,6 +23,13 @@ import initPagination from "../component/pagination";
 
 /* VAR        ----------------------------------------------------------------------------- */
 let render = await async_render();
+const API = {
+  EDIT_BLOG: "/blog/edit",
+  CREATE_BLOG: "/api/blog",
+  REMOVE_BLOGS: "/api/blog",
+  CANCEL_FOLLOW: "/api/user/cancelFollow",
+  FOLLOW: "/api/user/follow",
+};
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
@@ -202,7 +209,7 @@ async function initMain() {
       if (!redir.check_login(G)) {
         return;
       }
-      await G.utils.axios.post(G.constant.API.FOLLOW, {
+      await G.utils.axios.post(API.FOLLOW, {
         id: G.data.currentUser.id,
       });
       //  同步 fansList 數據
@@ -233,12 +240,9 @@ async function initMain() {
       if (!redir.check_login(G)) {
         return;
       }
-      let { errno, msg } = await G.utils.axios.post(
-        G.constant.API.CANCEL_FOLLOW,
-        {
-          id: G.data.currentUser.id,
-        }
-      );
+      let { errno, msg } = await G.utils.axios.post(API.CANCEL_FOLLOW, {
+        id: G.data.currentUser.id,
+      });
       if (errno) {
         // 針對employer，限制取消
         alert(msg);
@@ -332,7 +336,7 @@ async function initMain() {
         );
       }
       //  送出刪除命令
-      let { errno } = await G.utils.axios.delete(G.constant.API.REMOVE_BLOGS, {
+      let { errno } = await G.utils.axios.delete(API.REMOVE_BLOGS, {
         data: {
           blogList,
         },
@@ -358,11 +362,11 @@ async function initMain() {
       }
       const {
         data: { id: blog_id },
-      } = await G.utils.axios.post(G.constant.API.CREATE_BLOG, {
+      } = await G.utils.axios.post(API.CREATE_BLOG, {
         title,
       });
       window.alert("創建成功，開始編輯文章");
-      location.href = `${G.constant.API.EDIT_BLOG}/${blog_id}?owner_id=${G.data.me.id}`;
+      location.href = `${API.EDIT_BLOG}/${blog_id}?owner_id=${G.data.me.id}`;
       //  清空表格
       $input_new_blog_title.val("");
     }

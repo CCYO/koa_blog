@@ -7,7 +7,7 @@ const { log } = require("../../utils/log");
 
 const {
   CACHE: { TYPE },
-} = require("../../config");
+} = require("../../const");
 
 // redis資料庫端
 const client = store.client;

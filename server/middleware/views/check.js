@@ -38,8 +38,6 @@ async function skipLogin(ctx, next) {
 }
 module.exports = {
   skipLogin,
-  //  0501
   isSelf,
-  //  0501
   login,
 };

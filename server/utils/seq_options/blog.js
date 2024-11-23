@@ -2,8 +2,7 @@ const { Op } = require("sequelize");
 const { Img, BlogImg, BlogImgAlt, User } = require("../../db/mysql/model");
 const _REMOVE = require("./_remove");
 const _xss = require("../_xss");
-const BACKEND = require("../../config");
-
+const { PAGINATION } = require("../../const");
 const REMOVE = {
   list: _REMOVE.list,
 };
@@ -58,7 +57,7 @@ const FIND = {
   listAndCountForAlbum: ({
     author_id,
     show = true,
-    limit = BACKEND.ALBUM_LIST.PAGINATION.BLOG_COUNT,
+    limit = PAGINATION.ALBUM_LIST.BLOG_COUNT,
     offset = 0,
   }) => {
     return {
@@ -112,7 +111,7 @@ const FIND = {
   listAndCountForSquare({
     user_id = undefined,
     offset = 0,
-    limit = BACKEND.SQUARE.PAGINATION.BLOG_COUNT,
+    limit = PAGINATION.SQUARE.BLOG_COUNT,
   }) {
     return {
       list: genList(user_id, limit, offset),
@@ -165,7 +164,7 @@ const FIND = {
     author_id = undefined,
     show = true,
     offset = 0,
-    limit = BACKEND.BLOG.PAGINATION.BLOG_COUNT,
+    limit = PAGINATION.BLOG.BLOG_COUNT,
   }) {
     return {
       list: genList(author_id, show, limit, offset),

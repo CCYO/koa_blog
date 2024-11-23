@@ -1,4 +1,3 @@
-import DEFAULT from "./default";
 import BLOG_IMG from "./blog_img";
 import BLOG from "./blog";
 import BLOG_TITLE from "./blog_title";
@@ -12,7 +11,6 @@ import REGISTER from "./register";
 import SETTING from "./setting";
 
 export default [
-  DEFAULT,
   BLOG_IMG,
   BLOG,
   BLOG_TITLE,

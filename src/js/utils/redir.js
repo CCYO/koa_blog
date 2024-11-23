@@ -1,8 +1,9 @@
 /* CONFIG     ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
+import { COMMON } from "../../const";
 
 /* VAR        ----------------------------------------------------------------------------- */
 const API_LOGIN = "/login";
+const REDIR_FROM = COMMON.UTILS.REDIR_FROM;
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default { from, check_login };
@@ -12,7 +13,7 @@ function from(url) {
   let searchParams = new URLSearchParams(location.search);
   if (searchParams.size) {
     //  searchParams 取得的query，已經完成decodeURIComponent
-    url = searchParams.get(FRONTEND.REDIR.FROM);
+    url = searchParams.get(REDIR_FROM);
   }
   location.replace(url);
 }
@@ -23,7 +24,7 @@ function check_login(G) {
   if (!loginStatus) {
     /* 若未登入，跳轉到登入頁 */
     alert(`請先登入`);
-    location.href = `${API_LOGIN}?${FRONTEND.REDIR.FROM}=${encodeURIComponent(
+    location.href = `${API_LOGIN}?${REDIR_FROM}=${encodeURIComponent(
       location.href
     )}`;
   }

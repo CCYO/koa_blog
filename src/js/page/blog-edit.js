@@ -4,7 +4,7 @@ import "@css/blog-edit.scss";
 import G from "../common";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-import localeTw from "@config/const/wangeditor_locale_tw.json";
+import { wangeditor_local_tw, COMMON } from "../../const";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import SparkMD5 from "spark-md5";
@@ -27,6 +27,13 @@ import {
 
 /* COMPONENT   ---------------------------------------------------------------------------- */
 import blog_htmlStr from "../component/blog_htmlStr";
+
+/* VAR         ---------------------------------------------------------------------------- */
+const API = {
+  UPDATE_ALBUM: "/api/album",
+  CREATE_IMG: "/api/blog/img",
+  UPDATE_BLOG: "/api/blog",
+};
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
@@ -119,7 +126,7 @@ async function initMain() {
     localStorage.clear();
     localStorage.setItem(key, val);
     window.open(
-      `/blog/preview/${G.data.blog.id}?${G.constant.PREVIEW_KEY}=${key}`
+      `/blog/preview/${G.data.blog.id}?${COMMON.BLOG.PREVIEW_KEY}=${key}`
     );
   }
 
@@ -143,7 +150,7 @@ async function initMain() {
     const data = {
       blogList: [G.data.blog.id],
     };
-    let { errno } = await G.utils.axios.delete(G.constant.API.UPDATE_BLOG, {
+    let { errno } = await G.utils.axios.delete(API.UPDATE_BLOG, {
       data,
     });
     if (errno) {
@@ -173,10 +180,7 @@ async function initMain() {
       throw new Error(JSON.stringify(result));
     }
     payload.blog_id = G.data.blog.id;
-    let { errno, data } = await G.utils.axios.patch(
-      G.constant.API.UPDATE_BLOG,
-      payload
-    );
+    let { errno, data } = await G.utils.axios.patch(API.UPDATE_BLOG, payload);
     if (errno) {
       location.href = `/permission/${errno}`;
       return;
@@ -189,15 +193,14 @@ async function initMain() {
       time,
     };
     //  畫面內容處理
-    if (payload.hasOwnProperty("show")) {
-      let text;
-      if (show) {
-        text = `已於 ${time} 發佈`;
-      } else {
-        text = `最近一次於 ${time} 編輯`;
-      }
-      $("#time").text(text);
+    let text;
+    if (show) {
+      text = `當前文章【已公開】於${time}發布`;
+    } else {
+      text = `當前文章【編輯中】於${time}更新`;
     }
+    $("#time").text(text);
+
     //  數據同步
     if (payload.hasOwnProperty("cancelImgs")) {
       for (let { blogImgAlt_list } of cancelImgs) {
@@ -214,14 +217,19 @@ async function initMain() {
     G.utils.lock.clear();
     G.utils.lock.check_submit();
 
-    if (
-      e &&
-      e.type === "click" &&
-      confirm("儲存成功！是否預覽？（新開視窗）")
-    ) {
-      preview();
+    if (!e || e.type !== "click") {
+      return;
     }
-    return;
+    let msg = "儲存成功！是否前往";
+    if (G.data.blog.show) {
+      if (confirm((msg += "文章頁查看？"))) {
+        location.href = `/blog/${G.data.blog.id}`;
+      }
+    } else {
+      if (confirm((msg += "預覽？"))) {
+        preview();
+      }
+    }
   }
 
   //  公開or隱藏文章
@@ -252,10 +260,7 @@ async function initMain() {
       blog_id: G.data.blog.id,
       title: G.utils.lock.get(KEY),
     };
-    let response = await G.utils.axios.patch(
-      G.constant.API.UPDATE_BLOG,
-      payload
-    );
+    let response = await G.utils.axios.patch(API.UPDATE_BLOG, payload);
     //  同步數據
     G.data.blog[KEY] = response.data[KEY];
     G.utils.lock.del(KEY);
@@ -308,7 +313,7 @@ async function initMain() {
     //  紀錄插入youtube影片的網址
     let hash;
     //  editor 的 繁中設定
-    i18nAddResources("tw", localeTw);
+    i18nAddResources("tw", wangeditor_local_tw);
     i18nChangeLanguage("tw");
     const { debounce: handle_debounce_change } = new Debounce(
       handle_editorChange,
@@ -382,7 +387,7 @@ async function initMain() {
     });
     $span_content_count.text(
       `還能輸入${
-        G.constant.EDITOR.HTML_MAX_LENGTH - editor.getHtml().length
+        COMMON.AJV.EDITOR.HTML_MAX_LENGTH - editor.getHtml().length
       }個字`
     );
     let imgEditModalisShow = false;
@@ -405,7 +410,8 @@ async function initMain() {
       const $modal = $(modalOrPanel.$elem).first();
       const $containerList = $modal.find("div > label.babel-container");
       const isImgModel =
-        $containerList.first().children("span").text() === localeTw.image.src;
+        $containerList.first().children("span").text() ===
+        wangeditor_local_tw.image.src;
       if (!isImgModel || setImgMode) {
         return;
       }
@@ -479,8 +485,9 @@ async function initMain() {
       if (!redir.check_login(G)) {
         return;
       }
-      let res = G.constant.REG.IMG_ALT_ID.exec(src);
       //  取得要修改的alt_id
+      let reg_alt = /alt_id=(?<alt_id>\w+)/;
+      let res = reg_alt.exec(src);
       let alt_id = (res.groups.alt_id *= 1);
       let { alt, img } = G.data.blog.map_imgs.get(alt_id);
       if (`${img.url}?alt_id=${alt_id}` !== src) {
@@ -498,23 +505,18 @@ async function initMain() {
       });
       if (!result.valid) {
         let { message } = result.find(({ field_name }) => field_name === "alt");
-        return message;
-      }
-      let { errno, data } = await G.utils.axios.patch(
-        G.constant.API.UPDATE_ALBUM,
-        {
-          alt_id,
-          blog_id: G.data.blog.id,
-          alt: G.utils._xss.trim(new_alt),
-        }
-      );
-      if (errno) {
-        location.href = `/permission/${errno}`;
+        alert(message);
         return;
       }
+      let { data } = await G.utils.axios.patch(API.UPDATE_ALBUM, {
+        alt_id,
+        blog_id: G.data.blog.id,
+        alt: G.utils._xss.trim(new_alt),
+      });
       //  尋找相同 alt_id
       let imgData = G.data.blog.map_imgs.get(alt_id);
       imgData.alt = data.alt;
+      alert("圖片名稱已更新");
       return true;
     }
     //  自定義上傳圖片方法
@@ -525,13 +527,16 @@ async function initMain() {
         return;
       }
       //  取得 name ext
-      let _res = G.constant.REG.IMG_NAME_AND_EXT.exec(img.name);
-      if (!_res) {
-        setImgMode = 0;
-        alert("圖檔格式必須為PNG或JPG");
-        return false;
+      let pattern = `\\.(?<ext>${COMMON.AJV.IMG_EXT.map(
+        (ext) => `(${ext})`
+      ).join("|")})$`;
+      let reg = new RegExp(pattern, "i");
+      let _res = reg.exec(img.name);
+      let ext = _res ? _res.groups.ext : undefined;
+      if (!ext) {
+        alert(`限${COMMON.AJV.IMG_EXT.join("或")}格式`);
+        return;
       }
-      let [match = "", ext] = _res;
       let validated_list = await G.utils.validate.blog_img({
         ext,
         size: img.size,
@@ -555,7 +560,7 @@ async function initMain() {
       let hash = await _getMD5Hash(img);
       // exist = { blogImg_id, img_id };
       let exist = await _isImgExist(hash);
-      let api = `${G.constant.API.CREATE_IMG}?hash=${hash}&blog_id=${G.data.blog.id}`;
+      let api = `${API.CREATE_IMG}?hash=${hash}&blog_id=${G.data.blog.id}`;
       let formdata = new FormData();
       api += `&ext=${ext}`;
       formdata.append("blogImg", img);
@@ -646,14 +651,15 @@ async function initMain() {
       let KEY = "html";
       let content = G.utils.editor.getHtml();
       // xss + 將<img>轉換為自定義<x-img>
-      cache_content = _parseHtmlStr_ImgToXImg(G.utils._xss.blog(content));
+      let x = G.utils._xss.blog(content);
+      cache_content = _parseHtmlStr_ImgToXImg(x);
       let newData = { [KEY]: cache_content };
       //  校證html
       let result = await G.utils.validate.blog({
         ...newData,
         _old: G.data.blog,
       });
-      let text_count = G.constant.EDITOR.HTML_MAX_LENGTH - cache_content.length;
+      let text_count = COMMON.AJV.EDITOR.HTML_MAX_LENGTH - cache_content.length;
       let text = `還能輸入${text_count}個字`;
       if (result.valid) {
         G.utils.lock.setKVpairs(newData);
@@ -678,10 +684,12 @@ async function initMain() {
 
       //  將<img>替換為自定義<x-img>
       function _parseHtmlStr_ImgToXImg(html) {
-        let reg = G.constant.REG.IMG_PARSE_TO_X_IMG;
+        // const REG_IMG_PARSE_TO_X_IMG = /<img\ssrc="[^=]+?alt_id=(?<alt_id>\d+?)"(.+?style="(?<style>.*?)")?(.*?)\/?>/g
+        const REG_IMG_PARSE_TO_X_IMG =
+          /<img\ssrc="[^=]+?alt_id=(?<alt_id>\d+?)"(.+?)((style="(?<style>.*?)")?)?(.+?)\/?>/g;
         let res;
         let copy = html;
-        while ((res = reg.exec(html))) {
+        while ((res = REG_IMG_PARSE_TO_X_IMG.exec(html))) {
           let { alt_id, style } = res.groups;
           copy = copy.replace(
             res[0],
@@ -762,7 +770,7 @@ async function initMain() {
     if (!cancelImgs.length) {
       return;
     }
-    await G.utils.axios.patch(G.constant.API.UPDATE_BLOG, {
+    await G.utils.axios.patch(API.UPDATE_BLOG, {
       cancelImgs,
       blog_id: G.data.blog.id,
     });
@@ -788,12 +796,12 @@ async function initMain() {
      * 會導致G.data.blog.map_imgs存在G.data.blog.html所沒有的圖片
      */
     let set = new Set(G.data.blog.map_imgs.keys());
-    let reg = G.constant.REG.IMG_ALT_ID;
+    let reg_alt = /alt_id=(?<alt_id>\w+)/;
     //  找出editor內的<img>數據，格式為 [{src, alt, href}, ...]
     let alt_list = G.utils.editor
       .getElemsByType("image")
       .reduce((acc, { src }) => {
-        let res = reg.exec(src);
+        let res = reg_alt.exec(src);
         if (res && res.groups.alt_id) {
           //  由電腦上傳的圖片
           let alt_id = res.groups.alt_id * 1;

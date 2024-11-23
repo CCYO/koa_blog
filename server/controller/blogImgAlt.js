@@ -1,8 +1,8 @@
 const BlogImgAlt = require("../server/blogImgAlt");
 const Opts = require("../utils/seq_options");
 const { MyErr, SuccModel } = require("../utils/model");
-const { CACHE, ENV, ERR_RES } = require("../config");
-
+const { ENV } = require("../config");
+const { CACHE, ERR_RES } = require("../const");
 async function add(blogImg_id, alt) {
   let _data = { blogImg_id };
   if (alt) {

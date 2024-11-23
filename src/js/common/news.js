@@ -3,12 +3,12 @@ import Loop from "./loop";
 import { async_render } from "../utils";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-import FRONTEND from "@config/frontend_esm";
+import { COMMON } from "../../const";
 
 /* NPM        ----------------------------------------------------------------------------- */
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import "dayjs/locale/zh-tw";
+// import dayjs from "dayjs";
+// import relativeTime from "dayjs/plugin/relativeTime";
+// import "dayjs/locale/zh-tw";
 
 /* VAR        ----------------------------------------------------------------------------- */
 let render = await async_render();
@@ -84,12 +84,12 @@ export default class {
       get() {
         if (this.#first) {
           !process.env.isProd && console.log("news ---> 首次");
-          return { status: FRONTEND.NAVBAR.NEWS.STATUS.FIRST };
+          return { status: COMMON.NEWS.STATUS.FIRST };
           // } else if (this.#checkNews) {
         } else if (this.#auto && this.#checkNews) {
           !process.env.isProd && console.log("news ---> 自動|check");
           return {
-            status: FRONTEND.NAVBAR.NEWS.STATUS.CHECK,
+            status: COMMON.NEWS.STATUS.CHECK,
           };
         } else if (!this.#auto) {
           // 到這邊的原因
@@ -99,7 +99,7 @@ export default class {
           !process.env.isProd &&
             console.log(`news ---> ${this.#auto ? "自動" : "手動"}|獲取通知`);
           return {
-            status: FRONTEND.NAVBAR.NEWS.STATUS.AGAIN,
+            status: COMMON.NEWS.STATUS.AGAIN,
             excepts: { ...this.#id_list },
           };
         }
@@ -137,7 +137,7 @@ export default class {
       ws.onclose = async (event) => {
         !process.env.isProd &&
           console.log(`ws close \ncode:${event.code}\nreason:${event.reason}`);
-        if (event.code >= FRONTEND.NAVBAR.NEWS.WS.CLOSE.EMPLOYER_ID.CODE) {
+        if (event.code >= COMMON.WS.CLOSE.EMPLOYER_ID.CODE) {
           if (!document.hidden) {
             logout(event.reason);
           } else {
@@ -157,10 +157,10 @@ export default class {
 
       ws.onmessage = async function (event) {
         switch (Number(event.data)) {
-          case FRONTEND.NAVBAR.NEWS.WS.HAS_UNCONFIRM:
+          case COMMON.WS.HAS_UNCONFIRM:
             await getNews();
             break;
-          case FRONTEND.NAVBAR.NEWS.WS.HAS_CONFIRM:
+          case COMMON.WS.HAS_CONFIRM:
             ins_news.db.confirm += 1;
             ins_news.renderClass.showReadMore();
         }
@@ -279,8 +279,8 @@ class HtmlStr {
   unRender = _count();
 
   constructor() {
-    dayjs.locale("zh-tw");
-    dayjs.extend(relativeTime);
+    //   dayjs.locale("zh-tw");
+    //   dayjs.extend(relativeTime);
     Object.defineProperties(this, {
       confirm: { configurable: false },
       unconfirm: { configurable: false },
@@ -339,10 +339,10 @@ class HtmlStr {
     return list.reduce((htmlStr, item) => {
       // let { confirm, id, fans, timestamp } = item;
       let { type, confirm } = item;
-      item.timestamp = dayjs(
-        item.timestamp,
-        FRONTEND.NAVBAR.NEWS.TIME_FORMAT
-      ).fromNow();
+      // item.timestamp = dayjs(
+      //   item.timestamp,
+      //   FRONTEND.NAVBAR.NEWS.TIME_FORMAT
+      // ).fromNow();
       switch (type) {
         case 1:
           htmlStr += render.navbar.fansIdol(item);
@@ -434,7 +434,7 @@ class Render {
       : db.unconfirm;
     if (
       newCount === 0 ||
-      (first && htmlStr.unRender.total > FRONTEND.NAVBAR.NEWS.LIMIT)
+      (first && htmlStr.unRender.total > COMMON.NEWS.LIMIT)
     ) {
       this.$newsCount.text(newCount ? newCount : "");
     } else {
@@ -483,8 +483,7 @@ class Render {
   async _renderFadeIn() {
     let { htmlStr, db } = this.newsClass;
     let scroll =
-      htmlStr.rendered.total &&
-      htmlStr.unRender.unconfirm <= FRONTEND.NAVBAR.NEWS.LIMIT;
+      htmlStr.rendered.total && htmlStr.unRender.unconfirm <= COMMON.NEWS.LIMIT;
     htmlStr.render();
     if (scroll) {
       $(".dropdown-menu").scrollTop(99999);

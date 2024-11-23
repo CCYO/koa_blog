@@ -13,8 +13,8 @@ const Blog = require("../server/blog");
 const Opts = require("../utils/seq_options");
 const { MyErr, ErrModel, SuccModel } = require("../utils/model");
 /* CONFIG     ----------------------------------------------------------------------------- */
-const { CACHE, ERR_RES, ENV } = require("../config");
-
+const { ENV } = require("../config");
+const { COMMON, CACHE, ERR_RES } = require("../const");
 /**
  * @description find pagination for blog
  * @param {Object} param0
@@ -38,9 +38,9 @@ async function findListForPagination({
   let resModel = await findListAndCount({ author_id, show, offset, limit });
   let data;
   if (show) {
-    data = { public: resModel.data };
+    data = { [COMMON.BLOG.STATUS.PUBLIC]: resModel.data };
   } else {
-    data = { private: resModel.data };
+    data = { [COMMON.BLOG.STATUS.PRIVATE]: resModel.data };
   }
   return new SuccModel({ data });
 }
@@ -295,7 +295,7 @@ async function findListAndCountOfSquare(opts) {
     Opts.BLOG.FIND.listAndCountForSquare(opts)
   );
   let data = {
-    public: { blogs, count },
+    [COMMON.BLOG.STATUS.PUBLIC]: { blogs, count },
   };
   return new SuccModel({ data });
 }
@@ -323,12 +323,12 @@ async function findListAndCountOfAlbum(opts) {
   }
   let data = {};
   if (public) {
-    data.public = await Blog.readListAndCountAll(
+    data[COMMON.BLOG.STATUS.PUBLIC] = await Blog.readListAndCountAll(
       Opts.BLOG.FIND.listAndCountForAlbum({ ...opts, show: true })
     );
   }
   if (private) {
-    data.private = await Blog.readListAndCountAll(
+    data[COMMON.BLOG.STATUS.PRIVATE] = await Blog.readListAndCountAll(
       Opts.BLOG.FIND.listAndCountForAlbum({ ...opts, show: false })
     );
   }

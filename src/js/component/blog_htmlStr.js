@@ -2,10 +2,15 @@
  * @description  initEJS解析後，其中HTML的<img>為自定義的<x-img>，這裡負責數據轉回<img>
  */
 
+const REG_X_IMG_PARSE_TO_IMG = new RegExp(
+  "<x-img.+?data-alt-id='(?<alt_id>\\d+?)'.+?(data-style='(?<style>.*?)')?.*?\\/>",
+  "g"
+);
+
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default function parseHtmlStr_XImgToImg(G) {
   let htmlStr = G.data.blog.html;
-  let reg = G.constant.REG.X_IMG_PARSE_TO_IMG;
+  let reg = REG_X_IMG_PARSE_TO_IMG;
   let imgLoad_list = [];
   let regRes;
 
@@ -42,6 +47,9 @@ export default function parseHtmlStr_XImgToImg(G) {
       });
     }
   }
+
+  // let reg_list = /<li style=".*?text-align: (?<text_align>(.+?);.*?">/;
+
   // 確認全部img是否完成讀取
   let checkImgLoad = () =>
     Promise.all(imgLoad_list.map((imgLoad) => imgLoad())).catch((e) => {

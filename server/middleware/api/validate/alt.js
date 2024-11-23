@@ -1,9 +1,10 @@
 /**
  * @description middleware validate
  */
-const { BLOG_IMG_ALT } = require("../../../config/_errRes");
-const { TYPE } = require("../../../utils/validator/config");
-const validator = require("../../../utils/validator");
+const {
+  ERR_RES: { BLOG_IMG_ALT },
+} = require("../../../const");
+const _ajv = require("../../../utils/_ajv");
 const C_BlogImgAlt = require("../../../controller/blogImgAlt");
 const { MyErr } = require("../../../utils/model");
 
@@ -26,7 +27,7 @@ module.exports = async (ctx, next) => {
       let { data } = await C_BlogImgAlt.findWholeInfo(ctx.request.body);
       ctx.request.body._old = { alt: data.alt };
       // ctx.request.body { author_id, blog_id, alt_id, alt, _old }
-      validate_result = await validator._validate[TYPE.IMG_ALT](
+      validate_result = await _ajv._validate[_ajv._type.IMG_ALT](
         ctx.request.body
       );
       if (!validate_result.valid) {

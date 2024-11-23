@@ -1,7 +1,7 @@
 const Img = require("../server/img");
 const Opts = require("../utils/seq_options");
 const { SuccModel, ErrModel } = require("../utils/model");
-const { ERR_RES } = require("../config");
+const { ERR_RES } = require("../const");
 
 async function add({ hash, url }) {
   let data = await Img.create({ hash, url });

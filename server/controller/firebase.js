@@ -5,73 +5,74 @@ const { formidable } = require("formidable");
 const { firstValues } = require("formidable/src/helpers/firstValues.js");
 const { storage } = require("../db/firebase");
 const { MyErr, SuccModel } = require("../utils/model");
-const { IMG, USER, BLOG, GFB, ERR_RES } = require("../config");
+const { COMMON } = require("../const");
+const { SERVER, ERR_RES } = require("../const");
 
+const pattern = `^(${COMMON.AJV.IMG_EXT.map((ext) => `(${ext})`).join("|")})$`;
+const REGEXP_EXT = new RegExp(pattern, "i");
 //  處理 blog 內文圖片
 async function addBlogImg(ctx) {
   //  上傳 blog 內文圖片時，會附上圖片相關資料
   let { ext, hash } = ctx.query;
   if (ext) {
-    ext = ext.toUpperCase();
-    if (!BLOG.EDITOR.IMG_EXT.some((ext_type) => ext_type === ext)) {
-      throw new MyErr(IMG.READ.FORMAT_ERR);
+    if (!REGEXP_EXT.exec(ext)) {
+      throw new MyErr(ERR_RES.IMG.CREATE.BLOG_IMG_FROMAT_ERR);
     }
   } else {
-    throw new MyErr(IMG.READ.NO_EXT);
+    throw new MyErr(ERR_RES.IMG.CREATE.BLOG_IMG_NO_EXT);
   }
   if (!hash) {
-    throw new MyErr(IMG.READ.NO_HASH);
+    throw new MyErr(ERR_RES.IMG.CREATE.BLOG_IMG_NO_HASH);
   }
   //  創建GFB的存放路徑
-  let ref = storage.bucket().file(`${GFB.BLOG_REF}/${hash}.${ext}`);
+  let ref = storage.bucket().file(`${SERVER.GFB.BLOG_REF}/${hash}.${ext}`);
   //  確認是否已存
   let [exist] = await ref.exists();
   if (!exist) {
     ctx._my = { gceFile: { ref } };
     //  建立 formidable Ins
     let { files } = await _parse(ctx, {
-      maxFileSize: BLOG.EDITOR.IMG_MAX_SIZE,
+      maxFileSize: COMMON.AJV.EDITOR.IMG_MAX_SIZE,
     });
-    if (!files[GFB.BLOG_REF].length) {
+    if (!files[SERVER.GFB.BLOG_REF].length) {
       throw new MyErr(ERR_RES.SERVER.FORMIDABLE.NO_PAYLOAD);
     }
     delete ctx._my;
   }
-  let data = { [GFB.BLOG_REF]: ref.publicUrl() };
+  let data = { [SERVER.GFB.BLOG_REF]: ref.publicUrl() };
   return new SuccModel({ data });
 }
 //  處理 user avatar
 async function addUserAvatar(ctx) {
   let { avatar_ext, avatar_hash } = ctx.request.query;
   if (avatar_ext && !avatar_hash) {
-    throw new MyErr(USER.UPDATE.AVATAR_NO_ARGS_HASH);
+    throw new MyErr(ERR_RES.USER.UPDATE.AVATAR_NO_ARGS_HASH);
   } else if (avatar_hash && !avatar_ext) {
-    throw new MyErr(USER.UPDATE.AVATAR_NO_ARGS_EXT);
+    throw new MyErr(ERR_RES.USER.UPDATE.AVATAR_NO_ARGS_EXT);
   } else if (avatar_hash === ctx.session.user.avatar_hash) {
-    throw new MyErr(USER.UPDATE.SAME_AVATAR_HASH);
+    throw new MyErr(ERR_RES.USER.UPDATE.SAME_AVATAR_HASH);
   }
 
   let data = {};
   let ref;
   if (avatar_ext && avatar_hash) {
-    avatar_ext = avatar_ext.toUpperCase();
-    if (!USER.AVATAR.EXT.some((ext) => avatar_ext === ext)) {
-      throw new MyErr(USER.UPDATE.AVATAR_FORMAT_ERR);
+    if (!REGEXP_EXT.exec(avatar_ext)) {
+      throw new MyErr(ERR_RES.USER.UPDATE.AVATAR_FORMAT_ERR);
     }
     //  創建GFB的存放路徑
     ref = storage
       .bucket()
-      .file(`${GFB.AVATAR_REF}/${avatar_hash}.${avatar_ext}`);
+      .file(`${SERVER.GFB.AVATAR_REF}/${avatar_hash}.${avatar_ext}`);
     //  確認是否已存
     let [exist] = await ref.exists();
     if (!exist) {
       ctx._my = { gceFile: { ref } };
     } else {
-      data[GFB.AVATAR_REF] = ref.publicUrl();
+      data[SERVER.GFB.AVATAR_REF] = ref.publicUrl();
     }
   }
   let { fields, files } = await _parse(ctx, {
-    maxFileSize: USER.AVATAR.MAX_SIZE,
+    maxFileSize: COMMON.AJV.SETTING.AVATAR.MAX_SIZE,
   }).catch((e) => {
     throw e;
   });
@@ -81,9 +82,9 @@ async function addUserAvatar(ctx) {
   ) {
     throw new MyErr(ERR_RES.SERVER.FORMIDABLE.NO_PAYLOAD);
   }
-  if (files.hasOwnProperty(GFB.AVATAR_REF)) {
+  if (files.hasOwnProperty(SERVER.GFB.AVATAR_REF)) {
     delete ctx._my;
-    data[GFB.AVATAR_REF] = ref.publicUrl();
+    data[SERVER.GFB.AVATAR_REF] = ref.publicUrl();
   }
   data = { ...data, ...fields };
 

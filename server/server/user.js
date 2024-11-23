@@ -2,7 +2,7 @@
  * @description Server User
  */
 const { MyErr } = require("../utils/model");
-const { ERR_RES } = require("../config");
+const { ERR_RES } = require("../const");
 const { User } = require("../db/mysql/model");
 const Init = require("../utils/init");
 
