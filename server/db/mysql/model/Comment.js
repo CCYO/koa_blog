@@ -1,28 +1,30 @@
-const seq = require('../seq')
-const {
-    STRING,
-    INTEGER
-} = require('../types')
+const seq = require("../seq");
+const { STRING, INTEGER } = require("../types");
+const { COMMON } = require("../../../const");
 
-let Comment = seq.define('Comment', {
+let Comment = seq.define(
+  "Comment",
+  {
     html: {
-        type: STRING,
-        defaultValue: ''
+      type: STRING,
+      defaultValue: "",
     },
     commenter_id: {
-        type: INTEGER,
-        allowNull: false
+      type: INTEGER,
+      allowNull: false,
     },
     article_id: {
-        type: INTEGER,
-        allowNull: false
+      type: INTEGER,
+      allowNull: false,
     },
     pid: {
-        type: INTEGER,
-        allowNull: true
-    }
-}, {
-    paranoid: true
-})
+      type: INTEGER,
+      allowNull: true,
+    },
+  },
+  {
+    paranoid: true,
+  }
+);
 
-module.exports = Comment
+module.exports = Comment;
