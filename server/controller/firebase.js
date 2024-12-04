@@ -8,7 +8,7 @@ const { MyErr, SuccModel } = require("../utils/model");
 const { COMMON } = require("../const");
 const { SERVER, ERR_RES } = require("../const");
 
-const pattern = `^(${COMMON.AJV.IMG_EXT.map((ext) => `(${ext})`).join("|")})$`;
+const pattern = `^(${COMMON.AJV.IMG.EXT.map((ext) => `(${ext})`).join("|")})$`;
 const REGEXP_EXT = new RegExp(pattern, "i");
 //  處理 blog 內文圖片
 async function addBlogImg(ctx) {
@@ -32,7 +32,7 @@ async function addBlogImg(ctx) {
     ctx._my = { gceFile: { ref } };
     //  建立 formidable Ins
     let { files } = await _parse(ctx, {
-      maxFileSize: COMMON.AJV.EDITOR.IMG_MAX_SIZE,
+      maxFileSize: COMMON.AJV.BLOG.IMG.MAX_SIZE,
     });
     if (!files[SERVER.GFB.BLOG_REF].length) {
       throw new MyErr(ERR_RES.SERVER.FORMIDABLE.NO_PAYLOAD);

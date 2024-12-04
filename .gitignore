@@ -13,3 +13,4 @@ src/js/utils/render/template/*
 !src/js/utils/render/template/.gitkeep
 src/js/utils/render/dev_template/*
 !src/js/utils/render/dev_template/.gitkeep
+src/assets/js/common.js

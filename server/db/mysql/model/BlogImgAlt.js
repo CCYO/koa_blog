@@ -3,25 +3,28 @@
  */
 const seq = require("../seq");
 const { STRING, INTEGER } = require("../types");
-const { COMMON } = require("../../../const");
+const {
+  COMMON: { AJV },
+} = require("../../../const");
 
 const BlogImgAlt = seq.define("BlogImgAlt", {
   id: {
     type: INTEGER,
-    primaryKey: true,
     allowNull: false,
     autoIncrement: true,
+    primaryKey: true,
   },
   blogImg_id: {
     type: INTEGER,
     allowNull: false,
   },
   alt: {
-    type: STRING(COMMON.AJV.EDITOR.IMG_ALT_MAX_LENGTH),
+    type: STRING(AJV.BLOG.IMG_ALT.MAX_LENGTH),
     validate: {
-      is: COMMON.AJV.EDITOR.IMG_ALT_REGEXP,
+      is: AJV.BLOG.IMG_ALT.REGEXP,
+      len: [AJV.BLOG.IMG_ALT.MIN_LENGTH, AJV.BLOG.IMG_ALT.MAX_LENGTH],
+      notEmpty: false,
     },
-    allowNull: true,
   },
 });
 

@@ -1,2 +1,2 @@
-import { CONST } from "../../common/dist/index.esm";
+import { CONST } from "../assets/js/common";
 export default CONST;

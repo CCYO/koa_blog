@@ -4,14 +4,24 @@
 const seq = require("../seq");
 const { STRING } = require("../types");
 
+const {
+  COMMON: { AJV },
+} = require("../../../const");
+
 const Img = seq.define("Img", {
   url: {
     type: STRING,
     allowNull: false,
+    validate: {
+      isUrl: true,
+    },
   },
   hash: {
     type: STRING,
     allowNull: false,
+    validate: {
+      is: AJV.HASH,
+    },
   },
 });
 

@@ -3,17 +3,19 @@
  */
 const seq = require("../seq");
 const { STRING, INTEGER, TEXT, BOO, DATE } = require("../types");
-const { COMMON } = require("../../../const");
+const {
+  COMMON: { AJV },
+} = require("../../../const");
 
 const Blog = seq.define(
   "Blog",
   {
     title: {
-      type: STRING(COMMON.AJV.EDITOR.TITLE_MAX_LENGTH),
-      validate: {
-        is: COMMON.AJV.EDITOR.TITLE_REGEXP,
-      },
       allowNull: false,
+      type: STRING(AJV.BLOG.TITLE.MAX_LENGTH),
+      validate: {
+        is: AJV.BLOG.TITLE.REGEXP,
+      },
     },
     author_id: {
       type: INTEGER,
@@ -21,7 +23,6 @@ const Blog = seq.define(
     },
     html: {
       type: TEXT,
-      allowNull: true,
     },
     show: {
       type: BOO,
@@ -29,7 +30,6 @@ const Blog = seq.define(
     },
     showAt: {
       type: DATE,
-      allowNull: true,
     },
   },
   {

@@ -13,9 +13,6 @@ import { COMMON } from "../../const";
 
 /* VAR        ----------------------------------------------------------------------------- */
 let render = await async_render();
-const API = {
-  GET_PAGINATION: "/api/album/list",
-};
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default function (G) {
@@ -24,17 +21,21 @@ export default function (G) {
   const template_blogList = render[G.data.page].blogList;
   let author_id = undefined;
   let pageData = undefined;
+  let API_PAGINATION;
   switch (G.data.page) {
     case COMMON.PAGE.USER.PAGE_NAME:
       author_id = G.data.currentUser.id;
       pageData = G.data.blogs;
+      API_PAGINATION = "/api/blog/list";
       break;
     case COMMON.PAGE.ALBUM_LIST.PAGE_NAME:
       author_id = G.data.me.id;
       pageData = G.data.album;
+      API_PAGINATION = "/api/album/list";
       break;
     case COMMON.PAGE.SQUARE.PAGE_NAME:
       pageData = G.data.blog;
+      API_PAGINATION = "/api/square/list";
       break;
   }
   let $div_blogList = $(`[data-${pageConst.DATASET.KEY.BLOG_STATUS}]`);
@@ -117,7 +118,7 @@ export default function (G) {
           data: {
             [$$status]: { blogs },
           },
-        } = await G.utils.axios.post(API.GET_PAGINATION, {
+        } = await G.utils.axios.post(API_PAGINATION, {
           author_id,
           limit: pageConst.PAGINATION.BLOG_COUNT,
           //  前端分頁index從1開始，後端分頁index從0開始，所以要-1

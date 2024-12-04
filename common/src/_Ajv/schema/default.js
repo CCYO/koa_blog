@@ -1,37 +1,37 @@
 import { AJV } from "../../const";
-const { EDITOR, SETTING, IMG_EXT } = AJV;
+const { SETTING, IMG, BLOG, HASH } = AJV;
 
 export default {
   blogImg_size: {
     type: "number",
-    minimum: EDITOR.IMG_MIN_SIZE,
-    maximum: EDITOR.IMG_MAX_SIZE,
+    minimum: BLOG.IMG.MIN_SIZE,
+    maximum: BLOG.IMG.MAX_SIZE,
     errorMessage: {
       minimum: `圖片不存在`,
-      maximum: `必須小於${EDITOR.IMG_MAX_SIZE / (1024 * 1024)}M`,
+      maximum: `必須小於${BLOG.IMG.MAX_SIZE / (1024 * 1024)}M`,
       type: "必須是number",
     },
   },
   img_ext: {
     type: "string",
     regexp: {
-      pattern: `^(${IMG_EXT.map((ext) => `(${ext})`).join("|")})$`,
+      pattern: `^(${IMG.EXT.map((ext) => `(${ext})`).join("|")})$`,
       flags: "i",
     },
     errorMessage: {
       type: "必須是字符串",
-      regexp: `圖片格式必須是${IMG_EXT.join(", ")}類型`,
+      regexp: `圖片格式必須是${IMG.EXT}類型`,
     },
   },
   alt: {
     type: "string",
-    minLength: EDITOR.IMG_ALT_MIN_LENGTH,
-    maxLength: EDITOR.IMG_ALT_MAX_LENGTH,
-    regexp: EDITOR.IMG_ALT_REGEXP.toString(),
+    minLength: BLOG.IMG_ALT.MIN_LENGTH,
+    maxLength: BLOG.IMG_ALT.MAX_LENGTH,
+    regexp: BLOG.IMG_ALT.REGEXP.toString(),
     errorMessage: {
-      minLength: `名稱需介於${EDITOR.IMG_ALT_MIN_LENGTH}-${EDITOR.IMG_ALT_MAX_LENGTH}個字`,
-      maxLength: `名稱需介於${EDITOR.IMG_ALT_MIN_LENGTH}-${EDITOR.IMG_ALT_MAX_LENGTH}個字`,
-      regexp: EDITOR.IMG_ALT_REGEXP_ERR_MSG,
+      minLength: `名稱需介於${BLOG.IMG_ALT.MIN_LENGTH}-${BLOG.IMG_ALT.MAX_LENGTH}個字`,
+      maxLength: `名稱需介於${BLOG.IMG_ALT.MIN_LENGTH}-${BLOG.IMG_ALT.MAX_LENGTH}個字`,
+      regexp: BLOG.IMG_ALT.REGEXP_MSG,
       type: "必須是字符串",
     },
   },
@@ -62,7 +62,7 @@ export default {
     errorMessage: {
       minLength: `必須介於${SETTING.NICKNAME.MIN_LENGTH}-${SETTING.NICKNAME.MAX_LENGTH}個字符`,
       maxLength: `必須介於${SETTING.NICKNAME.MIN_LENGTH}-${SETTING.NICKNAME.MAX_LENGTH}個字符`,
-      regexp: SETTING.NICKNAME.REGEXP_ERR_MSG,
+      regexp: SETTING.NICKNAME.REGEXP_MSG,
       type: "必須是字符串",
     },
   },
@@ -100,31 +100,31 @@ export default {
   },
   hash: {
     type: "string",
-    pattern: "[0-9a-f]{16,16}",
+    pattern: HASH.toString(),
     errorMessage: {
       type: "必須是字符串",
-      pattern: "必須由32個16進制字符組成",
+      pattern: "必須符合HASH",
     },
   },
   title: {
     type: "string",
-    regexp: EDITOR.TITLE_REGEXP.toString(),
-    minLength: EDITOR.TITLE_MIN_LENGTH,
-    maxLength: EDITOR.TITLE_MAX_LENGTH,
+    regexp: BLOG.TITLE.REGEXP.toString(),
+    minLength: BLOG.TITLE.MIN_LENGTH,
+    maxLength: BLOG.TITLE.MAX_LENGTH,
     errorMessage: {
-      minLength: `必須介於${EDITOR.TITLE_MIN_LENGTH}-${EDITOR.TITLE_MAX_LENGTH}個字符`,
-      maxLength: `必須介於${EDITOR.TITLE_MIN_LENGTH}-${EDITOR.TITLE_MAX_LENGTH}個字符`,
-      regexp: EDITOR.TITLE_REGEXP_ERR_MSG,
+      minLength: `必須介於${BLOG.TITLE.MIN_LENGTH}-${BLOG.TITLE.MAX_LENGTH}個字符`,
+      maxLength: `必須介於${BLOG.TITLE.MIN_LENGTH}-${BLOG.TITLE.MAX_LENGTH}個字符`,
+      regexp: BLOG.TITLE.REGEXP_MSG,
       type: "必須是字符串",
     },
   },
   html: {
     type: "string",
-    minLength: EDITOR.HTML_MIN_LENGTH,
-    maxLength: EDITOR.HTML_MAX_LENGTH,
+    minLength: BLOG.HTML.MIN_LENGTH,
+    maxLength: BLOG.HTML.MAX_LENGTH,
     errorMessage: {
-      minLength: `長度需小於${EDITOR.HTML_MIN_LENGTH}個字`,
-      maxLength: `長度需大於${EDITOR.HTML_MAX_LENGTH}個字`,
+      minLength: `長度需小於${BLOG.HTML.MIN_LENGTH}個字`,
+      maxLength: `長度需大於${BLOG.HTML.MAX_LENGTH}個字`,
       type: "必須是字符串",
     },
   },

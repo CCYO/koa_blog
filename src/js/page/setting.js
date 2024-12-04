@@ -243,7 +243,7 @@ async function initMain() {
           }Mb`,
         };
       }
-      let pattern = `\\.(?<ext>${COMMON.AJV.IMG_EXT.map(
+      let pattern = `\\.(?<ext>${COMMON.AJV.IMG.EXT.map(
         (ext) => `(${ext})`
       ).join("|")})$`;
       let reg = new RegExp(pattern, "i");

@@ -386,9 +386,7 @@ async function initMain() {
       },
     });
     $span_content_count.text(
-      `還能輸入${
-        COMMON.AJV.EDITOR.HTML_MAX_LENGTH - editor.getHtml().length
-      }個字`
+      `還能輸入${COMMON.AJV.BLOG.HTML.MAX_LENGTH - editor.getHtml().length}個字`
     );
     let imgEditModalisShow = false;
     //  handle 用來隱藏 image modal 的 src & url 編輯功能
@@ -421,18 +419,13 @@ async function initMain() {
       //  不能省略focus操作，推估modalOrPanel成型條件需要由focus定位，
       //  否則會導致稍後任何點擊都觸發 handle_editorChange，而讓model自動消失
       $containerList.eq(1).show(0).get(0).focus();
+      let src = $containerList.eq(0).children("input").get(0).value;
+      let alt_id = new URL(src).searchParams.get("alt_id") * 1;
+      let data = G.data.blog.map_imgs.get(alt_id);
+
       let input = $containerList.eq(1).children("input").get(0);
       let alt = input.value;
-      const reg = /(?<hash>.+?):(?<alt_id>\d+)/;
-      let result = reg.exec(alt);
-      if (!result) {
-        return;
-      }
-      let {
-        groups: { alt_id },
-      } = result;
-      let data = G.data.blog.map_imgs.get(alt_id * 1);
-      if (data && `${data.alt}:${alt_id}` === alt) {
+      if (data.img.hash === alt) {
         input.value = "";
       }
     }
@@ -527,7 +520,7 @@ async function initMain() {
         return;
       }
       //  取得 name ext
-      let pattern = `\\.(?<ext>${COMMON.AJV.IMG_EXT.map(
+      let pattern = `\\.(?<ext>${COMMON.AJV.IMG.EXT.map(
         (ext) => `(${ext})`
       ).join("|")})$`;
       let reg = new RegExp(pattern, "i");
@@ -577,7 +570,7 @@ async function initMain() {
       //  { [alt_id]: { alt, blogImg: { id }, img: { id, hash, url } }}
       G.data.blog.map_imgs.set(id, alt_data);
       //  將圖片插入 editor
-      insertFn(`${alt_data.img.url}?alt_id=${id}`, `${alt_data.alt}:${id}`);
+      insertFn(`${alt_data.img.url}?alt_id=${id}`, `${alt_data.alt}`);
       setImgMode = 0;
       return;
       //  取得圖片的 hash
@@ -659,7 +652,7 @@ async function initMain() {
         ...newData,
         _old: G.data.blog,
       });
-      let text_count = COMMON.AJV.EDITOR.HTML_MAX_LENGTH - cache_content.length;
+      let text_count = COMMON.AJV.BLOG.HTML.MAX_LENGTH - cache_content.length;
       let text = `還能輸入${text_count}個字`;
       if (result.valid) {
         G.utils.lock.setKVpairs(newData);
@@ -684,9 +677,8 @@ async function initMain() {
 
       //  將<img>替換為自定義<x-img>
       function _parseHtmlStr_ImgToXImg(html) {
-        // const REG_IMG_PARSE_TO_X_IMG = /<img\ssrc="[^=]+?alt_id=(?<alt_id>\d+?)"(.+?style="(?<style>.*?)")?(.*?)\/?>/g
         const REG_IMG_PARSE_TO_X_IMG =
-          /<img\ssrc="[^=]+?alt_id=(?<alt_id>\d+?)"(.+?)((style="(?<style>.*?)")?)?(.+?)\/?>/g;
+          /<img\ssrc="[^=]+?alt_id=(?<alt_id>\d+?)"((.+?)style="(?<style>.*?)")?(.*?)\/?>/g;
         let res;
         let copy = html;
         while ((res = REG_IMG_PARSE_TO_X_IMG.exec(html))) {

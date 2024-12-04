@@ -1,28 +1,31 @@
 const path = require("path");
 
-module.exports = {
-  mode: 'none',
+module.exports = (env) => ({
+  mode: "none",
   entry: {
-    "index.cjs": {
-      import: './src/index.js',
+    "common.cjs": {
+      import: "./src/index.js",
       library: {
-        type: 'commonjs2',
+        type: "commonjs2",
       },
-
+      filename: env.dev
+        ? "../server/dev_assets/js/common.js"
+        : "../server/assets/js/common.js",
     },
-    "index.esm": {
-      import: './src/index.js',
+    "common.esm": {
+      import: "./src/index.js",
       library: {
-        type: 'module',
+        type: "module",
       },
+      filename: "../src/assets/js/common.js",
     },
   },
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname),
     filename: "[name].js",
     clean: true,
   },
   experiments: {
-    outputModule: true
-  }
-};
+    outputModule: true,
+  },
+});

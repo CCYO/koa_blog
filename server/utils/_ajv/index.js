@@ -1,4 +1,10 @@
-const { _Ajv } = require("../../../common/dist/index.cjs.js");
+// const { _Ajv } = require("../../../common/dist/index.cjs.js");
+
+const { ENV } = require("../../config");
+const { _Ajv } = ENV.isProd
+  ? require("../../assets/js/common")
+  : require("../../dev_assets/js/common");
+
 const schemaFn_list = require("./schema");
 const type = require("./type");
 const _ajv = new _Ajv({

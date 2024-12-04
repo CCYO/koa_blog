@@ -106,6 +106,8 @@ function initImg(imgs) {
    */
   let map = new Map();
   for (let alt_id in imgs) {
+    let data = imgs[alt_id];
+    data.alt = data.alt === data.img.hash ? "" : data.alt;
     map.set(alt_id * 1, imgs[alt_id]);
   }
   return map;

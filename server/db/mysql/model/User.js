@@ -3,7 +3,9 @@
  */
 const seq = require("../seq");
 const { STRING, INTEGER } = require("../types");
-const { COMMON } = require("../../../const");
+const {
+  COMMON: { AJV },
+} = require("../../../const");
 
 const User = seq.define(
   "User",
@@ -14,44 +16,41 @@ const User = seq.define(
       unique: true,
       validate: {
         isEmail: true,
-        notNull: true,
       },
     },
     password: {
       type: STRING,
       allowNull: false,
       validate: {
-        notNull: true,
-        is: /^[\w]+$/,
-        len: [32, 32],
+        is: AJV.HASH,
       },
     },
     age: {
       type: INTEGER,
       validate: {
-        max: COMMON.AJV.SETTING.AGE.MAXIMUM,
-        min: COMMON.AJV.SETTING.AGE.MINIMUM,
+        max: AJV.SETTING.AGE.MAXIMUM,
+        min: AJV.SETTING.AGE.MINIMUM,
       },
     },
     nickname: {
       type: STRING,
-      allowNull: true,
       validate: {
-        is: COMMON.AJV.SETTING.NICKNAME.REGEXP,
-        len: [
-          COMMON.AJV.SETTING.NICKNAME.MIN_LENGTH,
-          COMMON.AJV.SETTING.NICKNAME.MAX_LENGTH,
-        ],
-        notNull: false,
+        is: AJV.SETTING.NICKNAME.REGEXP,
+        len: [AJV.SETTING.NICKNAME.MIN_LENGTH, AJV.SETTING.NICKNAME.MAX_LENGTH],
+        notEmpty: false,
       },
     },
     avatar: {
       type: STRING,
-      allowNull: true,
+      validate: {
+        isUrl: true,
+      },
     },
     avatar_hash: {
       type: STRING,
-      allowNull: true,
+      validate: {
+        is: AJV.HASH,
+      },
     },
   },
   {

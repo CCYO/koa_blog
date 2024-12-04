@@ -22,7 +22,7 @@ export default function parseHtmlStr_XImgToImg(G) {
       alt,
       img: { url },
     } = G.data.blog.map_imgs.get(alt_id * 1);
-    let imgEle = `<img src="${url}?alt_id=${alt_id}" alt="${alt}"`;
+    let imgEle = `<img src="${url}?alt_id=${alt_id}" alt="${alt}" title="${alt}"`;
     let replaceStr = style ? `${imgEle} style="${style}"/>` : `${imgEle}/>`;
     //  替換匹配的<img>數據
     htmlStr = htmlStr.replace(regRes[0], replaceStr);
@@ -47,8 +47,6 @@ export default function parseHtmlStr_XImgToImg(G) {
       });
     }
   }
-
-  // let reg_list = /<li style=".*?text-align: (?<text_align>(.+?);.*?">/;
 
   // 確認全部img是否完成讀取
   let checkImgLoad = () =>
