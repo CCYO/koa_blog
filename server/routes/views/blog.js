@@ -1,18 +1,26 @@
 /**
  * @description blog view
  */
-/* NPM        ----------------------------------------------------------------------------- */
-const router = require("koa-router")();
-/* UTILS      ----------------------------------------------------------------------------- */
-const Blog = require("../../controller/blog");
-const render = require("../../utils/render");
-const { CACHE } = require("../../middleware/views");
-/* Config      ----------------------------------------------------------------------------- */
+
+/* CONFIG      ----------------------------------------------------------------------------- */
 const {
   CACHE: { TYPE },
   COMMON: { PAGE, BLOG },
-} = require("../../const");
-/* Var         ----------------------------------------------------------------------------- */
+} = require("../../config");
+
+/* NPM        ----------------------------------------------------------------------------- */
+const router = require("koa-router")();
+
+/* MIDDLEWARE ----------------------------------------------------------------------------- */
+const { CACHE } = require("../../middleware/views");
+
+/* CONTROLLER ----------------------------------------------------------------------------- */
+const Blog = require("../../controller/blog");
+
+/* UTILS      ----------------------------------------------------------------------------- */
+const render = require("../../utils/render");
+
+/* VAR         ----------------------------------------------------------------------------- */
 const privateCache = CACHE.genPrivate(TYPE.PAGE.BLOG);
 const commonCache = CACHE.genCommon(TYPE.PAGE.BLOG);
 const ejs_render = render.blog;

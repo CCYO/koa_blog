@@ -1,7 +1,12 @@
+/* CONFIG      ----------------------------------------------------------------------------- */
+const { ERR_RES } = require("../config");
+
+/* CUSTOM      ----------------------------------------------------------------------------- */
 const { MsgReceiver } = require("../db/mysql/model");
-const Init = require("../utils/init");
+
+/* UTILS       ----------------------------------------------------------------------------- */
 const { MyErr } = require("../utils/model");
-const { ERR_RES } = require("../const");
+const Init = require("../utils/init");
 
 async function bulkCreate({ datas, updateOnDuplicate }) {
   try {

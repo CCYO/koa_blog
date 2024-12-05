@@ -1,6 +1,5 @@
 const seq = require("../seq");
 const { STRING, INTEGER } = require("../types");
-const { COMMON } = require("../../../const");
 
 let Comment = seq.define(
   "Comment",

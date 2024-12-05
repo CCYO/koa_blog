@@ -1,10 +1,15 @@
 /**
  * @description 彙整routes
  */
+
+/* Config     ----------------------------------------------------------------------------- */
+const { ENV, ERR_RES } = require("../config");
+
 /* NPM        ----------------------------------------------------------------------------- */
 let router = require("koa-router")();
-/* Config     ----------------------------------------------------------------------------- */
-const { ENV } = require("../config");
+
+/* UTILS      ----------------------------------------------------------------------------- */
+const { MyErr } = require("../utils/model");
 
 const api = require("./api");
 const views = require("./views");
@@ -25,8 +30,6 @@ router.get("/", (ctx) => {
  * @description test error
  */
 if (!ENV.isProd) {
-  const { MyErr } = require("../utils/model");
-  const { ERR_RES } = require("../const");
   router.get("/api/error", () => {
     throw new MyErr(ERR_RES.SERVER.RESPONSE.TEST);
   });

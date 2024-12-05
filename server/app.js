@@ -1,16 +1,9 @@
-/* NODEJS     ----------------------------------------------------------------------------- */
-const { resolve } = require("path");
-
 /* CONFIG     ----------------------------------------------------------------------------- */
 const { ENV } = require("./config");
-const WEBPACK_CONFIG = require("../build/config");
+const { WEBPACK } = require("../build/config");
 const { SESSION_KEY } = require("./_config");
 
 /* NPM        ----------------------------------------------------------------------------- */
-//  設定環境變量
-require("dotenv").config({
-  path: resolve(__dirname, `./_config/${ENV.isProd ? ".prod" : ".dev"}.env`),
-});
 const Koa = require("koa");
 //  處理非 multipart/form-data 的請求數據
 const bodyparser = require("koa-bodyparser")({
@@ -52,7 +45,7 @@ app.use(ws_middleware);
 app.use(session_middleware);
 app.use(sequelizeTransaction);
 app.use(
-  koaViews(WEBPACK_CONFIG.BUILD.VIEW, {
+  koaViews(WEBPACK.BUILD.VIEW, {
     extension: "ejs",
   })
 );

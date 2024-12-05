@@ -1,19 +1,27 @@
 /**
  * @description user view
  */
-/* NPM        ----------------------------------------------------------------------------- */
-const router = require("koa-router")();
-/* UTILS      ----------------------------------------------------------------------------- */
-const { CHECK, CACHE } = require("../../middleware/views");
-const User = require("../../controller/user");
-const render = require("../../utils/render");
-/* Config      ----------------------------------------------------------------------------- */
+
+/* CONFIG      ----------------------------------------------------------------------------- */
 const {
   CACHE: { TYPE },
   COMMON: { PAGE },
   PAGINATION,
-} = require("../../const");
-/* Var         ----------------------------------------------------------------------------- */
+} = require("../../config");
+
+/* NPM        ----------------------------------------------------------------------------- */
+const router = require("koa-router")();
+
+/* MIDDLEWARE ----------------------------------------------------------------------------- */
+const { CHECK, CACHE } = require("../../middleware/views");
+
+/* CONTROLLER ----------------------------------------------------------------------------- */
+const User = require("../../controller/user");
+
+/* UTILS      ----------------------------------------------------------------------------- */
+const render = require("../../utils/render");
+
+/* VAR        ----------------------------------------------------------------------------- */
 const privateCache = CACHE.genPrivate(TYPE.PAGE.USER);
 const commonCache = CACHE.genCommon(TYPE.PAGE.USER);
 const ejs_render = render.user;

@@ -5,7 +5,7 @@ import "@css/blog.scss";
 import G from "../common";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-import { COMMON } from "../../const";
+import { COMMON } from "../../config";
 
 /* UTILS      ----------------------------------------------------------------------------- */
 import { async_render, redir, errorHandle, _xss } from "../utils";

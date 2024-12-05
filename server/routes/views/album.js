@@ -1,18 +1,22 @@
 /**
  * @description album view
  */
+
+/* CONFIG      ----------------------------------------------------------------------------- */
+const {
+  COMMON: { PAGE },
+  PAGINATION,
+} = require("../../config");
+
 /* NPM        ----------------------------------------------------------------------------- */
 let router = require("koa-router")();
+
 /* UTILS      ----------------------------------------------------------------------------- */
 const { CHECK, CACHE } = require("../../middleware/views");
 const Blog = require("../../controller/blog");
 const render = require("../../utils/render");
-/* Config      ----------------------------------------------------------------------------- */
-const {
-  COMMON: { PAGE },
-  PAGINATION,
-} = require("../../const");
-/* Var         ----------------------------------------------------------------------------- */
+
+/* VAR        ----------------------------------------------------------------------------- */
 const ejs_render = render.albumList;
 
 router.prefix("/album");

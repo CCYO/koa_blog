@@ -1,15 +1,20 @@
-const dayjs = require("dayjs");
-const utc = require("dayjs/plugin/utc");
-dayjs.extend(utc);
+/* CONFIG      ----------------------------------------------------------------------------- */
 const {
   COMMON: { BLOG },
   SETTING,
-} = require("../../const");
+} = require("../../config");
+
+/* NPM         ----------------------------------------------------------------------------- */
+const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
+dayjs.extend(utc);
+
+/* CUSTOM      ----------------------------------------------------------------------------- */
 const _comment = require("./_comment");
 const {
   filterEmptyAndFranferFns,
   filterEmptyAndFranferFnsForArray,
-} = require("./_filterEmpty"); //  0404
+} = require("./_filterEmpty");
 
 function blogImgAlt(data) {
   return toJSONAndFns(data, _init);

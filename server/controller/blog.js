@@ -1,20 +1,24 @@
 /**
  * @description controller blog
  */
+
+/* CONFIG     ----------------------------------------------------------------------------- */
+const { COMMON, CACHE, ERR_RES, ENV } = require("../config");
+
 /* Controller ----------------------------------------------------------------------------- */
 const C_Img = require("./img");
 const C_BlogImg = require("./blogImg");
 const C_BlogImgAlt = require("./blogImgAlt");
 const C_ArticleReader = require("./articleReader");
 const C_Comment = require("./comment");
+
 /* SERVER     ----------------------------------------------------------------------------- */
 const Blog = require("../server/blog");
+
 /* UTILS      ----------------------------------------------------------------------------- */
 const Opts = require("../utils/seq_options");
 const { MyErr, ErrModel, SuccModel } = require("../utils/model");
-/* CONFIG     ----------------------------------------------------------------------------- */
-const { ENV } = require("../config");
-const { COMMON, CACHE, ERR_RES } = require("../const");
+
 /**
  * @description find pagination for blog
  * @param {Object} param0

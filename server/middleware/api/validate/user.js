@@ -1,9 +1,13 @@
 /**
  * @description middleware validate
  */
+
+/* CONFIG     ----------------------------------------------------------------------------- */
 const {
   ERR_RES: { USER },
-} = require("../../../const");
+} = require("../../../config");
+
+/* UTILS      ----------------------------------------------------------------------------- */
 const _ajv = require("../../../utils/_ajv");
 const { MyErr } = require("../../../utils/model");
 

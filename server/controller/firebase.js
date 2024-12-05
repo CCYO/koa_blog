@@ -1,15 +1,24 @@
 /**
  * @description middleware of upload to GCS by Formidable
  */
+
+/* CONFIG     ----------------------------------------------------------------------------- */
+const { COMMON, ERR_RES, SERVER } = require("../config");
+
+/* NPM        ----------------------------------------------------------------------------- */
 const { formidable } = require("formidable");
 const { firstValues } = require("formidable/src/helpers/firstValues.js");
-const { storage } = require("../db/firebase");
-const { MyErr, SuccModel } = require("../utils/model");
-const { COMMON } = require("../const");
-const { SERVER, ERR_RES } = require("../const");
 
+/* UTILS      ----------------------------------------------------------------------------- */
+const { MyErr, SuccModel } = require("../utils/model");
+
+/* CUSTOM     ----------------------------------------------------------------------------- */
+const { storage } = require("../db/firebase");
+
+/* VAR        ----------------------------------------------------------------------------- */
 const pattern = `^(${COMMON.AJV.IMG.EXT.map((ext) => `(${ext})`).join("|")})$`;
 const REGEXP_EXT = new RegExp(pattern, "i");
+
 //  處理 blog 內文圖片
 async function addBlogImg(ctx) {
   //  上傳 blog 內文圖片時，會附上圖片相關資料

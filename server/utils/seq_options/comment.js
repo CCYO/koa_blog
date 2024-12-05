@@ -1,6 +1,10 @@
+/* NPM         ----------------------------------------------------------------------------- */
 const { Op } = require("sequelize");
 const xss = require("xss");
+
+/* SEQ_OPTS    ----------------------------------------------------------------------------- */
 const _REMOVE = require("./_remove");
+
 const FIND = {
   _removeListInBlog: (article_id) => ({
     where: { article_id },

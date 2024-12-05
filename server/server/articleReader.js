@@ -1,6 +1,11 @@
+/* CONFIG      ----------------------------------------------------------------------------- */
+const { ERR_RES } = require("../config");
+
+/* CUSTOM      ----------------------------------------------------------------------------- */
 const { ArticleReader } = require("../db/mysql/model");
+
+/* UTILS       ----------------------------------------------------------------------------- */
 const { MyErr } = require("../utils/model");
-const { ERR_RES } = require("../const");
 
 async function create(opts) {
   try {

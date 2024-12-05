@@ -1,9 +1,15 @@
 /**
  * @description Server IdolFans
  */
+
+/* CONFIG      ----------------------------------------------------------------------------- */
+const { ERR_RES } = require("../config");
+
+/* CUSTOM      ----------------------------------------------------------------------------- */
 const { IdolFans } = require("../db/mysql/model");
+
+/* UTILS       ----------------------------------------------------------------------------- */
 const { MyErr } = require("../utils/model");
-const { ERR_RES } = require("../const");
 
 async function restore(opts) {
   try {

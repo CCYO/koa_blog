@@ -1,9 +1,15 @@
 /**
  * @description Server User
  */
-const { MyErr } = require("../utils/model");
-const { ERR_RES } = require("../const");
+
+/* CONFIG      ----------------------------------------------------------------------------- */
+const { ERR_RES } = require("../config");
+
+/* CUSTOM      ----------------------------------------------------------------------------- */
 const { User } = require("../db/mysql/model");
+
+/* UTILS       ----------------------------------------------------------------------------- */
+const { MyErr } = require("../utils/model");
 const Init = require("../utils/init");
 
 //  更新user數據

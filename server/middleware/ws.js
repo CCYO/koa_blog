@@ -1,14 +1,20 @@
-const ws_middleware = require("koa-easy-ws")();
-
+/* CONFIG     ----------------------------------------------------------------------------- */
 const {
   SERVER: { EMPLOYER, DB },
   COMMON: { WS },
-} = require("../const");
+} = require("../config");
+
+/* NPM        ----------------------------------------------------------------------------- */
+const ws_middleware = require("koa-easy-ws")();
+
+/* UTILS      ----------------------------------------------------------------------------- */
 let { log } = require("../utils/log");
 
-const ws_clients = ws_middleware.server.clients;
+/* VAR      ----------------------------------------------------------------------------- */
 const CODE_CLOSE_NORMAL = 1000;
 const REASON_CLOSE_NORMAL = "登出";
+
+const ws_clients = ws_middleware.server.clients;
 
 module.exports = {
   ws_middleware,

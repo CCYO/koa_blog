@@ -1,7 +1,12 @@
+/* CONFIG     ----------------------------------------------------------------------------- */
+const { SERVER } = require("../../config");
+
+/* NPM        ----------------------------------------------------------------------------- */
 const session = require("koa-generic-session");
 
+/* CUSTOM     ----------------------------------------------------------------------------- */
 const store = require("./store");
-const { SERVER } = require("../../const");
+
 const middleware = session({
   //  存放在瀏覽器的cookie裡，session 的 key
   key: SERVER.DB.COOKIE_KEY,

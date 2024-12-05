@@ -1,6 +1,11 @@
+/* CONFIG     ----------------------------------------------------------------------------- */
+const { ERR_RES } = require("../config");
+
+/* SERVER     ----------------------------------------------------------------------------- */
 const CacheNews = require("../server/cache_news");
+
+/* UTILS      ----------------------------------------------------------------------------- */
 const { SuccModel, ErrModel } = require("../utils/model");
-const { ERR_RES } = require("../const");
 
 async function isExist(id) {
   let exist = await CacheNews.has(id);

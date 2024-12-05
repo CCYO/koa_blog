@@ -1,5 +1,10 @@
-const redisStore = require("koa-redis");
+/* CONFIG     ----------------------------------------------------------------------------- */
 const { DB } = require("../../_config");
+
+/* NPM        ----------------------------------------------------------------------------- */
+const redisStore = require("koa-redis");
+
+/* UTILS      ----------------------------------------------------------------------------- */
 const { log } = require("../../utils/log");
 
 const store = redisStore(DB.REDIS_CONF);

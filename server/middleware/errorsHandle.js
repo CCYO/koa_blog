@@ -1,5 +1,8 @@
+/* CONFIG     ----------------------------------------------------------------------------- */
+let { ERR_RES } = require("../config");
+
+/* UTILS      ----------------------------------------------------------------------------- */
 const { MyErr, ErrModel } = require("../utils/model");
-let { ERR_RES } = require("../const");
 
 module.exports = async (ctx, next) => {
   try {

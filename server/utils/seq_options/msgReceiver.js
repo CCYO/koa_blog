@@ -1,3 +1,4 @@
+/* SEQ_OPTS    ----------------------------------------------------------------------------- */
 const _REMOVE = require("./_remove");
 const _RESTORE = require("./_restore");
 

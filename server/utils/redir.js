@@ -1,6 +1,8 @@
+/* CONFIG      ----------------------------------------------------------------------------- */
 const {
   COMMON: { UTILS },
-} = require("../const");
+} = require("../config");
+
 //  redirect login page
 function login(ctx) {
   let url = new URL(ctx.href);

@@ -1,10 +1,15 @@
-const { ErrModel } = require("../../utils/model");
+/* CONFIG     ----------------------------------------------------------------------------- */
 const {
   ERR_RES,
   SERVER: { EMPLOYER, ME },
-} = require("../../const");
+} = require("../../config");
+
+/* CONTROLLER ----------------------------------------------------------------------------- */
 const C_articleReader = require("../../controller/articleReader");
 const C_idolFans = require("../../controller/idolFans");
+
+/* UTILS      ----------------------------------------------------------------------------- */
+const { ErrModel } = require("../../utils/model");
 
 async function prohibit_cancel_Follow_me(ctx, next) {
   if (ctx.session.user.id === EMPLOYER.ID && ctx.request.body.id === ME.ID) {

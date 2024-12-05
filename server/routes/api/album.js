@@ -1,10 +1,14 @@
 /**
  * @description album api
  */
+
 /* NPM        ----------------------------------------------------------------------------- */
 const router = require("koa-router")();
+
 /* UTILS      ----------------------------------------------------------------------------- */
 const { CHECK, CACHE, VALIDATE } = require("../../middleware/api");
+
+/* CONTROLLER ----------------------------------------------------------------------------- */
 const C_Blog = require("../../controller/blog");
 const C_BlogImgAlt = require("../../controller/blogImgAlt");
 

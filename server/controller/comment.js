@@ -1,11 +1,18 @@
+/* CONFIG     ----------------------------------------------------------------------------- */
+const { CACHE, ERR_RES, ENV } = require("../config");
+
+/* CONTROLLER ----------------------------------------------------------------------------- */
 const C_MsgReceiver = require("./msgReceiver");
+
+/* SERVER     ----------------------------------------------------------------------------- */
 const Comment = require("../server/comment");
+
+/* UTILS      ----------------------------------------------------------------------------- */
 const Opts = require("../utils/seq_options");
 const Init = require("../utils/init");
-const { SuccModel, ErrModel, MyErr } = require("../utils/model");
-const { ENV } = require("../config");
-const { CACHE, ERR_RES } = require("../const");
 const _xss = require("../utils/_xss");
+const { SuccModel, ErrModel, MyErr } = require("../utils/model");
+
 async function add({ commenter_id, article_id, html, pid, author_id }) {
   html = _xss.blog(html);
   if (!html) {

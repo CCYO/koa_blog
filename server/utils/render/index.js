@@ -1,15 +1,21 @@
+/* CONFIG      ----------------------------------------------------------------------------- */
+const { ENV } = require("../../config");
+
+/* NODEJS      ----------------------------------------------------------------------------- */
+const { resolve } = require("path");
+
+/* NPM         ----------------------------------------------------------------------------- */
 const glob = require("glob");
 let fs = require("fs");
 const lodash_template = require("lodash/template");
-const { resolve } = require("path");
-const { ENV } = require("../../config");
 
-// let template_dir = resolve(__dirname, `./template/**/*.ejs`);
-let template_dir = resolve(
+/* VAR         ----------------------------------------------------------------------------- */
+const template_dir = resolve(
   __dirname,
   ENV.isProd ? `./template` : `./dev_template`,
   "./**/*.ejs"
 );
+
 const res = {};
 glob.sync(template_dir).forEach((filepath) => {
   let array_filepath = filepath.split(/[\/|\/\/|\\|\\\\]/g);

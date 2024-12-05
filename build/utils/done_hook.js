@@ -39,11 +39,12 @@ function create_nginx_error_pages() {
     fs.mkdirSync(folder);
   }
   for (let [status, errModel] of Object.entries(COMMON.ERR_RES.VIEW)) {
-    let filename = resolve(folder, `./${status}.html`);
+    let filename = `${status}.html`;
+    let filePath = resolve(folder, filename);
     fs.writeFileSync(
-      filename,
+      filePath,
       ejs.render(template, {
-        filename, //  ejs.render指定要求的傳參，應該是緩存所需
+        filename: `${status}.html`, //  ejs.render指定要求的傳參，應該是緩存所需
         active: COMMON.PAGE.ERR_PAGE.ACTIVE.NGINX,
         page: COMMON.PAGE.ERR_PAGE.PAGE_NAME,
         login: false,

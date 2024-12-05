@@ -10,7 +10,7 @@ import { async_render } from "../utils";
 import News from "./news";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-import { COMMON } from "../../const";
+import { COMMON } from "../../config";
 
 /* VAR        ----------------------------------------------------------------------------- */
 let render = await async_render();

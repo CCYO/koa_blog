@@ -1,13 +1,18 @@
 /**
  * @description redis methods: set & get
  */
-const store = require("./store");
+
+/* CONFIG     ----------------------------------------------------------------------------- */
+const {
+  CACHE: { TYPE },
+} = require("../../config");
+
+/* UTILS      ----------------------------------------------------------------------------- */
 const crypto = require("../../utils/crypto");
 const { log } = require("../../utils/log");
 
-const {
-  CACHE: { TYPE },
-} = require("../../const");
+/* CUSTOM      ----------------------------------------------------------------------------- */
+const store = require("./store");
 
 // redis資料庫端
 const client = store.client;

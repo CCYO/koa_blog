@@ -1,4 +1,4 @@
-const { ENV } = require("../config");
+const ENV = require("./env");
 
 const { CONST: COMMON } = ENV.isProd
   ? require("../assets/js/common")

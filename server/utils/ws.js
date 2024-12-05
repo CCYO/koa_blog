@@ -1,5 +1,8 @@
-const { ws_clients } = require("../middleware/ws");
+/* CONFIG      ----------------------------------------------------------------------------- */
 let { ENV } = require("../config");
+
+/* MIDDLEWARE  ----------------------------------------------------------------------------- */
+const { ws_clients } = require("../middleware/ws");
 
 module.exports = {
   broadcast_news,

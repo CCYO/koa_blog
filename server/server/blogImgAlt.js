@@ -1,7 +1,12 @@
+/* CONFIG      ----------------------------------------------------------------------------- */
+const { ERR_RES } = require("../config");
+
+/* CUSTOM      ----------------------------------------------------------------------------- */
 const { BlogImgAlt } = require("../db/mysql/model");
-const { MyErr } = require("../utils/model");
-const { ERR_RES } = require("../const");
+
+/* UTILS       ----------------------------------------------------------------------------- */
 const Init = require("../utils/init");
+const { MyErr } = require("../utils/model");
 
 async function create(data) {
   try {

@@ -1,10 +1,15 @@
-const { ENV } = require("../../config");
+/* CONFIG     ----------------------------------------------------------------------------- */
 const {
   CACHE,
   COMMON: { WS },
-} = require("../../const");
+  ENV,
+} = require("../../config");
+
+/* CONTROLLER ----------------------------------------------------------------------------- */
 const C_CacheNews = require("../../controller/cache_news");
 const C_CachePage = require("../../controller/cache_page");
+
+/* UTILS      ----------------------------------------------------------------------------- */
 const _ws = require("../../utils/ws");
 
 //  處理 resModel.cache

@@ -1,9 +1,12 @@
-const { getCache } = require("../db/redis");
+/* CONFIG      ----------------------------------------------------------------------------- */
 const {
   CACHE: {
     TYPE: { NEWS },
   },
-} = require("../const");
+} = require("../config");
+
+/* CUSTOM      ----------------------------------------------------------------------------- */
+const { getCache } = require("../db/redis");
 
 async function has(id) {
   let news = getCache(NEWS);

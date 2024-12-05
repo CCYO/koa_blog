@@ -1,7 +1,12 @@
+/* CONFIG     ----------------------------------------------------------------------------- */
+const { CACHE, COMMON } = require("../../config");
+
+/* CONTROLLER ----------------------------------------------------------------------------- */
 const C_CacheNews = require("../../controller/cache_news");
+
+/* UTILS      ----------------------------------------------------------------------------- */
 const { log } = require("../../utils/log");
 const { SuccModel } = require("../../utils/model");
-const { CACHE, COMMON } = require("../../const");
 
 const SESSION_NEWS = () => ({
   //  若是設定 undefined，經過JSON.stringify會被刪除

@@ -7,7 +7,7 @@
 import errorHandle from "../utils/errorHandle";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-import { COMMON } from "../../const";
+import { COMMON } from "../../config";
 /* NPM        ----------------------------------------------------------------------------- */
 import axios from "axios";
 

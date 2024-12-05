@@ -1,10 +1,14 @@
 /**
  * @description blog api
  */
+
 /* NPM        ----------------------------------------------------------------------------- */
 const router = require("koa-router")();
-/* UTILS      ----------------------------------------------------------------------------- */
+
+/* MIDDLEWARE ----------------------------------------------------------------------------- */
 const { CHECK, CACHE, FIREBASE, VALIDATE } = require("../../middleware/api");
+
+/* CONTROLLER ----------------------------------------------------------------------------- */
 const Blog = require("../../controller/blog");
 
 router.prefix("/api/blog");

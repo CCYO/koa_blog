@@ -3,6 +3,13 @@
  */
 /* NPM        ----------------------------------------------------------------------------- */
 const router = require("koa-router")();
+
+/* MIDDLEWARE ----------------------------------------------------------------------------- */
+const WS = require("../../middleware/ws");
+
+/* CONTROLLER ----------------------------------------------------------------------------- */
+const User = require("../../controller/user");
+
 /* UTILS      ----------------------------------------------------------------------------- */
 const {
   VALIDATE,
@@ -12,8 +19,6 @@ const {
   FIREBASE,
   EMPLOYER,
 } = require("../../middleware/api");
-const WS = require("../../middleware/ws");
-const User = require("../../controller/user");
 
 router.prefix("/api/user");
 

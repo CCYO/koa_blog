@@ -3,7 +3,7 @@
  */
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-const WEBPACK = require("./config");
+const { WEBPACK } = require("./config");
 const webpackBaseConfig = require("./webpack.base.config");
 
 /* NODEJS     ----------------------------------------------------------------------------- */

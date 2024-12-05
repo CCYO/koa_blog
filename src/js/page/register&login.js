@@ -11,7 +11,7 @@ import { _Ajv, Debounce, formFeedback, redir, errorHandle } from "../utils";
 import Tab from "bootstrap/js/dist/tab";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-import { COMMON } from "../../const";
+import { COMMON } from "../../config";
 
 /* VAR        ----------------------------------------------------------------------------- */
 const API = {

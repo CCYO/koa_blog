@@ -1,7 +1,12 @@
+/* CONFIG     ----------------------------------------------------------------------------- */
+const { ERR_RES } = require("../config");
+
+/* SERVER     ----------------------------------------------------------------------------- */
 const IdolFans = require("../server/idolFans");
+
+/* UTILS      ----------------------------------------------------------------------------- */
 const Opts = require("../utils/seq_options");
 const { SuccModel, MyErr } = require("../utils/model");
-const { ERR_RES } = require("../const");
 
 async function reFollow(id_list) {
   let opts = Opts.IDOL_FANS.UPDATE.reFollow(id_list);

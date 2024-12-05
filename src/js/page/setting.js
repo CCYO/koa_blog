@@ -8,7 +8,7 @@ import G from "../common";
 import { _Ajv, Debounce, formFeedback, redir, errorHandle } from "../utils";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-import { COMMON } from "../../const";
+import { COMMON } from "../../config";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import SparkMD5 from "spark-md5";

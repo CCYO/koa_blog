@@ -1,9 +1,14 @@
 /**
  * @description firebase init
  */
+
+/* NPM        ----------------------------------------------------------------------------- */
 const { initializeApp, applicationDefault } = require("firebase-admin/app");
 const { getStorage } = require("firebase-admin/storage");
+
+/* _CONFIG    ----------------------------------------------------------------------------- */
 const { DB } = require("../../_config");
+
 const firebaseConfig = {
   //  applicationDefault() 會撈取 環境變量GOOGLE_APPLICATION_CREDENTIALS存放的路徑，作為服務帳號的密鑰(json格式)
   //  ex1: $ export GOOGLE_APPLICATION_CREDENTIALS="/home/使用者帳號/koa-blog/server/conf/GFB_admin_key.json"

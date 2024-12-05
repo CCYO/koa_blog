@@ -1,11 +1,17 @@
 /**
  * @description middleware validate
  */
+
+/* CONFIG     ----------------------------------------------------------------------------- */
 const {
   ERR_RES: { BLOG, BLOG_IMG },
-} = require("../../../const");
-const _ajv = require("../../../utils/_ajv");
+} = require("../../../config");
+
+/* CONTROLLER ----------------------------------------------------------------------------- */
 const C_Blog = require("../../../controller/blog");
+
+/* UTILS      ----------------------------------------------------------------------------- */
+const _ajv = require("../../../utils/_ajv");
 const { MyErr } = require("../../../utils/model");
 
 /** Middleware - 校驗 USER 資料

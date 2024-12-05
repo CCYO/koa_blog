@@ -59,7 +59,7 @@ module.exports = (function () {
       array_filepath[index_views] = "_views";
     } else if (!isTemplate) {
       array_filepath[index_views - 1] = "server";
-      if (!isProd) {
+      if (!WEBPACK.ENV.isProd) {
         array_filepath[index_views] = "dev_views";
       }
     }

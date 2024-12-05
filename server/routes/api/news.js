@@ -3,12 +3,15 @@
  */
 /* NPM        ----------------------------------------------------------------------------- */
 const router = require("koa-router")();
-/* UTILS      ----------------------------------------------------------------------------- */
-const { CACHE, CHECK, SESSION } = require("../../middleware/api");
+
+/* CONTROLLER ----------------------------------------------------------------------------- */
 const News = require("../../controller/news");
 const C_User = require("../../controller/user");
 const C_Blog = require("../../controller/blog");
 const C_Comment = require("../../controller/comment");
+
+/* MIDDLEWARE ----------------------------------------------------------------------------- */
+const { CACHE, CHECK, SESSION } = require("../../middleware/api");
 
 router.prefix("/api/news");
 

@@ -5,7 +5,7 @@ const seq = require("../seq");
 const { STRING, INTEGER, TEXT, BOO, DATE } = require("../types");
 const {
   COMMON: { AJV },
-} = require("../../../const");
+} = require("../../../config");
 
 const Blog = seq.define(
   "Blog",

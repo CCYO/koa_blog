@@ -1,7 +1,12 @@
+/* CONFIG      ----------------------------------------------------------------------------- */
+const { ERR_RES } = require("../config");
+
+/* CUSTOM      ----------------------------------------------------------------------------- */
 const { Blog } = require("../db/mysql/model");
+
+/* UTILS       ----------------------------------------------------------------------------- */
 const Init = require("../utils/init");
 const { MyErr } = require("../utils/model");
-const { ERR_RES } = require("../const");
 
 /** 創建Blog
  * @param {string} title 文章表提

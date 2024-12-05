@@ -9,7 +9,7 @@ import initNavbar from "./navbar";
 import initEJSData from "./initEJSData";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-import { COMMON } from "../../const";
+import { COMMON } from "../../config";
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default class {
   data;

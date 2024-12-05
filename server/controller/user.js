@@ -1,22 +1,30 @@
 /**
  * @description Controller user相關
  */
-const User = require("../server/user");
-const C_Blog = require("./blog");
-const C_IdolFans = require("./idolFans");
-const C_ArticleReader = require("./articleReader");
-const Opts = require("../utils/seq_options");
-const { ErrModel, SuccModel, MyErr } = require("../utils/model");
-const { ENV } = require("../config");
+
+/* CONFIG     ----------------------------------------------------------------------------- */
 const {
   CACHE: {
     TYPE: { PAGE, NEWS, NEWS_RESTORY },
     STATUS,
   },
+  COMMON,
+  ENV,
   ERR_RES,
   SERVER,
-  COMMON,
-} = require("../const");
+} = require("../config");
+
+/* CONTROLLER ----------------------------------------------------------------------------- */
+const C_Blog = require("./blog");
+const C_IdolFans = require("./idolFans");
+const C_ArticleReader = require("./articleReader");
+
+/* SERVER     ----------------------------------------------------------------------------- */
+const User = require("../server/user");
+
+/* UTILS      ----------------------------------------------------------------------------- */
+const Opts = require("../utils/seq_options");
+const { ErrModel, SuccModel, MyErr } = require("../utils/model");
 
 /** 確認信箱是否已被註冊
  * @param {string} email 信箱

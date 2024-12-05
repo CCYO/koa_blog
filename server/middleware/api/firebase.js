@@ -1,12 +1,18 @@
 /**
  * @description middleware of upload to GCS by Formidable
  */
-const { log } = require("../../utils/log");
-const C_GFB = require("../../controller/firebase");
-const C_Img = require("../../controller/img");
+
+/* CONFIG     ----------------------------------------------------------------------------- */
 const {
   SERVER: { GFB },
-} = require("../../const");
+} = require("../../config");
+
+/* CONTROLLER ----------------------------------------------------------------------------- */
+const C_GFB = require("../../controller/firebase");
+const C_Img = require("../../controller/img");
+
+/* UTILS      ----------------------------------------------------------------------------- */
+const { log } = require("../../utils/log");
 
 /**
  * 上傳圖檔至GFB

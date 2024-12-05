@@ -1,3 +1,4 @@
+/* CUSTOM      ----------------------------------------------------------------------------- */
 const { getCache } = require("../db/redis");
 
 async function destroyList(type, id_list) {

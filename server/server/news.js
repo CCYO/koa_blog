@@ -1,6 +1,11 @@
+/* CONFIG      ----------------------------------------------------------------------------- */
+const { NEWS } = require("../config");
+
+/* NPM         ----------------------------------------------------------------------------- */
 const { QueryTypes } = require("sequelize");
+
+/* CUSTOM      ----------------------------------------------------------------------------- */
 const { seq } = require("../db/mysql/model");
-const { NEWS } = require("../const");
 
 async function readList({ user_id, excepts }) {
   /*

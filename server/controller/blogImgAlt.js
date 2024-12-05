@@ -1,8 +1,13 @@
+/* CONFIG     ----------------------------------------------------------------------------- */
+const { CACHE, ERR_RES, ENV } = require("../config");
+
+/* SERVER     ----------------------------------------------------------------------------- */
 const BlogImgAlt = require("../server/blogImgAlt");
+
+/* UTILS      ----------------------------------------------------------------------------- */
 const Opts = require("../utils/seq_options");
 const { MyErr, SuccModel } = require("../utils/model");
-const { ENV } = require("../config");
-const { CACHE, ERR_RES } = require("../const");
+
 async function add(blogImg_id, alt) {
   let _data = { blogImg_id };
   if (alt) {

@@ -1,14 +1,19 @@
 /**
  * @description Sequelize Ins
  */
+
+/* CONFIG     ----------------------------------------------------------------------------- */
+const { DB } = require("../../_config");
+
+/* NPM        ----------------------------------------------------------------------------- */
 const { Sequelize } = require("sequelize");
 const cls = require("cls-hooked");
-const { DB } = require("../../_config");
+
+/* UTILS      ----------------------------------------------------------------------------- */
 const { log } = require("../../utils/log");
 
 const namespace = cls.createNamespace("seq-namespace");
 Sequelize.useCLS(namespace);
-
 const seq = new Sequelize({ ...DB.MYSQL_CONF, logging: false });
 
 //  連線測試

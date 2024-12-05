@@ -1,6 +1,11 @@
+/* CONFIG     ----------------------------------------------------------------------------- */
+const { ERR_RES } = require("../config");
+
+/* SERVER     ----------------------------------------------------------------------------- */
 const CachePage = require("../server/cache_page");
+
+/* UTILS      ----------------------------------------------------------------------------- */
 const { SuccModel, ErrModel } = require("../utils/model");
-const { ERR_RES } = require("../const");
 
 async function find(type, id) {
   let cache = await CachePage.read(type, id);

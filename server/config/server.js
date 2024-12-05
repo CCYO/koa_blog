@@ -8,9 +8,9 @@ module.exports = {
     REDIS_PREFIX: "koa_blog.sid",
   },
   EMPLOYER: {
-    ID: 3,
-    ARICLE_READER_ID: 12,
-    IDOL_FANS_ID: 3,
+    ID: 2,
+    ARICLE_READER_ID: 1,
+    IDOL_FANS_ID: 2,
   },
   ME: {
     ID: 1,

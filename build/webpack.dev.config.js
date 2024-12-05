@@ -4,7 +4,7 @@
 
 /* CONFIG     ----------------------------------------------------------------------------- */
 const webpackBaseConfig = require("./webpack.base.config");
-const WEBPACK = require("./config");
+const { WEBPACK } = require("./config");
 
 /* NPM        ----------------------------------------------------------------------------- */
 const webpack = require("webpack");

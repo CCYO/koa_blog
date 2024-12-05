@@ -3,37 +3,37 @@
  * Module dependencies.
  */
 
-const http = require("http");
-const app = require("../app");
-
+/* CONFIG     ----------------------------------------------------------------------------- */
 const { ENV } = require("../config");
-const port = normalizePort(process.env.NODE_PORT);
+
+/* NODEJS     ----------------------------------------------------------------------------- */
+const http = require("http");
+const { resolve } = require("path");
+
+/* NPM     ----------------------------------------------------------------------------- */
+//  設定環境變量
+require("dotenv").config({
+  path: resolve(
+    __dirname,
+    `../_config`,
+    ENV.isProd ? `./.prod.env` : `./.dev.env`
+  ),
+});
+
+/* CUSTOM     ----------------------------------------------------------------------------- */
+const app = require("../app");
 
 /**
  * Create HTTP server.
  */
 
-let server;
-
-// SSL交由NGINX負責
-// if (ENV.isProd) {
-//   server = https.createServer(
-//     {
-//       key: readFileSync(resolve(__dirname, "../_config/ssl/private.key")),
-//       cert: readFileSync(resolve(__dirname, "../_config/ssl/certificate.crt")),
-//       ca: readFileSync(resolve(__dirname, "../_config/ssl/ca_bundle.crt")),
-//     },
-//     app.callback()
-//   );
-// } else {
-server = http.createServer(app.callback());
-// }
+let server = http.createServer(app.callback());
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(normalizePort(process.env.NODE_PORT));
 server.on("error", onError);
 server.on("listening", onListening);
 

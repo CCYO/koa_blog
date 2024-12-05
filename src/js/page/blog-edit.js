@@ -4,7 +4,7 @@ import "@css/blog-edit.scss";
 import G from "../common";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-import { wangeditor_local_tw, COMMON } from "../../const";
+import { wangeditor_local_tw, COMMON } from "../../config";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import SparkMD5 from "spark-md5";

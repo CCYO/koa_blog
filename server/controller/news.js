@@ -1,19 +1,30 @@
 /**
  * @description Controller news相關
  */
+
+/* CONFIG     ----------------------------------------------------------------------------- */
+const { NEWS } = require("../config");
+
+/* NPM        ----------------------------------------------------------------------------- */
 const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
-require("dayjs/locale/zh-tw");
 const relativeTime = require("dayjs/plugin/relativeTime");
-dayjs.extend(utc);
-dayjs.extend(relativeTime);
-dayjs.locale("zh-tw");
+require("dayjs/locale/zh-tw");
+
+/* CONTROLLER ----------------------------------------------------------------------------- */
 const C_User = require("../controller/user");
 const C_Blog = require("../controller/blog");
 const C_Comment = require("../controller/comment");
+
+/* SERVER     ----------------------------------------------------------------------------- */
 const News = require("../server/news");
-const { NEWS } = require("../const");
+
+/* UTILS      ----------------------------------------------------------------------------- */
 const { MyErr, SuccModel } = require("../utils/model");
+
+dayjs.extend(utc);
+dayjs.extend(relativeTime);
+dayjs.locale("zh-tw");
 
 async function readMore({ user_id, excepts }) {
   /*

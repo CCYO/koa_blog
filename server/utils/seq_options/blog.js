@@ -1,8 +1,18 @@
+/* CONFIG      ----------------------------------------------------------------------------- */
+const { PAGINATION } = require("../../config");
+
+/* NPM         ----------------------------------------------------------------------------- */
 const { Op } = require("sequelize");
+
+/* CUSTOM      ----------------------------------------------------------------------------- */
 const { Img, BlogImg, BlogImgAlt, User } = require("../../db/mysql/model");
-const _REMOVE = require("./_remove");
+
+/* UTILS       ----------------------------------------------------------------------------- */
 const _xss = require("../_xss");
-const { PAGINATION } = require("../../const");
+
+/* SEQ_OPTS    ----------------------------------------------------------------------------- */
+const _REMOVE = require("./_remove");
+
 const REMOVE = {
   list: _REMOVE.list,
 };

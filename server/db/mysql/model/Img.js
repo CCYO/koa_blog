@@ -6,7 +6,7 @@ const { STRING } = require("../types");
 
 const {
   COMMON: { AJV },
-} = require("../../../const");
+} = require("../../../config");
 
 const Img = seq.define("Img", {
   url: {

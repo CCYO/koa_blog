@@ -3,12 +3,7 @@ import Loop from "./loop";
 import { async_render } from "../utils";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-import { COMMON } from "../../const";
-
-/* NPM        ----------------------------------------------------------------------------- */
-// import dayjs from "dayjs";
-// import relativeTime from "dayjs/plugin/relativeTime";
-// import "dayjs/locale/zh-tw";
+import { COMMON } from "../../config";
 
 /* VAR        ----------------------------------------------------------------------------- */
 let render = await async_render();
