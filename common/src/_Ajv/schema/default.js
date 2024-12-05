@@ -134,6 +134,14 @@ export default {
       type: "必須是boolean",
     },
   },
+  showAt: {
+    type: "string",
+    format: "date-time",
+    errorMessage: {
+      type: "必須是string",
+      format: "必須是date-time格式",
+    },
+  },
   cancelImgItem: {
     type: "object",
     properties: {

@@ -28,6 +28,10 @@ module.exports = function (HOST, DEFAULT) {
         type: "boolean",
         $ref: `${DEFAULT_URL}/show`,
       },
+      showAt: {
+        type: "string",
+        $ref: `${DEFAULT_URL}/showAt`,
+      },
       cancelImgs: {
         $ref: `${DEFAULT_URL}/cancelImgs`,
       },

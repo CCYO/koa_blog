@@ -57,6 +57,8 @@ async function initMain() {
   let $btn_updateBlog = $(`#${G.constant.ID.UPDATE_BLOG}`);
   let $btn_removeBlog = $(`#${G.constant.ID.REMOVE_BLOG}`);
   let $span_content_count = $(`#${G.constant.ID.BLOG_HTML_STRING_COUNT}`);
+  const $btn_showNow = $("#showNow");
+
   //  校驗可否submit
   G.utils.lock = initLock();
   //  文章內容編輯器
@@ -93,6 +95,27 @@ async function initMain() {
   $btn_updateBlog.on("click", handle_updateBlog);
   //  btn#remove 綁定 click handle => 刪除 blog
   $btn_removeBlog.on("click", handle_removeBlog);
+
+  $btn_showNow.on("click", handle_showNow);
+  async function handle_showNow() {
+    if (!G.data.blog.show) {
+      location.reload();
+      return;
+    } else if (new Date() - new Date(G.data.blog.showAt) < 60 * 1000) {
+      alert("更新完成");
+      return;
+    }
+    let { data } = await G.utils.axios.patch(API.UPDATE_BLOG, {
+      blog_id: G.data.blog.id,
+      showAt: new Date().toISOString(),
+    });
+    //  資料同步
+    G.data.blog.showAt = data.showAt;
+    G.data.blog.time = data.time;
+    //  畫面內容處理
+    $("#time").text(`當前文章【已公開】於${data.time.slice(0, 16)}發布`);
+    alert("更新完成");
+  }
 
   //  離開頁面前的提醒
   window.addEventListener("beforeunload", (e) => {
@@ -180,11 +203,7 @@ async function initMain() {
       throw new Error(JSON.stringify(result));
     }
     payload.blog_id = G.data.blog.id;
-    let { errno, data } = await G.utils.axios.patch(API.UPDATE_BLOG, payload);
-    if (errno) {
-      location.href = `/permission/${errno}`;
-      return;
-    }
+    let { data } = await G.utils.axios.patch(API.UPDATE_BLOG, payload);
     let { title, html, show, time } = data;
     let newData = {
       title,
@@ -195,9 +214,11 @@ async function initMain() {
     //  畫面內容處理
     let text;
     if (show) {
-      text = `當前文章【已公開】於${time}發布`;
+      text = `當前文章【已公開】於${time.slice(0, 16)}發布`;
+      $btn_showNow.show();
     } else {
-      text = `當前文章【編輯中】於${time}更新`;
+      text = `當前文章【編輯中】於${time.slice(0, 16)}更新`;
+      $btn_showNow.hide();
     }
     $("#time").text(text);
 

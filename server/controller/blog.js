@@ -125,6 +125,10 @@ async function modify({ blog_id, author_id, ...blog_data }) {
   let newData = {};
 
   let go = false;
+  if (map.has("showAt")) {
+    newData.showAt = new Date(map.get("showAt"));
+    go = true;
+  }
   //  更新 文章公開狀態
   if (map.has("show")) {
     newData.show = map.get("show");

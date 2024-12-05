@@ -30,13 +30,17 @@
       </div>
       <div class="card-footer">
         <p>
+          <% if (blog.show) { %>
           <span id="time">
-            <% if (blog.show) { %>
-            當前文章【已公開】於<%= blog.time %>發布
-            <% } else { %>
-            當前文章【編輯中】於<%= blog.time %>更新
-            <% } %>
+            當前文章【已公開】於<%= blog.time.slice(0, 16) %>發布
           </span>
+          <button id="showNow" class="btn btn-outline-primary btn-sm">更新至當前時間</button>
+          <% } else { %>
+          <span id="time">
+            當前文章【編輯中】於<%= blog.time.slice(0, 16) %>更新
+          </span>
+          <button id="showNow" style="display: none" class="btn btn-outline-primary btn-sm">更新至當前時間</button>
+          <% } %>
         </p>
         <label>
           <span>修改文章狀態：</span>
