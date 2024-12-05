@@ -55,7 +55,6 @@ export default {
   },
   nickname: {
     type: "string",
-    pattern: "",
     regexp: SETTING.NICKNAME.REGEXP.toString(),
     minLength: SETTING.NICKNAME.MIN_LENGTH,
     maxLength: SETTING.NICKNAME.MAX_LENGTH,
@@ -100,10 +99,10 @@ export default {
   },
   hash: {
     type: "string",
-    pattern: HASH.toString(),
+    regexp: HASH.toString(),
     errorMessage: {
       type: "必須是字符串",
-      pattern: "必須符合HASH",
+      regexp: "必須符合HASH",
     },
   },
   title: {
