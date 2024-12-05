@@ -1,7 +1,7 @@
 <!-- 新通知 of fans -->
 <% let query = confirm ? "" : `?type=1&id=${id}` %>
 <li class="dropdown-item position-relative news-item transition-bg" <%= confirm ?`style=""` : `style="background-color: rgb(120 180 255);"` %>>
-  <a href="/api/news/idolFans/<%= id %>" class="stretched-link text-wrap">
+  <a href="/api/news/idolFans/<%= id %>" class="stretched-link text-wrap" title="<%= new Date(updatedAt).toLocaleString() %>">
     <div class="news-item-content">
       <span><%= fans.nickname %>追蹤你囉！</span>
     </div>
