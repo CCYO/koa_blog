@@ -2,6 +2,9 @@
  * @description  取得webpack.base.config內，plugins中的htmlWebpackPlugins
  */
 
+/* CONFIG     ----------------------------------------------------------------------------- */
+const { WEBPACK, COMMON } = require("../config");
+
 /* NODEJS     ----------------------------------------------------------------------------- */
 const glob = require("glob");
 const fs = require("fs");
@@ -10,25 +13,20 @@ const { resolve } = require("path");
 /* NPM        ----------------------------------------------------------------------------- */
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-/* CONFIG     ----------------------------------------------------------------------------- */
-const COMMON = require("../_common_const");
-const WEBPACK_CONFIG = require("../config");
-
 /* VAR        ----------------------------------------------------------------------------- */
-const isProd = process.env.NODE_ENV === "production";
 //  ejs 須被替換為常量的標記
 const PREFIX = "CONS";
 //  server/utils/render/template位置
 const dir_template_server = resolve(
   __dirname,
   `../../server/utils/render`,
-  isProd ? `./template` : `./dev_template`
+  WEBPACK.ENV.isProd ? `./template` : `./dev_template`
 );
 //  src/js/utils/render/template位置
 const dir_template_src = resolve(
   __dirname,
   `../../src/js/utils/render`,
-  isProd ? `./template` : `./dev_template`
+  WEBPACK.ENV.isProd ? `./template` : `./dev_template`
 );
 
 /* EXPORT     ----------------------------------------------------------------------------- */
@@ -117,7 +115,7 @@ module.exports = (function () {
     //  匹配到 webpackConfig.entry {[chunkName]: 檔案位置}
     const fileChunk = array_filepath[index_views + 2];
     let opts = {
-      filename: `${WEBPACK_CONFIG.BUILD.VIEW}/${fileChunk}/${filename}`,
+      filename: `${WEBPACK.BUILD.VIEW}/${fileChunk}/${filename}`,
       template: newFilename_list[0],
       //   以entry[chunkName]匹配那些打包後js要被插入
       chunks: [fileChunk],

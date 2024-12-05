@@ -1,3 +1,11 @@
+/**
+ * @description webpack.prod.config
+ */
+
+/* CONFIG     ----------------------------------------------------------------------------- */
+const WEBPACK = require("./config");
+const webpackBaseConfig = require("./webpack.base.config");
+
 /* NODEJS     ----------------------------------------------------------------------------- */
 const { resolve } = require("path");
 
@@ -15,10 +23,6 @@ const BundleAnalyzerPlugin =
  */
 const TerserPlugin = require("terser-webpack-plugin");
 const RemovePlugin = require("remove-files-webpack-plugin");
-
-/* CONFIG     ----------------------------------------------------------------------------- */
-const WEBPACK_CONFIG = require("./config");
-const webpackBaseConfig = require("./webpack.base.config");
 
 const styleLoaderList = [
   {
@@ -61,7 +65,7 @@ const optimization = {
         name(module, chunks, cacheGroupKey) {
           return chunks.reduce((acc, chunk) => (acc += `@${chunk.name}`), "");
         },
-        filename: `${WEBPACK_CONFIG.BUILD.SCRIPT}/dynamic_vendor.[name].[contenthash:5].js`,
+        filename: `${WEBPACK.BUILD.SCRIPT}/dynamic_vendor.[name].[contenthash:5].js`,
       },
       vendors_npm: {
         priority: 0,
@@ -75,7 +79,7 @@ const optimization = {
         chunks: "async",
         minChunks: 2,
         reuseExistingChunk: true,
-        filename: `${WEBPACK_CONFIG.BUILD.SCRIPT}/dynamic_common.[name].[contenthash:5].js`,
+        filename: `${WEBPACK.BUILD.SCRIPT}/dynamic_common.[name].[contenthash:5].js`,
         name(module, chunks, cacheGroupKey) {
           return chunks.reduce((acc, chunk) => (acc += `@${chunk.name}`), "");
         },
@@ -109,7 +113,7 @@ const plugins = (run) =>
      * 最後再加入MiniCssExtractPlugin
      */
     new MiniCssExtractPlugin({
-      filename: `${WEBPACK_CONFIG.BUILD.STYLE}/[name].[contenthash:5].min.css`,
+      filename: `${WEBPACK.BUILD.STYLE}/[name].[contenthash:5].min.css`,
     }),
     new HtmlInlineScriptPlugin({
       htmlMatchPattern: [/[.]ejs$/],
@@ -135,7 +139,7 @@ const prod_config = (run) => ({
         test: /\.(png|jpg|jpeg|gif)$/,
         type: "asset",
         generator: {
-          filename: `${WEBPACK_CONFIG.BUILD.IMAGE}/[name].[contenthash:5][ext]`,
+          filename: `${WEBPACK.BUILD.IMAGE}/[name].[contenthash:5][ext]`,
         },
         parser: {
           dataUrlCondition: {
@@ -177,7 +181,7 @@ module.exports = (env) => {
    * );
    * config.plugins.push(
    *   new MiniCssExtractPlugin({
-   *     filename: `${WEBPACK_CONFIG.BUILD.STYLE}/[name].[contenthash:5].min.css`,
+   *     filename: `${WEBPACK.BUILD.STYLE}/[name].[contenthash:5].min.css`,
    *   })
    * );
    */
@@ -193,8 +197,7 @@ function run_pm2(run) {
   }
 
   function apply(compiler) {
-    // compiler.hooks.afterEmit.tap("_", (compilation) => {
-    compiler.hooks.done.tap("_", (compilation) => {
+    compiler.hooks.done.tap("_", () => {
       pm2.connect((connect_err) => {
         if (connect_err) {
           throw connect_err;
@@ -203,7 +206,6 @@ function run_pm2(run) {
           if (start_err) {
             throw start_err;
           }
-          process.env.NODE_ENV !== "production" && console.log("PM2 START");
         });
       });
     });

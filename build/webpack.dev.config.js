@@ -1,10 +1,14 @@
-/* NPM        ----------------------------------------------------------------------------- */
-const webpack = require("webpack");
-const { merge } = require("webpack-merge");
+/**
+ * @description webpack.dev.config
+ */
 
 /* CONFIG     ----------------------------------------------------------------------------- */
 const webpackBaseConfig = require("./webpack.base.config");
-const WEBPACK_CONFIG = require("./config");
+const WEBPACK = require("./config");
+
+/* NPM        ----------------------------------------------------------------------------- */
+const webpack = require("webpack");
+const { merge } = require("webpack-merge");
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 module.exports = merge(webpackBaseConfig, {
@@ -24,7 +28,7 @@ module.exports = merge(webpackBaseConfig, {
         test: /\.(png|jpg|jpeg|gif)$/,
         type: "asset",
         generator: {
-          filename: `${WEBPACK_CONFIG.BUILD.IMAGE}/[name].[contenthash:5][ext]`,
+          filename: `${WEBPACK.BUILD.IMAGE}/[name].[contenthash:5][ext]`,
         },
         parser: {
           dataUrlCondition: {

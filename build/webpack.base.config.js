@@ -1,3 +1,10 @@
+/**
+ * @description webpack.base.config
+ */
+
+/* CONFIG     ----------------------------------------------------------------------------- */
+const { WEBPACK } = require("./config");
+
 /* NODEJS     ----------------------------------------------------------------------------- */
 const { resolve } = require("path");
 
@@ -10,22 +17,17 @@ const WebpackBar = require("webpackbar");
 const htmlWebpackPlugins = require("./utils/ins_htmlWebpackPlugins");
 const entry = require("./utils/entry");
 const done_hook = require("./utils/done_hook");
-/* CONFIG     ----------------------------------------------------------------------------- */
-const WEBPACK_CONFIG = require("./config");
-
-/* VAR        ----------------------------------------------------------------------------- */
-const isProd = process.env.NODE_ENV === "production";
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 module.exports = {
   context: resolve(__dirname),
   entry,
   output: {
-    path: WEBPACK_CONFIG.BUILD.DIST,
-    publicPath: `${WEBPACK_CONFIG.PUBLIC_PATH}/`,
-    filename: isProd
-      ? `${WEBPACK_CONFIG.BUILD.SCRIPT}/[name].[contenthash:5].js`
-      : `${WEBPACK_CONFIG.BUILD.SCRIPT}/[name].js`,
+    path: WEBPACK.BUILD.DIST,
+    publicPath: `${WEBPACK.PUBLIC_PATH}/`,
+    filename: WEBPACK.ENV.isProd
+      ? `${WEBPACK.BUILD.SCRIPT}/[name].[contenthash:5].js`
+      : `${WEBPACK.BUILD.SCRIPT}/[name].js`,
     //  可設定 { keep: regex },regex是相對output.path的路徑，且若是folder則不可為空
     // clean: true,
     clean: { keep: /js\/common\.js/ },
@@ -54,9 +56,9 @@ module.exports = {
         test: /\.(eot|woff2|woff|ttf|svg|otf)$/,
         type: "asset/resource",
         generator: {
-          filename: isProd
-            ? `${WEBPACK_CONFIG.BUILD.FONT}/[name].[contenthash:5][ext]`
-            : `${WEBPACK_CONFIG.BUILD.FONT}/[name][ext]`,
+          filename: WEBPACK.ENV.isProd
+            ? `${WEBPACK.BUILD.FONT}/[name].[contenthash:5][ext]`
+            : `${WEBPACK.BUILD.FONT}/[name][ext]`,
         },
       },
       {
@@ -80,7 +82,7 @@ module.exports = {
       $: "jquery",
     }),
     new webpack.DefinePlugin({
-      "process.env.isProd": JSON.stringify(isProd),
+      "process.env.isProd": JSON.stringify(WEBPACK.ENV.isProd),
     }),
     new WebpackBar(),
     //  生成NGINX靜態錯誤頁面
