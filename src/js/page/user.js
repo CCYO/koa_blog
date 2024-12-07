@@ -35,7 +35,6 @@ const API = {
 try {
   const $$ajv = _Ajv(G.utils.axios);
   G.utils.validate = {
-    // blog_title: $$ajv._validate.blog_title,
     blog_title: $$ajv._validate.blog_title,
   };
   G.utils.render = render[G.data.page];
@@ -366,7 +365,7 @@ async function initMain() {
         title,
       });
       window.alert("創建成功，開始編輯文章");
-      location.href = `${API.EDIT_BLOG}/${blog_id}?owner_id=${G.data.me.id}`;
+      location.href = `${API.EDIT_BLOG}/${blog_id}`;
       //  清空表格
       $input_new_blog_title.val("");
     }
