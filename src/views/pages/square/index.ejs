@@ -2,7 +2,8 @@
 <html lang="zh-tw">
 
 <head>
-  <%- include('../wedgets/header/index', {title}) %>
+  <!-- 傳入 title -->
+  <%- include('../wedgets/header/index') %>
 </head>
 
 <body>
@@ -15,7 +16,8 @@
       </div>
       <div class="card-body">
         <!-- BlogList -->
-        <%- include('./components/square_blog_card', {blog, pagination, ejs_render }) %>
+        <!-- 傳入 blog, pagination, ejs_render, SELECTOR -->
+        <%- include('./components/square_blog_card') %>
       </div>
     </div>
   </main>

@@ -132,6 +132,7 @@ export default function (G) {
           pagination: pageConst.PAGINATION,
           isPublic: show,
           isSelf: G.data.active === "self",
+          SELECTOR: COMMON.SELECTOR,
         });
         //  將生成的html放入
         $container

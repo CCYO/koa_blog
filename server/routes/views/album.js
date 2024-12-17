@@ -4,7 +4,7 @@
 
 /* CONFIG      ----------------------------------------------------------------------------- */
 const {
-  COMMON: { PAGE },
+  COMMON: { PAGE, SELECTOR },
   PAGINATION,
 } = require("../../config");
 
@@ -17,7 +17,7 @@ const Blog = require("../../controller/blog");
 const render = require("../../utils/render");
 
 /* VAR        ----------------------------------------------------------------------------- */
-const ejs_render = render.albumList;
+// const ejs_render = render.albumList;
 
 router.prefix("/album");
 
@@ -37,7 +37,8 @@ router.get("/list", CACHE.noCache, CHECK.login, async (ctx) => {
     author,
     album,
     pagination: PAGINATION.ALBUM_LIST,
-    ejs_render,
+    ejs_render: render[PAGE.ALBUM_LIST.PAGE_NAME],
+    SELECTOR,
   });
 });
 
@@ -61,6 +62,7 @@ router.get("/:blog_id", CACHE.noCache, CHECK.login, async (ctx) => {
       title: `${blog.title}的相簿`,
       blog,
       imgs,
+      SELECTOR,
     });
   }
 });

@@ -1,4 +1,5 @@
-<% let G_PAGE = JSON.parse(--CONS.USER--) %>
+<!-- 傳入 blogs, ejs_render, isSelf, pagination, SELECTOR -->
+<% let G_PAGE = SELECTOR.USER %>
 <% for(let _status in blogs){ %>
 <% let _isPublic = _status === G_PAGE.DATASET.VALUE.BLOG_STATUS_PUBLIC %>
 <% if(!isSelf && !_isPublic){ continue }%>
@@ -11,7 +12,7 @@
   <% if(_blogData.count){ %>
   <ul class="list-group">
     <% let blogs = _blogData.blogs %>
-    <%- ejs_render.blogList({ blogs, page: 1, isSelf, isPublic: _isPublic, pagination }) %>
+    <%- ejs_render.blogList({ blogs, page: 1, isSelf, isPublic: _isPublic, pagination, SELECTOR }) %>
     <div class="pageLoading" style="display: none;">
       <h1></h1>
     </div>

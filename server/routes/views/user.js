@@ -5,7 +5,7 @@
 /* CONFIG      ----------------------------------------------------------------------------- */
 const {
   CACHE: { TYPE },
-  COMMON: { PAGE },
+  COMMON: { PAGE, SELECTOR },
   PAGINATION,
 } = require("../../config");
 
@@ -24,7 +24,7 @@ const render = require("../../utils/render");
 /* VAR        ----------------------------------------------------------------------------- */
 const privateCache = CACHE.genPrivate(TYPE.PAGE.USER);
 const commonCache = CACHE.genCommon(TYPE.PAGE.USER);
-const ejs_render = render.user;
+// const ejs_render = render.user;
 
 /**
  * @description register
@@ -35,6 +35,7 @@ router.get("/register", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
     login: false,
     active: PAGE.REGISTER_LOGIN.ACTIVE.REGISTER,
     title: "註冊",
+    SELECTOR,
   });
 });
 
@@ -47,6 +48,7 @@ router.get("/login", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
     page: PAGE.REGISTER_LOGIN.PAGE_NAME,
     login: false,
     title: "登入",
+    SELECTOR,
   });
 });
 
@@ -69,13 +71,14 @@ router.get("/self", privateCache, async (ctx) => {
     active: PAGE.USER.ACTIVE.SELF,
     page: PAGE.USER.PAGE_NAME,
     login: true,
-    ejs_render,
+    ejs_render: render[PAGE.USER.PAGE_NAME],
     pagination: PAGINATION.BLOG,
     isSelf: true,
     title: `${currentUser.nickname}的主頁`,
     currentUser,
     blogs,
     relationShip,
+    SELECTOR,
   });
 });
 
@@ -109,13 +112,14 @@ router.get("/other/:id", CHECK.isSelf, commonCache, async (ctx) => {
     active: PAGE.USER.ACTIVE.OTEHR,
     page: PAGE.USER.PAGE_NAME,
     login: Boolean(ctx.session.user),
-    ejs_render,
+    ejs_render: render[PAGE.USER.PAGE_NAME],
     pagination: PAGINATION.BLOG,
     isSelf: false,
     title: `${currentUser.nickname}的主頁`,
     currentUser,
     blogs,
     relationShip,
+    SELECTOR,
   });
 });
 
@@ -130,6 +134,7 @@ router.get("/setting", CACHE.noCache, CHECK.login, async (ctx, next) => {
     login: true,
     title: `${currentUser.nickname}個人資料設置`,
     currentUser,
+    SELECTOR,
   });
 });
 

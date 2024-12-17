@@ -1,3 +1,4 @@
+<!-- 傳入 relationShip, ejs_render, SELECTOR -->
 <% for( _type in relationShip){ %> <% let _list = relationShip[_type] %>
 <div class="card">
   <div class="card-header">
@@ -8,7 +9,7 @@
       <% if(_list.length) {%>
       <ul class="list-group list-group-horizontal">
         <% _list.forEach( _user => { %> <%- ejs_render.relationshipItem({ user:
-        _user }) %> <% }) %>
+        _user, SELECTOR }) %> <% }) %>
         <% } else { %>
         <ul class="list-group list-group-horizontal" style="width: 100%">
           <div>很遺憾，列表裡沒有人</div>

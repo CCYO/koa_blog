@@ -5,7 +5,7 @@
 /* CONFIG      ----------------------------------------------------------------------------- */
 const {
   CACHE: { TYPE },
-  COMMON: { PAGE, BLOG },
+  COMMON: { PAGE, BLOG, SELECTOR },
 } = require("../../config");
 
 /* NPM        ----------------------------------------------------------------------------- */
@@ -23,7 +23,7 @@ const render = require("../../utils/render");
 /* VAR         ----------------------------------------------------------------------------- */
 const privateCache = CACHE.genPrivate(TYPE.PAGE.BLOG);
 const commonCache = CACHE.genCommon(TYPE.PAGE.BLOG);
-const ejs_render = render.blog;
+// const ejs_render = render.blog;
 
 /**
  * @description blog preview
@@ -49,6 +49,7 @@ router.get("/blog/preview/:id", privateCache, async (ctx) => {
         ? "文章預覽"
         : data.title,
       blog: { ...data, showComment: false },
+      SELECTOR,
     });
   }
 });
@@ -75,6 +76,7 @@ router.get("/blog/edit/:id", privateCache, async (ctx, next) => {
       login: true,
       title: data.title,
       blog: { ...data, showComment: false },
+      SELECTOR,
     });
   }
 });
@@ -99,8 +101,9 @@ router.get("/blog/:id", commonCache, async (ctx) => {
       page: PAGE.BLOG.PAGE_NAME,
       login: Boolean(ctx.session.user),
       title: data.title,
-      ejs_render,
+      ejs_render: render[PAGE.BLOG.PAGE_NAME],
       blog: { ...data, showComment: true },
+      SELECTOR,
     });
   }
 });

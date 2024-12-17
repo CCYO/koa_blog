@@ -1,4 +1,5 @@
-<% let G_PAGE = JSON.parse(--CONS.BLOG--) %>
+<!-- 傳入 comment -->
+<% let G_PAGE = SELECTOR.BLOG %>
 <div class="<%= G_PAGE.CLASS.COMMENT_ITEM_CONTENT %>" id="comment_<%= id %>">
   <% if (deletedAt || !html) { %>
   <div>

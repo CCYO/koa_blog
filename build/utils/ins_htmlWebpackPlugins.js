@@ -46,18 +46,18 @@ module.exports = (function () {
     let array_filepath = filepath.split(/[\/|\/\/|\\|\\\\]/g); // eslint-disable-line
     array_filepath.shift();
     const filename = array_filepath.pop(); //  移除、取得原檔名
+    const isPage = !!array_filepath.find((item) => item === "pages");
     const isTemplate = !!array_filepath.find((item) => item === "template");
     const isComponent = !!array_filepath.find((item) => item === "components");
-    const isWedget = !!array_filepath.find((item) => item === "wedgets");
-    const isNavbar = !!array_filepath.find((item) => item === "navbar");
-    const isPageIndex = !isWedget && !isTemplate && !isComponent;
+    const isPageIndex = isPage && !isTemplate && !isComponent;
     let index_views = array_filepath.findIndex((item) => item === "views");
     //  取得絕對路徑形式的新檔案名
     let newFilename_list = [];
     let target_folder;
-    if (isPageIndex) {
-      array_filepath[index_views] = "_views";
-    } else if (!isTemplate) {
+    // if (isPageIndex) {
+    // array_filepath[index_views] = "_views";
+    // } else
+    if (!isTemplate) {
       array_filepath[index_views - 1] = "server";
       if (!WEBPACK.ENV.isProd) {
         array_filepath[index_views] = "dev_views";
@@ -68,27 +68,8 @@ module.exports = (function () {
     //  2)創建(1)路徑不存在的folder
     for (let [index, folder] of array_filepath.entries()) {
       if (isTemplate) {
-        //  蒐集 template檔案 的絕對路徑
-        newFilename_list = [dir_template_src, dir_template_server].map(
-          (dir, index) => {
-            if (isNavbar && index) {
-              //  navbar/template 只需要提供給 src/js/utils/render
-              return;
-            }
-            target_folder = dir;
-            // if (!fs.existsSync(target_folder)) {
-            //   fs.mkdirSync(target_folder);
-            // }
-            let typeName = array_filepath[array_filepath.length - 2];
-            target_folder = `${dir}/${typeName}`;
-            if (!fs.existsSync(target_folder)) {
-              //  若 dirPath 不存在，則新建
-              fs.mkdirSync(target_folder);
-            }
-            return (target_folder += `/${filename}`);
-          }
-        );
-        break;
+        // 改
+        continue;
       } else if (folder === "pages") {
         continue;
       } else {
@@ -104,7 +85,9 @@ module.exports = (function () {
       }
     }
     //  替換ejs內的標記
-    let ejs_string = _replaceFrontendConst(filepath);
+    // 改
+    // let ejs_string = _replaceFrontendConst(filepath);
+    let ejs_string = fs.readFileSync(filepath, "utf-8");
     newFilename_list.forEach((item) => {
       item && fs.writeFileSync(item, ejs_string);
     });
@@ -126,22 +109,3 @@ module.exports = (function () {
   });
   return result;
 })();
-
-//  將ejs內被標註的字符，替換為指定常量
-function _replaceFrontendConst(filepath) {
-  const REG_REPLACE = new RegExp(`[-]{2}${PREFIX}\\.(\\S+?)[-]{2}`, "g");
-  //  存放ejs內需要替換的常量
-  let cache_ejs_const = new Map();
-  ////  替換 ejs_string 內的變量常數 "--CONS.[PAGE_NAME]--"
-  let ejs_string = fs.readFileSync(filepath, "utf-8");
-  return ejs_string.replace(REG_REPLACE, (match, target_string) => {
-    //  匹配的常量變數若已存在，直接取得
-    if (cache_ejs_const.has(match)) {
-      return cache_ejs_const.get(match);
-    }
-    //  JSON.stringify result雖然已經是string，但此時ejs_string也是string，所以必須在result外在加上' '
-    let json_string = `'${JSON.stringify(COMMON.SELECTOR[target_string])}'`;
-    cache_ejs_const.set(match, json_string);
-    return json_string;
-  });
-}

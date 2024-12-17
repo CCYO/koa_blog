@@ -4,7 +4,7 @@
 
 /* CONFIG    ----------------------------------------------------------------------------- */
 const {
-  COMMON: { PAGE },
+  COMMON: { PAGE, SELECTOR },
   PAGINATION,
 } = require("../../config");
 
@@ -18,7 +18,7 @@ const Square = require("../../controller/square");
 const render = require("../../utils/render");
 
 /* VAR        ----------------------------------------------------------------------------- */
-const ejs_render = render.square;
+// const ejs_render = render.square;
 
 /**
  * @description square
@@ -34,7 +34,8 @@ router.get("/square", async (ctx) => {
     title: "廣場頁",
     blog,
     pagination: PAGINATION.SQUARE,
-    ejs_render,
+    ejs_render: render[PAGE.SQUARE.PAGE_NAME],
+    SELECTOR,
   });
 });
 

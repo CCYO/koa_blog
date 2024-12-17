@@ -1,9 +1,10 @@
-<% let G_PAGE = JSON.parse(--CONS.SQUARE--) %>
+<!-- 傳入 blog, pagination, ejs_render, SELECTOR -->
+<% let G_PAGE = SELECTOR.SQUARE %>
 <% let { blogs, count } = blog.public %>
 <div class="blogList card" <%= `data-${G_PAGE.DATASET.KEY.BLOG_STATUS}=${G_PAGE.DATASET.VALUE.BLOG_STATUS_PUBLIC}` %>>
   <% if(count){ %>
   <ul class="list-group">
-    <%- ejs_render.blogList({ blogs, page: 1, pagination }) %>
+    <%- ejs_render.blogList({ blogs, page: 1, pagination, SELECTOR }) %>
     <div class="pageLoading" style="display: none;">
       <h1></h1>
     </div>

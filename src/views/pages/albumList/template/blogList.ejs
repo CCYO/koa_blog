@@ -1,4 +1,5 @@
-<% let G_PAGE = JSON.parse(--CONS.ALBUM_LIST--) %>
+<!-- 傳入 blogs, page, isPublic, pagination  -->
+<% let G_PAGE = SELECTOR.ALBUM_LIST %>
 <li <%= `data-${G_PAGE.DATASET.KEY.PAGE_NUM}=${page}` %> style="<%= page !== 1 ? 'display: none' : ''%>">
   <ul class="list-group list-group-flush">
     <li class="list-group-item list-group-item-info d-flex align-items-center justify-content-between">

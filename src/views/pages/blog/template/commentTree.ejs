@@ -1,14 +1,15 @@
-<% let G_PAGE = JSON.parse(--CONS.BLOG--) %>
+<!-- 傳入 tree, ejs_render -->
+<% let G_PAGE = SELECTOR.BLOG %>
 <% tree.forEach( _comment => { %>
 <% if (_comment.html || _comment.reply.length) { %>
 <!-- comment-box 是一個留言串的 container -->
 <div class="comment-item-container">
-  <%= ejs_render.commentItem({..._comment}) %>
+  <%= ejs_render.commentItem({SELECTOR, ..._comment}) %>
   <!-- reply-box 是這個留言的回覆串 -->
   <div class="<%= G_PAGE.CLASS.COMMENT_EDITOR_CONTAINER %>" <%= `data-${G_PAGE.DATASET.KEY.PID}=${_comment.id}` %>></div>
   <div class="comment-list" <%= `data-${G_PAGE.DATASET.KEY.PID}=${_comment.id}` %>>
     <% if(_comment.reply.length){ %>
-    <%= ejs_render.commentTree({ tree: _comment.reply, ejs_render }) %>
+    <%= ejs_render.commentTree({ tree: _comment.reply, ejs_render, SELECTOR }) %>
     <% } %>
   </div>
 </div>

@@ -1,9 +1,10 @@
-<% let G_PAGE = JSON.parse(--CONS.BLOG--) %>
+<% let G_PAGE = SELECTOR.BLOG %>
 <!DOCTYPE html>
 <html lang="zh-tw">
 
 <head>
-  <%- include('../wedgets/header/index', {title}) %>
+  <!-- 傳入 title -->
+  <%- include('../wedgets/header/index') %>
 </head>
 
 <body>
@@ -32,7 +33,7 @@
           <div class="<%= G_PAGE.CLASS.COMMENT_LIST_CONTAINER %>">
             <div class="<%= G_PAGE.CLASS.COMMENT_LIST %>" <%= `data-${G_PAGE.DATASET.KEY.PID}=0` %>>
               <% if(blog.comment.tree){ %>
-              <%- ejs_render.commentTree({tree: blog.comment.tree, ejs_render }) %>
+              <%- ejs_render.commentTree({tree: blog.comment.tree, ejs_render, SELECTOR }) %>
               <% } %>
             </div>
           </div>

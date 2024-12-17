@@ -1,4 +1,5 @@
-<% let G_PAGE = JSON.parse(--CONS.ALBUM--) %>
+<!-- 傳入 imgs -->
+<% let G_PAGE = SELECTOR.ALBUM %>
 <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
   <% for( let alt_id in imgs ){  %>
   <% let _url = `${imgs[alt_id].img.url}?blogImgAlt=${alt_id}` %>

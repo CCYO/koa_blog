@@ -1,9 +1,10 @@
-<% let G_PAGE = JSON.parse(--CONS.SETTING--) %>
+<% let G_PAGE = SELECTOR.SETTING %>
 <!DOCTYPE html>
 <html lang="zh-tw">
 
 <head>
-  <%- include('../wedgets/header/index', {title}) %>
+  <!-- 傳入 title -->
+  <%- include('../wedgets/header/index') %>
 </head>
 
 <body>

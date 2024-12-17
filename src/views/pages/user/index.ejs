@@ -1,9 +1,11 @@
-<% let G_PAGE = JSON.parse(--CONS.USER--) %>
+<% let G_PAGE = SELECTOR.USER %>
+
 <!DOCTYPE html>
 <html lang="zh-tw">
 
 <head>
-  <%- include('../wedgets/header/index', {title}) %>
+  <!-- 傳入 title -->
+  <%- include('../wedgets/header/index') %>
 </head>
 
 <body>
@@ -75,13 +77,15 @@
               </div>
               <% } %>
               <!-- BlogList -->
-              <%- include('./components/blog_card', { blogs, ejs_render, isSelf, pagination }) %>
+              <!-- 傳入 blogs, ejs_render, isSelf, pagination  -->
+              <%- include('./components/blog_card') %>
             </div>
           </div>
 
           <div class="col-lg-4">
             <div id="follow-info">
-              <%- include('./components/relationship_list', { relationShip, ejs_render}) %>
+              <!-- 傳入 relationShip, ejs_render -->
+              <%- include('./components/relationship_list') %>
             </div>
           </div>
         </div>

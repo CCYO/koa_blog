@@ -2,7 +2,8 @@
 <html lang="zh-tw">
 
 <head>
-  <%- include('../wedgets/header/index', {title}) %>
+  <!-- 傳入 title -->
+  <%- include('../wedgets/header/index') %>
 </head>
 
 <body>
@@ -21,7 +22,8 @@
         </ol>
       </div>
       <div class="card-body">
-        <%- include('./components/imgList', {imgs}) %>
+        <!-- 傳入 imgs -->
+        <%- include('./components/imgList') %>
         <%- include('./components/modal') %>
       </div>
       <div class="card-footer">
