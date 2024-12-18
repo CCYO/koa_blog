@@ -6,15 +6,10 @@ import Debounce from "./debounce";
 import _xss from "./_xss";
 import formFeedback from "./formFeedback";
 import redir from "./redir";
+import render from "./render.js";
 
 /* FUC        ----------------------------------------------------------------------------- */
 import errorHandle from "./errorHandle";
-const async_render = async () => {
-  let module = await import(
-    process.env.isProd ? "./render/index" : "./render/dev_index"
-  );
-  return module.default;
-};
 
 /* EXPORT     ----------------------------------------------------------------------------- */
-export { _Ajv, Debounce, async_render, _xss, formFeedback, redir, errorHandle };
+export { _Ajv, Debounce, render, _xss, formFeedback, redir, errorHandle };

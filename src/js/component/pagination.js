@@ -6,13 +6,10 @@
 import "@css/component/pagination";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import { async_render } from "../utils";
+import { render } from "../utils";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
 import { COMMON } from "../../config";
-
-/* VAR        ----------------------------------------------------------------------------- */
-let render = await async_render();
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default function (G) {
@@ -132,7 +129,6 @@ export default function (G) {
           pagination: pageConst.PAGINATION,
           isPublic: show,
           isSelf: G.data.active === "self",
-          SELECTOR: COMMON.SELECTOR,
         });
         //  將生成的html放入
         $container

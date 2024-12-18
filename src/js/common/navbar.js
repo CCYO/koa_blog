@@ -6,14 +6,13 @@
 import "@css/wedgets/navbar.scss";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import { async_render } from "../utils";
+import { render } from "../utils";
 import News from "./news";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
 import { COMMON } from "../../config";
 
 /* VAR        ----------------------------------------------------------------------------- */
-let render = await async_render();
 const API_LOGOUT = "/api/user/logout";
 // 不需要news數據的頁面
 const noNewsPage = [

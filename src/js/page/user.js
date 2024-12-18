@@ -8,7 +8,7 @@ import G from "../common";
 import {
   _Ajv,
   Debounce,
-  async_render,
+  render,
   _xss,
   formFeedback,
   redir,
@@ -22,7 +22,6 @@ import BetterScroll from "better-scroll";
 import initPagination from "../component/pagination";
 
 /* VAR        ----------------------------------------------------------------------------- */
-let render = await async_render();
 const API = {
   EDIT_BLOG: "/blog/edit",
   CREATE_BLOG: "/api/blog",
@@ -214,7 +213,9 @@ async function initMain() {
       //  同步 fansList 數據
       G.data.relationShip.fansList.unshift(G.data.me);
       //  在粉絲列表中插入 粉絲htmlStr
-      let html = G.utils.render.relationshipItem({ user: G.data.me });
+      let html = G.utils.render.relationshipItem({
+        user: G.data.me,
+      });
 
       if (G.data.relationShip.fansList.length === 1) {
         //  如果追蹤者只有當前的你，撤換掉列表內容

@@ -1,13 +1,9 @@
 /* COMMON     ----------------------------------------------------------------------------- */
 import Loop from "./loop";
-import { async_render } from "../utils";
+import { render } from "../utils";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
 import { COMMON } from "../../config";
-
-/* VAR        ----------------------------------------------------------------------------- */
-let render = await async_render();
-const API_LOGOUT = "/api/user/logout";
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default class {

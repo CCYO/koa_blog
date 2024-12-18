@@ -1,6 +1,8 @@
 /* NPM        ----------------------------------------------------------------------------- */
 import lodash_template from "lodash/template";
 
+import { SELECTOR } from "../const";
+
 //  藉row-loader將ejs轉純字符
 import navbar_logout_uncollapseList from "!!raw-loader!../../../src/views/wedgets/navbar/template/logout_uncollapseList.ejs";
 import navbar_login_uncollapseList from "!!raw-loader!../../../src/views/wedgets/navbar/template/login_uncollapseList.ejs";
@@ -18,7 +20,7 @@ import user_blogList from "!!raw-loader!../../../src/views/pages/user/template/b
 import square_blogList from "!!raw-loader!../../../src/views/pages/square/template/blogList.ejs";
 import albumList_blogList from "!!raw-loader!../../../src/views/pages/albumList/template/blogList.ejs";
 
-export default {
+let result = {
   navbar: {
     fansIdol: lodash_template(navbar_fansIdol),
     articleReader: lodash_template(navbar_articleReader),
@@ -31,17 +33,49 @@ export default {
       lodash_template(navbar_login_collapseList)({ active }),
   },
   BLOG: {
-    commentTree: lodash_template(blog_commentTree),
-    commentItem: lodash_template(blog_commentItem),
+    commentTree: (datas) => {
+      if (!datas.SELECTOR) {
+        datas.SELECTOR = SELECTOR;
+      }
+      return lodash_template(blog_commentTree)(datas);
+    },
+    commentItem: (datas) => {
+      if (!datas.SELECTOR) {
+        datas.SELECTOR = SELECTOR;
+      }
+      return lodash_template(blog_commentItem)(datas);
+    },
   },
   USER: {
-    relationshipItem: lodash_template(user_relationshipItem),
-    blogList: lodash_template(user_blogList),
+    relationshipItem: (datas) => {
+      if (!datas.SELECTOR) {
+        datas.SELECTOR = SELECTOR;
+      }
+      return lodash_template(user_relationshipItem)(datas);
+    },
+    blogList: (datas) => {
+      if (!datas.SELECTOR) {
+        datas.SELECTOR = SELECTOR;
+      }
+      return lodash_template(user_blogList)(datas);
+    },
   },
   SQUARE: {
-    blogList: lodash_template(square_blogList),
+    blogList: (datas) => {
+      if (!datas.SELECTOR) {
+        datas.SELECTOR = SELECTOR;
+      }
+      return lodash_template(square_blogList)(datas);
+    },
   },
   ALBUM_LIST: {
-    blogList: lodash_template(albumList_blogList),
+    blogList: (datas) => {
+      if (!datas.SELECTOR) {
+        datas.SELECTOR = SELECTOR;
+      }
+      return lodash_template(albumList_blogList)(datas);
+    },
   },
 };
+
+export default result;

@@ -8,7 +8,7 @@ import G from "../common";
 import { COMMON } from "../../config";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import { async_render, redir, errorHandle, _xss } from "../utils";
+import { render, redir, errorHandle, _xss } from "../utils";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import { createEditor } from "@wangeditor/editor";
@@ -17,7 +17,6 @@ import { createEditor } from "@wangeditor/editor";
 import blog_htmlStr from "../component/blog_htmlStr";
 
 /* VAR        ----------------------------------------------------------------------------- */
-let render = await async_render();
 const API = {
   REMOVE_COMMENT: "/api/comment",
   CREATE_COMMENT: "/api/comment",
@@ -106,7 +105,7 @@ async function initMain() {
           data: payload,
         });
         //  data { commenter, time, isDeleted, ... }
-        let htmlStr = G.utils.render.commentItem({ ...data });
+        let htmlStr = G.utils.render.commentItem(data);
         $btn_remove
           .parents(`.${G.constant.CLASS.COMMENT_ITEM_CONTENT}`)
           .first()
