@@ -15,6 +15,7 @@ export default class {
   //  紀錄當次debounce的Promise resolv
   resolve = undefined;
   constructor(callback, config) {
+    console.log("@process.env.isProd", process.env.isProd);
     if (!callback) {
       throw new Error("創建Debounce Ins必須提供callback參數");
     } else if (typeof callback !== "function") {
@@ -46,6 +47,7 @@ export default class {
         // 及時保存當前數據
         let _args = args;
         let _timeSet = this.timeSet;
+        console.log("@process.env.isProd", process.env.isProd);
         try {
           !process.env.isProd &&
             console.log(

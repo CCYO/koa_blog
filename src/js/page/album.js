@@ -107,13 +107,11 @@ async function initMain() {
       let { keyword, message } = result.find(
         ({ field_name }) => field_name === KEY
       );
-      if (keyword.length !== 1) {
-        throw new Error(JSON.stringify(result));
-      } else if (keyword[0] !== "_notRepeat") {
-        formFeedback.validated(el_input_alt, false, message);
-      } else {
-        formFeedback.clear(el_input_alt);
-      }
+      // if (keyword[0] !== "_notRepeat") {
+      formFeedback.validated(el_input_alt, false, message);
+      // } else {
+      //   formFeedback.clear(el_input_alt);
+      // }
       G.utils.lock.clear();
     }
     G.utils.lock.check_submit();

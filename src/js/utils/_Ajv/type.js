@@ -14,5 +14,4 @@ export default {
   //	setting
   SETTING: "setting",
   PASSWORD: "password",
-  BLOG_IMG: "blog_img",
 };

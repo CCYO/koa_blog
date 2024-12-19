@@ -105,7 +105,6 @@
     "postcss-loader": "^7.3.3",
     "postcss-preset-env": "^9.0.0",
     "raw-loader": "^4.0.2",
-    "remove-files-webpack-plugin": "^1.5.0",
     "sass": "^1.64.2",
     "sass-loader": "^13.3.3",
     "speed-measure-webpack-plugin": "^1.5.0",

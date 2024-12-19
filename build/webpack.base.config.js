@@ -18,6 +18,7 @@ const htmlWebpackPlugins = require("./utils/ins_htmlWebpackPlugins");
 const entry = require("./utils/entry");
 const done_hook = require("./utils/done_hook");
 
+console.log("@ build process.version => ", process.version);
 /* EXPORT     ----------------------------------------------------------------------------- */
 module.exports = {
   context: resolve(__dirname),

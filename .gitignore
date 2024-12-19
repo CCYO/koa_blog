@@ -2,15 +2,6 @@ node_modules/
 server/_config
 server/assets
 server/dev_assets
-server/utils/render/template/*
-!server/utils/render/template/.gitkeep
-server/utils/render/dev_template/*
-!server/utils/render/dev_template/.gitkeep
 server/views
 server/dev_views
-src/_views
-src/js/utils/render/template/*
-!src/js/utils/render/template/.gitkeep
-src/js/utils/render/dev_template/*
-!src/js/utils/render/dev_template/.gitkeep
 src/assets/js/common.js

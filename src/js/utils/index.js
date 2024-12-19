@@ -6,7 +6,7 @@ import Debounce from "./debounce";
 import _xss from "./_xss";
 import formFeedback from "./formFeedback";
 import redir from "./redir";
-import render from "./render.js";
+import render from "./render";
 
 /* FUC        ----------------------------------------------------------------------------- */
 import errorHandle from "./errorHandle";

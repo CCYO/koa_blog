@@ -22,7 +22,6 @@ const BundleAnalyzerPlugin =
  * const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
  */
 const TerserPlugin = require("terser-webpack-plugin");
-const RemovePlugin = require("remove-files-webpack-plugin");
 
 const styleLoaderList = [
   {
@@ -120,9 +119,6 @@ const plugins = (run) =>
       scriptMatchPattern: [/runtime[.]\w+[.]js$/],
       assetPreservePattern: [/runtime[.]\w+[.]js$/],
     }),
-    new RemovePlugin({
-      after: { include: [resolve(__dirname, "../src/_views")], trash: true },
-    }),
     new OptimizeCss(),
     ((run) => {
       if (!run) {
@@ -161,7 +157,7 @@ const prod_config = (run) => ({
 
   optimization,
 
-  // devtool: "cheap-module-source-map",
+  devtool: "cheap-module-source-map",
   mode: "production",
 });
 

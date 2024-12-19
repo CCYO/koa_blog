@@ -12,8 +12,8 @@ const _whiteList = {
   li: ["style"],
   p: ["style"],
   span: ["style"],
-  div: ["data-w-e-type", "data-w-e-is-void"],
-  input: ["type"],
+  div: ["data-w-e-type", "data-w-e-is-void", "style"],
+  input: ["type", "disabled", "checked"],
   img: ["src", "alt", "style", "data-href"],
   iframe: [
     "src",
@@ -33,17 +33,12 @@ function filter(html) {
     whiteList: _whiteList,
     //  通過在白名單上後的attr filter
     onTagAttr(tag, attr, attrVal, isWhiteAtt) {
-      let res = "";
       if (!isWhiteAtt) {
         //  若attr不在白名單內
         //  無返回值的狀況，會再進入onIgnoreTag處理
         return;
-      } else if (attrVal.length) {
-        res = `${attr}="${attrVal}"`;
-      } else if (attr !== "style") {
-        res = attr;
       }
-      return res;
+      return `${attr}="${attrVal}"`;
     },
     //  不符合白名單，會進入此過濾函數
     onIgnoreTag(tag, html) {
