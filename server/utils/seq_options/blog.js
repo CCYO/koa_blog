@@ -93,6 +93,7 @@ const FIND = {
             ORDER BY ${show ? "showAt" : "updatedAt"} DESC
           ) AS B
         ON BI.blog_id = B.id
+        ORDER BY ${show ? "showAt" : "updatedAt"} DESC
         LIMIT ${limit} OFFSET ${offset}
         `;
     }

@@ -18,6 +18,9 @@ const API = {
   CHECK_PASSWORD: "/api/user/confirmPassword",
   SETTING: "/api/user",
 };
+const EVENT_HANDLE_NAME = {
+  UNCHECK_ORIGIN_PASSWORD: "uncheck_origin_password",
+};
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
 try {
@@ -56,6 +59,13 @@ async function initMain() {
     loading: (e) => formFeedback.loading(e.target),
   });
 
+  $newPassword.on(
+    `input.${EVENT_HANDLE_NAME.UNCHECK_ORIGIN_PASSWORD}`,
+    clear_value
+  );
+  function clear_value(e) {
+    e.target.value = "";
+  }
   //  顯示驗證舊密碼modal
   $newPassword.on("focus", createModal);
   //  modal顯示後
@@ -89,7 +99,7 @@ async function initMain() {
   });
   //  新密碼與密碼二次輸入focus
   $newPasswordList.on("focus", handle_showModel);
-  //  密碼二次輸入驗證
+  //  原密碼驗證
   $checkOrginPassword.on("click", handle_originPassword);
   //  表單input
   jq_settingForm.on("input", handle_debounce_input);
@@ -327,6 +337,7 @@ async function initMain() {
     G.utils.lock.setKVpairs(payload);
     alert("驗證成功，請輸入新密碼");
     G.utils.bs5_modal.hide();
+    $newPassword.off(`.${EVENT_HANDLE_NAME.UNCHECK_ORIGIN_PASSWORD}`);
     $newPassword.get(0).focus();
   }
   //  顯示 origin_password 的 model

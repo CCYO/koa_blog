@@ -1,6 +1,10 @@
-const webpack = require("webpack");
+/* NODEJS     ----------------------------------------------------------------------------- */
 const path = require("path");
-console.log("@common process.version => ", process.version);
+
+/* NPM        ----------------------------------------------------------------------------- */
+const webpack = require("webpack");
+
+/* EXPORT     ----------------------------------------------------------------------------- */
 module.exports = (env) => {
   return {
     mode: "none",
@@ -35,8 +39,6 @@ module.exports = (env) => {
         "process.env.isProd": JSON.stringify(!!env.dev),
       }),
     ],
-    // devtool: env.dev ? "eval-source-map" : "cheap-module-source-map",
-    // devtool: false,
     devtool: "eval-source-map",
     mode: env.dev ? "development" : "production",
   };

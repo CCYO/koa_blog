@@ -14,7 +14,8 @@ const _whiteList = {
   span: ["style"],
   div: ["data-w-e-type", "data-w-e-is-void", "style"],
   input: ["type", "disabled", "checked"],
-  img: ["src", "alt", "style", "data-href"],
+  // img: ["src", "alt", "style", "data-href"],
+  img: ["src", "alt", "style"],
   iframe: [
     "src",
     "title",
@@ -25,6 +26,7 @@ const _whiteList = {
     "allow",
     "allowfullscreen",
   ],
+  "x-img": ["data-style", "data-alt-id"],
 };
 
 function filter(html) {
@@ -32,13 +34,16 @@ function filter(html) {
     //  這定能放過的 attr
     whiteList: _whiteList,
     //  通過在白名單上後的attr filter
-    onTagAttr(tag, attr, attrVal, isWhiteAtt) {
-      if (!isWhiteAtt) {
-        //  若attr不在白名單內
-        //  無返回值的狀況，會再進入onIgnoreTag處理
-        return;
+    onTagAttr(tag, attr, attrVal) {
+      if (tag === "img") {
+        if (attr === "alt" && !attrVal.length) {
+          return `${attr}="${attrVal}"`;
+        } else if (attr === "style" && !attrVal.length) {
+          return `${attr}="${attrVal}"`;
+        }
       }
-      return `${attr}="${attrVal}"`;
+      //  無返回值的狀況，會進入onTagAttr（預設的onTagAttr會進行一系列xss處理）
+      return;
     },
     //  不符合白名單，會進入此過濾函數
     onIgnoreTag(tag, html) {

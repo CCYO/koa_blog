@@ -2,10 +2,12 @@
  * @description  initEJS解析後，其中HTML的<img>為自定義的<x-img>，這裡負責數據轉回<img>
  */
 
-const REG_X_IMG_PARSE_TO_IMG = new RegExp(
-  "<x-img.+?data-alt-id='(?<alt_id>\\d+?)'.+?(data-style='(?<style>.*?)')?.*?\\/>",
-  "g"
-);
+const REG_X_IMG_PARSE_TO_IMG =
+  /<x-img.+?data-alt-id=("|')(?<alt_id>\d+?)\1.+?(data-style=("|')(?<style>.*?)\4)?.*?\/>/g;
+// new RegExp(
+//   "<x-img.+?data-alt-id='(?<alt_id>\\d+?)'.+?(data-style='(?<style>.*?)')?.*?\\/>",
+//   "g"
+// );
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default function parseHtmlStr_XImgToImg(G) {
