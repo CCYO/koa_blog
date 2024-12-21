@@ -154,10 +154,7 @@ const prod_config = (run) => ({
     ],
   },
   plugins: plugins(run),
-
   optimization,
-
-  devtool: "cheap-module-source-map",
   mode: "production",
 });
 

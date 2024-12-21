@@ -39,7 +39,7 @@ module.exports = (env) => {
         "process.env.isProd": JSON.stringify(!!env.dev),
       }),
     ],
-    devtool: "eval-source-map",
+    devtool: env.dev ? "eval-source-map" : "none",
     mode: env.dev ? "development" : "production",
   };
 };
