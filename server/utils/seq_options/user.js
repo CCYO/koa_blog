@@ -39,7 +39,6 @@ const FIND = {
         through: {
           //  articalReader Table
           attributes: ["id"],
-          paranoid: false, //  無視軟刪除
         },
       },
     ],
