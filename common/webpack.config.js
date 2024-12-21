@@ -14,20 +14,21 @@ module.exports = (env) => {
         library: {
           type: "commonjs2",
         },
-        filename: env.dev
-          ? "../server/dev_assets/js/common.js"
-          : "../server/assets/js/common.js",
+        // filename: env.dev
+        //   ? "../server/dev_assets/js/common.js"
+        //   : "../server/assets/js/common.js",
+        filename: env.dev ? "dev_common.cjs.js" : "common.cjs.js",
       },
       "common.esm": {
         import: "./src/index.js",
         library: {
           type: "module",
         },
-        filename: "../src/assets/js/common.js",
+        // filename: "../src/assets/js/common.js",
       },
     },
     output: {
-      path: path.resolve(__dirname),
+      path: path.resolve(__dirname, "dist"),
       filename: "[name].js",
       clean: true,
     },
