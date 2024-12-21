@@ -28,9 +28,8 @@ module.exports = {
     filename: WEBPACK.ENV.isProd
       ? `${WEBPACK.BUILD.SCRIPT}/[name].[contenthash:5].js`
       : `${WEBPACK.BUILD.SCRIPT}/[name].js`,
-    //  可設定 { keep: regex },regex是相對output.path的路徑，且若是folder則不可為空
+    //  可設定 { keep: regex },regex是相對output.path的路徑
     clean: true,
-    // clean: { keep: /js\/common\.js/ },
   },
   resolve: {
     modules: [resolve(__dirname, "../node_modules")],
