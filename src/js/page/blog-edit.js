@@ -13,7 +13,9 @@ import {
   i18nChangeLanguage,
   createToolbar,
   createEditor,
-} from "@wangeditor/editor";
+  DomEditor,
+  Boot,
+} from "@wangeditor-next/editor";
 
 /* UTILS      ----------------------------------------------------------------------------- */
 import {
@@ -385,6 +387,33 @@ async function initMain() {
           //  插入影片後的CB
           onInsertedVideo,
         },
+        fontFamily: {
+          fontFamilyList: [
+            "黑體",
+            {
+              name: "仿宋",
+              value: "仿宋",
+            },
+            "楷體",
+            "標楷體",
+            "華文仿宋",
+            "華文楷體",
+            {
+              name: "宋體",
+              value: "宋體",
+            },
+            "微軟雅黑",
+            {
+              name: "JetBrains Mono",
+              value: "JetBrains Mono",
+            },
+            "Arial",
+            "Tahoma",
+            "Verdana",
+            "Times New Roman",
+            "Courier New",
+          ],
+        },
       },
     };
     let { htmlStr, checkImgLoad } = blog_htmlStr(G);
@@ -396,16 +425,25 @@ async function initMain() {
       selector: `#${G.constant.ID.EDITOR_CONTAINER}`,
       config: editorConfig,
     });
+    //  根據官網方法無法引用 https://github.com/cycleccc/wangEditor-next/issues/458
+    const toolbarKeys = Boot.toolbarConfig.toolbarKeys; //  改以此方式引入，可正確取得
+
+    toolbarKeys[22] = "uploadImage"; // 修改工具攔選項
     //  editor 工具欄 創建
-    createToolbar({
+    const toolbar1 = createToolbar({
       editor,
       selector: `#${G.constant.ID.EDITOR_TOOLBAR_CONTAINER}`,
       mode: "simple",
       config: {
         //  移除滿版功能
-        excludeKeys: ["fullScreen"],
+        excludeKeys: ["fullScreen", "group-video"], //"insertVideo", "uploadVideo"
+        toolbarKeys,
       },
     });
+    const toolbar2 = DomEditor.getToolbar(editor);
+
+    editor._toolbar1 = toolbar1;
+    editor._toolbar2 = toolbar2;
     $span_content_count.text(
       `還能輸入${COMMON.AJV.BLOG.HTML.MAX_LENGTH - editor.getHtml().length}個字`
     );
@@ -591,7 +629,8 @@ async function initMain() {
       //  { [alt_id]: { alt, blogImg: { id }, img: { id, hash, url } }}
       G.data.blog.map_imgs.set(id, alt_data);
       //  將圖片插入 editor
-      insertFn(`${alt_data.img.url}?alt_id=${id}`, `${alt_data.alt}`);
+      // insertFn(`${alt_data.img.url}?alt_id=${id}`, `${alt_data.alt}`);
+      insertFn(`${alt_data.img.url}?alt_id=${id}`, "");
       setImgMode = 0;
       return;
       //  取得圖片的 hash

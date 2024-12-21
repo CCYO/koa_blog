@@ -24,11 +24,11 @@
   },
   "fontSize": {
     "title": "字體大小",
-    "default": "默認字體大小"
+    "default": "16px"
   },
   "fontFamily": {
     "title": "字體",
-    "default": "默認字體"
+    "default": "字體"
   },
   "fullScreen": {
     "title": "滿版"
@@ -58,7 +58,7 @@
   },
   "lineHeight": {
     "title": "行高",
-    "default": "默認行高"
+    "default": "行高"
   },
   "link": {
     "insert": "插入連結",
@@ -113,5 +113,8 @@
   },
   "highLightModule": {
     "selectLang": "語法"
+  },
+  "formatPainter": {
+    "title": "格式刷"
   }
 }

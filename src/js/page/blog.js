@@ -361,6 +361,7 @@ async function initMain() {
   async function render_blog() {
     let active = G.data.active;
     if (active === "blog") {
+      G.data.blog.author.id !== G.data.me?.id && $("#blog_edit").remove();
       let { htmlStr, checkImgLoad } = blog_htmlStr(G);
       G.utils.checkImgLoad = checkImgLoad;
       $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(htmlStr);

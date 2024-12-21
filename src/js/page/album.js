@@ -104,14 +104,8 @@ async function initMain() {
       G.utils.lock.setKVpairs(payload);
       formFeedback.validated(el_input_alt, true);
     } else {
-      let { keyword, message } = result.find(
-        ({ field_name }) => field_name === KEY
-      );
-      // if (keyword[0] !== "_notRepeat") {
+      let { message } = result.find(({ field_name }) => field_name === KEY);
       formFeedback.validated(el_input_alt, false, message);
-      // } else {
-      //   formFeedback.clear(el_input_alt);
-      // }
       G.utils.lock.clear();
     }
     G.utils.lock.check_submit();
