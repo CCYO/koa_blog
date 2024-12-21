@@ -187,7 +187,7 @@ async function modify({ blog_id, author_id, ...blog_data }) {
     await _removeImgList(cancelImgs);
   }
   let { data } = await _findWholeInfo({ blog_id });
-  if (map.has("title") || map.has("show")) {
+  if (map.has("showAt") || map.has("title") || map.has("show")) {
     cache[CACHE.TYPE.PAGE.USER] = [author_id];
   }
   let opts = { data, cache };
