@@ -9,7 +9,6 @@ const { WEBPACK } = require("./config");
 /* NPM        ----------------------------------------------------------------------------- */
 const webpack = require("webpack");
 const { merge } = require("webpack-merge");
-
 /* EXPORT     ----------------------------------------------------------------------------- */
 module.exports = merge(webpackBaseConfig, {
   cache: {

@@ -22,6 +22,7 @@ const BundleAnalyzerPlugin =
  * const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
  */
 const TerserPlugin = require("terser-webpack-plugin");
+const CompressionWebpackPlugin = require("compression-webpack-plugin");
 
 const styleLoaderList = [
   {
@@ -120,6 +121,12 @@ const plugins = (run) =>
       assetPreservePattern: [/runtime[.]\w+[.]js$/],
     }),
     new OptimizeCss(),
+    new CompressionWebpackPlugin({
+      test: /\.(js|css)$/,
+      threshold: 1024, // 超過 1kb
+      deleteOriginalAssets: false, // 不刪除原檔
+      minRatio: 0.8, //  壓縮率優於此值，才作壓縮
+    }),
     ((run) => {
       if (!run) {
         return new BundleAnalyzerPlugin();
@@ -199,6 +206,8 @@ function run_pm2(run) {
           if (start_err) {
             throw start_err;
           }
+          console.log("webpack production -- pm2 running...");
+          process.exit();
         });
       });
     });

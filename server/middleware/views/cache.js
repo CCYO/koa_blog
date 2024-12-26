@@ -35,7 +35,7 @@ let genCommon = (type) =>
         exist: STATUS.NO_IF_NONE_MATCH,
       };
       log(`請求取得 cache ${type}/${id} 時，沒有提供 if-none-match`);
-    } else if (ifNoneMatch !== resModel.data.etag) {
+    } else if (ifNoneMatch !== `W/${resModel.data.etag}`) {
       //  if-none-match 不匹配
       cacheStatus = {
         ...resModel.data,
@@ -61,7 +61,8 @@ let genCommon = (type) =>
       }
       //  將etag傳給前端做緩存
       ctx.set({
-        Etag: etag,
+        ETag: `W/${etag}`,
+        // ["Cache-Control"]: "private, no-cache",
         ["Cache-Control"]: "no-cache",
       });
       log(`${type}/${id} 提供前端 etag 做緩存`);

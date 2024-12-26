@@ -192,15 +192,15 @@ async function initMain() {
     const isMyIdol = G.data.me
       ? G.data.relationShip.fansList.some((fans) => fans.id === G.data.me.id)
       : false;
-    let self = $(`[data-user-id=${G.data.me.id}]`);
-    if (self) {
-      self.each((index, el) => {
-        let $el = $(el);
-        let list = $el.parent();
-        list.prepend(el.outerHTML);
-        $el.remove();
-      });
-    }
+    let self = $(`[data-user-id=${G.data.me?.id}]`);
+
+    self.each((index, el) => {
+      let $el = $(el);
+      let list = $el.parent();
+      list.prepend(el.outerHTML);
+      $el.remove();
+    });
+
     //  依據 isMyIdol 顯示 退追紐
     $btn_cancelFollow.toggle(isMyIdol);
     //  依據 isMyIdol 顯示 追蹤紐

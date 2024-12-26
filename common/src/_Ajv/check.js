@@ -32,7 +32,6 @@ export default async function (data, ignore_list = []) {
 //    [property]: [ { [keyword], [message] }, ... ], ...
 //  }
 function _init_errors(invalid_errors) {
-  // log("@整理前的validateErrors => ", invalid_errors);
   !process.env.isProd &&
     console.log("@整理前的validateErrors => ", invalid_errors);
 
@@ -60,7 +59,6 @@ function _init_errors(invalid_errors) {
     } = invalid_error;
     //  ↓ 忽略未自定義message的校驗錯誤
     if (!["errorMessage", "myKeyword"].some((item) => item === keyword)) {
-      // log(`@keyword: ${keyword} 沒有預定義錯誤訊息，故忽略`);
       !process.env.isProd &&
         console.log(`@keyword: ${keyword} 沒有預定義錯誤訊息，故忽略`);
       return acc;
@@ -95,7 +93,6 @@ function _init_errors(invalid_errors) {
     }
     return acc;
   }, acc);
-  // log("@整理後的validateErrors => ", res);
   !process.env.isProd && console.log("@整理後的validateErrors => ", res);
   return res;
 }
@@ -178,8 +175,6 @@ function _parseErrorsToForm(invalid_errors, data, ignore_list = []) {
   for (let field_name of valid_list) {
     res_list.push({ field_name, valid: true, value: data[field_name] });
   }
-
-  // log("整理後的驗證結果 res_list => ", res_list);
   !process.env.isProd && console.log("整理後的驗證結果 res_list => ", res_list);
   return res_list;
 }
