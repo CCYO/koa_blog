@@ -6,10 +6,15 @@ const ERR_404 = COMMON.ERR_RES.VIEW.NOT_FOUND;
 
 module.exports = {
   RESPONSE: {
+    NO_LOGIN,
+    PAGINATION_UPDATE: {
+      errno: 98003,
+      msg: "伺服器資料已更新，需重新整理",
+      code: 409,
+    },
     ERR_50x,
     ERR_504,
     ERR_404,
-    NO_LOGIN,
     TEST: {
       errno: 99999,
       msg: "測試報錯",

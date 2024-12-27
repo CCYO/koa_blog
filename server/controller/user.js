@@ -11,6 +11,7 @@ const {
   COMMON,
   ENV,
   ERR_RES,
+  PAGINATION,
   SERVER,
 } = require("../config");
 
@@ -262,7 +263,7 @@ async function _findBlogListHasCommented(user_id) {
   }, new Set());
   return [...set_blogs];
 }
-async function _findInfoForUserPage(user_id, limit, offset) {
+async function _findInfoForUserPage(user_id) {
   let resModel = await _findRelationship(user_id);
   if (resModel.errno) {
     return resModel;
@@ -271,6 +272,7 @@ async function _findInfoForUserPage(user_id, limit, offset) {
   let options = {
     currentUser_id: user_id,
     author_id: user_id,
+    PAGINATION: PAGINATION.BLOG,
   };
   let public_resModel = await C_Blog.findListForPagination({
     ...options,
@@ -288,6 +290,7 @@ async function _findInfoForUserPage(user_id, limit, offset) {
         public_resModel.data[COMMON.BLOG.STATUS.PUBLIC],
       [COMMON.BLOG.STATUS.PRIVATE]:
         private_resModel.data[COMMON.BLOG.STATUS.PRIVATE],
+      PAGINATION: PAGINATION.BLOG,
     },
   };
   return new SuccModel({ data });

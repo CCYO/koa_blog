@@ -4,7 +4,28 @@
 
 /* UTILS      ----------------------------------------------------------------------------- */
 const Redir = require("../../utils/redir");
+const { log } = require("../../utils/log");
+const {
+  CACHE: { STATUS, TYPE },
+  PAGINATION,
+} = require("../../config");
 
+async function userCache_is_fresh(ctx, next) {
+  let fresh = true;
+  if (ctx.cache.exist === STATUS.NO_CACHE) {
+    fresh = false;
+  } else if (
+    PAGINATION.BLOG.BLOG_COUNT !== ctx.cache.data.PAGINATION.BLOG_COUNT ||
+    PAGINATION.BLOG.PAGE_COUNT !== ctx.cache.data.PAGINATION.PAGE_COUNT
+  ) {
+    log("PAGINATION 常數被更改，緩存已無效，需重新向DB獲取數據");
+    fresh = false;
+  }
+  if (!fresh) {
+    ctx.cache.exist = STATUS.NO_CACHE;
+  }
+  await next();
+}
 //  若是當前使用者，跳往個人頁
 async function isSelf(ctx, next) {
   let me = ctx.session.user ? ctx.session.user.id : undefined;
@@ -42,4 +63,5 @@ module.exports = {
   skipLogin,
   isSelf,
   login,
+  userCache_is_fresh,
 };

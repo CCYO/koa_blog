@@ -2,6 +2,7 @@
 const {
   ENV,
   CACHE: { STATUS },
+  PAGINATION,
 } = require("../../config");
 
 /* CONTROLLER ----------------------------------------------------------------------------- */
@@ -56,6 +57,7 @@ let genCommon = (type) =>
     if (data) {
       //  當前系統緩存，無資料 || eTag已過期
       if (exist === STATUS.NO_CACHE) {
+        data.PAGINATION = PAGINATION.BLOG;
         //  將blog存入系統緩存
         await C_CachePage.modify(type, id, data);
       }
@@ -103,6 +105,7 @@ let genPrivate = (type) =>
     if (data) {
       //  系統沒有應對的緩存資料
       if (exist === STATUS.NO_CACHE) {
+        data.PAGINATION = PAGINATION.BLOG;
         //  將數據存入系統緩存
         await C_CachePage.modify(type, id, data);
       }

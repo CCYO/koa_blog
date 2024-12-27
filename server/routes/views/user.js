@@ -55,7 +55,7 @@ router.get("/login", CACHE.noCache, CHECK.skipLogin, async (ctx) => {
 /**
  * @description self
  */
-router.get("/self", privateCache, async (ctx) => {
+router.get("/self", privateCache, CHECK.userCache_is_fresh, async (ctx) => {
   //  middleware/privateCache 取得的緩存數據
   //  ctx.cache[TYPE.PAGE.USER]
   //  { exist: 提取緩存數據的結果 ,
@@ -85,43 +85,49 @@ router.get("/self", privateCache, async (ctx) => {
 /**
  * @description otehr
  */
-router.get("/other/:id", CHECK.isSelf, commonCache, async (ctx) => {
-  //  從 middleware 取得的緩存數據 ctx.cache[PAGE.USER]
-  /**
-   * {
-   ** exist: 提取緩存數據的結果 ,
-   ** data: { currentUser, fansList, idolList, blogList } || undefined
-   * }
-   */
-  // cache = { exist: STATUS.NO_CACHE, data: undefined };
+router.get(
+  "/other/:id",
+  CHECK.isSelf,
+  commonCache,
+  CHECK.userCache_is_fresh,
+  async (ctx) => {
+    //  從 middleware 取得的緩存數據 ctx.cache[PAGE.USER]
+    /**
+     * {
+     ** exist: 提取緩存數據的結果 ,
+     ** data: { currentUser, fansList, idolList, blogList } || undefined
+     * }
+     */
+    // cache = { exist: STATUS.NO_CACHE, data: undefined };
 
-  let opts = {
-    cache: ctx.cache,
-    user_id: ctx.params.id * 1,
-  };
-  let resModel = await User.findDataForUserPage(opts);
-  if (resModel.errno) {
-    return ctx.redirect(`/permission/${resModel.errno}`);
+    let opts = {
+      cache: ctx.cache,
+      user_id: ctx.params.id * 1,
+    };
+    let resModel = await User.findDataForUserPage(opts);
+    if (resModel.errno) {
+      return ctx.redirect(`/permission/${resModel.errno}`);
+    }
+    let { data } = resModel;
+    //  將 DB 數據賦予給 ctx.cache
+    let { currentUser, relationShip, blogs } = (ctx.cache.data = data);
+    //  非文章作者，所以不傳入未公開的文章
+    blogs = { public: blogs.public };
+    await ctx.render("user", {
+      active: PAGE.USER.ACTIVE.OTEHR,
+      page: PAGE.USER.PAGE_NAME,
+      login: Boolean(ctx.session.user),
+      ejs_render: render[PAGE.USER.PAGE_NAME],
+      pagination: PAGINATION.BLOG,
+      isSelf: false,
+      title: `${currentUser.nickname}的主頁`,
+      currentUser,
+      blogs,
+      relationShip,
+      SELECTOR,
+    });
   }
-  let { data } = resModel;
-  //  將 DB 數據賦予給 ctx.cache
-  let { currentUser, relationShip, blogs } = (ctx.cache.data = data);
-  //  非文章作者，所以不傳入未公開的文章
-  blogs = { public: blogs.public };
-  await ctx.render("user", {
-    active: PAGE.USER.ACTIVE.OTEHR,
-    page: PAGE.USER.PAGE_NAME,
-    login: Boolean(ctx.session.user),
-    ejs_render: render[PAGE.USER.PAGE_NAME],
-    pagination: PAGINATION.BLOG,
-    isSelf: false,
-    title: `${currentUser.nickname}的主頁`,
-    currentUser,
-    blogs,
-    relationShip,
-    SELECTOR,
-  });
-});
+);
 
 /**
  * @description setting

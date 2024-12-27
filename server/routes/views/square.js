@@ -26,6 +26,7 @@ const render = require("../../utils/render");
 router.get("/square", async (ctx) => {
   let { data: blog } = await Square.findListForPagination({
     user_id: ctx.session.user?.id,
+    PAGINATION: PAGINATION.SQUARE,
   });
   await ctx.render("square", {
     active: PAGE.SQUARE.ACTIVE._,

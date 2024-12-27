@@ -1,8 +1,3 @@
-// const COMMON = require("../common");
-// const NOT_EXIST = COMMON.ERR_RES.VIEW.BLOG_NOT_EXIST;
-// const NOT_AUTHOR = COMMON.ERR_RES.VIEW.NOT_AUTHOR;
-// const NO_ALBUM = COMMON.ERR_RES.VIEW.NO_ALBUM;
-
 module.exports = {
   CREATE: {
     ERR: {

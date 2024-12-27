@@ -28,6 +28,7 @@ router.get("/list", CACHE.noCache, CHECK.login, async (ctx) => {
   let author = ctx.session.user;
   let { data: album } = await Blog.findListAndCountOfAlbum({
     author_id: author.id,
+    PAGINATION: PAGINATION.ALBUM_LIST,
   });
   await ctx.render("albumList", {
     active: PAGE.ALBUM_LIST.ACTIVE._,

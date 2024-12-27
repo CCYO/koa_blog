@@ -111,20 +111,23 @@ export default function (G) {
             ? true
             : false;
         //  發出請求，取得blogList數據
-        let {
-          data: {
-            [$$status]: { blogs },
-          },
-        } = await G.utils.axios.post(API_PAGINATION, {
+        let { errno, data, msg } = await G.utils.axios.post(API_PAGINATION, {
           author_id,
           limit: pageConst.PAGINATION.BLOG_COUNT,
           //  前端分頁index從1開始，後端分頁index從0開始，所以要-1
           offset: (targetPage - 1) * pageConst.PAGINATION.BLOG_COUNT,
+          // 後端由此確認，前端的 pagination相關常數是否已過期
+          PAGINATION: pageConst.PAGINATION,
           show,
         });
+        if (errno) {
+          alert(msg);
+          location.reload();
+          return;
+        }
         //  生成html
         let html = template_blogList({
-          blogs,
+          blogs: data[$$status].blogs,
           page: targetPage,
           pagination: pageConst.PAGINATION,
           isPublic: show,

@@ -1,6 +1,3 @@
-// const COMMON = require("../common");
-// const NOT_EXIST = COMMON.ERR_RES.VIEW.COMMENT_NOT_EXIST;
-
 module.exports = {
   CREATE: {
     ERR: {

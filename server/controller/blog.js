@@ -3,7 +3,7 @@
  */
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-const { COMMON, CACHE, ERR_RES, ENV } = require("../config");
+const { COMMON, CACHE, ERR_RES, ENV, PAGINATION } = require("../config");
 
 /* Controller ----------------------------------------------------------------------------- */
 const C_Img = require("./img");
@@ -29,19 +29,20 @@ const { MyErr, ErrModel, SuccModel } = require("../utils/model");
  * @param {Number} param0.offset page number of pagination
  * @return {Promise<SuccModel>} { data: { public: obj | private: obj }} || throw MyErr
  */
-async function findListForPagination({
-  currentUser_id,
-  author_id,
-  show,
-  limit = undefined,
-  offset = undefined,
-}) {
-  if (!show && currentUser_id !== author_id) {
+async function findListForPagination(opts) {
+  // opts = {currentUser_id,author_id,show,limit ,offset ,PAGINATION}
+  if (
+    PAGINATION.BLOG.BLOG_COUNT !== opts.PAGINATION.BLOG_COUNT ||
+    PAGINATION.BLOG.PAGE_COUNT !== opts.PAGINATION.PAGE_COUNT
+  ) {
+    return new ErrModel(ERR_RES.SERVER.RESPONSE.PAGINATION_UPDATE);
+  }
+  if (!opts.show && opts.currentUser_id !== opts.author_id) {
     throw new MyErr(ERR_RES.BLOG.READ.NO_PERMISSION);
   }
-  let resModel = await findListAndCount({ author_id, show, offset, limit });
+  let resModel = await findListAndCount(opts);
   let data;
-  if (show) {
+  if (opts.show) {
     data = { [COMMON.BLOG.STATUS.PUBLIC]: resModel.data };
   } else {
     data = { [COMMON.BLOG.STATUS.PRIVATE]: resModel.data };
@@ -318,6 +319,12 @@ async function findListAndCountOfSquare(opts) {
  * @returns {Promise<SuccModel>}
  */
 async function findListAndCountOfAlbum(opts) {
+  if (
+    PAGINATION.ALBUM_LIST.BLOG_COUNT !== opts.PAGINATION.BLOG_COUNT ||
+    PAGINATION.ALBUM_LIST.PAGE_COUNT !== opts.PAGINATION.PAGE_COUNT
+  ) {
+    return new ErrModel(ERR_RES.SERVER.RESPONSE.PAGINATION_UPDATE);
+  }
   // opts {author_id, show, offset, limit}
   let public = false;
   let private = false;
@@ -352,10 +359,16 @@ async function findListAndCountOfAlbum(opts) {
  * @param {Number} opts.limit how many blogs in per pagination
  * @returns {Promise<SuccModel>}
  */
-async function findListAndCount(opts) {
-  //  opts { author_id, show, offset, limit }
+async function findListAndCount({
+  author_id,
+  show,
+  offset = 0,
+  limit = PAGINATION.BLOG.BLOG_COUNT,
+}) {
   //  data {list, count}
-  let data = await Blog.readListAndCountAll(Opts.BLOG.FIND.listAndCount(opts));
+  let data = await Blog.readListAndCountAll(
+    Opts.BLOG.FIND.listAndCount({ author_id, show, offset, limit })
+  );
   return new SuccModel({ data });
 }
 async function findAlbum({ author_id, blog_id }) {
