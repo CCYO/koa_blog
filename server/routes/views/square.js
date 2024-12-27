@@ -17,9 +17,6 @@ const Square = require("../../controller/square");
 /* UTILS      ----------------------------------------------------------------------------- */
 const render = require("../../utils/render");
 
-/* VAR        ----------------------------------------------------------------------------- */
-// const ejs_render = render.square;
-
 /**
  * @description square
  */

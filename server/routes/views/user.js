@@ -24,7 +24,6 @@ const render = require("../../utils/render");
 /* VAR        ----------------------------------------------------------------------------- */
 const privateCache = CACHE.genPrivate(TYPE.PAGE.USER);
 const commonCache = CACHE.genCommon(TYPE.PAGE.USER);
-// const ejs_render = render.user;
 
 /**
  * @description register

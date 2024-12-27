@@ -23,7 +23,6 @@ const render = require("../../utils/render");
 /* VAR         ----------------------------------------------------------------------------- */
 const privateCache = CACHE.genPrivate(TYPE.PAGE.BLOG);
 const commonCache = CACHE.genCommon(TYPE.PAGE.BLOG);
-// const ejs_render = render.blog;
 
 /**
  * @description blog preview

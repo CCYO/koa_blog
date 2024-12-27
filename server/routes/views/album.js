@@ -16,9 +16,6 @@ const { CHECK, CACHE } = require("../../middleware/views");
 const Blog = require("../../controller/blog");
 const render = require("../../utils/render");
 
-/* VAR        ----------------------------------------------------------------------------- */
-// const ejs_render = render.albumList;
-
 router.prefix("/album");
 
 /**

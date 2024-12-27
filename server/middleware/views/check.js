@@ -2,13 +2,15 @@
  * 系統直接調用的緩存處理
  */
 
+/* CONFIG     ----------------------------------------------------------------------------- */
+const {
+  CACHE: { STATUS },
+  PAGINATION,
+} = require("../../config");
+
 /* UTILS      ----------------------------------------------------------------------------- */
 const Redir = require("../../utils/redir");
 const { log } = require("../../utils/log");
-const {
-  CACHE: { STATUS, TYPE },
-  PAGINATION,
-} = require("../../config");
 
 async function userCache_is_fresh(ctx, next) {
   let fresh = true;
