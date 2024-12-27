@@ -1,6 +1,9 @@
 <!-- 傳入 blog, pagination, ejs_render, SELECTOR -->
 <% let G_PAGE = SELECTOR.SQUARE %>
+
+
 <% let { blogs, count } = blog.public %>
+
 <div class="blogList card" <%= `data-${G_PAGE.DATASET.KEY.BLOG_STATUS}=${G_PAGE.DATASET.VALUE.BLOG_STATUS_PUBLIC}` %>>
   <% if(count){ %>
   <ul class="list-group">
@@ -10,6 +13,10 @@
     </div>
   </ul>
   <% if (count / pagination.BLOG_COUNT > 1) { %>
+  <!-- 總頁數 -->
+  <% let _totalPage=Math.ceil(count / pagination.BLOG_COUNT) %>
+  <!-- 總分頁數 -->
+  <% let _totalPagination=Math.ceil(_totalPage / pagination.PAGE_COUNT) %>
   <nav aria-label="...">
     <ul class="pagination">
       <li class="page-item">
@@ -20,29 +27,37 @@
       <li class="page-item">
         <a class="page-link pe-none" href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${G_PAGE.DATASET.VALUE.PREVIOUS_PAGE}`%>>&#60;</a>
       </li>
-      <% var _totalPage=Math.ceil(count / pagination.BLOG_COUNT) %>
-      <% for(let _page_num=1; _totalPage>= _page_num; _page_num++){ %>
+
+      <% for( let _page_num = 1; _totalPage >= _page_num; _page_num++ ){ %>
+      <!-- 當前頁數/分頁選單頁數上限，若餘數是1，則新增一份分頁選單 -->
       <% if((_page_num % pagination.PAGE_COUNT)===1){ %>
-      <!-- 除5若無餘數，要有ul li -->
-      <ul class="pagination" <%= `data-${G_PAGE.DATASET.KEY.PAGINATION_NUM}=${Math.ceil(_page_num / pagination.PAGE_COUNT)}` %> <% if(Math.ceil(_page_num / pagination.PAGE_COUNT) > 1){ %> style="display: none;" <% } %>>
+      <!-- 當前分頁數 -->
+      <% let page_pagination = Math.ceil(_page_num / pagination.PAGE_COUNT) %>
+      <% if (page_pagination === 1) { %>
+      <ul class="pagination" <%= `data-${G_PAGE.DATASET.KEY.PAGINATION_NUM}=${page_pagination}` %>>
+        <% } else { %>
+        <ul class="pagination" <%= `data-${G_PAGE.DATASET.KEY.PAGINATION_NUM}=${page_pagination}` %> style="display: none;">
+          <% } %>
+          <% } %>
+          <!-- 分頁選單內的單頁選項 -->
+          <li class="page-item <%= _page_num === 1 ? 'active' : '' %>">
+            <a class="page-link" href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${_page_num}` %>>
+              <%= _page_num %>
+            </a>
+          </li>
+
+          <!-- 總頁數/分頁選單頁數上限，若整除，或是此頁是最後一頁，則此份分頁選單閉鎖 -->
+          <% if( !(_page_num % pagination.PAGE_COUNT) || _page_num===_totalPage ){ %>
+        </ul>
         <% } %>
-        <!-- 除5無論有無餘數，都要li -->
-        <li class="page-item <%= _page_num === 1 ? 'active' : '' %>">
-          <a class="page-link" href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${_page_num}` %>>
-            <%= _page_num %>
-          </a>
+        <% } %>
+        <li class="page-item">
+          <a href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${G_PAGE.DATASET.VALUE.NEXT_PAGE}` %> class="page-link <%= _totalPage < 2 ? "pe-none" : '' %>">&#62;</a>
         </li>
-        <% if( !(_page_num % pagination.PAGE_COUNT) || _page_num===_totalPage ){ %>
+        <li class="page-item">
+          <a href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${G_PAGE.DATASET.VALUE.NEXT_PAGINATION}` %> class="page-link <%= _totalPagination < 2 ? "pe-none" : '' %>">&#8811;</a>
+        </li>
       </ul>
-      <% } %>
-      <% } %>
-      <li class="page-item">
-        <a href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${G_PAGE.DATASET.VALUE.NEXT_PAGE}` %> class="page-link <%= _totalPage < 2 ? "pe-none" : '' %>">&#62;</a>
-      </li>
-      <li class="page-item">
-        <a href="#" <%= `data-${G_PAGE.DATASET.KEY.PAGE_TURN}=${G_PAGE.DATASET.VALUE.NEXT_PAGINATION}` %> class="page-link <%= _totalPage <= 2 ? "pe-none" : '' %>">&#8811;</a>
-      </li>
-    </ul>
   </nav>
   <% } %>
 

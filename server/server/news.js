@@ -1,5 +1,5 @@
 /* CONFIG      ----------------------------------------------------------------------------- */
-const { NEWS } = require("../config");
+const { NEWS, COMMON } = require("../config");
 
 /* NPM         ----------------------------------------------------------------------------- */
 const { QueryTypes } = require("sequelize");
@@ -59,7 +59,7 @@ async function readList({ user_id, excepts }) {
   
     ) AS table_dual
     ORDER BY confirm, updatedAt DESC
-    LIMIT ${NEWS.LIMIT}
+    LIMIT ${COMMON.NEWS.LIMIT}
     `;
   }
 }

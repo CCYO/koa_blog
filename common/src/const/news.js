@@ -7,6 +7,6 @@ export default {
     //已知news條目皆已拉取
     CHECK: 3,
   },
-  LIMIT: 2,
+  LIMIT: 5,
   // "TIME_FORMAT": "YYYY/MM/DD HH:mm:ss"
 };
