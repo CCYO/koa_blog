@@ -3,7 +3,7 @@
  */
 
 /* CONFIG     ----------------------------------------------------------------------------- */
-const { NEWS } = require("../config");
+const { COMMON, NEWS } = require("../config");
 
 /* NPM        ----------------------------------------------------------------------------- */
 const dayjs = require("dayjs");
@@ -82,27 +82,24 @@ async function _findThroughData(newsList) {
   return res;
 
   async function _findNews(news) {
-    let { type, id, target_id, follow_id, confirm, createdAt, updatedAt } =
-      news;
+    let { type, id, target_id, follow_id, confirm, updatedAt } = news;
     //  序列化時間數據
-    let timestamp = dayjs.utc(updatedAt).utcOffset(8).format(NEWS.TIME_FORMAT);
-
-    timestamp = dayjs(timestamp).fromNow();
+    let timestamp = dayjs.utc(updatedAt).utcOffset(8).fromNow();
     //  結果的預設值
     let res = { type, id, timestamp, confirm, updatedAt };
-    if (type === NEWS.TYPE.IDOL_FANS) {
+    if (type === COMMON.NEWS.TYPE.IDOL_FANS) {
       let resModel = await C_User.find(follow_id);
       if (resModel.errno) {
         throw new MyErr({ ...resModel, error: `user/${follow_id} 不存在` });
       }
       return { ...res, fans: resModel.data };
-    } else if (type === NEWS.TYPE.ARTICLE_READER) {
+    } else if (type === COMMON.NEWS.TYPE.ARTICLE_READER) {
       let resModel = await C_Blog.findItemForNews(target_id);
       if (resModel.errno) {
         throw new MyErr({ ...resModel, error: `blog/${target_id} 不存在` });
       }
       return { ...res, blog: resModel.data };
-    } else if (type === NEWS.TYPE.MSG_RECEIVER) {
+    } else if (type === COMMON.NEWS.TYPE.MSG_RECEIVER) {
       let resModel = await C_Comment.findInfoForNews(target_id);
       if (resModel.errno) {
         throw new MyErr({ ...resModel, error: `comment/${target_id} 不存在` });

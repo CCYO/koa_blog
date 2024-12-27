@@ -32,7 +32,7 @@ async function readList({ user_id, excepts }) {
     return `
     SELECT type, id, target_id, follow_id, confirm, createdAt, updatedAt
     FROM (
-        SELECT ${NEWS.TYPE.IDOL_FANS} as type, id , idol_id as target_id , fans_id as follow_id, confirm, createdAt, updatedAt
+        SELECT ${COMMON.NEWS.TYPE.IDOL_FANS} as type, id , idol_id as target_id , fans_id as follow_id, confirm, createdAt, updatedAt
         FROM IdolFans
         WHERE 
             idol_id=${user_id}
@@ -41,7 +41,7 @@ async function readList({ user_id, excepts }) {
   
         UNION
   
-        SELECT ${NEWS.TYPE.ARTICLE_READER} as type, id, article_id as target_id, reader_id as follow_id, confirm, createdAt, updatedAt 
+        SELECT ${COMMON.NEWS.TYPE.ARTICLE_READER} as type, id, article_id as target_id, reader_id as follow_id, confirm, createdAt, updatedAt 
         FROM ArticleReaders
         WHERE 
             reader_id=${user_id}
@@ -50,7 +50,7 @@ async function readList({ user_id, excepts }) {
   
         UNION
   
-        SELECT ${NEWS.TYPE.MSG_RECEIVER} as type, id, msg_id as target_id, receiver_id as follow_id, confirm, createdAt, updatedAt 
+        SELECT ${COMMON.NEWS.TYPE.MSG_RECEIVER} as type, id, msg_id as target_id, receiver_id as follow_id, confirm, createdAt, updatedAt 
         FROM MsgReceivers
         WHERE 
             receiver_id=${user_id}
@@ -77,21 +77,21 @@ async function count(user_id) {
           COUNT(if(confirm = 1, true, null)) as confirm, 
           COUNT(*) as total
       FROM (
-          SELECT ${NEWS.TYPE.IDOL_FANS} as type, id, confirm
+          SELECT ${COMMON.NEWS.TYPE.IDOL_FANS} as type, id, confirm
           FROM IdolFans
           WHERE
               idol_id=${user_id} 
               AND deletedAt IS NULL 
           UNION
   
-          SELECT ${NEWS.TYPE.ARTICLE_READER} as type, id, confirm
+          SELECT ${COMMON.NEWS.TYPE.ARTICLE_READER} as type, id, confirm
           FROM ArticleReaders
           WHERE 
               reader_id=${user_id}
               AND deletedAt IS NULL 
           UNION
   
-          SELECT ${NEWS.TYPE.MSG_RECEIVER} as type, id, confirm
+          SELECT ${COMMON.NEWS.TYPE.MSG_RECEIVER} as type, id, confirm
           FROM MsgReceivers
           WHERE
               receiver_id=${user_id}

@@ -7,6 +7,10 @@ export default {
     //已知news條目皆已拉取
     CHECK: 3,
   },
+  TYPE: {
+    IDOL_FANS: 1,
+    ARTICLE_READER: 2,
+    MSG_RECEIVER: 3,
+  },
   LIMIT: 5,
-  // "TIME_FORMAT": "YYYY/MM/DD HH:mm:ss"
 };

@@ -44,13 +44,13 @@ export default class {
           for (let { type, id } of list) {
             let prop;
             switch (type) {
-              case 1:
+              case COMMON.NEWS.TYPE.IDOL_FANS:
                 prop = "idolFans";
                 break;
-              case 2:
+              case COMMON.NEWS.TYPE.ARTICLE_READER:
                 prop = "articleReader";
                 break;
-              case 3:
+              case COMMON.NEWS.TYPE.MSG_RECEIVER:
                 prop = "msgReceiver";
                 break;
             }
