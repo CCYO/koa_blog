@@ -72,7 +72,7 @@ export default class {
           instance.backdrop.hidden();
         }
         if (!ok) {
-          return Promise.reject(new Error(JSON.stringify(resData)));
+          return Promise.reject(resData);
         }
         return Promise.resolve(resData);
       },

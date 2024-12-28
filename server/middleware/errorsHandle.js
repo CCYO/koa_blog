@@ -10,6 +10,9 @@ module.exports = async (ctx, next) => {
     if (ctx.status === 404) {
       if (ctx.header.accept && ~ctx.header.accept.indexOf("html")) {
         ctx.redirect(`/permission/${ERR_RES.SERVER.RESPONSE.ERR_404.errno}`);
+      } else {
+        ctx.status = 404;
+        ctx.body = new ErrModel(ERR_RES.SERVER.RESPONSE.ERR_404);
       }
     }
   } catch (error) {
