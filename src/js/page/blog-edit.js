@@ -111,7 +111,6 @@ async function initMain() {
       blog_id: G.data.blog.id,
       showAt: new Date().toISOString(),
     });
-    throw new Error("沙小");
     //  資料同步
     G.data.blog.showAt = data.showAt;
     G.data.blog.time = data.time;
