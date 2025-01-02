@@ -53,33 +53,30 @@ export default class {
     /* 配置 axios 的 響應攔截器，統一處理報錯 */
     instance.interceptors.response.use(
       (response) => {
-        let ok = true;
-        //  resData { errno, data }
-        let resData = response.data;
-
-        if (
-          resData.errno === COMMON.ERR_RES.AXIOS.NEWS_NO_LOGIN.errno &&
-          !this.#ACTIVE_WHITE_LIST.some((item) => item === active)
-        ) {
-          //  response 為 news請求的 noLogin 提醒
-          ok = false;
-        } else if (
-          resData.errno === COMMON.ERR_RES.AXIOS.RESPONSE_NO_LOGIN.errno
-        ) {
-          //  response 為 非news請求的 noLogin 提醒
-          ok = false;
-        }
+        // 關閉LoadingBackdrop
         if (instance.autoLoadingBackdrop) {
           instance.backdrop.hidden();
         }
-        if (!ok) {
+        //  resData { errno, data }
+        let resData = response.data;
+        if (
+          //  後端需要登入權限的請求，響應 noLogin 提醒
+          resData.errno === COMMON.ERR_RES.AXIOS.RESPONSE_NO_LOGIN.errno ||
+          //  後端針對news請求，響應 noLogin 提醒
+          (resData.errno === COMMON.ERR_RES.AXIOS.NEWS_NO_LOGIN.errno &&
+            !this.#ACTIVE_WHITE_LIST.some((item) => item === active))
+        ) {
           return Promise.reject(resData);
         }
         return Promise.resolve(resData);
       },
       (axiosError) => {
+        // 關閉LoadingBackdrop
+        if (instance.autoLoadingBackdrop) {
+          instance.backdrop.hidden();
+        }
         !process.env.isProd && console.log("_axios捕獲到Server Error");
-        // axiosError.response.data { model: { errno, data }}
+        // axiosError.response.data { errno, data }
         errorHandle(axiosError.response.data);
       }
     );
