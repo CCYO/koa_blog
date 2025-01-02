@@ -11,15 +11,18 @@ const {
 /* NPM        ----------------------------------------------------------------------------- */
 const router = require("koa-router")();
 
+/* MIDDLEWARE ----------------------------------------------------------------------------- */
+const { CHECK } = require("../../middleware/views");
+
 /* UTILS      ----------------------------------------------------------------------------- */
 const { ErrModel } = require("../../utils/model");
 
 /**
  * @description error page
  */
-router.get("/permission/:errno", async (ctx) => {
+router.get("/permission/:id", CHECK.validParam, async (ctx) => {
   let opts = {};
-  switch (ctx.params.errno * 1) {
+  switch (ctx.params.id * 1) {
     //  意料外的錯誤
     case ERR_RES.SERVER.RESPONSE.ERR_50x.errno:
       opts.errModel = new ErrModel(ERR_RES.SERVER.RESPONSE.ERR_50x);
@@ -32,8 +35,8 @@ router.get("/permission/:errno", async (ctx) => {
     case ERR_RES.NEWS.READ.NOT_EXIST.errno:
       opts.errModel = new ErrModel(ERR_RES.NEWS.READ.NOT_EXIST);
       break;
-    case ERR_RES.USER.READ.NO_DATA.errno:
-      opts.errModel = new ErrModel(ERR_RES.USER.READ.NO_DATA);
+    case ERR_RES.USER.READ.NO_EXIST.errno:
+      opts.errModel = new ErrModel(ERR_RES.USER.READ.NO_EXIST);
       break;
     case ERR_RES.BLOG.READ.NOT_EXIST.errno:
       opts.errModel = new ErrModel(ERR_RES.BLOG.READ.NOT_EXIST);

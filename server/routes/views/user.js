@@ -86,6 +86,7 @@ router.get("/self", privateCache, CHECK.userCache_is_fresh, async (ctx) => {
  */
 router.get(
   "/other/:id",
+  CHECK.validParam,
   CHECK.isSelf,
   commonCache,
   CHECK.userCache_is_fresh,
@@ -99,6 +100,7 @@ router.get(
      */
     // cache = { exist: STATUS.NO_CACHE, data: undefined };
 
+    // 確認params.id是否為數字
     let opts = {
       cache: ctx.cache,
       user_id: ctx.params.id * 1,

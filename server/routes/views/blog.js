@@ -12,7 +12,7 @@ const {
 const router = require("koa-router")();
 
 /* MIDDLEWARE ----------------------------------------------------------------------------- */
-const { CACHE } = require("../../middleware/views");
+const { CACHE, CHECK } = require("../../middleware/views");
 
 /* CONTROLLER ----------------------------------------------------------------------------- */
 const Blog = require("../../controller/blog");
@@ -27,7 +27,7 @@ const commonCache = CACHE.genCommon(TYPE.PAGE.BLOG);
 /**
  * @description blog preview
  */
-router.get("/blog/preview/:id", privateCache, async (ctx) => {
+router.get("/blog/preview/:id", CHECK.validParam, privateCache, async (ctx) => {
   let opts = {
     //  來自 privateCache
     cache: ctx.cache,
@@ -56,34 +56,39 @@ router.get("/blog/preview/:id", privateCache, async (ctx) => {
 /**
  * @description edit blog
  */
-router.get("/blog/edit/:id", privateCache, async (ctx, next) => {
-  let opts = {
-    //  來自 privateCache
-    cache: ctx.cache,
-    author_id: ctx.session.user.id,
-    blog_id: ctx.params.id * 1,
-  };
-  let { errno, data } = await Blog.findInfoForPrivatePage(opts);
-  if (errno) {
-    ctx.redirect(`/permission/${errno}`);
-  } else {
-    //  將 data 賦予 ctx.cache，稍後 privateCache 會視情況處理緩存
-    ctx.cache.data = data;
-    await ctx.render("blog-edit", {
-      active: PAGE.BLOG_EDIT.ACTIVE._,
-      page: PAGE.BLOG_EDIT.PAGE_NAME,
-      login: true,
-      title: data.title,
-      blog: { ...data, showComment: false },
-      SELECTOR,
-    });
+router.get(
+  "/blog/edit/:id",
+  CHECK.validParam,
+  privateCache,
+  async (ctx, next) => {
+    let opts = {
+      //  來自 privateCache
+      cache: ctx.cache,
+      author_id: ctx.session.user.id,
+      blog_id: ctx.params.id * 1,
+    };
+    let { errno, data } = await Blog.findInfoForPrivatePage(opts);
+    if (errno) {
+      ctx.redirect(`/permission/${errno}`);
+    } else {
+      //  將 data 賦予 ctx.cache，稍後 privateCache 會視情況處理緩存
+      ctx.cache.data = data;
+      await ctx.render("blog-edit", {
+        active: PAGE.BLOG_EDIT.ACTIVE._,
+        page: PAGE.BLOG_EDIT.PAGE_NAME,
+        login: true,
+        title: data.title,
+        blog: { ...data, showComment: false },
+        SELECTOR,
+      });
+    }
   }
-});
+);
 
 /**
  * @description blog
  */
-router.get("/blog/:id", commonCache, async (ctx) => {
+router.get("/blog/:id", CHECK.validParam, commonCache, async (ctx) => {
   let opts = {
     //  來自 privateCache
     cache: ctx.cache,

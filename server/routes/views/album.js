@@ -43,26 +43,32 @@ router.get("/list", CACHE.noCache, CHECK.login, async (ctx) => {
 /**
  * @description album
  */
-router.get("/:blog_id", CACHE.noCache, CHECK.login, async (ctx) => {
-  let opts = {
-    blog_id: ctx.params.blog_id * 1,
-    author_id: ctx.session.user.id,
-  };
-  let { errno, data } = await Blog.findAlbum(opts);
-  if (errno) {
-    ctx.redirect(`/permission/${errno}`);
-  } else {
-    let { imgs, ...blog } = data;
-    await ctx.render("album", {
-      active: PAGE.ALBUM.ACTIVE._,
-      page: PAGE.ALBUM.PAGE_NAME,
-      login: true,
-      title: `${blog.title}的相簿`,
-      blog,
-      imgs,
-      SELECTOR,
-    });
+router.get(
+  "/:id",
+  CHECK.validParam,
+  CACHE.noCache,
+  CHECK.login,
+  async (ctx) => {
+    let opts = {
+      blog_id: ctx.params.id * 1,
+      author_id: ctx.session.user.id,
+    };
+    let { errno, data } = await Blog.findAlbum(opts);
+    if (errno) {
+      ctx.redirect(`/permission/${errno}`);
+    } else {
+      let { imgs, ...blog } = data;
+      await ctx.render("album", {
+        active: PAGE.ALBUM.ACTIVE._,
+        page: PAGE.ALBUM.PAGE_NAME,
+        login: true,
+        title: `${blog.title}的相簿`,
+        blog,
+        imgs,
+        SELECTOR,
+      });
+    }
   }
-});
+);
 
 module.exports = router;

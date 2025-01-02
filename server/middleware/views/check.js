@@ -12,6 +12,17 @@ const {
 const Redir = require("../../utils/redir");
 const { log } = require("../../utils/log");
 
+async function validParam(ctx, next) {
+  let _id = ctx.params.id;
+  if (Number(_id.replace(/e/, "x"))) {
+    await next();
+    return;
+  }
+  // return ctx.redirect("/self");
+  ctx.status = 404;
+  return;
+}
+
 async function userCache_is_fresh(ctx, next) {
   let fresh = true;
   if (ctx.cache.exist === STATUS.NO_CACHE) {
@@ -62,6 +73,7 @@ async function skipLogin(ctx, next) {
   await next();
 }
 module.exports = {
+  validParam,
   skipLogin,
   isSelf,
   login,
