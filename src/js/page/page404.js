@@ -28,7 +28,7 @@ async function initMain() {
     // 循環錯誤
     let loopError = /\/permission/.test(target);
     // 報錯來自NGINX
-    let errorFromNginx = /\/html\/50\d\.html/.test(location.href);
+    let errorFromNginx = /\/public\/html\/.+?\.html/.test(location.href);
     //  404 || 通知已過期 || 需要登入權限 || 其他
     let alertMsg = G.data.errModel?.msg;
     if (errorFromNginx) {
