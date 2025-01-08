@@ -30,7 +30,7 @@ async function codeErr(ctx) {
   let filePath = path.resolve(
     __dirname,
     `../../${ENV.isProd ? "assets" : "dev_assets"}`,
-    "js",
+    "map",
     `${fileName}.map`
   );
   const rawSouceMap = fs.readFileSync(filePath, { encoding: "utf-8" });

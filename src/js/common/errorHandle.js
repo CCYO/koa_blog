@@ -72,9 +72,6 @@ window.addEventListener("unhandledrejection", function (event) {
     //  前端引發的錯誤
     else {
       _log(result);
-      if (isProd) {
-        location.reload();
-      }
     }
   });
 });
@@ -117,6 +114,11 @@ TraceKit.report.subscribe(async (error) => {
   };
 
   !isProd && console.log("將錯誤交由TraceKit處理，並回報給伺服器\n", payload);
-
-  await axios.post("/api/report/error", payload);
+  console.log("將錯誤交由TraceKit處理，並回報給伺服器\n", payload);
+  await axios
+    .post("/api/report/error", payload)
+    .then((res) => console.log(res, "ok"))
+    .catch((e) => console.log(e, "nok"));
+  console.log("report over 重整頁面");
+  // location.reload();
 });

@@ -133,7 +133,7 @@ const plugins = (run) =>
       events: {
         onEnd: {
           mkdir: [resolve(__dirname, "../server/assets/map/")],
-          move: [
+          copy: [
             {
               source: resolve(__dirname, "../server/assets/js/*.map"),
               destination: resolve(__dirname, "../server/assets/map"),
@@ -142,6 +142,10 @@ const plugins = (run) =>
               source: resolve(__dirname, "../server/assets/css/*.map"),
               destination: resolve(__dirname, "../server/assets/map"),
             },
+          ],
+          delete: [
+            resolve(__dirname, "../server/assets/css/*.map"),
+            resolve(__dirname, "../server/assets/js/*.map"),
           ],
         },
       },
@@ -181,7 +185,7 @@ const prod_config = (run) => ({
   },
   plugins: plugins(run),
   optimization,
-  devtool: "source-map",
+  devtool: "hidden-nosources-source-map",
   mode: "production",
 });
 
