@@ -10,11 +10,10 @@ const bodyparser = require("koa-bodyparser")({
   enableTypes: ["json", "form", "text"],
 });
 const koaViews = require("@ladjs/koa-views");
-const { consola } = require("consola/basic");
 
 /* UTILS      ----------------------------------------------------------------------------- */
 //  錯誤處理
-const middleware_errors = require("./middleware/errorsHandle");
+const errorsHandle = require("./middleware/errorsHandle");
 const { webpackDev, webpackHMR } = require("./middleware/webpackDevAndHMR");
 //  middleware:與redis-session連線
 const { session_middleware } = require("./db/redis");
@@ -23,14 +22,13 @@ const sequelizeTransaction = require("./middleware/api/seq_transaction");
 //  middleware:ws
 const { ws_middleware } = require("./middleware/ws");
 const router = require("./routes");
-const { MyErr } = require("./utils/model");
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
 const app = new Koa();
 //  加密 session
 app.keys = [SESSION_KEY];
 
-app.use(middleware_errors);
+app.use(errorsHandle.middleware);
 if (!ENV.isProd) {
   //  打印每一次的request與response
   app.use(require("koa-logger")());
@@ -52,28 +50,6 @@ app.use(
 app.use(router.routes(), router.allowedMethods());
 
 //  error log
-app.on("error", (error, ctx) => {
-  let msg = [
-    `----- -----\n
-      METHOD:${ctx.method}\n
-      PATH:${ctx.path}\n
-      ERROR TYPE:`,
-  ];
-  if (error instanceof MyErr) {
-    let { serverError } = error;
-    msg = msg.concat([
-      "【MyErr】\nmodel:\n",
-      error.model,
-      "\n+++++ +++++\nstack:\n",
-      error.stack,
-      "\n+++++ +++++\norigin stack:\n",
-      serverError?.stack,
-    ]);
-  } else {
-    msg = msg.concat(["【SEVER ERROR】\n", error]);
-  }
-  msg = msg.concat("\n----- -----");
-  consola.error(...msg);
-});
+app.on("error", errorsHandle.log);
 
 module.exports = app;

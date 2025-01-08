@@ -18,14 +18,7 @@ import {
 } from "@wangeditor-next/editor";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import {
-  _Ajv,
-  Debounce,
-  _xss,
-  formFeedback,
-  redir,
-  errorHandle,
-} from "../utils";
+import { _Ajv, Debounce, _xss, formFeedback, redir } from "../utils";
 
 /* COMPONENT   ---------------------------------------------------------------------------- */
 import blog_htmlStr from "../component/blog_htmlStr";
@@ -38,20 +31,17 @@ const API = {
 };
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
-try {
-  //  離開頁面前，是否發出提醒
-  G.data.saveWarn = true;
-  G.utils._xss = _xss;
-  const $$ajv = _Ajv(G.utils.axios);
-  G.utils.validate = {
-    img_alt: $$ajv._validate.img_alt,
-    blog_img: $$ajv._validate.blog_img,
-    blog: $$ajv._validate.blog,
-  };
-  await G.initPage(initMain);
-} catch (error) {
-  errorHandle(error);
-}
+//  離開頁面前，是否發出提醒
+G.data.saveWarn = true;
+G.utils._xss = _xss;
+const $$ajv = _Ajv(G.utils.axios);
+G.utils.validate = {
+  img_alt: $$ajv._validate.img_alt,
+  blog_img: $$ajv._validate.blog_img,
+  blog: $$ajv._validate.blog,
+};
+await G.initPage(initMain);
+
 async function initMain() {
   let $blog_status = $(`#${G.constant.ID.STATUS}`);
   let $inp_title = $(`#${G.constant.ID.TITLE}`);

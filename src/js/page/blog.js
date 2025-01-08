@@ -8,7 +8,7 @@ import G from "../common";
 import { COMMON } from "../../config";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import { render, redir, errorHandle, _xss } from "../utils";
+import { render, redir, _xss } from "../utils";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import { createEditor } from "@wangeditor/editor";
@@ -22,12 +22,8 @@ const API = {
   CREATE_COMMENT: "/api/comment",
 };
 /* RUNTIME    ----------------------------------------------------------------------------- */
-try {
-  G.utils.render = render[G.data.page];
-  await G.initPage(initMain);
-} catch (error) {
-  errorHandle(error);
-}
+G.utils.render = render[G.data.page];
+await G.initPage(initMain);
 
 async function initMain() {
   await render_blog();

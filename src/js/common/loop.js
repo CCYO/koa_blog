@@ -1,9 +1,7 @@
 /**
  * @description Loop Func
  */
-
-/* UTILS      ----------------------------------------------------------------------------- */
-import errorHandle from "../utils/errorHandle";
+/* 
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default class {
@@ -73,15 +71,14 @@ export default class {
           );
         this.timeSet = undefined;
         this.start(...this.args);
-      } catch (e) {
+      } catch (error) {
         !process.env.isProd &&
           console.log(
-            `loop auto ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- catch error, and call errorHandle`
+            `loop auto ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- catch error`
           );
         this.stop();
-        errorHandle(e);
+        throw error;
       }
-      return;
     }, this.ms);
     !process.env.isProd &&
       console.log(

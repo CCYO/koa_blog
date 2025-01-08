@@ -4,17 +4,8 @@ import "@css/page404.scss";
 /* COMMON     ----------------------------------------------------------------------------- */
 import G from "../common";
 
-/* UTILS      ----------------------------------------------------------------------------- */
-import { errorHandle } from "../utils";
-
-/* Config     ----------------------------------------------------------------------------- */
-
 /* RUNTIME    ----------------------------------------------------------------------------- */
-try {
-  await G.initPage(initMain);
-} catch (error) {
-  errorHandle(error);
-}
+await G.initPage(initMain);
 
 async function initMain() {
   showErrorCode();

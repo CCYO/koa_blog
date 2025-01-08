@@ -5,7 +5,7 @@ import "@css/setting.scss";
 import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import { _Ajv, Debounce, formFeedback, redir, errorHandle } from "../utils";
+import { _Ajv, Debounce, formFeedback, redir } from "../utils";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
 import { COMMON } from "../../config";
@@ -23,20 +23,16 @@ const EVENT_HANDLE_NAME = {
 };
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
-try {
-  //  離開頁面前，是否發出提醒
-  G.data.saveWarn = true;
-  G.utils.bs5_modal = undefined;
-  const $$ajv = _Ajv(G.utils.axios);
-  G.utils.validate = {
-    setting: $$ajv._validate.setting,
-    avartar: $$ajv._validate.avatar,
-    password: $$ajv._validate.password,
-  };
-  await G.initPage(initMain);
-} catch (error) {
-  errorHandle(error);
-}
+//  離開頁面前，是否發出提醒
+G.data.saveWarn = true;
+G.utils.bs5_modal = undefined;
+const $$ajv = _Ajv(G.utils.axios);
+G.utils.validate = {
+  setting: $$ajv._validate.setting,
+  avartar: $$ajv._validate.avatar,
+  password: $$ajv._validate.password,
+};
+await G.initPage(initMain);
 
 async function initMain() {
   let el_origin_password = document.querySelector(

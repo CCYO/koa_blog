@@ -5,15 +5,7 @@ import "@css/user.scss";
 import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import {
-  _Ajv,
-  Debounce,
-  render,
-  _xss,
-  formFeedback,
-  redir,
-  errorHandle,
-} from "../utils";
+import { _Ajv, Debounce, render, _xss, formFeedback, redir } from "../utils";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import BetterScroll from "better-scroll";
@@ -31,17 +23,13 @@ const API = {
 };
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
-try {
-  const $$ajv = _Ajv(G.utils.axios);
-  G.utils.validate = {
-    blog_title: $$ajv._validate.blog_title,
-  };
-  G.utils.render = render[G.data.page];
-  G.utils._xss = _xss;
-  await G.initPage(initMain);
-} catch (error) {
-  errorHandle(error);
-}
+const $$ajv = _Ajv(G.utils.axios);
+G.utils.validate = {
+  blog_title: $$ajv._validate.blog_title,
+};
+G.utils.render = render[G.data.page];
+G.utils._xss = _xss;
+await G.initPage(initMain);
 
 async function initMain() {
   let $input_new_blog_title = $(`#${G.constant.ID.NEW_BLOG_TITLE}`);

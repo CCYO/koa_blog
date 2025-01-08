@@ -5,17 +5,13 @@ import "@css/square.scss";
 import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import { errorHandle } from "../utils";
+// import { errorHandle } from "../utils";
 
 /* COMPONENT   ---------------------------------------------------------------------------- */
 import initPagination from "../component/pagination";
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
-try {
-  await G.initPage(initMain);
-} catch (error) {
-  errorHandle(error);
-}
+await G.initPage(initMain);
 
 async function initMain() {
   //  初始化文章列表

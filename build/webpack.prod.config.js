@@ -23,6 +23,8 @@ const BundleAnalyzerPlugin =
  */
 const TerserPlugin = require("terser-webpack-plugin");
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
+const filemanagerWebpackPlugin = require("filemanager-webpack-plugin");
+const { mkdir } = require("fs");
 
 const styleLoaderList = [
   {
@@ -127,6 +129,23 @@ const plugins = (run) =>
       deleteOriginalAssets: false, // 不刪除原檔
       minRatio: 0.8, //  壓縮率優於此值，才作壓縮
     }),
+    new filemanagerWebpackPlugin({
+      events: {
+        onEnd: {
+          mkdir: [resolve(__dirname, "../server/assets/map/")],
+          move: [
+            {
+              source: resolve(__dirname, "../server/assets/js/*.map"),
+              destination: resolve(__dirname, "../server/assets/map"),
+            },
+            {
+              source: resolve(__dirname, "../server/assets/css/*.map"),
+              destination: resolve(__dirname, "../server/assets/map"),
+            },
+          ],
+        },
+      },
+    }),
     ((run) => {
       if (!run) {
         return new BundleAnalyzerPlugin();
@@ -162,6 +181,7 @@ const prod_config = (run) => ({
   },
   plugins: plugins(run),
   optimization,
+  devtool: "source-map",
   mode: "production",
 });
 

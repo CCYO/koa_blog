@@ -8,8 +8,5 @@ import formFeedback from "./formFeedback";
 import redir from "./redir";
 import render from "./render";
 
-/* FUC        ----------------------------------------------------------------------------- */
-import errorHandle from "./errorHandle";
-
 /* EXPORT     ----------------------------------------------------------------------------- */
-export { _Ajv, Debounce, render, _xss, formFeedback, redir, errorHandle };
+export { _Ajv, Debounce, render, _xss, formFeedback, redir };

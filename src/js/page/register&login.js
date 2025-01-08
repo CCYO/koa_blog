@@ -5,7 +5,7 @@ import "@css/register&login.scss";
 import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import { _Ajv, Debounce, formFeedback, redir, errorHandle } from "../utils";
+import { _Ajv, Debounce, formFeedback, redir } from "../utils";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import Tab from "bootstrap/js/dist/tab";
@@ -21,18 +21,14 @@ const API = {
   LOGIN: "/api/user",
 };
 /* RUNTIME    ----------------------------------------------------------------------------- */
-try {
-  const ajv = _Ajv(G.utils.axios);
-  G.utils.validate = {
-    login: ajv._validate.login,
-    register: ajv._validate.register,
-    passwordAndAgain: ajv._validate.password_again,
-    isEmailExist: ajv._validate.is_email_exist,
-  };
-  await G.initPage(initMain);
-} catch (error) {
-  errorHandle(error);
-}
+const ajv = _Ajv(G.utils.axios);
+G.utils.validate = {
+  login: ajv._validate.login,
+  register: ajv._validate.register,
+  passwordAndAgain: ajv._validate.password_again,
+  isEmailExist: ajv._validate.is_email_exist,
+};
+await G.initPage(initMain);
 
 function initMain() {
   //  初始化 NavTab

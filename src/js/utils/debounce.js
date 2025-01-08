@@ -1,6 +1,3 @@
-/* UTILS      ----------------------------------------------------------------------------- */
-import error_handle from "./errorHandle";
-
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default class {
   //  防抖動的間距時間
@@ -70,14 +67,15 @@ export default class {
         } catch (e) {
           !process.env.isProd &&
             console.log(
-              `debounce ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- catch error, and call error_handle`
+              `debounce ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- catch error`
             );
-          this._clearTimeout(_timeSet);
-          error_handle(e);
-          reject();
+          clearTimeout(_timeSet);
+          reject(e);
         }
       }, this.ms);
 
+      // 每次生成setTimeout時，針對將此次setTimeout封裝的Promise，
+      // 都要記下該次的Promise resolve，以便此次setTimeout被clearTimeout時一併調用
       this.resolve = (result) => {
         let _resolve = resolve;
         _resolve(result);
@@ -94,10 +92,11 @@ export default class {
   _clearTimeout(timeSet) {
     !process.env.isProd &&
       console.log(
-        `debounce ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- cancel, still resolve`
+        `debounce ----- \nsetTimeout\n【timer:${this.timeSet}】\n【CB:${this.name}】\n---------- cancel`
       );
-    // 取消上一次的 setTimeout
+    // 取消最近一次 setTimeout
     this.timeSet = clearTimeout(timeSet);
+    // 取消最近一次 setTimeout
     this.resolve(null);
   }
 }

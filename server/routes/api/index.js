@@ -9,7 +9,9 @@ let blog = require("./blog");
 let comment = require("./comment");
 let news = require("./news");
 let user = require("./user");
+let report = require("./report");
 
+router.use(report.routes());
 router.use(album.routes());
 router.use(square.routes());
 router.use(blog.routes());

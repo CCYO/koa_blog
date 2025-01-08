@@ -3,6 +3,7 @@
  */
 
 /* COMMON     ----------------------------------------------------------------------------- */
+import errorHandle from "./errorHandle";
 import _Axios from "./_axios";
 import Loading_backdrop from "./LoadingBackdrop";
 import initNavbar from "./navbar";

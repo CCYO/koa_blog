@@ -5,14 +5,7 @@ import "@css/album.scss";
 import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import {
-  _Ajv,
-  Debounce,
-  _xss,
-  formFeedback,
-  redir,
-  errorHandle,
-} from "../utils";
+import { _Ajv, Debounce, _xss, formFeedback, redir } from "../utils";
 
 /* VAR         ---------------------------------------------------------------------------- */
 const API = {
@@ -20,16 +13,12 @@ const API = {
 };
 
 /* RUNTIME    ----------------------------------------------------------------------------- */
-try {
-  const $$ajv = _Ajv(G.utils.axios);
-  G.utils.validate = {
-    img_alt: $$ajv._validate.img_alt,
-  };
-  G.utils._xss = _xss;
-  await G.initPage(initMain);
-} catch (e) {
-  errorHandle(e);
-}
+const $$ajv = _Ajv(G.utils.axios);
+G.utils.validate = {
+  img_alt: $$ajv._validate.img_alt,
+};
+G.utils._xss = _xss;
+await G.initPage(initMain);
 
 async function initMain() {
   const el_modal = $(`#${G.constant.ID.MODAL}`).get(0);

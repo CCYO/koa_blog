@@ -3,9 +3,6 @@
  * @description 針對特定的response設定處理方式，統一處理錯誤
  */
 
-/* UTILS      ----------------------------------------------------------------------------- */
-import errorHandle from "../utils/errorHandle";
-
 /* CONFIG     ----------------------------------------------------------------------------- */
 import { COMMON } from "../../config";
 
@@ -77,7 +74,7 @@ export default class {
         }
         !process.env.isProd && console.log("_axios捕獲到Server Error");
         // axiosError.response.data { errno, data }
-        errorHandle(axiosError.response.data);
+        return Promise.reject(axiosError.response.data);
       }
     );
     return instance;
