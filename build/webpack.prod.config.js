@@ -24,7 +24,6 @@ const BundleAnalyzerPlugin =
 const TerserPlugin = require("terser-webpack-plugin");
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
 const filemanagerWebpackPlugin = require("filemanager-webpack-plugin");
-const { mkdir } = require("fs");
 
 const styleLoaderList = [
   {

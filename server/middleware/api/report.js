@@ -1,6 +1,3 @@
-/* CONFIG     ----------------------------------------------------------------------------- */
-const { ENV } = require("../../config");
-
 /* NodeJS     ----------------------------------------------------------------------------- */
 const path = require("path");
 const fs = require("fs");
@@ -22,24 +19,23 @@ async function codeErr(ctx) {
   const {
     browserInfo,
     error: {
+      message,
       stack: { line, column, url },
     },
   } = ctx.request.body;
   // decodeURIComponent 處理 register&login 的 % ←→ %26 轉換
   const fileName = decodeURIComponent(path.basename(url));
-  let filePath = path.resolve(
-    __dirname,
-    `../../${ENV.isProd ? "assets" : "dev_assets"}`,
-    "map",
-    `${fileName}.map`
-  );
+  let filePath = path.resolve(__dirname, `../../assets/map`, `${fileName}.map`);
   const rawSouceMap = fs.readFileSync(filePath, { encoding: "utf-8" });
   const consumer = await new SourceMapConsumer(rawSouceMap);
   const result = consumer.originalPositionFor({ filePath, line, column });
   consumer.destroy();
   let msg = {
     browserInfo,
-    error: result,
+    error: {
+      message,
+      ...result,
+    },
   };
   ctx.app.emit("error", msg);
   ctx.body = new SuccModel();

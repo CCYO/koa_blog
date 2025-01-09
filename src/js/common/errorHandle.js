@@ -18,20 +18,24 @@ const isProd = process.env.isProd;
 let pre_msg = "";
 
 /* EXPORT     ----------------------------------------------------------------------------- */
-function _log(result, fromBackend = false) {
+function _report(result, fromBackend = false) {
+  // prod mode 使用alert提示使用者「頁面將重整」
   if (isProd) {
     let from = fromBackend ? "伺服器" : "";
     alert(`${from}發生未知錯誤，頁面將自動重整`);
-  } else {
+  }
+  // dev mode 使用alert提示使用者「觀察console.log」
+  else {
     let from = fromBackend ? "後" : "前";
     alert(`【${from}端錯誤】 ${pre_msg}`);
     console.error(`【${from}端錯誤】 ${pre_msg}\n`, result);
   }
+  // 將提醒內容重新清空
   pre_msg = "";
-  if (fromBackend || !isProd) {
+  if (!isProd || fromBackend) {
     return;
   }
-  // 前端錯誤需要回報給伺服器
+  // 將前端錯誤回報給伺服器
   try {
     TraceKit.report(result);
   } catch (error) {
@@ -46,39 +50,41 @@ window.addEventListener("unhandledrejection", function (event) {
   pre_msg += 'BY window.addEventLister("unhandledrejection")';
   event.preventDefault();
   event.promise.catch((result) => {
-    // ?webpack sourcemap似乎沒辦法對result映射，所以這裡採用event.reason
     const errno = result.errno;
-
     // 後端（NodeJS或NGINX）提供的錯誤響應
     if (
       errno === COMMON.ERR_RES.VIEW.SERVER_ERROR.errno ||
       errno === COMMON.ERR_RES.VIEW.NOT_FOUND.errno ||
       errno === COMMON.ERR_RES.VIEW.TIME_OUT.errno
     ) {
-      _log(result, true);
+      _report(result, true);
+      // API 請求給予「伺服器錯誤」的響應，主動重整頁面
       if (isProd) {
         location.reload();
       }
     }
     //  axios HTTP CODE 200，但需要額外處理的數據（ex:登入權限過期）
     else if (errno) {
+      // API 請求給予「使用者權限問題」的響應
+      // prod mode 導向登入頁面
       if (isProd) {
-        // 後端響應請求需要登入權限
         redir.check_login();
-      } else {
-        _log(result, true);
+      }
+      // dev mode 提示錯誤
+      else {
+        _report(result, true);
       }
     }
     //  前端引發的錯誤
     else {
-      _log(result);
+      _report(result);
     }
   });
 });
 
 window.addEventListener("error", (event) => {
   pre_msg += ' BY window.addEventLister("error")';
-  _log(event.error);
+  _report(event.error);
 });
 window.onerror = function () {
   !isProd &&
@@ -87,10 +93,10 @@ window.onerror = function () {
     );
   return true;
 };
-// 取消因為window拋錯而自動觸發TraceKit.report.subscribe的行為
+// 取消「TraceKit.report.subscribe會因為window拋錯，自動觸發的行為」
 TraceKit.collectWindowErrors = false;
-// 由TraceKit.report(event)主動調用
-TraceKit.report.subscribe(async (error) => {
+// 由TraceKit.report(error)主動調用
+TraceKit.report.subscribe((error) => {
   const { message, stack } = error;
   const payload = {
     error: {
@@ -112,13 +118,13 @@ TraceKit.report.subscribe(async (error) => {
       userAgent: navigator.userAgent,
     },
   };
-
   !isProd && console.log("將錯誤交由TraceKit處理，並回報給伺服器\n", payload);
-  console.log("將錯誤交由TraceKit處理，並回報給伺服器\n", payload);
-  await axios
+  axios
     .post("/api/report/error", payload)
-    .then((res) => console.log(res, "ok"))
-    .catch((e) => console.log(e, "nok"));
-  console.log("report over 重整頁面");
-  // location.reload();
+    .then(() => location.reload())
+    .catch((error) => {
+      // 若還有失敗狀況，後端早已經生成錯誤報告，
+      // 此處引發前端觸發window.addEventLister("unhandledrejection")，引導至調用 location.reload()
+      Promise.reject(error.response.data);
+    });
 });

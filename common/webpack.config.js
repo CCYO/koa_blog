@@ -27,8 +27,7 @@ module.exports = (env) => {
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "[name].js",
-      //  regex是相對output.path的路徑
-      clean: { keep: /common\.cjs/ },
+      clean: { keep: /dev_common\.cjs/ }, //  regex是相對output.path的路徑
     },
     experiments: {
       outputModule: true,
@@ -48,7 +47,11 @@ module.exports = (env) => {
         }),
       ],
     },
-    devtool: isProd ? "source-map" : "eval-source-map",
+    // prod mode，此處生成的共用模塊會提供給src打包，src會以hidden-nosources-source-map在頁面中隱藏碼源，
+    // 而此處共用模塊若使用內聯模式的source-map，會導致此部分碼源被頁面讀取到，
+    // 只要將source-map抽離出來，即可避免頁面讀取，且src打包的sourceMap可成功追蹤過來
+    // 但要注意，此處共用模塊不可使用hidden模式的source-map，會導致src打包的sourceMap也無法追蹤
+    devtool: isProd ? "nosources-source-map" : "eval-source-map",
     mode: isProd ? "production" : "development",
   };
 };

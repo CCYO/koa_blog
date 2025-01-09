@@ -21,5 +21,12 @@ module.exports = ((filepathList) => {
         ? [filepath, "webpack-hot-middleware/client?reload=true"]
         : filepath;
   });
+  // 安排靜態資源
+  let filepath = resolve(__dirname, "../../src/assets/js/report.js");
+  res["report"] =
+    process.env.NODE_ENV !== "production"
+      ? [filepath, "webpack-hot-middleware/client?reload=true"]
+      : filepath;
+
   return res;
 })(filepathList);

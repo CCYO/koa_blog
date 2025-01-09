@@ -29,6 +29,7 @@ G.utils.validate = {
 };
 G.utils.render = render[G.data.page];
 G.utils._xss = _xss;
+
 await G.initPage(initMain);
 
 async function initMain() {

@@ -26,7 +26,14 @@ module.exports = {
     path: WEBPACK.BUILD.DIST,
     publicPath: `${WEBPACK.PUBLIC_PATH}/`,
     filename: WEBPACK.ENV.isProd
-      ? `${WEBPACK.BUILD.SCRIPT}/[name].[contenthash:5].js`
+      ? (pathData) => {
+          return pathData.chunk.name === "report"
+            ? // report.js 取至 src/assets/js/report.js，用來處理「資源加載失敗時，回報伺服器」的功能，
+              // 並且直接在 src/views/wedgets/header/components/script_tag.ejs
+              // 以<script src="/public/js/report.js">讀取，因此需要一個固定的檔名
+              `${WEBPACK.BUILD.SCRIPT}/[name].js`
+            : `${WEBPACK.BUILD.SCRIPT}/[name].[contenthash:5].js`;
+        }
       : `${WEBPACK.BUILD.SCRIPT}/[name].js`,
     //  可設定 { keep: regex },regex是相對output.path的路徑
     clean: true,

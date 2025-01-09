@@ -6,7 +6,6 @@
     "nocache": "npm run _rm_dev_dir && npm run common && cross-env NODE_ENV=nocache nodemon",
     "dev": "npm run _rm_dev_dir && npm run common && cross-env NODE_ENV=development nodemon",
     "prod": "npm run pm2_rm && npm run build -- --env=run",
-    "restart": "pm2 restart koa_blog",
     "start": "pm2 start ecosystem.config.js",
     "build": "npm run _rm_prod_dir && npm run common -- --env=prod && cross-env NODE_ENV=production webpack --config ./build/webpack.prod.config.js",
     "pm2_rm": "pm2 delete all || true && pm2 flush",
