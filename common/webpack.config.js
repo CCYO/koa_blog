@@ -1,12 +1,12 @@
 /* NODEJS     ----------------------------------------------------------------------------- */
-const path = require("path");
+const { resolve } = require("path");
 
 /* NPM        ----------------------------------------------------------------------------- */
 const webpack = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
 /* EXPORT     ----------------------------------------------------------------------------- */
 module.exports = (env) => {
-  const isProd = Boolean(env.prod);
+  const isProd = !Boolean(env.dev);
   return {
     mode: "none",
     entry: {
@@ -25,9 +25,10 @@ module.exports = (env) => {
       },
     },
     output: {
-      path: path.resolve(__dirname, "dist"),
+      path: resolve(__dirname, "dist"),
       filename: "[name].js",
-      clean: { keep: /dev_common\.cjs/ }, //  regex是相對output.path的路徑
+      //  clean.keep 可以是regex，匹配的是「相對output.path的路徑」
+      clean: { keep: /dev_common\.cjs/ },
     },
     experiments: {
       outputModule: true,
@@ -47,11 +48,6 @@ module.exports = (env) => {
         }),
       ],
     },
-    // prod mode，此處生成的共用模塊會提供給src打包，src會以hidden-nosources-source-map在頁面中隱藏碼源，
-    // 而此處共用模塊若使用內聯模式的source-map，會導致此部分碼源被頁面讀取到，
-    // 只要將source-map抽離出來，即可避免頁面讀取，且src打包的sourceMap可成功追蹤過來
-    // 但要注意，此處共用模塊不可使用hidden模式的source-map，會導致src打包的sourceMap也無法追蹤
-
     // koa-blog/common 負責打包前後端都會用到的「通用模塊」，實際上在前/後端會如何使用
     // 後端：由NodeJS直接運行使用（不需再討論）
     // 前端：再一次被koa-blog/build進行打包，生成最終的前端代碼

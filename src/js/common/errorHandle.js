@@ -109,7 +109,8 @@ TraceKit.report.subscribe((error) => {
       },
     },
     browserInfo: {
-      time: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+      // format 參考 https://day.js.org/docs/zh-CN/display/format
+      time: dayjs().format("YYYY-MM-DD HH:mm:ss ZZ"),
       isMobile: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent), // 移動端
       isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream, // IOS 不支援window.MSStream
       isAndroid:

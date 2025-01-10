@@ -11,7 +11,7 @@ import { COMMON } from "../../config";
 import { render, redir, _xss } from "../utils";
 
 /* NPM        ----------------------------------------------------------------------------- */
-import { createEditor } from "@wangeditor/editor";
+import { createEditor } from "@wangeditor-next/editor";
 
 /* COMPONENT   ---------------------------------------------------------------------------- */
 import blog_htmlStr from "../component/blog_htmlStr";

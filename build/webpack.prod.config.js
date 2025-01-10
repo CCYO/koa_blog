@@ -10,7 +10,6 @@ const webpackBaseConfig = require("./webpack.base.config");
 const { resolve } = require("path");
 
 /* NPM        ----------------------------------------------------------------------------- */
-const pm2 = require("pm2");
 const { merge } = require("webpack-merge");
 const OptimizeCss = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -107,8 +106,9 @@ const optimization = {
   ],
 };
 
-const plugins = (run) =>
+const plugins = (analyzer) =>
   [
+    runBundleAnalyzerPlugin(analyzer),
     /**
      * SpeedMeasurePlugin hack
      * 最後再加入MiniCssExtractPlugin
@@ -130,12 +130,9 @@ const plugins = (run) =>
     }),
     new filemanagerWebpackPlugin({
       events: {
-        onStart: {
-          delete: [
-            resolve(__dirname, "../server/views/"),
-            resolve(__dirname, "../server/dev_views/"),
-          ],
-        },
+        // onStart: {
+        //   delete: [resolve(__dirname, "../server/views/")],
+        // },
         onEnd: {
           mkdir: [resolve(__dirname, "../server/assets/map/")],
           copy: [
@@ -155,15 +152,9 @@ const plugins = (run) =>
         },
       },
     }),
-    ((run) => {
-      if (!run) {
-        return new BundleAnalyzerPlugin();
-      }
-    })(run),
-    run_pm2(run),
   ].filter(Boolean);
 
-const prod_config = (run) => ({
+const prod_config = (analyzer) => ({
   module: {
     rules: [
       {
@@ -188,13 +179,14 @@ const prod_config = (run) => ({
       },
     ],
   },
-  plugins: plugins(run),
+  plugins: plugins(analyzer),
   optimization,
   devtool: "hidden-nosources-source-map",
   mode: "production",
 });
 
 module.exports = (env) => {
+  let analyzer = Boolean(env.analyzer === "true");
   /**
    * SpeedMeasurePlugin 會導致
    * 1)因為MiniCssExtractPlugin報錯，無法打包
@@ -206,7 +198,7 @@ module.exports = (env) => {
   /**
    * SpeedMeasurePlugin hack
    * let config = new SpeedMeasurePlugin().wrap(
-   *   merge(webpackBaseConfig, prod_config(env.run))
+   *   merge(webpackBaseConfig, prod_config(env.build))
    * );
    * config.plugins.push(
    *   new MiniCssExtractPlugin({
@@ -214,31 +206,17 @@ module.exports = (env) => {
    *   })
    * );
    */
-  let config = merge(webpackBaseConfig, prod_config(env.run));
+  let config = merge(webpackBaseConfig, prod_config(analyzer));
   config.module.rules = [{ oneOf: [...config.module.rules] }];
   return config;
 };
 
-// 自動調用PM2
-function run_pm2(run) {
-  if (run) {
-    return { apply };
-  }
+function runBundleAnalyzerPlugin(analyzer) {
+  return analyzer ? new BundleAnalyzerPlugin() : undefined;
 
-  function apply(compiler) {
-    compiler.hooks.done.tap("_", () => {
-      pm2.connect((connect_err) => {
-        if (connect_err) {
-          throw connect_err;
-        }
-        pm2.start(resolve(__dirname, "../ecosystem.config.js"), (start_err) => {
-          if (start_err) {
-            throw start_err;
-          }
-          console.log("webpack production -- pm2 running...");
-          process.exit();
-        });
-      });
-    });
-  }
+  // return {
+  //   apply(compiler) {
+  //     compiler.hooks.done.tap("_", () => {});
+  //   },
+  // };
 }

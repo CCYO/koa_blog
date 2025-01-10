@@ -50,10 +50,15 @@ module.exports = (function () {
       array_filepath[index_views] = "dev_views";
     }
 
+    array_filepath.findIndex((folder) => folder);
     //  創建 server/[dev_]views 內，除了 isPageIndex 以外的 ejs
     for (let [index, folder] of array_filepath.entries()) {
-      if (isPageIndex || folder === "pages") {
-        // isPageIndex 由 HtmlWebpackPlugin 生成
+      if (
+        // 不用生成 pages 資料夾
+        folder === "pages" ||
+        // [page]/index.ejs 由 HtmlWebpackPlugin 生成
+        isPageIndex
+      ) {
         continue;
       }
       //  ejs檔要存放的folder

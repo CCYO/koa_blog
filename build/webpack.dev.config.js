@@ -6,10 +6,12 @@
 const webpackBaseConfig = require("./webpack.base.config");
 const { WEBPACK } = require("./config");
 
+/* NODEJS     ----------------------------------------------------------------------------- */
+const { resolve } = require("path");
+
 /* NPM        ----------------------------------------------------------------------------- */
 const webpack = require("webpack");
 const { merge } = require("webpack-merge");
-const filemanagerWebpackPlugin = require("filemanager-webpack-plugin");
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 module.exports = merge(webpackBaseConfig, {
@@ -22,16 +24,6 @@ module.exports = merge(webpackBaseConfig, {
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
-    new filemanagerWebpackPlugin({
-      events: {
-        onStart: {
-          delete: [
-            resolve(__dirname, "../server/views/"),
-            resolve(__dirname, "../server/dev_views/"),
-          ],
-        },
-      },
-    }),
   ],
   module: {
     rules: [
