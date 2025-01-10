@@ -32,7 +32,10 @@ function _report(result, fromBackend = false) {
   }
   // 將提醒內容重新清空
   pre_msg = "";
-  if (!isProd || fromBackend) {
+  // if (!isProd || fromBackend) {
+  //   return;
+  // }
+  if (fromBackend) {
     return;
   }
   // 將前端錯誤回報給伺服器
@@ -119,7 +122,10 @@ TraceKit.report.subscribe((error) => {
       userAgent: navigator.userAgent,
     },
   };
-  !isProd && console.log("將錯誤交由TraceKit處理，並回報給伺服器\n", payload);
+  if (!isProd) {
+    console.log("將錯誤交由TraceKit處理，並回報給伺服器\n", payload);
+    return;
+  }
   axios
     .post("/api/report/error", payload)
     .then(() => location.reload())
