@@ -9,6 +9,8 @@ const { WEBPACK } = require("./config");
 /* NPM        ----------------------------------------------------------------------------- */
 const webpack = require("webpack");
 const { merge } = require("webpack-merge");
+const filemanagerWebpackPlugin = require("filemanager-webpack-plugin");
+
 /* EXPORT     ----------------------------------------------------------------------------- */
 module.exports = merge(webpackBaseConfig, {
   cache: {
@@ -20,6 +22,16 @@ module.exports = merge(webpackBaseConfig, {
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
+    new filemanagerWebpackPlugin({
+      events: {
+        onStart: {
+          delete: [
+            resolve(__dirname, "../server/views/"),
+            resolve(__dirname, "../server/dev_views/"),
+          ],
+        },
+      },
+    }),
   ],
   module: {
     rules: [

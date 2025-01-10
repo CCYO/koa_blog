@@ -130,6 +130,12 @@ const plugins = (run) =>
     }),
     new filemanagerWebpackPlugin({
       events: {
+        onStart: {
+          delete: [
+            resolve(__dirname, "../server/views/"),
+            resolve(__dirname, "../server/dev_views/"),
+          ],
+        },
         onEnd: {
           mkdir: [resolve(__dirname, "../server/assets/map/")],
           copy: [

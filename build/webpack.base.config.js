@@ -29,8 +29,9 @@ module.exports = {
       ? (pathData) => {
           return pathData.chunk.name === "report"
             ? // report.js 取至 src/assets/js/report.js，用來處理「資源加載失敗時，回報伺服器」的功能，
-              // 並且直接在 src/views/wedgets/header/components/script_tag.ejs
-              // 以<script src="/public/js/report.js">讀取，因此需要一個固定的檔名
+              // 並以<script src="/public/js/report.js">，
+              // 直接寫入 src/views/wedgets/header/components/script_tag.ejs讀取，
+              // 因此需要一個固定的檔名
               `${WEBPACK.BUILD.SCRIPT}/[name].js`
             : `${WEBPACK.BUILD.SCRIPT}/[name].[contenthash:5].js`;
         }
@@ -75,7 +76,8 @@ module.exports = {
   },
   plugins: [
     ...htmlWebpackPlugins,
-    //  要加入favicon的template，必須有<head>
+    // FaviconsWebpackPlugin 會將生成的 favicon 匹配至 htmlWebpackPlugins 的 template
+    // 必需留意這些template都必須有<head> HTML Tag
     new FaviconsWebpackPlugin({
       devMode: "webapp",
       cache: true,
