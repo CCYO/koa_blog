@@ -31,14 +31,23 @@ async function create_nginx_error_pages() {
     `${WEBPACK.BUILD.VIEW}/page404/index.ejs`,
     "utf-8"
   );
+  // 配合html-webpack-plugin生成的template路徑，針對<%- include %>引用的路徑
+
+  // 這裡會直接調用ejs.render()生成NGINX的錯誤頁
+  // 所以針對ejs使用<%- include %>引用外部ejs的檔案路徑，必須一併調整
+  // 在使用ejs.render生成html時，<%- include %>
+  let p = resolve(__dirname, "../../server", isProd ? "views/" : "dev_views/");
   template = template.replace(
     /include\('\.\.\//g,
-    `include('./server/${isProd ? "views/" : "dev_views/"}`
+    // `include('./server/${isProd ? "views/" : "dev_views/"}`
+    `include('${p}`
   );
+  // 要建檔的folder
   let folder = resolve(WEBPACK.BUILD.DIST, "./html");
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);
   }
+  // 針對生成NGINX錯誤頁，提供給 page404.ejs 的參數，格式為 { [STATUS]: { errno, msg, code }, ... }
   let map = Object.entries(COMMON.ERR_RES.VIEW);
   // map [[status, errModel], ... ]
   return Promise.all(
