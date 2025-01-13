@@ -13,11 +13,11 @@ import { COMMON } from "../../config";
 
 document.addEventListener("initPage", async (event) => {
   !process.env.isProd && console.log("initPage handle ---> 初始化分頁功能");
-  event.addFn({ fn: init });
+  event.addFn({ fn: init, passG: true });
 });
 /* EXPORT     ----------------------------------------------------------------------------- */
 // export default function (G.data, pageConst, _axios) {
-function init() {
+function init(G) {
   let author_id = undefined;
   let pageData = undefined;
   let API_PAGINATION;
