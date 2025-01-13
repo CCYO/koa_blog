@@ -5,13 +5,10 @@ import "@css/user.scss";
 import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import { _Ajv, Debounce, render, _xss, formFeedback, redir } from "../utils";
+import { _Ajv, Debounce, _xss, render, formFeedback, redir } from "../utils";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import BetterScroll from "better-scroll";
-
-/* COMPONENT   ---------------------------------------------------------------------------- */
-import initPagination from "../component/pagination";
 
 /* VAR        ----------------------------------------------------------------------------- */
 const API = {
@@ -27,7 +24,7 @@ const $$ajv = _Ajv(G.utils.axios);
 G.utils.validate = {
   blog_title: $$ajv._validate.blog_title,
 };
-G.utils.render = render[G.data.page];
+G.utils.render = render.component[G.data.page];
 G.utils._xss = _xss;
 
 await G.initPage(initMain);
@@ -53,12 +50,13 @@ async function initMain() {
     init_other();
   }
   //  分頁功能
-  initPagination(G);
+  // initPagination(G);
   //  初始化追蹤名單BetterScroll功能
   G.utils.betterScroll = init_BS([$fansList, $idolList]);
   //  刷新追蹤名單的滾動功能
   document.addEventListener("initPage", async () => {
-    await G.utils.betterScroll.refresh();
+    !process.env.isProd && console.log("initPage handle ---> 刷新betterScroll");
+    window._initFns.push(await G.utils.betterScroll.refresh());
   });
 
   // 初始化BetterScroll

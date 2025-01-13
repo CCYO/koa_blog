@@ -21,7 +21,7 @@ import {
 import { _Ajv, Debounce, _xss, formFeedback, redir } from "../utils";
 
 /* COMPONENT   ---------------------------------------------------------------------------- */
-import blog_htmlStr from "../component/blog_htmlStr";
+import init_blog_content from "../utils/init_blog_content";
 
 /* VAR         ---------------------------------------------------------------------------- */
 const API = {
@@ -406,7 +406,7 @@ async function initMain() {
         },
       },
     };
-    let { htmlStr, checkImgLoad } = blog_htmlStr(G);
+    let { htmlStr, checkImgLoad } = init_blog_content(G);
     G.utils.checkImgLoad = checkImgLoad;
     //  editor 編輯欄 創建
     const editor = createEditor({

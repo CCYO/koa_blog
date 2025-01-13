@@ -2,13 +2,18 @@ export default {
   AXIOS: {
     NEWS_NO_LOGIN: {
       errno: 98001,
-      msg: "尚未登入",
+      msg: "尚未登入,請先登入",
       code: 401,
     },
     RESPONSE_NO_LOGIN: {
       errno: 98002,
-      msg: "登入已過期",
+      msg: "登入已過期,請重新登入",
       code: 401,
+    },
+    PAGINATION_UPDATE: {
+      errno: 98003,
+      msg: "伺服器資料已更新，頁面需重新整理",
+      code: 409,
     },
   },
   VIEW: {

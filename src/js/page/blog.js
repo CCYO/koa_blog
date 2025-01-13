@@ -14,7 +14,7 @@ import { render, redir, _xss } from "../utils";
 import { createEditor } from "@wangeditor-next/editor";
 
 /* COMPONENT   ---------------------------------------------------------------------------- */
-import blog_htmlStr from "../component/blog_htmlStr";
+import init_blog_content from "../utils/init_blog_content";
 
 /* VAR        ----------------------------------------------------------------------------- */
 const API = {
@@ -22,7 +22,7 @@ const API = {
   CREATE_COMMENT: "/api/comment",
 };
 /* RUNTIME    ----------------------------------------------------------------------------- */
-G.utils.render = render[G.data.page];
+G.utils.render = render.component[G.data.page];
 await G.initPage(initMain);
 
 async function initMain() {
@@ -33,7 +33,11 @@ async function initMain() {
   // 初始化留言功能
   function init_comment() {
     //  滑動至指定comment
-    document.addEventListener("initPage", scrollToComment);
+    document.addEventListener("initPage", () => {
+      !process.env.isProd && console.log("initPage handle ---> 滾動到指定留言");
+      scrollToComment();
+      window._initFns.push(Promise.resolve());
+    });
 
     //  顯示/移除刪除紐
     init_removeBtn();
@@ -358,7 +362,7 @@ async function initMain() {
     let active = G.data.active;
     if (active === "blog") {
       G.data.blog.author.id !== G.data.me?.id && $("#blog_edit").remove();
-      let { htmlStr, checkImgLoad } = blog_htmlStr(G);
+      let { htmlStr, checkImgLoad } = init_blog_content(G);
       G.utils.checkImgLoad = checkImgLoad;
       $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(htmlStr);
     } else if (active === "blog-preview") {
@@ -381,7 +385,7 @@ async function initMain() {
       let { title, html } = JSON.parse(preview_data);
       G.data.blog.html = html;
       $(`.card-header > h1`).text(title);
-      let { htmlStr, checkImgLoad } = blog_htmlStr(G);
+      let { htmlStr, checkImgLoad } = init_blog_content(G);
       G.utils.checkImgLoad = checkImgLoad;
       $(`.${G.constant.CLASS.BLOG_CONTENT}`).html(htmlStr);
       //  刪除localStorage數據
@@ -389,11 +393,11 @@ async function initMain() {
 
       // 使用loadBackdrop，但鼠標不使用讀取樣式
       document.addEventListener("initPage", () => {
-        !process.env.isProd &&
-          console.log("initPage handle ---> loading_backdrop.show");
+        !process.env.isProd && console.log("initPage handle ---> 讀取遮罩開啟");
         G.utils.loading_backdrop.show({ blockPage: false });
         // 移除loading_backdrop導致的滑鼠讀取狀態
         $("body").removeClass("wait");
+        window._initFns.push(Promise.resolve());
       });
 
       return true;

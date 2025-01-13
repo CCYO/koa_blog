@@ -43,8 +43,8 @@ export default async function (active, _axios) {
   //  初始化News功能
   news = await news.init(loginData);
   document.addEventListener("initPage", async () => {
-    !process.env.isProd && console.log("initPage handle ---> checkNewsMore");
-    await news.checkNewsMore();
+    !process.env.isProd && console.log("initPage handle ---> 初始化news功能");
+    window._initFns.push(await news.checkNewsMore());
   });
   //  登出功能
   $("#logout").on("click", logout);

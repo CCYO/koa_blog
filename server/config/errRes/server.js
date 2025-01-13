@@ -1,5 +1,6 @@
 const COMMON = require("../common");
 const NO_LOGIN = COMMON.ERR_RES.AXIOS.RESPONSE_NO_LOGIN;
+const PAGINATION_UPDATE = COMMON.ERR_RES.AXIOS.PAGINATION_UPDATE;
 const ERR_50x = COMMON.ERR_RES.VIEW.SERVER_ERROR;
 const ERR_504 = COMMON.ERR_RES.VIEW.TIME_OUT;
 const ERR_404 = COMMON.ERR_RES.VIEW.NOT_FOUND;
@@ -7,11 +8,7 @@ const ERR_404 = COMMON.ERR_RES.VIEW.NOT_FOUND;
 module.exports = {
   RESPONSE: {
     NO_LOGIN,
-    PAGINATION_UPDATE: {
-      errno: 98003,
-      msg: "伺服器資料已更新，需重新整理",
-      code: 409,
-    },
+    PAGINATION_UPDATE,
     ERR_50x,
     ERR_504,
     ERR_404,

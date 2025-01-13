@@ -77,5 +77,63 @@ let result = {
     },
   },
 };
-
-export default result;
+const component = {
+  BLOG: {
+    commentTree: (datas) => {
+      if (!datas.SELECTOR) {
+        datas.SELECTOR = SELECTOR;
+      }
+      return lodash_template(blog_commentTree)(datas);
+    },
+    commentItem: (datas) => {
+      if (!datas.SELECTOR) {
+        datas.SELECTOR = SELECTOR;
+      }
+      return lodash_template(blog_commentItem)(datas);
+    },
+  },
+  USER: {
+    relationshipItem: (datas) => {
+      if (!datas.SELECTOR) {
+        datas.SELECTOR = SELECTOR;
+      }
+      return lodash_template(user_relationshipItem)(datas);
+    },
+  },
+};
+const navbar = {
+  fansIdol: lodash_template(navbar_fansIdol),
+  articleReader: lodash_template(navbar_articleReader),
+  msgReceiver: lodash_template(navbar_msgReceiver),
+  logout_uncollapseList: (active) =>
+    lodash_template(navbar_logout_uncollapseList)({ active }),
+  login_uncollapseList: (active) =>
+    lodash_template(navbar_login_uncollapseList)({ active }),
+  login_collapseList: (active) =>
+    lodash_template(navbar_login_collapseList)({ active }),
+};
+const blogList = {
+  USER(datas) {
+    if (!datas.SELECTOR) {
+      datas.SELECTOR = SELECTOR;
+    }
+    return lodash_template(user_blogList)(datas);
+  },
+  SQUARE(datas) {
+    if (!datas.SELECTOR) {
+      datas.SELECTOR = SELECTOR;
+    }
+    return lodash_template(square_blogList)(datas);
+  },
+  ALBUM_LIST(datas) {
+    if (!datas.SELECTOR) {
+      datas.SELECTOR = SELECTOR;
+    }
+    return lodash_template(albumList_blogList)(datas);
+  },
+};
+export default {
+  component,
+  navbar,
+  blogList,
+};

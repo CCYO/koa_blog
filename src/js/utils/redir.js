@@ -19,14 +19,21 @@ function from(url) {
 }
 
 //  確認是否有登入權限
-function check_login(G) {
-  const loginStatus = G?.data?.me;
-  if (!loginStatus) {
+function check_login(G_or_msg) {
+  let loginStatus;
+  let msg = undefined;
+  if (typeof G_or_msg === "string") {
+    msg = G_or_msg;
+  } else if (!G_or_msg?.data?.me) {
+    msg = `請先登入`;
+    loginStatus = !G?.data?.me;
+  }
+  if (msg) {
     /* 若未登入，跳轉到登入頁 */
-    alert(`請先登入`);
+    alert(msg);
     location.href = `${API_LOGIN}?${REDIR_FROM}=${encodeURIComponent(
       location.href
     )}`;
   }
-  return loginStatus;
+  return !msg;
 }

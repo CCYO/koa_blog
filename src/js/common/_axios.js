@@ -57,6 +57,7 @@ export default class {
         //  resData { errno, data }
         let resData = response.data;
         if (
+          resData.errno === COMMON.ERR_RES.AXIOS.PAGINATION_UPDATE ||
           //  後端需要登入權限的請求，響應 noLogin 提醒
           resData.errno === COMMON.ERR_RES.AXIOS.RESPONSE_NO_LOGIN.errno ||
           //  後端針對news請求，響應 noLogin 提醒

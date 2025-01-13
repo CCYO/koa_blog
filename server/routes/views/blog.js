@@ -105,7 +105,12 @@ router.get("/blog/:id", CHECK.validParam, commonCache, async (ctx) => {
       page: PAGE.BLOG.PAGE_NAME,
       login: Boolean(ctx.session.user),
       title: data.title,
-      ejs_render: render[PAGE.BLOG.PAGE_NAME],
+      // ejs_render: render[PAGE.BLOG.PAGE_NAME],
+      ejs_render: {
+        blogList: render.blogList[PAGE.BLOG.PAGE_NAME],
+        commentTree: render.component[PAGE.BLOG.PAGE_NAME].commentTree,
+        commentItem: render.component[PAGE.BLOG.PAGE_NAME].commentItem,
+      },
       blog: { ...data, showComment: true },
       SELECTOR,
     });

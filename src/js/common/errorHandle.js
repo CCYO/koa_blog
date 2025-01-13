@@ -66,12 +66,12 @@ window.addEventListener("unhandledrejection", function (event) {
         location.reload();
       }
     }
-    //  axios HTTP CODE 200，但需要額外處理的數據（ex:登入權限過期）
+    //  axios HTTP CODE 200，但需要額外處理的數據（ex:登入權限過期, 分頁設定變動）
     else if (errno) {
       // API 請求給予「使用者權限問題」的響應
       // prod mode 導向登入頁面
       if (isProd) {
-        redir.check_login();
+        redir.check_login(result.msg);
       }
       // dev mode 提示錯誤
       else {

@@ -11,11 +11,14 @@ import { render } from "../utils";
 /* CONFIG     ----------------------------------------------------------------------------- */
 import { COMMON } from "../../config";
 
+document.addEventListener("initPage", async () => {
+  !process.env.isProd && console.log("initPage handle ---> 初始化分頁功能");
+  init();
+  window._initFns.push(Promise.resolve());
+});
 /* EXPORT     ----------------------------------------------------------------------------- */
-export default function (G) {
-  const pageConst = G.constant;
-  pageConst.PAGINATION = G.data.pagination;
-  const template_blogList = render[G.data.page].blogList;
+// export default function (G.data, pageConst, _axios) {
+function init() {
   let author_id = undefined;
   let pageData = undefined;
   let API_PAGINATION;
@@ -35,6 +38,13 @@ export default function (G) {
       API_PAGINATION = "/api/square/list";
       break;
   }
+  if (!API_PAGINATION) {
+    return undefined;
+  }
+  const _axios = G.utils.axios;
+  const pageConst = G.constant;
+  pageConst.PAGINATION = G.data.pagination;
+  const template_blogList = render.blogList[G.data.page];
   let $div_blogList = $(`[data-${pageConst.DATASET.KEY.BLOG_STATUS}]`);
   //  Closure Var
   let $$pagination_list = {
@@ -111,7 +121,7 @@ export default function (G) {
             ? true
             : false;
         //  發出請求，取得blogList數據
-        let { errno, data, msg } = await G.utils.axios.post(API_PAGINATION, {
+        let response = await _axios.post(API_PAGINATION, {
           author_id,
           limit: pageConst.PAGINATION.BLOG_COUNT,
           //  前端分頁index從1開始，後端分頁index從0開始，所以要-1
@@ -120,14 +130,9 @@ export default function (G) {
           PAGINATION: pageConst.PAGINATION,
           show,
         });
-        if (errno) {
-          alert(msg);
-          location.reload();
-          return;
-        }
         //  生成html
         let html = template_blogList({
-          blogs: data[$$status].blogs,
+          blogs: response.data[$$status].blogs,
           page: targetPage,
           pagination: pageConst.PAGINATION,
           isPublic: show,

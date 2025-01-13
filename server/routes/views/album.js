@@ -35,7 +35,7 @@ router.get("/list", CACHE.noCache, CHECK.login, async (ctx) => {
     author,
     album,
     pagination: PAGINATION.ALBUM_LIST,
-    ejs_render: render[PAGE.ALBUM_LIST.PAGE_NAME],
+    ejs_render: { blogList: render.blogList[PAGE.ALBUM_LIST.PAGE_NAME] },
     SELECTOR,
   });
 });

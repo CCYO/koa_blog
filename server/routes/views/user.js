@@ -70,7 +70,11 @@ router.get("/self", privateCache, CHECK.userCache_is_fresh, async (ctx) => {
     active: PAGE.USER.ACTIVE.SELF,
     page: PAGE.USER.PAGE_NAME,
     login: true,
-    ejs_render: render[PAGE.USER.PAGE_NAME],
+    // ejs_render: render[PAGE.USER.PAGE_NAME],
+    ejs_render: {
+      blogList: render.blogList[PAGE.USER.PAGE_NAME],
+      relationshipItem: render.component[PAGE.USER.PAGE_NAME].relationshipItem,
+    },
     pagination: PAGINATION.BLOG,
     isSelf: true,
     title: `${currentUser.nickname}的主頁`,
@@ -118,7 +122,12 @@ router.get(
       active: PAGE.USER.ACTIVE.OTEHR,
       page: PAGE.USER.PAGE_NAME,
       login: Boolean(ctx.session.user),
-      ejs_render: render[PAGE.USER.PAGE_NAME],
+      // ejs_render: render[PAGE.USER.PAGE_NAME],
+      ejs_render: {
+        blogList: render.blogList[PAGE.USER.PAGE_NAME],
+        relationshipItem:
+          render.component[PAGE.USER.PAGE_NAME].relationshipItem,
+      },
       pagination: PAGINATION.BLOG,
       isSelf: false,
       title: `${currentUser.nickname}的主頁`,

@@ -10,7 +10,10 @@ await G.initPage(initMain);
 async function initMain() {
   showErrorCode();
   // 網址自動跳轉
-  document.addEventListener("initPage", redir);
+  document.addEventListener("initPage", () => {
+    !process.env.isProd && console.log("initPage handle ---> 頁面轉址");
+    redir;
+  });
 
   function redir() {
     let target = document.referrer;
@@ -34,6 +37,8 @@ async function initMain() {
     process.env.isProd &&
       !errorFromNginx &&
       setTimeout(() => location.replace(target), 5000);
+
+    window._initFns.push(Promise.resolve());
   }
   function showErrorCode() {
     let { code, msg } = G.data.errModel;

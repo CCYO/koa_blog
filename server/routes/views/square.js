@@ -32,7 +32,9 @@ router.get("/square", async (ctx) => {
     title: "廣場頁",
     blog,
     pagination: PAGINATION.SQUARE,
-    ejs_render: render[PAGE.SQUARE.PAGE_NAME],
+    ejs_render: {
+      blogList: render.blogList[PAGE.SQUARE.PAGE_NAME],
+    },
     SELECTOR,
   });
 });

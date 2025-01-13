@@ -24,23 +24,11 @@ module.exports = {
     });
   },
 };
-
 //   生成NGINX響應的ERROR PAGE
 async function create_nginx_error_pages() {
   let template = fs.readFileSync(
     `${WEBPACK.BUILD.VIEW}/page404/index.ejs`,
     "utf-8"
-  );
-  // 配合html-webpack-plugin生成的template路徑，針對<%- include %>引用的路徑
-
-  // 這裡會直接調用ejs.render()生成NGINX的錯誤頁
-  // 所以針對ejs使用<%- include %>引用外部ejs的檔案路徑，必須一併調整
-  // 在使用ejs.render生成html時，<%- include %>
-  let p = resolve(__dirname, "../../server", isProd ? "views/" : "dev_views/");
-  template = template.replace(
-    /include\('\.\.\//g,
-    // `include('./server/${isProd ? "views/" : "dev_views/"}`
-    `include('${p}`
   );
   // 要建檔的folder
   let folder = resolve(WEBPACK.BUILD.DIST, "./html");
@@ -56,13 +44,21 @@ async function create_nginx_error_pages() {
       let filePath = resolve(folder, filename);
       fs.writeFileSync(
         filePath,
-        ejs.render(template, {
-          filename: `${status}.html`, //  ejs.render指定要求的傳參，應該是緩存所需
-          active: COMMON.PAGE.ERR_PAGE.ACTIVE.NGINX,
-          page: COMMON.PAGE.ERR_PAGE.PAGE_NAME,
-          login: false,
-          errModel,
-        })
+        ejs.render(
+          template,
+          {
+            active: COMMON.PAGE.ERR_PAGE.ACTIVE.NGINX,
+            page: COMMON.PAGE.ERR_PAGE.PAGE_NAME,
+            login: false,
+            errModel,
+          },
+          {
+            // 必填，除了協助ejs緩存機制，
+            // 另協助template內的includes(pathname)，依據filename此參數正確定位pathname，
+            // 否則在pathname是相對路徑的情況下，是以process.cwd()作為相對位置的基準。
+            filename: `${WEBPACK.BUILD.VIEW}/page404/index.ejs`,
+          }
+        )
       );
       if (!isProd) {
         return Promise.resolve();

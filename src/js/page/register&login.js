@@ -40,10 +40,12 @@ function initMain() {
 
   //  提示需登入權限
   document.addEventListener("initPage", () => {
+    !process.env.isProd && console.log("initPage handle ---> 登入提醒");
     let params = new URL(location.href).searchParams;
     if (params.has(COMMON.UTILS.REDIR_FROM)) {
       alert("需要登入才能使用頁面功能");
     }
+    window._initFns.push(Promise.resolve());
   });
 
   // 初始化 NavTab
