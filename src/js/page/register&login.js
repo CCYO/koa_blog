@@ -39,13 +39,16 @@ function initMain() {
   initLoginFn(`#${G.constant.ID.LOGIN_FORM}`);
 
   //  提示需登入權限
-  document.addEventListener("initPage", () => {
+  document.addEventListener("initPage", (event) => {
     !process.env.isProd && console.log("initPage handle ---> 登入提醒");
-    let params = new URL(location.href).searchParams;
-    if (params.has(COMMON.UTILS.REDIR_FROM)) {
-      alert("需要登入才能使用頁面功能");
+    event.addFn({ fn });
+
+    function fn() {
+      let params = new URL(location.href).searchParams;
+      if (params.has(COMMON.UTILS.REDIR_FROM)) {
+        alert("需要登入才能使用頁面功能");
+      }
     }
-    window._initFns.push(Promise.resolve());
   });
 
   // 初始化 NavTab

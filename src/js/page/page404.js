@@ -10,9 +10,9 @@ await G.initPage(initMain);
 async function initMain() {
   showErrorCode();
   // 網址自動跳轉
-  document.addEventListener("initPage", () => {
+  document.addEventListener("initPage", (event) => {
     !process.env.isProd && console.log("initPage handle ---> 頁面轉址");
-    redir;
+    event.addFn({ fn: redir });
   });
 
   function redir() {

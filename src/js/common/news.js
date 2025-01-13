@@ -382,14 +382,17 @@ class Render {
       ms: this.LOAD_NEWS,
     }));
 
-    document.addEventListener("initPage", () => {
+    document.addEventListener("initPage", (event) => {
       !process.env.isProd &&
         console.log("initPage handle ---> 自動循環讀取news");
-      if (!document.hidden) {
-        //  啟動 readMore 自動循環
-        loop.start();
-      }
-      window._initFns.push(Promise.resolve());
+      event.addFn({
+        fn: () => {
+          if (!document.hidden) {
+            //  啟動 readMore 自動循環
+            loop.start();
+          }
+        },
+      });
     });
 
     // 頁面不被使用時，停止自動獲取news數據

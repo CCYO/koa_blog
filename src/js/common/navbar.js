@@ -33,6 +33,7 @@ export default async function (active, _axios) {
     news = new News(_axios);
     loginData = await news.getLoginData();
   }
+  // loginData: undefined || { me, news }
   // 未登入狀態
   if (!loginData) {
     _renderLogoutNavBar(active);
@@ -42,9 +43,11 @@ export default async function (active, _axios) {
   _renderLoginNav(active);
   //  初始化News功能
   news = await news.init(loginData);
-  document.addEventListener("initPage", async () => {
+  document.addEventListener("initPage", async (event) => {
     !process.env.isProd && console.log("initPage handle ---> 初始化news功能");
-    window._initFns.push(await news.checkNewsMore());
+    event.addFn({
+      fn: news.checkNewsMore,
+    });
   });
   //  登出功能
   $("#logout").on("click", logout);

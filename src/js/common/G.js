@@ -53,9 +53,11 @@ export default class {
       this.data.me = login.me;
       this.utils.news = login.news;
     }
+
+    // let initPage = new CustomEvent("initPage")
     this.event = {
       // 頁面初始化完成事件
-      initPage: new CustomEvent("initPage"),
+      initPage: this.#createInitPageEvent("initPage"),
       logout: new CustomEvent("logout"),
     };
 
@@ -65,17 +67,37 @@ export default class {
     initMain && (await initMain());
     await this.utils.loading_backdrop.hidden();
     await new Promise((resolve) => {
-      setTimeout(() => {
-        if (!process.env.isProd) {
-          window.G = this;
-          console.log("===============【G INIT FINISH】=================");
-          console.log("initPage Event ---> dispatch");
-        }
-        document.dispatchEvent(this.event.initPage);
-        resolve();
-      }, 0);
+      setTimeout(resolve, 0);
     });
-    await Promise.all(window._initFns);
-    !process.env.isProd && console.log("initPage handle ---> OVER");
+    if (!process.env.isProd) {
+      window.G = this;
+      console.log("initPage Event ---> dispatch");
+    }
+    document.dispatchEvent(this.event.initPage);
+    await this.event.initPage.finish(this);
+  }
+
+  #createInitPageEvent(eventName) {
+    let _G = this;
+    return new (class _CustomEvent extends CustomEvent {
+      #initFns = [];
+      constructor() {
+        super(eventName);
+      }
+      addFn(item) {
+        this.#initFns.push(item);
+      }
+      async finish(G) {
+        let promiseList = this.#initFns.map((item) => {
+          if (item.passG) {
+            return item.fn(G);
+          } else {
+            return item.fn();
+          }
+        });
+        await Promise.all(promiseList);
+        !process.env.isProd && console.log("initPage handle ---> OVER");
+      }
+    })();
   }
 }

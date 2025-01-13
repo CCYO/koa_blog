@@ -11,10 +11,9 @@ import { render } from "../utils";
 /* CONFIG     ----------------------------------------------------------------------------- */
 import { COMMON } from "../../config";
 
-document.addEventListener("initPage", async () => {
+document.addEventListener("initPage", async (event) => {
   !process.env.isProd && console.log("initPage handle ---> 初始化分頁功能");
-  init();
-  window._initFns.push(Promise.resolve());
+  event.addFn({ fn: init });
 });
 /* EXPORT     ----------------------------------------------------------------------------- */
 // export default function (G.data, pageConst, _axios) {

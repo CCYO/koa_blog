@@ -33,10 +33,9 @@ async function initMain() {
   // 初始化留言功能
   function init_comment() {
     //  滑動至指定comment
-    document.addEventListener("initPage", () => {
+    document.addEventListener("initPage", (event) => {
       !process.env.isProd && console.log("initPage handle ---> 滾動到指定留言");
-      scrollToComment();
-      window._initFns.push(Promise.resolve());
+      event.addFn({ fn: scrollToComment });
     });
 
     //  顯示/移除刪除紐
@@ -392,12 +391,15 @@ async function initMain() {
       localStorage.removeItem(preview_key);
 
       // 使用loadBackdrop，但鼠標不使用讀取樣式
-      document.addEventListener("initPage", () => {
+      document.addEventListener("initPage", (event) => {
         !process.env.isProd && console.log("initPage handle ---> 讀取遮罩開啟");
-        G.utils.loading_backdrop.show({ blockPage: false });
-        // 移除loading_backdrop導致的滑鼠讀取狀態
-        $("body").removeClass("wait");
-        window._initFns.push(Promise.resolve());
+        event.addFn({ fn });
+
+        function fn() {
+          G.utils.loading_backdrop.show({ blockPage: false });
+          // 移除loading_backdrop導致的滑鼠讀取狀態
+          $("body").removeClass("wait");
+        }
       });
 
       return true;
