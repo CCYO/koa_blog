@@ -13,14 +13,13 @@ import "./errorHandle";
 /* CONFIG     ----------------------------------------------------------------------------- */
 import { COMMON } from "../../config";
 
-window._initFns = [];
-
 /* EXPORT     ----------------------------------------------------------------------------- */
 export default class {
   data;
   constant;
   utils;
   event;
+  #afterRenderFns;
   async init() {
     // 初始化ejs以HTML存放的數據
     this.data = initEJSData();
@@ -65,38 +64,32 @@ export default class {
   }
   async initPage(initMain) {
     initMain && (await initMain());
+    !process.env.isProd && console.log("G initMain ---> OVER");
     await this.utils.loading_backdrop.hidden();
-    await new Promise((resolve) => {
-      setTimeout(resolve, 0);
-    });
-    if (!process.env.isProd) {
-      window.G = this;
-      console.log("initPage Event ---> dispatch");
-    }
-    document.dispatchEvent(this.event.initPage);
-    await this.event.initPage.finish(this);
+    await this.over();
   }
 
+  async over() {
+    document.dispatchEvent(this.event.initPage);
+    await Promise.all(this.#afterRenderFns);
+    if (!process.env.isProd) {
+      window.G = this;
+      !process.env.isProd && console.log("G INIT ---> OVER");
+    }
+  }
+
+  afterRender({ fn, passG, msg }) {
+    !process.env.isProd && console.log(`G After Render ---> ${msg}`);
+    this.#afterRenderFns.push(passG ? fn(this) : fn());
+  }
   #createInitPageEvent(eventName) {
-    let _G = this;
+    const G = this;
     return new (class _CustomEvent extends CustomEvent {
       #initFns = [];
       constructor() {
         super(eventName);
-      }
-      addFn(item) {
-        this.#initFns.push(item);
-      }
-      async finish(G) {
-        let promiseList = this.#initFns.map((item) => {
-          if (item.passG) {
-            return item.fn(G);
-          } else {
-            return item.fn();
-          }
-        });
-        await Promise.all(promiseList);
-        !process.env.isProd && console.log("initPage handle ---> OVER");
+        this.G = G;
+        this.G.#afterRenderFns = [];
       }
     })();
   }

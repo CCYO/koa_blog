@@ -54,9 +54,11 @@ async function initMain() {
   //  初始化追蹤名單BetterScroll功能
   G.utils.betterScroll = init_BS([$fansList, $idolList]);
   //  刷新追蹤名單的滾動功能
-  document.addEventListener("initPage", async (event) => {
-    !process.env.isProd && console.log("initPage handle ---> 刷新betterScroll");
-    event.addFn({ fn: G.utils.betterScroll.refresh });
+  document.addEventListener("initPage", (event) => {
+    event.G.afterRender({
+      fn: G.utils.betterScroll.refresh,
+      msg: "刷新betterScroll",
+    });
   });
 
   // 初始化BetterScroll

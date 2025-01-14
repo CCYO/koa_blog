@@ -11,9 +11,8 @@ import { render } from "../utils";
 /* CONFIG     ----------------------------------------------------------------------------- */
 import { COMMON } from "../../config";
 
-document.addEventListener("initPage", async (event) => {
-  !process.env.isProd && console.log("initPage handle ---> 初始化分頁功能");
-  event.addFn({ fn: init, passG: true });
+document.addEventListener("initPage", (event) => {
+  event.G.afterRender({ fn: init, passG: true, msg: "初始化分頁功能" });
 });
 /* EXPORT     ----------------------------------------------------------------------------- */
 // export default function (G.data, pageConst, _axios) {

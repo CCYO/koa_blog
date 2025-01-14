@@ -11,8 +11,7 @@ async function initMain() {
   showErrorCode();
   // 網址自動跳轉
   document.addEventListener("initPage", (event) => {
-    !process.env.isProd && console.log("initPage handle ---> 頁面轉址");
-    event.addFn({ fn: redir });
+    event.G.afterRender({ fn: redir, msg: "頁面轉址" });
   });
 
   function redir() {
@@ -37,8 +36,6 @@ async function initMain() {
     process.env.isProd &&
       !errorFromNginx &&
       setTimeout(() => location.replace(target), 5000);
-
-    window._initFns.push(Promise.resolve());
   }
   function showErrorCode() {
     let { code, msg } = G.data.errModel;

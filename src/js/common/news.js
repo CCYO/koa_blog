@@ -383,16 +383,17 @@ class Render {
     }));
 
     document.addEventListener("initPage", (event) => {
-      !process.env.isProd &&
-        console.log("initPage handle ---> 自動循環讀取news");
-      event.addFn({
-        fn: () => {
-          if (!document.hidden) {
-            //  啟動 readMore 自動循環
-            loop.start();
-          }
-        },
+      event.G.afterRender({
+        fn,
+        msg: "自動循環讀取news",
       });
+
+      function fn() {
+        if (!document.hidden) {
+          //  啟動 readMore 自動循環
+          loop.start();
+        }
+      }
     });
 
     // 頁面不被使用時，停止自動獲取news數據

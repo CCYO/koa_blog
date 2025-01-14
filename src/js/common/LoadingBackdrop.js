@@ -46,11 +46,7 @@ export default class {
       return;
     }
     this.#turnOnInteraction();
-    await new Promise((resolve) => {
-      this.$backdrop.fadeOut(() => {
-        return resolve();
-      });
-    });
+    await this.#fideOut();
     $("body").removeClass("wait");
     this.#active = false;
     !process.env.isProd && console.log("loadingBackdrop ---> hidden");
@@ -112,5 +108,32 @@ export default class {
     e.preventDefault();
     //  聚焦到 backdrop
     this.el_backdrop.focus();
+  }
+
+  async #fideOut() {
+    return await new Promise((resolve) => {
+      let observer = new MutationObserver(async (muations) => {
+        let stop = muations.some((muation) => {
+          if (muation.type === "attributes") {
+            let ComputedStyle = getComputedStyle(muation.target);
+            let display = ComputedStyle.getPropertyValue("display");
+            let opacity = ComputedStyle.getPropertyValue("opacity");
+            return display === "none" && opacity === "1";
+          }
+        });
+        if (stop) {
+          observer.disconnect();
+          // 照理來說，LoadingBackdrop此時已經完全隱藏
+          // 但畫面上仍然有很淡的「Loading」，所以還是使用setTimeout，讓browser進入下一次推積棧
+          setTimeout(resolve, 0);
+        }
+      });
+
+      observer.observe(this.el_backdrop, {
+        attributeFilter: ["style"],
+      });
+
+      this.$backdrop.fadeOut();
+    });
   }
 }

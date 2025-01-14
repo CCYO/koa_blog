@@ -40,8 +40,7 @@ function initMain() {
 
   //  提示需登入權限
   document.addEventListener("initPage", (event) => {
-    !process.env.isProd && console.log("initPage handle ---> 登入提醒");
-    event.addFn({ fn });
+    event.G.afterRender({ fn, msg: "登入提醒" });
 
     function fn() {
       let params = new URL(location.href).searchParams;

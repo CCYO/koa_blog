@@ -43,10 +43,10 @@ export default async function (active, _axios) {
   _renderLoginNav(active);
   //  初始化News功能
   news = await news.init(loginData);
-  document.addEventListener("initPage", async (event) => {
-    !process.env.isProd && console.log("initPage handle ---> 初始化news功能");
-    event.addFn({
+  document.addEventListener("initPage", (event) => {
+    event.G.afterRender({
       fn: news.checkNewsMore,
+      msg: "初始化news功能",
     });
   });
   //  登出功能

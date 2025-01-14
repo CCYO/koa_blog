@@ -34,8 +34,7 @@ async function initMain() {
   function init_comment() {
     //  滑動至指定comment
     document.addEventListener("initPage", (event) => {
-      !process.env.isProd && console.log("initPage handle ---> 滾動到指定留言");
-      event.addFn({ fn: scrollToComment });
+      event.G.afterRender({ fn: scrollToComment, msg: "滾動到指定留言" });
     });
 
     //  顯示/移除刪除紐
@@ -392,8 +391,7 @@ async function initMain() {
 
       // 使用loadBackdrop，但鼠標不使用讀取樣式
       document.addEventListener("initPage", (event) => {
-        !process.env.isProd && console.log("initPage handle ---> 讀取遮罩開啟");
-        event.addFn({ fn });
+        event.G.afterRender({ fn, msg: "讀取遮罩開啟" });
 
         function fn() {
           G.utils.loading_backdrop.show({ blockPage: false });
