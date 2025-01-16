@@ -8,7 +8,7 @@ module.exports = {
     PAGE_COUNT: 5,
   },
   BLOG: {
-    BLOG_COUNT: 3,
+    BLOG_COUNT: 5,
     PAGE_COUNT: 3,
   },
 };

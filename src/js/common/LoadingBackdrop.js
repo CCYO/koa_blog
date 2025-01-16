@@ -113,19 +113,16 @@ export default class {
   async #fideOut() {
     return await new Promise((resolve) => {
       let observer = new MutationObserver(async (muations) => {
-        let stop = muations.some(({ type, target }) => {
-          if (type === "attributes") {
-            let ComputedStyle = getComputedStyle(target);
-            let display = ComputedStyle.getPropertyValue("display");
-            let opacity = ComputedStyle.getPropertyValue("opacity");
-            return display === "none" && opacity === "1";
-          }
-        });
+        let stop = muations.some(
+          ({ target }) =>
+            getComputedStyle(target).getPropertyValue("display") === "none"
+        );
         if (stop) {
           observer.disconnect();
           // 照理來說，LoadingBackdrop此時已經完全隱藏
           // 但畫面上仍然有很淡的「Loading」，所以還是使用setTimeout，讓browser進入下一次推積棧
           setTimeout(resolve, 0);
+          // resolve();
         }
       });
 

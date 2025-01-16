@@ -53,7 +53,6 @@ export default class {
       this.utils.news = login.news;
     }
 
-    // let initPage = new CustomEvent("initPage")
     this.event = {
       // 頁面初始化完成事件
       initPage: this.#createInitPageEvent("initPage"),
@@ -74,7 +73,7 @@ export default class {
     await Promise.all(this.#afterRenderFns);
     if (!process.env.isProd) {
       window.G = this;
-      !process.env.isProd && console.log("G INIT ---> OVER");
+      !process.env.isProd && console.log("頁面初始化完成");
     }
   }
 
