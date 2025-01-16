@@ -321,36 +321,48 @@ async function initMain() {
         comment_id = res.groups.comment_id;
       }
 
-      let selector = `#comment_${comment_id}`;
-      let viewpointH = window.innerHeight;
-      let scrollY = window.scrollY;
-      let { height: navHeight } = document
-        .querySelector("nav.navbar")
-        .getBoundingClientRect();
-      let $comment = $(selector).eq(0);
-      let $container = $comment.parent();
-      let commentRect = $container.get(0).getBoundingClientRect();
-
-      let commentY = Math.floor(commentRect.y);
-      let commentH_half = Math.floor(Math.floor(commentRect.height) / 2);
-      let navH = Math.floor(navHeight);
-      let viewpointH_half = Math.floor(Math.floor(viewpointH) / 2);
-      let targetY_1 = scrollY + commentY - navH;
-      let up = viewpointH_half - navH;
-      let targetY = targetY_1 - up + commentH_half;
       // 使用scrollTop進行視窗滾動，各瀏覽器有不同的綁定對象
       // 然而僅有被綁定的對象能改變scollTop值，利用此特性來做判斷
       document.body.scrollTop = 1;
       document.documentElement.scrollTop = 1;
-      let ele = document.body.scrollTop
+      let viewpoint = document.body.scrollTop
         ? document.body
         : document.documentElement;
-      ele.scrollTop = targetY;
 
-      $comment.css({ backgroundColor: "rgb(219, 159, 159)" });
+      // 視窗高度
+      let viewpointH = window.innerHeight;
+      viewpointH = Math.floor(viewpointH);
+      let $target = $(`#comment_${comment_id}`).eq(0);
+      let { y: targetY, height: targetH } = $target
+        .get(0)
+        .getBoundingClientRect();
+      targetY = Math.floor(targetY);
+      targetH = Math.floor(targetH);
+      // 視窗高度 > target距離頁面頂部的縱向距離，代表target根本就在視窗內，不需要滾動
+      if (viewpointH > targetY) {
+        viewpoint.scrollTop += 9999;
+      }
+      // 導覽列高度
+      let { height: navH } = document
+        .querySelector("nav.navbar")
+        .getBoundingClientRect();
+      navH = Math.floor(navH);
+      // 目標：讓targetComment的縱向中線，對齊「撇除NAV高度後的VW高度」的縱向中線
+      let up =
+        // target頂部對齊viewport頂部
+        targetY -
+        // target頂部對齊NAV底部
+        navH -
+        // target下移「viewport撇除NAV高度後」剩下長度的一半
+        (viewpointH - navH) / 2 +
+        // target上移自身的一半高度
+        targetH / 2;
+      viewpoint.scrollTop += up;
+
+      $target.css({ backgroundColor: "rgb(219, 159, 159)" });
       // 配合 .comment-item-content { transition: background-color 4s ease-out; }
       setTimeout(() => {
-        $comment.removeAttr("style");
+        $target.removeAttr("style");
       }, 4000);
     }
   }

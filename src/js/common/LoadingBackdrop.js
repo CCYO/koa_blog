@@ -113,9 +113,9 @@ export default class {
   async #fideOut() {
     return await new Promise((resolve) => {
       let observer = new MutationObserver(async (muations) => {
-        let stop = muations.some((muation) => {
-          if (muation.type === "attributes") {
-            let ComputedStyle = getComputedStyle(muation.target);
+        let stop = muations.some(({ type, target }) => {
+          if (type === "attributes") {
+            let ComputedStyle = getComputedStyle(target);
             let display = ComputedStyle.getPropertyValue("display");
             let opacity = ComputedStyle.getPropertyValue("opacity");
             return display === "none" && opacity === "1";
