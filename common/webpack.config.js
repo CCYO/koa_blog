@@ -28,7 +28,7 @@ module.exports = (env) => {
       path: resolve(__dirname, "dist"),
       filename: "[name].js",
       //  clean.keep 可以是regex，匹配的是「相對output.path的路徑」
-      clean: { keep: /dev_common\.cjs/ },
+      clean: { keep: /common\.cjs/ },
     },
     experiments: {
       outputModule: true,

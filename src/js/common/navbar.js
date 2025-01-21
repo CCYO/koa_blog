@@ -29,11 +29,17 @@ const noNewsPage = [
 export default async function (active, _axios) {
   let loginData;
   let news;
+  // 依據active判斷頁面是否需要news功能與數據
   if (!noNewsPage.some((item) => item === active)) {
     news = new News(_axios);
+    // 此export default會被G初始化時調用，直到G初始化結束前，都要保持LoadingBackdrop的顯示狀態，
+    // 所以這裡先關閉「_axios自動調用LoadingBackdrop的功能」，以避免axios調用結束後，自動隱藏LoadingBackdrop
+    _axios.autoLoadingBackdrop = false;
+    // loginData: undefined || { me, news }
     loginData = await news.getLoginData();
+    // 開啟「_axios自動LoadingBackdrop的功能」s
+    _axios.autoLoadingBackdrop = true;
   }
-  // loginData: undefined || { me, news }
   // 未登入狀態
   if (!loginData) {
     _renderLogoutNavBar(active);
@@ -56,7 +62,6 @@ export default async function (active, _axios) {
     me: loginData.me,
     news,
   };
-  // return loginData.me;
 
   async function logout() {
     if (!confirm("真的要登出?")) {

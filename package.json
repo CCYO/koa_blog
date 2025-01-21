@@ -6,7 +6,7 @@
     "nocache": "npm run _dev_build && cross-env NODE_ENV=nocache nodemon",
     "dev": "npm run _dev_build && cross-env NODE_ENV=development nodemon",
     "build": "rm -rf ./server/views && npm run _common_build && cross-env NODE_ENV=production webpack --config ./build/webpack.prod.config.js --env analyzer=true",
-    "start": "pm2 start ecosystem.config.js",
+    "start": "pm2 start ./server/_config/ecosystem.config.js",
     "status": "pm2 status",
     "log": "pm2 logs koa_blog",
     "prod": "npm run build -- --env analyzer=false && npm start",

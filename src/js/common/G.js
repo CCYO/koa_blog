@@ -26,7 +26,7 @@ export default class {
     // 給JS使用的常數
     let { page, active } = this.data;
     this.constant = COMMON.SELECTOR[page];
-    // 讀取遮罩
+    // 讀取遮罩，創建後為顯示遮罩的狀態
     let loading_backdrop = new Loading_backdrop();
     // 自訂義的axios，針對響應封裝了一些處理
     let _axios = new _Axios({
@@ -35,16 +35,12 @@ export default class {
       // 提供響應處理的參數
       active,
     });
-    // 調用G.init之前，LoadingBackdrop已利用CSS保持顯示狀態，故手動關閉「_axios自動LoadingBackdrop的功能」
-    _axios.autoLoadingBackdrop = false;
-    // 初始化navbar的樣式與功能，返回結果代表是否為登入狀態
-    let login = await initNavbar(active, _axios);
-    // 故手動開啟「_axios自動LoadingBackdrop的功能」
-    _axios.autoLoadingBackdrop = true;
     this.utils = {
       loading_backdrop,
       axios: _axios,
     };
+    // 初始化navbar的樣式與功能，返回結果代表是否為登入狀態
+    let login = await initNavbar(active, _axios);
     if (!login) {
       this.data.me = undefined;
       this.utils.news = undefined;
@@ -56,7 +52,6 @@ export default class {
     this.event = {
       // 頁面初始化完成事件
       initPage: this.#createInitPageEvent("initPage"),
-      logout: new CustomEvent("logout"),
     };
 
     return this;

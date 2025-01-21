@@ -97,6 +97,14 @@ export default class {
       },
     });
   }
+  /**
+   * newsData { news, me }
+   * newsData.news { hasNews<Boo>, list, num }
+   * newsData.news.list { confirm<Arr>, unconfirm<Arr> }
+   * newsData.news.num  { unconfirm<Num>, confirm<Num>, total<Num> }
+   * newsData.news.list.confirm.item { type, id, timestamp, confirm, updatedAt, fans| blog| comment }
+   * newsData.news.list.unconfirm.item 同上
+   */
   async init({ me, news: newsData }) {
     await import(
       /*webpackChunkName:'bootstrap-offcanvas'*/ "bootstrap/js/dist/offcanvas"
@@ -200,24 +208,6 @@ export default class {
   }
   //  請求 news
   async getLoginData(auto = false) {
-    /* 響應的數據 { 
-        errno, 
-        data: {
-            news : {
-                newsList: {
-                    unconfirm: [
-                        { type, id, timestamp, confirm, fans: ... }, ...
-                        { type, id, timestamp, confirm, blog: ... }, ...
-                        { type, id, timestamp, confirm, comment: ... }, ...
-                    ],
-                   confirm: [...]
-               },
-               num: { unconfirm, confirm, total },
-               hasNews: boo
-           },
-           me: ...
-       }
-    */
     // 自動調用前，從前一次與後端取得的資料若已確認後端沒有新通知了，auto設為false
     this.#auto = auto;
     if (auto) {
@@ -231,7 +221,14 @@ export default class {
           this.htmlStr.unRender.unconfirm <=
         0;
     }
-
+    /**
+     * data { news, me }
+     * data.news { hasNews<Boo>, list, num }
+     * data.news.list { confirm<Arr>, unconfirm<Arr> }
+     * data.news.num  { unconfirm<Num>, confirm<Num>, total<Num> }
+     * data.news.list.confirm.item { type, id, timestamp, confirm, updatedAt, fans| blog| comment }
+     * data.news.list.unconfirm.item 同上
+     */
     let { errno, data } = await this.axios.post(this.#API_NEWS, this.status);
     this.axios.autoLoadingBackdrop = true;
     this.#checkNews = false;
