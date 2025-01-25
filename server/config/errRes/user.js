@@ -1,3 +1,5 @@
+const { REGISTER_CODE } = require("../cache");
+
 module.exports = {
   CREATE: {
     ERR: {
@@ -7,6 +9,14 @@ module.exports = {
     AJV_REGISTER: {
       errno: 10191,
       msg: "註冊數據不符校驗",
+    },
+    REGISTER_CODE_FAIL: {
+      errno: 10101,
+      msg: "驗證碼錯誤",
+    },
+    REGISTER_CODE_EXPIRE: {
+      errno: 10102,
+      msg: "驗證碼已過期,已重新寄發驗證碼至您的信箱,請再次嘗試",
     },
   },
   UPDATE: {
@@ -65,6 +75,10 @@ module.exports = {
       errno: 40106,
       msg: "缺少信箱",
       code: 200,
+    },
+    EMAIL_EXIST: {
+      errno: 40107,
+      msg: "信箱已有人註冊",
     },
     EMAIL_EXIST: {
       errno: 40107,

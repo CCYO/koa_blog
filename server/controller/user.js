@@ -19,6 +19,7 @@ const {
 const C_Blog = require("./blog");
 const C_IdolFans = require("./idolFans");
 const C_ArticleReader = require("./articleReader");
+const C_CacheRegisterCode = require("./cache_register_code");
 
 /* SERVER     ----------------------------------------------------------------------------- */
 const User = require("../server/user");
@@ -38,20 +39,32 @@ async function isEmailExist(email) {
   }
   return new SuccModel();
 }
+async function sendRegisterCode({ email }) {
+  const resModel = await isEmailExist(email);
+  if (resModel.errno) {
+    return resModel;
+  }
+  return await C_CacheRegisterCode.getCode(email);
+}
 /** 註冊
  * @param {string} email - user 的信箱
  * @param {string} password - user 未加密的密碼
  * @returns {object} SuccessMode || ErrModel Instance
  */
-async function register({ email, password }) {
+async function register({ email, password, code }) {
   if (!password) {
     return new ErrModel(ERR_RES.USER.READ.NO_PASSWORD);
   } else if (!email) {
     return new ErrModel(ERR_RES.USER.READ.NO_EMAIL);
   }
-  const resModel = await isEmailExist(email);
-  if (resModel.errno) {
-    return resModel;
+  let checkModel;
+  checkModel = await C_CacheRegisterCode.checkCode(email, code);
+  if (checkModel.errno) {
+    return checkModel;
+  }
+  checkModel = await isEmailExist(email);
+  if (checkModel.errno) {
+    return checkModel;
   }
   const data = await User.create(Opts.USER.CREATE.one({ email, password }));
   let opts = { data };
@@ -248,6 +261,7 @@ module.exports = {
   findFansList,
   findDataForUserPage,
   login,
+  sendRegisterCode,
   register,
   isEmailExist,
 };

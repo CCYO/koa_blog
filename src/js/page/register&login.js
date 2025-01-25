@@ -17,6 +17,7 @@ import { COMMON } from "../../config";
 const API = {
   REGISTER_SUCCESS: "/login",
   REGISTER: "/api/user/register",
+  REGISTER_CODE: "/api/user/registerCode",
   LOGIN_SUCCESS: "/self",
   LOGIN: "/api/user",
 };
@@ -151,38 +152,163 @@ function initMain() {
     //  為 form 註冊 submitEvent handler
     form.addEventListener("submit", handle_submit_register);
 
+    //  創建驗證舊密碼的modal
+    async function createModal(e) {
+      if (!G.utils?.bs5_modal) {
+        //  生成BS5 Modal
+        let { default: BS_Modal } = await import(
+          /*webpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
+        );
+        let target = document.querySelector(
+          `#${G.constant.ID.REGISTER_CODE_MODEL}`
+        );
+        G.utils.bs5_modal = new BS_Modal(target);
+        $(`#${G.constant.ID.MAIL_REGISTER_CODE}`).on("click", getRegisterCode);
+        $(`#${G.constant.ID.CHECK_REGISTER_CODE}`).on(
+          "click",
+          checkRegisterCode
+        );
+        let $inp = $(`#${G.constant.ID.REGISTER_CODE_MODEL}`).find("input");
+        $inp.on("keydown", validRegisterCode1);
+        $inp.on("input", validRegisterCode2);
+      }
+      G.utils.bs5_modal.show();
+    }
+
+    async function getRegisterCode(force = false) {
+      if (!force || G.data.register) {
+        let { TTL, REFRESH, expire } = G.data.register;
+        if (new Date(expire) - Date.now() > TTL - REFRESH) {
+          return;
+        }
+      }
+      let { data } = await G.utils.axios.post(API.REGISTER_CODE, {
+        email: axios_payload.email,
+      });
+
+      _lockRegisterCode(
+        data,
+        force ? "驗證碼已過期,已重新寄發驗證碼至您的信箱,請再次嘗試" : null
+      );
+    }
+
+    async function validRegisterCode1(e) {
+      let cancel =
+        /(KeyE)|(ArrowUp)|(ArrowRight)|(ArrowDown)|(ArrowLeft)|(NumpadDecimal)/.test(
+          e.code
+        );
+      if (cancel) {
+        e.preventDefault();
+      }
+    }
+    async function validRegisterCode2(e) {
+      let input = e.target;
+      let code = input.value;
+      input.value = code.replace(/[^0123456789]/g, "");
+      if (input.value.length > 5) {
+        $(`#${G.constant.ID.CHECK_REGISTER_CODE}`).prop("disabled", false);
+      } else {
+        $(`#${G.constant.ID.CHECK_REGISTER_CODE}`).prop("disabled", true);
+      }
+    }
+    async function checkRegisterCode(e) {
+      if (Date.now() >= G.data.register.expire) {
+        await getRegisterCode(true);
+        return;
+      }
+      let $inp = $(`#${G.constant.ID.REGISTER_CODE_MODEL}`).find("input");
+      let inp = $inp.get(0);
+      let code = $inp.val();
+      let invalid = /[^0123456789]/g.test(code) || code.length !== 6;
+      if (invalid) {
+        formFeedback.validated(inp, false, "驗證碼錯誤");
+        inp.addEventListener("input", () => formFeedback.clear(inp), {
+          once: true,
+        });
+        return;
+      }
+      axios_payload.code = code;
+      let { errno, data, msg } = await G.utils.axios.post(
+        API.REGISTER,
+        axios_payload
+      );
+      if (!errno) {
+        alert("註冊成功,請嘗試登入");
+        location.href = API.REGISTER_SUCCESS;
+        return;
+      }
+      // 驗證碼已過期
+      else if (data) {
+        inp.value = "";
+        _lockRegisterCode(data, msg);
+      }
+      // 驗證碼錯誤
+      else {
+        formFeedback.validated(inp, false, msg);
+      }
+      inp.addEventListener("input", () => formFeedback.clear(inp), {
+        once: true,
+      });
+    }
+    function _lockRegisterCode(data, msg) {
+      if (G.data.register) {
+        G.data.register = { ...G.data.register, ...data };
+      } else {
+        G.data.register = data;
+      }
+
+      let $inp = $(`#${G.constant.ID.REGISTER_CODE_MODEL}`).find("input").eq(0);
+      $inp.prop("disabled", false).val("");
+      $(`#${G.constant.ID.CHECK_REGISTER_CODE}`).prop("disabled", false);
+      $(`#${G.constant.ID.MAIL_REGISTER_CODE}`).prop("disabled", true);
+
+      let inp = $inp.get(0);
+      formFeedback.validated(inp, false, msg ? msg : "驗證碼已寄至您的信箱");
+      inp.addEventListener("input", () => formFeedback.clear(inp), {
+        once: true,
+      });
+      inp.focus();
+      if (G.data.register.timer) {
+        console.log("@clear timer=>", G.data.register.timer);
+        clearTimeout(G.data.register.timer);
+      }
+      reciprocal(data.REFRESH);
+
+      function reciprocal(msec) {
+        if (msec <= 0) {
+          // 開放重發驗證碼
+          $(`#${G.constant.ID.MAIL_REGISTER_CODE}`)
+            .text("重新發送驗證碼")
+            .prop("disabled", false);
+          return;
+        }
+        $(`#${G.constant.ID.MAIL_REGISTER_CODE}`).text(
+          `重新發送驗證碼(${msec / 1000})`
+        );
+        G.data.register.timer = setTimeout(() => {
+          console.log("@run timer=>", G.data.register.timer);
+          reciprocal(msec - 1000);
+        }, 1000);
+        console.log("@set timer=>", G.data.register.timer);
+      }
+    }
     /* 註冊表單 submit Event handler */
     async function handle_submit_register(e) {
       e.preventDefault();
-      let alert_message = G.constant.MESSAGE.REGISTER_SUCCESS;
       //  校驗 axios_payload
       let validated_list = await G.utils.validate.register(axios_payload);
-      //  axios_payload 是否有效
-      //  當前進度狀態是否順利
-      let status = validated_list.valid;
-      if (validated_list.valid) {
-        ////  校驗成功
-        let { errno } = await G.utils.axios.post(API.REGISTER, axios_payload);
-        //  更新進度狀態
-        status = !errno;
-        //  更新提醒內容
-        alert_message = !status
-          ? G.constant.MESSAGE.REGISTER_FAIL
-          : alert_message;
-      }
-      if (status) {
-        ////  請求成功
-        alert(alert_message);
-        location.href = API.REGISTER_SUCCESS;
-      } else {
-        ////  校驗失敗or請求失敗
+      // 校驗失敗
+      if (!validated_list.valid) {
         //  重置 payload
         axios_payload = {};
         //  重置 lock
         lock.reset();
-        alert(alert_message);
+        alert("註冊資料有誤,請重新填寫");
+        return;
       }
-      return status;
+      // 顯示modal
+      createModal();
+      return;
     }
 
     /* 註冊表單內容表格的 input Event handler */

@@ -75,6 +75,9 @@ export default {
     ID: {
       LOGIN_FORM: "login",
       REGISTER_FORM: "register",
+      REGISTER_CODE_MODEL: "register_code_model",
+      MAIL_REGISTER_CODE: "meil_register_code",
+      CHECK_REGISTER_CODE: "check_register_code",
     },
   },
   SETTING: {

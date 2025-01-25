@@ -11,6 +11,31 @@
   <%- include('../wedgets/pageLoading/index') %>
   <%- include('../wedgets/navbar/index') %>
   <main style="display: none;">
+
+    <div class="modal fade" id="<%= G_PAGE.ID.REGISTER_CODE_MODEL %>" tabindex="-1" aria-labelledby="<%= G_PAGE.ID.REGISTER_CODE_MODEL %>" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">驗證信箱</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="input-box">
+              <label class="form-label">
+                <input type="number" class="form-control" autocomplete="off" disabled>
+                <div></div>
+              </label>
+            </div>
+            <button type="button" id="<%= G_PAGE.ID.MAIL_REGISTER_CODE %>" class="btn btn-primary">取得驗證碼</button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button type="button" id="<%= G_PAGE.ID.CHECK_REGISTER_CODE %>" class="btn btn-primary" disabled>驗證</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 註冊/登入 互動卡片-->
     <div class="card w-75 mx-auto">
       <!-- 卡片頭部 -->
@@ -18,8 +43,9 @@
         <!-- 頭部導行列-->
         <ul class="card-header-tabs nav nav-tabs">
           <!-- 頭部導行項-->
-          <% for( let type in G_PAGE.ID ){ %>
-          <% let form_id = G_PAGE.ID[type] %>
+          <% let list = [G_PAGE.ID.REGISTER_FORM, G_PAGE.ID.LOGIN_FORM] %>
+          <% for( let type of list ){ %>
+          <% let form_id = type %>
           <% let tab_txt = form_id === G_PAGE.ID.REGISTER_FORM ? "註冊" : "登入" %>
           <li class="nav-item">
             <a class="nav-link <%= active === form_id ? `active` : `` %>" href="#" data-bs-toggle='tab' data-bs-target='#<%= form_id %>-card' role="tab" aria-controls=<%= form_id %> aria-selected="true"><%= tab_txt %></a>
@@ -31,8 +57,8 @@
       <div class="card-body tab-content">
         <!-- REGISTER PANE -->
 
-        <% for( let type in G_PAGE.ID ){ %>
-        <% let form_id = G_PAGE.ID[type] %>
+        <% for( let type of list ){ %>
+        <% let form_id = type %>
         <% if(form_id === G_PAGE.ID.REGISTER_FORM ){ %>
         <%- include('./components/pane-register', {form_id}) %>
         <% } else if (form_id === G_PAGE.ID.LOGIN_FORM ){ %>

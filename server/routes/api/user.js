@@ -85,6 +85,13 @@ router.post("/isEmailExist", VALIDATE.USER, async (ctx) => {
 });
 
 /**
+ * @description get register code
+ */
+router.post("/registerCode", async (ctx) => {
+  ctx.body = await User.sendRegisterCode(ctx.request.body);
+});
+
+/**
  * @description  register
  */
 router.post("/register", VALIDATE.USER, async (ctx) => {

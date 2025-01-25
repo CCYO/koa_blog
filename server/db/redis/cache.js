@@ -61,19 +61,29 @@ function _obj(type) {
     let obj = await get(id);
     return !!obj;
   }
-  async function set(id, data) {
+  async function set(id, data, ttl) {
     const KEY = `${type}:${id}`;
-    const etag = crypto.hash_obj(data);
-    let obj = { [etag]: data };
-    await Redis.set(KEY, obj);
-    log(`系統緩存數據 ${KEY} 的 etag: ${etag}`);
-    return etag;
+    if (typeof data === "object") {
+      const etag = crypto.hash_obj(data);
+      let obj = { [etag]: data };
+      await Redis.set(KEY, obj);
+      log(`系統緩存數據 ${KEY} 的 etag: ${etag}`);
+      return etag;
+    } else if (typeof data === "number") {
+      let code = data;
+      let expire_sec = Math.floor(Date.now() / 1000) + ttl / 1000;
+      let expire = expire_sec * 1000;
+      await Redis.set(KEY, { code, expire });
+      await Redis.expireat(KEY, expire_sec);
+      return { code, expire };
+    }
   }
   async function get(id) {
     const KEY = `${type}:${id}`;
     return await Redis.get(KEY);
   }
 }
+
 //  輔助 redis 存取數據
 const Redis = {
   async get(key) {
@@ -101,6 +111,10 @@ const Redis = {
       throw err;
     }
   },
+  async expireat(key, expire_sec) {
+    await client.expireat(key, expire_sec);
+    return true;
+  },
   async del(key) {
     await client.del(key);
     log(`清除系統緩存 --> cache/${key}`);
@@ -111,6 +125,9 @@ const Redis = {
  * @description 生成一個obj，具有可以直接針對Redis，進行指定緩存類型的存取方法
  */
 function getCache(type) {
+  // if (type === TYPE.REGISTER_CODE) {
+  //   return _str(type);
+  // } else
   if (type === TYPE.NEWS) {
     return _set(type);
   } else {
