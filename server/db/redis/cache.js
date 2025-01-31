@@ -69,7 +69,7 @@ function _obj(type) {
       await Redis.set(KEY, obj);
       log(`系統緩存數據 ${KEY} 的 etag: ${etag}`);
       return etag;
-    } else if (typeof data === "number") {
+    } else if (typeof data === "string") {
       let code = data;
       let expire_sec = Math.floor(Date.now() / 1000) + ttl / 1000;
       let expire = expire_sec * 1000;

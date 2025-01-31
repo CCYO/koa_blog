@@ -53,6 +53,14 @@ export default {
       minLength: "不可為空",
     },
   },
+  email_code: {
+    type: "string",
+    regexp: SETTING.EMAIL_CODE.REGEXP.toString(),
+    errorMessage: {
+      type: "必須是字符串",
+      regexp: SETTING.EMAIL_CODE.REGEXP_MSG,
+    },
+  },
   nickname: {
     type: "string",
     regexp: SETTING.NICKNAME.REGEXP.toString(),

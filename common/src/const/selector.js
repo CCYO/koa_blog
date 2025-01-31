@@ -75,17 +75,29 @@ export default {
     ID: {
       LOGIN_FORM: "login",
       REGISTER_FORM: "register",
-      REGISTER_CODE_MODEL: "register_code_model",
-      MAIL_REGISTER_CODE: "meil_register_code",
+      MODEL_REGISTER_CODE: "register_code_model",
+      MAIL_REGISTER_CODE: "mail_register_code",
       CHECK_REGISTER_CODE: "check_register_code",
     },
   },
   SETTING: {
     ID: {
+      FORM: "setting",
       MODAL_ORIGIN_PASSWORD: "modal_origin_password",
+      CHECK_ORIGIN_PASSWORD: "check_orgin_password",
+      MODAL_REGISTER_CODE: "modal_register_code",
+      MAIL_REGISTER_CODE: "mail_register_code",
+      CHECK_REGISTER_CODE: "check_register_code",
+      SHOW_MODAL_EMAIL_CODE: "show_model_register_code",
+      IMG_AVATAR: "avatar-img",
+      CANCEL: "cancel",
     },
     NAME: {
+      EMAIL: "email",
+      EMAIL_CODE: "code",
       ORIGIN_PASSWORD: "origin_password",
+      NEW_PASSWORD: "password",
+      PASSWORD_AGAIN: "password_again",
     },
   },
   USER: {

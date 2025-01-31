@@ -17,8 +17,12 @@ module.exports = function (HOST, DEFAULT) {
         type: "string",
         $ref: `${DEFAULT_URL}/password_again`,
       },
+      code: {
+        type: "string",
+        $ref: `${DEFAULT_URL}/email_code`,
+      },
     },
-    required: ["email", "password", "password_again"],
+    required: ["email", "code", "password", "password_again"],
     errorMessage: {
       type: "驗證數據必須是 object 格式",
       required: "必填",

@@ -40,6 +40,10 @@ export default class {
           //  開啟遮罩
           instance.backdrop.show(backdrop_config);
         }
+        console.log(
+          "@instance.autoLoadingBackdrop => ",
+          instance.autoLoadingBackdrop
+        );
         return config;
       },
       (error) => {

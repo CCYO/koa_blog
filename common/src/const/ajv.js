@@ -4,6 +4,8 @@
 const REG_ch_and_keywordW = /^[\u2F00-\u2FD5\u3105-\u312F\u4E00-\u9FFF\w\-]+$/;
 const ERR_MSG_ch_and_keywordW = "必須由中文、英文、數字以及底線與連接線組成";
 const REG_HASH = /^[0-9a-f]{32,32}$/;
+const REG_EMAIL_CODE = /^[0123456789]{6,6}$/;
+const REG_MSG_EMAIL_CODE = "由六個數字組成";
 export default {
   BLOG: {
     TITLE: {
@@ -31,6 +33,10 @@ export default {
   SETTING: {
     EMAIL: {
       MIN_LENGTH: 1,
+    },
+    EMAIL_CODE: {
+      REGEXP: REG_EMAIL_CODE,
+      REGEXP_MSG: REG_MSG_EMAIL_CODE,
     },
     NICKNAME: {
       MIN_LENGTH: 2,

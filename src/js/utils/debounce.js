@@ -21,9 +21,14 @@ export default class {
       this.name = config.name ? config.name : callback.name;
       this.ms = config.ms ? config.ms : this.ms;
       this.loading = config.loading ? config.loading : this.loading;
+      this.target = config.target ? config.target : undefined;
+      this.eventType = config.eventType ? config.eventType : undefined;
     }
     this.callback = callback;
     this.debounce = this.#debounce.bind(this);
+    if (this.target && this.eventType) {
+      this.target.addEventListener(this.eventType, this.debounce);
+    }
   }
 
   //  setTimeout 標記

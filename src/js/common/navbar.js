@@ -37,7 +37,7 @@ export default async function (active, _axios) {
     _axios.autoLoadingBackdrop = false;
     // loginData: undefined || { me, news }
     loginData = await news.getLoginData();
-    // 開啟「_axios自動LoadingBackdrop的功能」s
+    // 開啟「_axios自動LoadingBackdrop的功能」
     _axios.autoLoadingBackdrop = true;
   }
   // 未登入狀態

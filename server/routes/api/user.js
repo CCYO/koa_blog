@@ -9,6 +9,7 @@ const WS = require("../../middleware/ws");
 
 /* CONTROLLER ----------------------------------------------------------------------------- */
 const User = require("../../controller/user");
+const C_CacheRegisterCode = require("../../controller/cache_register_code");
 
 /* UTILS      ----------------------------------------------------------------------------- */
 const {
@@ -37,6 +38,14 @@ router.patch(
     ctx.body = await User.modifyInfo(ctx.request.body);
   }
 );
+
+/**
+ * @description confirm EmailCode for new Email
+ */
+router.post("/confirmEmailCode", CHECK.login, async (ctx) => {
+  let { email, code } = ctx.request.body;
+  ctx.body = await C_CacheRegisterCode.checkCode(email, code);
+});
 
 /**
  * @description check password

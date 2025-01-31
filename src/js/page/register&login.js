@@ -12,6 +12,7 @@ import Tab from "bootstrap/js/dist/tab";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
 import { COMMON } from "../../config";
+import { debounce } from "lodash";
 
 /* VAR        ----------------------------------------------------------------------------- */
 const API = {
@@ -143,6 +144,12 @@ function initMain() {
 
   /* 初始化 Register Form 功能 */
   function initRegistFn(form_id) {
+    let el_modal = document.querySelector(
+      `#${G.constant.ID.MODEL_REGISTER_CODE}`
+    );
+    let $inp_registerCode = $(el_modal).find("input");
+    let $btn_registerCode = $(`#${G.constant.ID.MAIL_REGISTER_CODE}`);
+    let $btn_register = $(`#${G.constant.ID.CHECK_REGISTER_CODE}`);
     const form = document.querySelector(form_id);
     let axios_payload = {};
     //  依據 input 數據，自動判斷 form 可否開放 submit 功能
@@ -150,7 +157,7 @@ function initMain() {
     //  為所有input註冊debounce化的inputEvent handler
     _add_form_debounce_inputEvent_handler(form, handle_input_register);
     //  為 form 註冊 submitEvent handler
-    form.addEventListener("submit", handle_submit_register);
+    form.addEventListener("submit", handle_checkForm);
 
     //  創建驗證舊密碼的modal
     async function createModal(e) {
@@ -159,25 +166,26 @@ function initMain() {
         let { default: BS_Modal } = await import(
           /*webpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
         );
-        let target = document.querySelector(
-          `#${G.constant.ID.REGISTER_CODE_MODEL}`
-        );
-        G.utils.bs5_modal = new BS_Modal(target);
-        $(`#${G.constant.ID.MAIL_REGISTER_CODE}`).on("click", getRegisterCode);
-        $(`#${G.constant.ID.CHECK_REGISTER_CODE}`).on(
-          "click",
-          checkRegisterCode
-        );
-        let $inp = $(`#${G.constant.ID.REGISTER_CODE_MODEL}`).find("input");
-        $inp.on("keydown", validRegisterCode1);
-        $inp.on("input", validRegisterCode2);
+        G.utils.bs5_modal = new BS_Modal(el_modal);
+        $btn_registerCode.on("click", getRegisterCode);
+        $btn_register.on("click", checkRegisterCode);
+        $inp_registerCode.on("keydown", validRegisterCode1);
+        $inp_registerCode.on("input", validRegisterCode2);
       }
       G.utils.bs5_modal.show();
+      el_modal.addEventListener("hide.bs.modal", () => {
+        delete axios_payload.code;
+      });
     }
 
-    async function getRegisterCode(force = false) {
-      if (!force || G.data.register) {
-        let { TTL, REFRESH, expire } = G.data.register;
+    async function getRegisterCode(e, force = false) {
+      let turnOff = $btn_registerCode.prop("disabled");
+      if (turnOff) {
+        return;
+      }
+
+      if (!force && G.data.emailCode) {
+        let { TTL, REFRESH, expire } = G.data.emailCode;
         if (new Date(expire) - Date.now() > TTL - REFRESH) {
           return;
         }
@@ -185,11 +193,10 @@ function initMain() {
       let { data } = await G.utils.axios.post(API.REGISTER_CODE, {
         email: axios_payload.email,
       });
-
-      _lockRegisterCode(
-        data,
-        force ? "驗證碼已過期,已重新寄發驗證碼至您的信箱,請再次嘗試" : null
-      );
+      let msg = force
+        ? "驗證碼已過期,已重新寄發驗證碼至您的信箱,請再次嘗試"
+        : null;
+      _lockRegisterCode(data, msg);
     }
 
     async function validRegisterCode1(e) {
@@ -200,31 +207,47 @@ function initMain() {
       if (cancel) {
         e.preventDefault();
       }
+      if (e.key === "Enter") {
+        let disabled = $btn_register.prop("disabled");
+        !disabled && (await checkRegisterCode());
+      }
     }
+
     async function validRegisterCode2(e) {
       let input = e.target;
       let code = input.value;
       input.value = code.replace(/[^0123456789]/g, "");
       if (input.value.length > 5) {
-        $(`#${G.constant.ID.CHECK_REGISTER_CODE}`).prop("disabled", false);
+        $btn_register.prop("disabled", false);
       } else {
-        $(`#${G.constant.ID.CHECK_REGISTER_CODE}`).prop("disabled", true);
+        $btn_register.prop("disabled", true);
       }
     }
     async function checkRegisterCode(e) {
-      if (Date.now() >= G.data.register.expire) {
-        await getRegisterCode(true);
+      let turnOff = $btn_register.prop("disabled");
+      if (turnOff) {
         return;
       }
-      let $inp = $(`#${G.constant.ID.REGISTER_CODE_MODEL}`).find("input");
-      let inp = $inp.get(0);
-      let code = $inp.val();
+      let inp_registerCode = $inp_registerCode.get(0);
+      formFeedback.loading(inp_registerCode);
+      $btn_register.prop("disabled", (turnOff = true));
+      if (Date.now() >= G.data.emailCode.expire) {
+        await getRegisterCode(null, true);
+        return;
+      }
+
+      let code = inp_registerCode.value;
       let invalid = /[^0123456789]/g.test(code) || code.length !== 6;
       if (invalid) {
-        formFeedback.validated(inp, false, "驗證碼錯誤");
-        inp.addEventListener("input", () => formFeedback.clear(inp), {
-          once: true,
-        });
+        formFeedback.validated(inp_registerCode, false, "驗證碼錯誤");
+        $btn_register.prop("disabled", (turnOff = false));
+        inp_registerCode.addEventListener(
+          "input",
+          (e) => formFeedback.clear(e.target),
+          {
+            once: true,
+          }
+        );
         return;
       }
       axios_payload.code = code;
@@ -239,61 +262,58 @@ function initMain() {
       }
       // 驗證碼已過期
       else if (data) {
-        inp.value = "";
+        inp_registerCode.value = "";
         _lockRegisterCode(data, msg);
       }
       // 驗證碼錯誤
       else {
-        formFeedback.validated(inp, false, msg);
+        formFeedback.validated(inp_registerCode, false, msg);
       }
-      inp.addEventListener("input", () => formFeedback.clear(inp), {
-        once: true,
-      });
+      $btn_register.prop("disabled", false);
+      turnOff = false;
+      inp_registerCode.addEventListener(
+        "input",
+        (e) => formFeedback.clear(e.target),
+        {
+          once: true,
+        }
+      );
     }
     function _lockRegisterCode(data, msg) {
-      if (G.data.register) {
-        G.data.register = { ...G.data.register, ...data };
+      if (G.data.emailCode) {
+        G.data.emailCode = { ...G.data.emailCode, ...data };
       } else {
-        G.data.register = data;
+        G.data.emailCode = data;
       }
 
-      let $inp = $(`#${G.constant.ID.REGISTER_CODE_MODEL}`).find("input").eq(0);
-      $inp.prop("disabled", false).val("");
-      $(`#${G.constant.ID.CHECK_REGISTER_CODE}`).prop("disabled", false);
-      $(`#${G.constant.ID.MAIL_REGISTER_CODE}`).prop("disabled", true);
+      $inp_registerCode.prop("disabled", false).val("");
+      $btn_registerCode.prop("disabled", true);
 
-      let inp = $inp.get(0);
+      let inp = $inp_registerCode.get(0);
       formFeedback.validated(inp, false, msg ? msg : "驗證碼已寄至您的信箱");
       inp.addEventListener("input", () => formFeedback.clear(inp), {
         once: true,
       });
       inp.focus();
-      if (G.data.register.timer) {
-        console.log("@clear timer=>", G.data.register.timer);
-        clearTimeout(G.data.register.timer);
+      if (G.data.emailCode.timer) {
+        clearTimeout(G.data.emailCode.timer);
       }
       reciprocal(data.REFRESH);
 
       function reciprocal(msec) {
         if (msec <= 0) {
           // 開放重發驗證碼
-          $(`#${G.constant.ID.MAIL_REGISTER_CODE}`)
-            .text("重新發送驗證碼")
-            .prop("disabled", false);
+          $btn_registerCode.text("重新發送驗證碼").prop("disabled", false);
           return;
         }
-        $(`#${G.constant.ID.MAIL_REGISTER_CODE}`).text(
-          `重新發送驗證碼(${msec / 1000})`
-        );
-        G.data.register.timer = setTimeout(() => {
-          console.log("@run timer=>", G.data.register.timer);
+        $btn_registerCode.text(`重新發送驗證碼(${msec / 1000})`);
+        G.data.emailCode.timer = setTimeout(() => {
           reciprocal(msec - 1000);
         }, 1000);
-        console.log("@set timer=>", G.data.register.timer);
       }
     }
     /* 註冊表單 submit Event handler */
-    async function handle_submit_register(e) {
+    async function handle_checkForm(e) {
       e.preventDefault();
       //  校驗 axios_payload
       let validated_list = await G.utils.validate.register(axios_payload);

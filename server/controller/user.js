@@ -39,6 +39,7 @@ async function isEmailExist(email) {
   }
   return new SuccModel();
 }
+
 async function sendRegisterCode({ email }) {
   const resModel = await isEmailExist(email);
   if (resModel.errno) {
@@ -46,6 +47,7 @@ async function sendRegisterCode({ email }) {
   }
   return await C_CacheRegisterCode.getCode(email);
 }
+
 /** 註冊
  * @param {string} email - user 的信箱
  * @param {string} password - user 未加密的密碼
@@ -186,6 +188,13 @@ async function modifyInfo({ _origin, origin_password, ...newData }) {
     });
     if (errno) {
       throw new MyErr(ERR_RES.USER.UPDATE.ORIGIN_PASSWORD_ERR);
+    }
+  }
+  if (newData.hasOwnProperty("email")) {
+    let { email, code } = newData;
+    let resModel = await C_CacheRegisterCode.checkCode(email, code);
+    if (resModel.errno) {
+      return resModel;
     }
   }
   await User.update(Opts.USER.UPDATE.one({ user_id, newData }));

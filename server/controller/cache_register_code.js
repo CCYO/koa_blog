@@ -35,8 +35,9 @@ async function checkCode(email, code) {
       data: { expire, REFRESH, TTL },
     });
   }
-  if (data.code === code * 1) {
+  if (data.code === code) {
     // 驗證成功
+    await CacheRegisterCode.remove(email);
     return new SuccModel();
   } else {
     // 驗證失敗

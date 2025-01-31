@@ -41,6 +41,8 @@ export default class {
     };
     // 初始化navbar的樣式與功能，返回結果代表是否為登入狀態
     let login = await initNavbar(active, _axios);
+    // 開啟「_axios自動LoadingBackdrop的功能」
+    _axios.autoLoadingBackdrop = true;
     if (!login) {
       this.data.me = undefined;
       this.utils.news = undefined;
