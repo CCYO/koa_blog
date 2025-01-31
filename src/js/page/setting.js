@@ -61,13 +61,12 @@ async function initMain() {
     `[name=${G.constant.NAME.PASSWORD_AGAIN}]`
   );
   let $inp_password_again = $(inp_password_again);
-  let $newPasswordList = $([$inp_newPassword, $inp_password_again]);
-
   let btn_check_orgin_password = document.querySelector(
     `#${G.constant.ID.CHECK_ORIGIN_PASSWORD}`
   );
-  let $avatar = $("input[type=file]");
-  let $avatar_previes = $(`#${G.constant.ID.IMG_AVATAR}`);
+  let inp_avatar = document.querySelector("input[type=file]");
+  let $inp_avatar = $(inp_avatar);
+  let $img_avatar = $(`#${G.constant.ID.IMG_AVATAR}`);
   let jq_settingForm = $(`#${G.constant.ID.FORM}`);
 
   function check_submit(lock) {
@@ -106,19 +105,19 @@ async function initMain() {
     //  avatar change
     jq_settingForm.on("change", handle_change);
     //  avatar click
-    $avatar.on("click", handle_resetAvatar);
+    $inp_avatar.on("click", handle_resetAvatar);
 
     //  重新選擇要上傳的頭像
     function handle_resetAvatar(e) {
-      if (!$avatar.prop("files")[0]) {
+      if (!$inp_avatar.prop("files")[0]) {
         return;
       }
       if (confirm("要重新傳一顆頭嗎?")) {
         //  重設頭像表格
         G.utils.lock.delete("avatar_hash");
         G.utils.lock.delete("avatar_ext");
-        $avatar_previes.attr("src", G.data.me.avatar);
-        $avatar.val(null);
+        $img_avatar.attr("src", G.data.me.avatar);
+        $inp_avatar.val(null);
         G.utils.lock.check_submit();
         formFeedback.clear(e.target);
       } else {
@@ -128,24 +127,24 @@ async function initMain() {
     //  avatar change
     async function handle_change(e) {
       e.preventDefault();
-      if (e.target.name !== "avatar") {
+      if (e.target !== inp_avatar) {
         return;
       }
       if (G.utils.lock.has("avatar_hash") && !confirm("要重新傳一顆頭嗎?")) {
         return;
       }
-      let files = $avatar.prop("files");
+      let files = $inp_avatar.prop("files");
 
       let { valid, message, hash, ext } = await _check_avatar(files);
       if (!valid) {
         //  清除input的數據
-        $avatar.prop("files", undefined);
-        $avatar.val(null);
+        $inp_avatar.prop("files", undefined);
+        $inp_avatar.val(null);
         //  清除lock的avatar數據
         G.utils.lock.delete("avatar_hash");
         G.utils.lock.delete("avatar_ext");
         //  恢復舊avatar
-        $avatar_previes.attr("src", G.data.me.avatar);
+        $img_avatar.attr("src", G.data.me.avatar);
         G.utils.lock.check_submit();
         formFeedback.validated(e.target, valid, message);
         //  移除avatar的錯誤提醒
@@ -155,7 +154,7 @@ async function initMain() {
       formFeedback.validated(e.target, valid);
       //  計算src
       let src = await _src(files[0]);
-      $avatar_previes.attr("src", src);
+      $img_avatar.attr("src", src);
       G.utils.lock.setKVpairs({ avatar_hash: hash, avatar_ext: ext });
       async function _check_avatar(files) {
         let ext = undefined;
@@ -295,7 +294,7 @@ async function initMain() {
       btn_check_orgin_password.click();
     });
     //  新密碼與密碼二次輸入focus
-    $newPasswordList.on("focus", handle_showModal);
+    inp_newPassword.addEventListener("focus", handle_showModal);
     //  原密碼驗證
     btn_check_orgin_password.addEventListener("click", handle_originPassword);
 
@@ -306,7 +305,7 @@ async function initMain() {
       if (!redir.check_login(G)) {
         return;
       }
-      const KEY = "origin_password";
+      const KEY = e.target.name;
       let payload = { [KEY]: inp_origin_password.value };
       let result = await G.utils.validate.password(payload);
       let res = result.find(({ field_name }) => field_name === KEY);
@@ -335,9 +334,8 @@ async function initMain() {
       if (!G.utils.bs5_modal?.pwd) {
         return;
       }
-      const KEY = "origin_password";
       e.preventDefault();
-      if (G.utils.lock.get(KEY)) {
+      if (G.utils.lock.has(G.constant.NAME.ORIGIN_PASSWORD)) {
         ////  已經驗證過 origin_password，不須再顯示 Modal
         return false;
       }
@@ -368,13 +366,15 @@ async function initMain() {
     async function createEmailModal(e) {
       if (!G.utils.bs5_modal?.email) {
         G.utils.lock.before_setKVpairs.push(resetEmailAgain);
-        function resetEmailAgain(lock) {
-          if (dataObj.hasOwnProperty("email") && lock.has("code")) {
+        function resetEmailAgain(lock, dataObj) {
+          if (
+            dataObj.hasOwnProperty(G.constant.NAME.EMAIL) &&
+            lock.has(G.constant.NAME.EMAIL_CODE)
+          ) {
             if (confirm("若確認要重新設置信箱，等等請記得再做一次信箱驗證")) {
-              lock.delete("code");
+              lock.delete(G.constant.NAME.EMAIL_CODE);
             } else {
-              $inp_email.val(lock.get("email"));
-              return;
+              $inp_email.val(lock.get(G.constant.NAME.EMAIL));
             }
           }
         }
@@ -413,7 +413,7 @@ async function initMain() {
             turnOff = false;
             return;
           }
-          let email = G.utils.lock.get("email");
+          let email = G.utils.lock.get(G.constant.NAME.EMAIL);
           let payload = { code, email };
           let { errno, data, msg } = await G.utils.axios.post(
             API.CHECK_EMAIL_CODE,
@@ -476,7 +476,7 @@ async function initMain() {
               return;
             }
           }
-          let email = G.utils.lock.get("email");
+          let email = G.utils.lock.get(G.constant.NAME.EMAIL);
           let { data } = await G.utils.axios.post(API.EMAIL_CODE, { email });
           let msg = force
             ? "驗證碼已過期,已重新寄發驗證碼至您的信箱,請再次嘗試"
@@ -555,7 +555,10 @@ async function initMain() {
     }
 
     function needEmailCode(lock) {
-      if (lock.has("email") && !lock.has("code")) {
+      if (
+        lock.has(G.constant.NAME.EMAIL) &&
+        !lock.has(G.constant.NAME.EMAIL_CODE)
+      ) {
         $btn_showModal_emailCode.prop("disabled", false);
         formFeedback.validated(inp_email, false, "請進行信箱驗證");
       }
@@ -590,32 +593,34 @@ async function initMain() {
     if (!redir.check_login(G)) {
       return;
     }
-    if (G.utils.lock.has("email") && G.utils.lock.has("code")) {
-      // 驗證碼超時
-      if (Date.now() > G.data.emailCode.expire) {
-        // 清除驗證碼資料
-        G.data.emailCode = undefined;
-        G.utils.lock.delete("code");
-        $btn_showModal_emailCode.prop("disabled", false);
-        $inp_emailCode.prop("true");
-        formFeedback.validated(inp_email, false, "驗證碼過期,請重新驗證");
-        $btn_showModal_emailCode[0].addEventListener(
-          "click",
-          () => {
-            formFeedback.clear(inp_email, inp_email.value);
-          },
-          { once: true }
-        );
-        G.utils.lock.check_submit();
-        return;
-      }
+    // 若需要修改信箱，要確認驗證碼是否超時
+    if (
+      G.utils.lock.has(G.constant.NAME.EMAIL) &&
+      G.utils.lock.has(G.constant.NAME.EMAIL_CODE) &&
+      Date.now() > G.data.emailCode.expire
+    ) {
+      // 清除驗證碼資料
+      G.data.emailCode = undefined;
+      G.utils.lock.delete("code");
+      $btn_showModal_emailCode.prop("disabled", false);
+      $inp_emailCode.prop("true");
+      formFeedback.validated(inp_email, false, "驗證碼過期,請重新驗證");
+      $btn_showModal_emailCode[0].addEventListener(
+        "click",
+        () => {
+          formFeedback.clear(inp_email, inp_email.value);
+        },
+        { once: true }
+      );
+      G.utils.lock.check_submit();
+      return;
     }
     let api = API.SETTING;
     let payload = G.utils.lock.getPayload();
     let formData = new FormData();
     if (payload.hasOwnProperty("avatar_hash")) {
       api += `?avatar_hash=${payload.avatar_hash}&avatar_ext=${payload.avatar_ext}`;
-      formData.append("avatar", $avatar.prop("files")[0]);
+      formData.append("avatar", $inp_avatar.prop("files")[0]);
       delete payload.avatar_hash;
       delete payload.avatar_ext;
     }
@@ -654,7 +659,7 @@ async function initMain() {
   async function handle_input(e) {
     let target = e.target;
     const KEY = target.name;
-    if (KEY === "avatar") {
+    if (target === inp_avatar) {
       return;
     }
     let targetVal = target.value;
@@ -662,49 +667,46 @@ async function initMain() {
       //  el若未被標記過，則標記
       target.validated = true;
     }
-    if (KEY === "age") {
+    if (target.type === "number") {
       targetVal *= 1;
     }
-    await one();
-    async function one() {
-      let result_list = await _validate({ [KEY]: targetVal });
-      let { field_name, valid, keyword, message, value } = result_list.find(
-        ({ field_name }) => field_name === KEY
-      );
-      let input = document.querySelector(`[name=${field_name}]`);
-      if (valid) {
-        G.utils.lock.setKVpairs({ [field_name]: value });
-        if (KEY !== "email") {
-          formFeedback.validated(input, valid);
-        }
-        return;
+    let result_list = await _validate({ [KEY]: targetVal });
+    let { field_name, valid, keyword, message, value } = result_list.find(
+      ({ field_name }) => field_name === KEY
+    );
+    let input = document.querySelector(`[name=${field_name}]`);
+    if (valid) {
+      G.utils.lock.setKVpairs({ [field_name]: value });
+      if (KEY !== G.constant.NAME.EMAIL) {
+        formFeedback.validated(input, valid);
       }
-      G.utils.lock.delete(KEY);
-      //  password 與 password_again 為依賴關係，必須做特別處理
-      if (input === inp_newPassword && inp_password_again.validated) {
-        // 清空提醒
-        formFeedback.clear(inp_password_again);
-        // 清空表格
-        inp_password_again.value = "";
-        // 取消提醒標記
-        inp_password_again.validated = false;
-        // 不可寫入
-        $inp_password_again.prop("disabled", true);
-        // 刪除資料
-        G.utils.lock.delete("password_again");
-      }
-      // newPassword與password_again可填寫的狀況下，必須有值
-      if (
-        input.value.length > 0 ||
-        input === inp_newPassword ||
-        input === inp_password_again
-      ) {
-        formFeedback.validated(input, valid, message);
-      }
-      //  除了有依賴關係的資料外，setting表單的資料都是非必填的
-      else {
-        formFeedback.clear(input);
-      }
+      return;
+    }
+    G.utils.lock.delete(KEY);
+    //  password 與 password_again 為依賴關係，必須做特別處理
+    if (input === inp_newPassword && inp_password_again.validated) {
+      // 清空提醒
+      formFeedback.clear(inp_password_again);
+      // 清空表格
+      inp_password_again.value = "";
+      // 取消提醒標記
+      inp_password_again.validated = false;
+      // 不可寫入
+      $inp_password_again.prop("disabled", true);
+      // 刪除資料
+      G.utils.lock.delete("password_again");
+    }
+    // newPassword與password_again可填寫的狀況下，必須有值
+    if (
+      input.value.length > 0 ||
+      input === inp_newPassword ||
+      input === inp_password_again
+    ) {
+      formFeedback.validated(input, valid, message);
+    }
+    //  除了有依賴關係的資料外，setting表單的資料都是非必填的
+    else {
+      formFeedback.clear(input);
     }
 
     //  驗證setting
@@ -754,7 +756,7 @@ async function initMain() {
 
       setKVpairs(dataObj, check = true) {
         if (this.before_setKVpairs.length) {
-          this.before_setKVpairs.forEach((fn) => fn(this));
+          this.before_setKVpairs.forEach((fn) => fn(this, dataObj));
         }
         //  將kv資料存入
         const entries = Object.entries(dataObj);
