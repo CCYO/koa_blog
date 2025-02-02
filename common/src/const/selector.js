@@ -65,19 +65,16 @@ export default {
   REGISTER_LOGIN: {
     NAME: {
       EMAIL: "email",
-    },
-    MESSAGE: {
-      REGISTER_FAIL: "註冊失敗，請重新嘗試",
-      REGISTER_SUCCESS: "註冊成功，請嘗試登入",
-      LOGIN_SUCCESS: "登入成功",
-      LOGIN_FAIL: "登入失敗，請重新嘗試",
+      PASSWORD: "password",
+      PASSWORD_AGAIN: "password_again",
+      EMAIL_CODE: "code",
     },
     ID: {
       LOGIN_FORM: "login",
       REGISTER_FORM: "register",
-      MODEL_REGISTER_CODE: "register_code_model",
-      MAIL_REGISTER_CODE: "mail_register_code",
-      CHECK_REGISTER_CODE: "check_register_code",
+      MODAL_EMAIL_CODE: "modal_email_code",
+      GET_EMAIL_CODE: "email_code",
+      CHECK_EMAIL_CODE: "check_email_code",
     },
   },
   SETTING: {
@@ -85,9 +82,11 @@ export default {
       FORM: "setting",
       MODAL_ORIGIN_PASSWORD: "modal_origin_password",
       CHECK_ORIGIN_PASSWORD: "check_orgin_password",
+
       MODAL_REGISTER_CODE: "modal_register_code",
       MAIL_REGISTER_CODE: "mail_register_code",
       CHECK_REGISTER_CODE: "check_register_code",
+
       SHOW_MODAL_EMAIL_CODE: "show_model_register_code",
       IMG_AVATAR: "avatar-img",
       CANCEL: "cancel",

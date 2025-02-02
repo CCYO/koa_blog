@@ -11,7 +11,6 @@
   <%- include('../wedgets/pageLoading/index') %>
   <%- include('../wedgets/navbar/index') %>
   <main style="display: none;">
-    <%- include('./components/model-registerCode', { G_PAGE }) %>
     <!-- 註冊/登入 互動卡片-->
     <div class="card w-75 mx-auto">
       <!-- 卡片頭部 -->
@@ -36,9 +35,9 @@
         <% for( let type of list ){ %>
         <% let form_id = type %>
         <% if(form_id === G_PAGE.ID.REGISTER_FORM ){ %>
-        <%- include('./components/pane-register', {form_id}) %>
+        <%- include('./components/pane-register', {form_id, G_PAGE}) %>
         <% } else if (form_id === G_PAGE.ID.LOGIN_FORM ){ %>
-        <%- include('./components/pane-login', {form_id}) %>
+        <%- include('./components/pane-login', {form_id, G_PAGE}) %>
         <% } %>
         <% } %>
       </div>

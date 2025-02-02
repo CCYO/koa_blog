@@ -7,6 +7,8 @@ import PASSWORD_AND_AGAIN from "./passwordAndAgain";
 import IMG_ALT from "./img_alt";
 import LOGIN from "./login";
 
+import GET_EMAIL_CODE from "./getEmailCode";
+import EMAIL_CODE from "./emailCode";
 import REGISTER from "./register";
 import SETTING from "./setting";
 
@@ -19,6 +21,8 @@ export default [
   PASSWORD_AND_AGAIN,
   IMG_ALT,
   LOGIN,
+  GET_EMAIL_CODE,
+  EMAIL_CODE,
   REGISTER,
   SETTING,
 ];

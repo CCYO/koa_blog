@@ -1,4 +1,4 @@
-<div class="modal fade" id="<%= G_PAGE.ID.MODEL_REGISTER_CODE %>" tabindex="-1" aria-labelledby="<%= G_PAGE.ID.MODEL_REGISTER_CODE %>" aria-hidden="true">
+<div class="modal fade" id="<%= G_PAGE.ID.MODAL_EMAIL_CODE %>" tabindex="-1" aria-labelledby="<%= G_PAGE.ID.MODAL_EMAIL_CODE %>" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -8,15 +8,15 @@
       <div class="modal-body">
         <div class="input-box">
           <label class="form-label">
-            <input type="number" class="form-control" autocomplete="off" disabled>
+            <input type="number" name="<%= G_PAGE.NAME.EMAIL_CODE %>" class="form-control" autocomplete="off" disabled>
             <div></div>
           </label>
         </div>
-        <button type="button" id="<%= G_PAGE.ID.MAIL_REGISTER_CODE %>" class="btn btn-primary">取得驗證碼</button>
+        <button type="button" id="<%= G_PAGE.ID.GET_EMAIL_CODE %>" class="btn btn-primary">取得驗證碼</button>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-        <button type="button" id="<%= G_PAGE.ID.CHECK_REGISTER_CODE %>" class="btn btn-primary" disabled>驗證</button>
+        <button type="button" id="<%= G_PAGE.ID.CHECK_EMAIL_CODE %>" class="btn btn-primary" disabled>驗證</button>
       </div>
     </div>
   </div>

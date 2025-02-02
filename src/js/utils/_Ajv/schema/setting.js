@@ -22,6 +22,9 @@ export default function (HOST, DEFAULT) {
           email: {
             $ref: `${DEFAULT_URL}/email`,
           },
+          code: {
+            $ref: `${DEFAULT_URL}/email_code`,
+          },
           age: {
             $ref: `${DEFAULT_URL}/age`,
           },
@@ -73,6 +76,7 @@ export default function (HOST, DEFAULT) {
     _notRepeat: ["email", "age", "nickname", "password", "avatar_hash"],
     _noSpace: [
       "email",
+      "code",
       "age",
       "nickname",
       "origin_password",
@@ -82,6 +86,7 @@ export default function (HOST, DEFAULT) {
     ],
     required: ["_old"],
     dependentRequired: {
+      email: ["code"],
       password: ["password_again", "origin_password"],
       password_again: ["password", "origin_password"],
       avatar_hash: ["avatar_ext"],
