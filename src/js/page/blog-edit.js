@@ -44,15 +44,30 @@ await G.initPage(initMain);
 
 async function initMain() {
   let $blog_status = $(`#${G.constant.ID.STATUS}`);
-  let $inp_title = $(`#${G.constant.ID.TITLE}`);
-  let $btn_updateTitle = $(`#${G.constant.ID.UPDATE_TITLE}`);
+  let inp_title = document.querySelector(`#${G.constant.ID.TITLE}`);
+  let btn_updateTitle = document.querySelector(`#${G.constant.ID.UPDATE_TITLE}`);
+  let $btn_updateTitle = $(btn_updateTitle);
   let $btn_updateBlog = $(`#${G.constant.ID.UPDATE_BLOG}`);
   let $btn_removeBlog = $(`#${G.constant.ID.REMOVE_BLOG}`);
   let $span_content_count = $(`#${G.constant.ID.BLOG_HTML_STRING_COUNT}`);
   const $btn_showNow = $("#showNow");
 
+  function check_submit(lock) {
+    let keys = new Set(lock.keys());
+    let disabled =
+      !keys.size > 1 ||
+      !keys.has("_old") ||
+      !keys.has("title") ||
+      !keys.has("html") ||
+      !keys.has("show");
+    return !disabled;
+  }
+
   //  校驗可否submit
-  G.utils.lock = initLock();
+  G.utils.lock = initLock({
+    selector: "body",
+    other_check_submit: [check_submit],
+  });
   //  文章內容編輯器
   G.utils.editor = init_editor();
   //  將文章內容編輯器放入loading_backdrop管理
@@ -64,10 +79,12 @@ async function initMain() {
   //  focus editor
   G.utils.editor.focus();
 
-  //  生成 blog title 的 input handle
-  let { debounce: handle_debounce_input_for_title } = new Debounce(
+  //  blog title 的 input handle,校驗標題
+  new Debounce(
     handle_input,
     {
+      target: inp_title,
+      eventType: 'input',
       //  debounce階段時，限制更新鈕
       loading(e) {
         $btn_updateTitle.prop("disabled", true);
@@ -75,12 +92,12 @@ async function initMain() {
       },
     }
   );
-  //  $title handleInput => 驗證標題合法性
-  $inp_title.on("input", handle_debounce_input_for_title);
+  
+  
   //  $title handleBlur => 若標題非法，恢復原標題
-  $inp_title.on("blur", handle_blur);
+  inp_title.addEventListener("blur", handle_blur);
   //  $btn_updateTitlebtn handleClick => 送出新標題
-  $btn_updateTitle.on("click", handle_updateTitle);
+  btn_updateTitle.addEventListener("click", handle_updateTitle);
   //  $show handleChange => 改變文章的公開狀態
   $blog_status.on("change", handle_pubOrPri);
   //  $save handleClick => 更新文章
@@ -88,6 +105,7 @@ async function initMain() {
   //  btn#remove 綁定 click handle => 刪除 blog
   $btn_removeBlog.on("click", handle_removeBlog);
 
+  // 公開文章
   $btn_showNow.on("click", handle_showNow);
   async function handle_showNow() {
     if (!G.data.blog.show) {
@@ -278,7 +296,7 @@ async function initMain() {
     G.data.blog[KEY] = response.data[KEY];
     G.utils.lock.del(KEY);
     G.utils.lock.check_submit();
-    formFeedback.clear($inp_title.get(0));
+    formFeedback.clear(inp_title);
     //  清空提醒
     alert("標題更新完成");
     return;
@@ -752,52 +770,6 @@ async function initMain() {
     }
   }
 
-  //  校驗submit
-  function initLock() {
-    return new (class Lock extends Map {
-      setKVpairs(dataObj) {
-        //  將kv資料存入
-        const entries = Object.entries(dataObj);
-        if (entries.length) {
-          for (let [key, value] of entries) {
-            this.#set(key, value);
-          }
-        }
-      }
-      getPayload() {
-        let res = {};
-        for (let [key, value] of [...this]) {
-          res[key] = value;
-        }
-        return res;
-      }
-      check_submit() {
-        let disabled = true;
-        // if (this.size) {
-        if (this.size) {
-          disabled = $span_content_count.hasClass("text-danger");
-        }
-        $btn_updateBlog.prop("disabled", disabled);
-        return !disabled;
-      }
-      //  刪除數據
-      del(key) {
-        this.delete(key);
-        if (key === "title") {
-          //  若刪除的是title，關閉更新鈕
-          $btn_updateTitle.prop("disabled", true);
-        }
-      }
-      #set(key, value) {
-        if (key === "title") {
-          //  若設定的是title，開啟更新鈕
-          $btn_updateTitle.prop("disabled", false);
-        }
-        this.set(key, value);
-      }
-    })();
-  }
-
   //  整理圖片數據
   async function initImgData() {
     //  檢查登入狀態
@@ -870,5 +842,120 @@ async function initMain() {
       return acc;
     }, []);
     return cancelImgs;
+  }
+
+  //  校驗submit
+  function _initLock() {
+    return new (class Lock extends Map {
+      setKVpairs(dataObj) {
+        //  將kv資料存入
+        const entries = Object.entries(dataObj);
+        if (entries.length) {
+          for (let [key, value] of entries) {
+            this.#set(key, value);
+          }
+        }
+      }
+      getPayload() {
+        let res = {};
+        for (let [key, value] of [...this]) {
+          res[key] = value;
+        }
+        return res;
+      }
+      check_submit() {
+        let disabled = true;
+        // if (this.size) {
+        if (this.size) {
+          disabled = $span_content_count.hasClass("text-danger");
+        }
+        $btn_updateBlog.prop("disabled", disabled);
+        return !disabled;
+      }
+      //  刪除數據
+      del(key) {
+        this.delete(key);
+        if (key === "title") {
+          //  若刪除的是title，關閉更新鈕
+          $btn_updateTitle.prop("disabled", true);
+        }
+      }
+      #set(key, value) {
+        if (key === "title") {
+          //  若設定的是title，開啟更新鈕
+          $btn_updateTitle.prop("disabled", false);
+        }
+        this.set(key, value);
+      }
+    })();
+  }
+
+  function initLock(selector) {
+    class Payload extends Map {
+      constructor(config) {
+        super();
+        let {
+          selector,
+          submit,
+          before_setKVpairs,
+          after_setKVpairs,
+          other_check_submit,
+        } = config;
+        this.$form = $(selector);
+        this.jq_submit = this.$form.find("[type=submit]").eq(0);
+        if (submit) {
+          let $btn_updateBlog = $(`#${G.constant.ID.UPDATE_BLOG}`);
+        } else if (!this.jq_submit.length) {
+          throw new Error(`${selector}沒有submit元素`);
+        }
+        this.selector = selector;
+        // 通常使用情況為，再次更動「已確定」且「存在依賴關係」表格數據
+        this.before_setKVpairs = before_setKVpairs ? before_setKVpairs : [];
+        // 通常使用情況為，提醒使用者接著填寫「存在依賴關係」表格數據
+        this.after_setKVpairs = after_setKVpairs ? after_setKVpairs : [];
+        // 添加「form內有無is-invalid」以外的判斷，item的RV為Boolean，true表示valid，false表示invalid
+        this.other_check_submit = other_check_submit ? other_check_submit : [];
+      }
+
+      async setKVpairs(dataObj) {
+        if (this.before_setKVpairs.length) {
+          let promises = this.before_setKVpairs.map((fn) => fn(this, dataObj));
+          await Promise.all(promises);
+        }
+        //  將kv資料存入
+        const entries = Object.entries(dataObj);
+        if (entries.length) {
+          for (let [key, value] of entries) {
+            this.set(key, value);
+            let input = document.querySelector(
+              `${this.selector} input[name=${key}]`
+            );
+            input && formFeedback.validated(input, true);
+          }
+        }
+        if (this.after_setKVpairs.length) {
+          let promises = this.after_setKVpairs.map((fn) => fn(this, dataObj));
+          await Promise.all(promises);
+        }
+      }
+      getPayload() {
+        let res = {};
+        for (let [key, value] of [...this]) {
+          res[key] = value;
+        }
+        return res;
+      }
+      check_submit() {
+        let disabled = this.$form.find(".is-invalid").length > 0;
+        if (!disabled && this.other_check_submit.length) {
+          disabled = this.other_check_submit
+            .map((fn) => fn(this))
+            .some((boo) => !boo);
+        }
+        this.jq_submit.prop("disabled", disabled);
+        return !disabled;
+      }
+    }
+    return new Payload(selector);
   }
 }
