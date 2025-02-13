@@ -37,15 +37,20 @@ export default {
     },
   },
   BLOG_EDIT: {
-    ID: {
-      STATUS: "status",
+    NAME: {
       TITLE: "title",
+      SHOW: "show",
+    },
+    ID: {
+      // STATUS: "status",
       UPDATE_TITLE: "update_title",
       UPDATE_BLOG: "update_blog",
       REMOVE_BLOG: "remove_blog",
       BLOG_HTML_STRING_COUNT: "content_count",
       EDITOR_CONTAINER: "editor-container",
       EDITOR_TOOLBAR_CONTAINER: "toolbar-container",
+      SHOW_AT: "show_at",
+      SHOW_NOW: "show_now",
     },
   },
   BLOG: {

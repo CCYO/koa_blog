@@ -8,13 +8,10 @@ import G from "../common";
 import { COMMON } from "../../config";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import { render, redir, _xss } from "../utils";
+import { init_blog_content, render, redir, _xss } from "../utils";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import { createEditor } from "@wangeditor-next/editor";
-
-/* COMPONENT   ---------------------------------------------------------------------------- */
-import init_blog_content from "../utils/init_blog_content";
 
 /* VAR        ----------------------------------------------------------------------------- */
 const API = {

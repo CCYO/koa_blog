@@ -18,13 +18,13 @@
       <div class="card-body">
         <div class="title-box">
           <button id="<%= G_PAGE.ID.UPDATE_TITLE %>" class="btn btn-outline-primary btn-sm" disabled>修改標題</button>
-          <input type="text" id="<%= G_PAGE.ID.TITLE %>" name="title" class="form-control" value="<%= blog.title %>">
+          <input type="text" id="<%= G_PAGE.ID.TITLE %>" name="<%= G_PAGE.NAME.TITLE %>" value="<%= blog.title %>">
           <div></div>
         </div>
         <div id="editor-wrapper">
           <div id="<%= G_PAGE.ID.EDITOR_TOOLBAR_CONTAINER %>"></div>
           <div id="<%= G_PAGE.ID.EDITOR_CONTAINER %>"></div>
-          <div class="">
+          <div>
             <span id="<%= G_PAGE.ID.BLOG_HTML_STRING_COUNT %>"></span>
           </div>
         </div>
@@ -32,29 +32,29 @@
       <div class="card-footer">
         <p>
           <% if (blog.show) { %>
-          <span id="time">
+          <span id="<%= G_PAGE.ID.SHOW_AT %>">
             當前文章【已公開】於<%= blog.time.slice(0, 16) %>發布
           </span>
           <button id="showNow" class="btn btn-outline-primary btn-sm">更新至當前時間</button>
           <% } else { %>
-          <span id="time">
+          <span id="<%= G_PAGE.ID.SHOW_AT %>">
             當前文章【編輯中】於<%= blog.time.slice(0, 16) %>更新
           </span>
-          <button id="showNow" style="display: none" class="btn btn-outline-primary btn-sm">更新至當前時間</button>
+          <button id="<%= G_PAGE.ID.SHOW_NOW %>" style="display: none" class="btn btn-outline-primary btn-sm">更新至當前時間</button>
           <% } %>
         </p>
         <label>
           <span>修改文章狀態：</span>
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="<%= G_PAGE.ID.STATUS %>" <%= blog.show ? 'checked' : '' %> />
+            <input class="form-check-input" type="checkbox" name="<%= G_PAGE.NAME.SHOW %>" <%= blog.show ? 'checked' : '' %> />
             <label class="form-check-label" for="<%= G_PAGE.ID.STATUS %>"></label>
           </div>
         </label>
         <div>
           <button type="submit" id="<%= G_PAGE.ID.UPDATE_BLOG %>" class="btn btn-outline-primary btn-sm" disabled>存檔</button>
-          <button id="preview" class="btn btn-outline-primary btn-sm">預覽</button>
-          <button id="leave" class="btn btn-outline-primary btn-sm">取消編輯</button>
-          <button id="<%= G_PAGE.ID.REMOVE_BLOG %>" class="btn btn-outline-danger btn-sm">刪除此篇文章</button>
+          <button type="button" id="preview" class="btn btn-outline-primary btn-sm">預覽</button>
+          <button type="button" id="leave" class="btn btn-outline-primary btn-sm">取消編輯</button>
+          <button type="button" id="<%= G_PAGE.ID.REMOVE_BLOG %>" class="btn btn-outline-danger btn-sm">刪除此篇文章</button>
         </div>
       </div>
     </div>

@@ -28,20 +28,21 @@ async function initMain() {
   const jq_submit = jq_modal.find(".modal-footer > button:last-child").eq(0);
   G.utils.bs5_modal = undefined;
   G.utils.lock = init_lock();
-  let { debounce: handle_debounce_input } = new Debounce(handle_input, {
+  //  debounce input Event 照片名稱
+  new Debounce(handle_input, {
+    target: el_modal,
+    eventType: "input",
     loading() {
       formFeedback.loading(el_input_alt);
     },
   });
-  ////  為修改imgAlt的modal，綁定各種handle
   //  顯示
   $(".card button").on("click", handle_cueModale);
   //  顯示前
   el_modal.addEventListener("show.bs.modal", handle_showModal);
   //  顯示後
   el_modal.addEventListener("shown.bs.modal", handle_shownModal);
-  //  圖片名稱input
-  el_modal.addEventListener("input", handle_debounce_input);
+
   //  Enter觸發
   el_modal.addEventListener("keyup", (e) => {
     e.preventDefault();

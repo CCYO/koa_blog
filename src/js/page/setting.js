@@ -5,14 +5,13 @@ import "@css/setting.scss";
 import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import { _Ajv, Debounce, formFeedback, redir } from "../utils";
+import { _Ajv, init_lock, Debounce, formFeedback, redir } from "../utils";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
 import { COMMON } from "../../config";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import SparkMD5 from "spark-md5";
-import selector from "../../../common/src/const/selector";
 
 /* VAR        ----------------------------------------------------------------------------- */
 const API = {
@@ -79,10 +78,10 @@ async function initMain() {
     let disabled =
       !keys.size ||
       (keys.size === 1 && (keys.has("origin_password") || keys.has("email")));
-    return !disabled;
+    return disabled;
   }
   //  初始化 頁面各功能
-  G.utils.lock = initLock({
+  G.utils.lock = init_lock({
     selector: `#${G.constant.ID.FORM}`,
     other_check_submit: [check_submit],
   });
@@ -113,7 +112,7 @@ async function initMain() {
     $inp_avatar.on("click", handle_resetAvatar);
 
     //  重新選擇要上傳的頭像
-    function handle_resetAvatar(e) {
+    async function handle_resetAvatar(e) {
       if (!$inp_avatar.prop("files")[0]) {
         return;
       }
@@ -123,7 +122,7 @@ async function initMain() {
         G.utils.lock.delete("avatar_ext");
         $img_avatar.attr("src", G.data.me.avatar);
         $inp_avatar.val(null);
-        G.utils.lock.check_submit();
+        await G.utils.lock.check_submit();
         formFeedback.clear(e.target);
       } else {
         e.preventDefault();
@@ -150,17 +149,18 @@ async function initMain() {
         G.utils.lock.delete("avatar_ext");
         //  恢復舊avatar
         $img_avatar.attr("src", G.data.me.avatar);
-        G.utils.lock.check_submit();
         formFeedback.validated(e.target, valid, message);
+        await G.utils.lock.check_submit();
         //  移除avatar的錯誤提醒
         $("body").one("click", () => formFeedback.clear(e.target));
         return;
       }
-      formFeedback.validated(e.target, valid);
       //  計算src
       let src = await _src(files[0]);
       $img_avatar.attr("src", src);
       await G.utils.lock.setKVpairs({ avatar_hash: hash, avatar_ext: ext });
+      await formFeedback.validated(e.target, valid);
+      await G.utils.lock.check_submit();
       async function _check_avatar(files) {
         let ext = undefined;
         let hash = undefined;
@@ -288,7 +288,7 @@ async function initMain() {
       }
       G.utils.lock.delete(field_name);
       formFeedback.validated(inp_password_again, valid, valid ? "" : message);
-      G.utils.lock.check_submit();
+      await G.utils.lock.check_submit();
       // inp_password_again.validated = true;
       // $inp_password_again.prop("disabled", false);
       // formFeedback.validated(inp_password_again, false, "必填");
@@ -396,6 +396,7 @@ async function initMain() {
     let $btn_emailCode = $(`#${G.constant.ID.MAIL_REGISTER_CODE}`);
 
     G.utils.lock.after_setKVpairs.push(needEmailCode);
+    G.utils.lock.after_check_submit.push(disable_show_modal);
     $btn_showModal_emailCode.on("click", createEmailModal);
     return;
 
@@ -496,7 +497,7 @@ async function initMain() {
           G.utils.bs5_modal.email.hide();
           // 禁按驗證信箱紐
           $btn_showModal_emailCode.prop("disabled", true);
-          G.utils.lock.check_submit();
+          await G.utils.lock.check_submit();
           alert("驗證成功");
           return;
         }
@@ -607,7 +608,12 @@ async function initMain() {
         }
       }
     }
-
+    function disable_show_modal(lock) {
+      $btn_showModal_emailCode.prop(
+        "disabled",
+        !lock.has(G.constant.NAME.EMAIL)
+      );
+    }
     function needEmailCode(lock) {
       if (
         lock.has(G.constant.NAME.EMAIL) &&
@@ -619,8 +625,8 @@ async function initMain() {
     }
   }
   // 離開頁面前的提醒功能
-  function leavePage(e) {
-    if (G.data.saveWarn && G.utils.lock.check_submit()) {
+  async function leavePage(e) {
+    if (G.data.saveWarn && (await G.utils.lock.check_submit())) {
       e.preventDefault();
       // 過去有些browser必須給予e.returnValue字符值，才能使beforeunload有效運作
       e.returnValue = "mark";
@@ -631,7 +637,10 @@ async function initMain() {
   // 取消更改的提醒
   async function cancelModify() {
     if (confirm("真的要放棄編輯?")) {
-      if (G.utils.lock.check_submit() && confirm("放棄編輯前是否儲存?")) {
+      if (
+        (await G.utils.lock.check_submit()) &&
+        confirm("放棄編輯前是否儲存?")
+      ) {
         await handle_submit();
       }
       G.data.saveWarn = false;
@@ -665,7 +674,7 @@ async function initMain() {
         },
         { once: true }
       );
-      G.utils.lock.check_submit();
+      await G.utils.lock.check_submit();
       return;
     }
     let api = API.SETTING;
@@ -705,7 +714,7 @@ async function initMain() {
     inp_origin_password.value = "";
     formFeedback.reset(jq_settingForm[0]);
     G.utils.lock.clear();
-    G.utils.lock.check_submit();
+    await G.utils.lock.check_submit();
   }
 
   //  表單input handle
@@ -729,8 +738,7 @@ async function initMain() {
     );
     if (valid) {
       await G.utils.lock.setKVpairs({ [field_name]: value });
-
-      G.utils.lock.check_submit();
+      await G.utils.lock.check_submit();
       return;
     }
     // 校驗失敗
@@ -760,7 +768,7 @@ async function initMain() {
     else {
       formFeedback.clear(input);
     }
-    G.utils.lock.check_submit();
+    await G.utils.lock.check_submit();
     //  驗證setting
     async function _validate(inputEvent_data) {
       //  除了當前最新的kv，因為origin_password、password、password_again是依賴關係，需要依情況額外添加需驗證的資料
@@ -780,74 +788,5 @@ async function initMain() {
         return !exclude.some((item) => item === field_name);
       });
     }
-  }
-
-  //  驗證是否可submit
-  // lock基本上,是針對數據的操作,額外對樣式的操作,
-  // 僅限存於使用setKVpairs存入數據時,會直接使用formFeed將該input顯示為valid樣式
-  function initLock(selector) {
-    class Payload extends Map {
-      constructor(config) {
-        super();
-        let {
-          selector,
-          before_setKVpairs,
-          after_setKVpairs,
-          other_check_submit,
-        } = config;
-        this.$form = $(selector);
-        this.jq_submit = this.$form.find("[type=submit]").eq(0);
-        if (!this.jq_submit.length) {
-          throw new Error(`${selector}沒有submit元素`);
-        }
-        this.selector = selector;
-        // 通常使用情況為，再次更動「已確定」且「存在依賴關係」表格數據
-        this.before_setKVpairs = before_setKVpairs ? before_setKVpairs : [];
-        // 通常使用情況為，提醒使用者接著填寫「存在依賴關係」表格數據
-        this.after_setKVpairs = after_setKVpairs ? after_setKVpairs : [];
-        // 添加「form內有無is-invalid」以外的判斷，item的RV為Boolean，true表示valid，false表示invalid
-        this.other_check_submit = other_check_submit ? other_check_submit : [];
-      }
-
-      async setKVpairs(dataObj) {
-        if (this.before_setKVpairs.length) {
-          let promises = this.before_setKVpairs.map((fn) => fn(this, dataObj));
-          await Promise.all(promises);
-        }
-        //  將kv資料存入
-        const entries = Object.entries(dataObj);
-        if (entries.length) {
-          for (let [key, value] of entries) {
-            this.set(key, value);
-            let input = document.querySelector(
-              `${this.selector} input[name=${key}]`
-            );
-            input && formFeedback.validated(input, true);
-          }
-        }
-        if (this.after_setKVpairs.length) {
-          let promises = this.after_setKVpairs.map((fn) => fn(this, dataObj));
-          await Promise.all(promises);
-        }
-      }
-      getPayload() {
-        let res = {};
-        for (let [key, value] of [...this]) {
-          res[key] = value;
-        }
-        return res;
-      }
-      check_submit() {
-        let disabled = this.$form.find(".is-invalid").length > 0;
-        if (!disabled && this.other_check_submit.length) {
-          disabled = this.other_check_submit
-            .map((fn) => fn(this))
-            .some((boo) => !boo);
-        }
-        this.jq_submit.prop("disabled", disabled);
-        return !disabled;
-      }
-    }
-    return new Payload(selector);
   }
 }

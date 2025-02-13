@@ -30,7 +30,9 @@ G.utils._xss = _xss;
 await G.initPage(initMain);
 
 async function initMain() {
-  let $input_new_blog_title = $(`#${G.constant.ID.NEW_BLOG_TITLE}`);
+  let input_new_blog_title = document.querySelector(
+    `#${G.constant.ID.NEW_BLOG_TITLE}`
+  );
   let $btn_new_blog = $(`#${G.constant.ID.NEW_BLOG}`);
   //  粉絲列表contaner
   let $fansList = $(`#${G.constant.ID.FANS_LIST}`);
@@ -283,7 +285,7 @@ async function initMain() {
       /*webpackChunkName:'bootstrap-modal'*/ "bootstrap/js/dist/modal"
     );
     $("#new_blog_modal").on("focus", async () => {
-      $input_new_blog_title.get(0).focus();
+      input_new_blog_title.focus();
     });
     $("#new_blog_modal").on("keyup", (e) => {
       e.preventDefault();
@@ -291,15 +293,15 @@ async function initMain() {
         $btn_new_blog.get(0).click();
       }
     });
-    //  debouncer event handle
-    let { debounce: handle_debounce_check_title } = new Debounce(check_title, {
+    //  為input註冊debounce化的inputEvent handler
+    new Debounce(check_title, {
+      target: input_new_blog_title,
+      eventType: "input",
       loading(e) {
         $btn_new_blog.prop("disabled", true);
         formFeedback.loading(e.target);
       },
     });
-    //  為input註冊debounce化的inputEvent handler
-    $input_new_blog_title.on("input", handle_debounce_check_title);
     //  為btn註冊clickEvent handler
     $btn_new_blog.on("click", handle_createBlog);
     //  為btn註冊clickEvent handler
@@ -366,20 +368,19 @@ async function initMain() {
       window.alert("創建成功，開始編輯文章");
       location.href = `${API.EDIT_BLOG}/${blog_id}`;
       //  清空表格
-      $input_new_blog_title.val("");
+      input_new_blog_title.value = "";
     }
 
     //  校驗文章標題
     async function check_title() {
-      let input = $input_new_blog_title.get(0);
       let data = {
-        title: G.utils._xss.trim(input.value),
+        title: G.utils._xss.trim(input_new_blog_title.value),
       };
       let validated_list = await G.utils.validate.blog_title(data);
       let { valid, message } = validated_list.find(
         (item) => item.field_name === "title"
       );
-      formFeedback.validated(input, valid, message);
+      formFeedback.validated(input_new_blog_title, valid, message);
       $btn_new_blog.prop("disabled", !valid);
       return valid ? data.title : false;
     }

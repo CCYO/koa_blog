@@ -6,3 +6,4 @@ server/dev_assets
 server/views
 server/dev_views
 src/assets/js/common.js
+.vscode/

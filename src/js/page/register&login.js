@@ -5,15 +5,13 @@ import "@css/register&login.scss";
 import G from "../common";
 
 /* UTILS      ----------------------------------------------------------------------------- */
-import { _Ajv, Debounce, formFeedback, redir } from "../utils";
+import { _Ajv, init_lock, Debounce, formFeedback, redir } from "../utils";
 
 /* NPM        ----------------------------------------------------------------------------- */
 import Tab from "bootstrap/js/dist/tab";
 
 /* CONFIG     ----------------------------------------------------------------------------- */
 import { COMMON } from "../../config";
-import { debounce } from "lodash";
-import { invalid } from "moment/moment";
 
 /* VAR        ----------------------------------------------------------------------------- */
 const API = {
@@ -90,7 +88,7 @@ function initMain() {
     const inp_email = document.querySelector(
       `${form_id} input[name=${G.constant.NAME.EMAIL}]`
     );
-    G.utils.lock.login = initLock({ selector: form_id });
+    G.utils.lock.login = init_lock({ selector: form_id });
     //  為所有input註冊debounce化的inputEvent handler
     _add_form_debounce_inputEvent_handler(form, handle_input_login);
     //  為 form 註冊 submitEvent handler
@@ -131,7 +129,7 @@ function initMain() {
       alert(msg);
       //  重置 payload
       G.utils.lock.login.clear();
-      G.utils.lock.login.check_submit();
+      await G.utils.lock.login.check_submit();
       formFeedback.reset(form);
       inp_email.focus();
     }
@@ -164,7 +162,7 @@ function initMain() {
           formFeedback.validated(input, valid, message);
         }
       }
-      G.utils.lock.login.check_submit();
+      await G.utils.lock.login.check_submit();
       return;
     }
   }
@@ -188,7 +186,7 @@ function initMain() {
     );
     let $inp_password_again = $(inp_password_again);
 
-    G.utils.lock.register = initLock({
+    G.utils.lock.register = init_lock({
       selector: form_id,
       after_setKVpairs: [needPWD],
     });
@@ -224,7 +222,7 @@ function initMain() {
         G.utils.lock.register.delete(field_name);
         formFeedback.validated(input, vaild, message);
       }
-      G.utils.lock.register.check_submit();
+      await G.utils.lock.register.check_submit();
       return;
 
       //  創建驗證舊密碼的modal
@@ -290,21 +288,23 @@ function initMain() {
             }
             let hide = false;
             for (let { field_name, message, valid } of result_list) {
+              if (valid) {
+                continue;
+              }
               let input = document.querySelector(
                 `${G.constant.ID.REGISTER_FORM} input[name=${field_name}]`
               );
-              if (!input) {
-                continue;
-              }
               if (field_name !== G.constant.NAME.EMAIL_CODE) {
                 hide = true;
+              } else {
+                input = inp_emailCode;
               }
               G.utils.lock.register.delete(field_name);
               formFeedback.validated(input, false, valid ? "" : message);
             }
             if (hide) {
               G.utils.bs5_modal.hide();
-              G.utils.lock.register.check_submit();
+              await G.utils.lock.register.check_submit();
             }
             return false;
           }
@@ -334,7 +334,7 @@ function initMain() {
 
           function again() {
             turnOff = false;
-            $btn_check_emailCode.prop("disabled", false);
+            $btn_check_emailCode.prop("disabled", true);
             inp_emailCode.addEventListener(
               "input",
               (e) => formFeedback.clear(e.target),
@@ -462,7 +462,7 @@ function initMain() {
           }
           G.utils.lock.register.delete({ [field_name]: value });
         }
-        G.utils.lock.register.check_submit();
+        await G.utils.lock.register.check_submit();
       }
       async function checkEmail(payload) {
         let result_list = await G.utils.validate.isEmailExist(payload);
@@ -474,7 +474,7 @@ function initMain() {
         } else {
           formFeedback.validated(target, valid, message);
         }
-        G.utils.lock.register.check_submit();
+        await G.utils.lock.register.check_submit();
       }
     }
 
@@ -501,86 +501,11 @@ function initMain() {
         formFeedback.loading(input);
         $(form).eq(0).prop("disabled", true);
       }
-      // const { debounce } = new Debounce(handle, {
       new Debounce(handle, {
         loading,
         target: input,
         eventType: "input",
       });
-      // input.addEventListener("input", debounce);
     }
-  }
-
-  //  驗證是否可submit
-  function initLock(config) {
-    class Payload extends Map {
-      constructor(config) {
-        super();
-        let {
-          selector,
-          before_setKVpairs,
-          after_setKVpairs,
-          other_check_submit,
-        } = config;
-        this.$form = $(selector);
-        this.jq_submit = this.$form.find("[type=submit]").eq(0);
-        if (!this.jq_submit.length) {
-          throw new Error(`${selector}沒有submit元素`);
-        }
-        this.selector = selector;
-        // 通常使用情況為，再次更動「已確定」且「存在依賴關係」表格數據
-        this.before_setKVpairs = before_setKVpairs ? before_setKVpairs : [];
-        // 通常使用情況為，提醒使用者接著填寫「存在依賴關係」表格數據
-        this.after_setKVpairs = after_setKVpairs ? after_setKVpairs : [];
-        // 添加「form內有無is-invalid」以外的判斷，item的RV為Boolean，true表示valid，false表示invalid
-        this.other_check_submit = other_check_submit ? other_check_submit : [];
-        this.required_list = [
-          ...this.$form.find("input[required]").map((ind, inp) => inp.name),
-        ];
-      }
-
-      async setKVpairs(dataObj) {
-        if (this.before_setKVpairs.length) {
-          let promises = this.before_setKVpairs.map((fn) => fn(this, dataObj));
-          await Promise.all(promises);
-        }
-        //  將kv資料存入
-        const entries = Object.entries(dataObj);
-        if (entries.length) {
-          for (let [key, value] of entries) {
-            this.set(key, value);
-            let input = document.querySelector(
-              `${this.selector} input[name=${key}]`
-            );
-            input && formFeedback.validated(input, true);
-          }
-        }
-        if (this.after_setKVpairs.length) {
-          let promise = this.after_setKVpairs.map((fn) => fn(this, dataObj));
-          await Promise.all(promise);
-        }
-      }
-      getPayload() {
-        let res = {};
-        for (let [key, value] of [...this]) {
-          res[key] = value;
-        }
-        return res;
-      }
-      check_submit() {
-        let disabled =
-          this.$form.find(".is-invalid").length > 0 ||
-          this.required_list.some((required) => !this.has(required));
-        console.log("disabled", disabled);
-        if (!disabled && this.other_check_submit.length) {
-          disabled = this.other_check_submit
-            .map((fn) => fn(this))
-            .some((boo) => !boo);
-        }
-        this.jq_submit.prop("disabled", disabled);
-        return !disabled;
-      }
-    }
-    return new Payload(config);
   }
 }

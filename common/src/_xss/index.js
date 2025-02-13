@@ -64,8 +64,12 @@ function blog(data) {
   //  移除前後空格
   let curHtml = trim(data);
   //  移除開頭、結尾的空格與空行
-  let reg_start = /^((<p><br><\/p>)|(<p>(\s|&nbsp;)*<\/p>))*/g;
-  let reg_end = /((<p><br><\/p>)|(<p>(\s|&nbsp;)*<\/p>))*$/g;
+  // let reg_start = /^((<p><br><\/p>)|(<p>(\s|&nbsp;)*<\/p>))*/g;
+  // let reg_end = /((<p><br><\/p>)|(<p>(\s|&nbsp;)*<\/p>))*$/g;
+  let reg_start =
+    /^((<p([\w\s\-'";:=]+)?><br><\/p>)|(<p([\w\s\-'";:=]+)?>(\s|&nbsp;)*<\/p>))+/g;
+  let reg_end =
+    /((<p([\w\s\-'";:=]+)?><br><\/p>)|(<p([\w\s\-'";:=]+)?>(\s|&nbsp;)*<\/p>))+$/g;
   curHtml = curHtml.replace(reg_start, "");
   curHtml = curHtml.replace(reg_end, "");
   return curHtml;

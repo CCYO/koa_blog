@@ -4,7 +4,6 @@ module.exports = function (HOST, DEFAULT) {
   return {
     $id: `${HOST}/${BLOG_UPDATE}.json`,
     type: "object",
-    minProperties: 2,
     properties: {
       _old: {
         type: "object",
