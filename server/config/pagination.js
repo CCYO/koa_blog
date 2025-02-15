@@ -1,6 +1,6 @@
 module.exports = {
   SQUARE: {
-    BLOG_COUNT: 2,
+    BLOG_COUNT: 5,
     PAGE_COUNT: 4,
   },
   ALBUM_LIST: {

@@ -1,17 +1,16 @@
-// @import "bootstrap/scss/bootstrap";
 @import "./bs";
-/* basis.css */
-// 使用CDN載入更快
-// @font-face {
-//   font-family: "JetBrainsMono";
-//   //  sass針對font-face的url引用，使用相對路徑的情況下，是相對於output，
-//   //  因此這裡利用webpack.config.js/resolve.alias來生成絕對路徑，避免 Module not found 錯誤。
-//   src: url("@src/assets/font/JetBrainsMono-Regular.ttf");
-// }
-// @font-face {
-//   font-family: "NotoSerifTC";
-//   src: url("@src/assets/font/NotoSerifTC-Regular.otf");
-// }
+
+/*
+  原本連同字體都從後端提供，後來直接使用載入更快的CDN，
+  不過過程中有坑，便保留作紀錄
+
+  //  sass針對font-face的url引用，「相對路徑」是相對於output，故採絕對路徑會更安全，避免 Module not found 錯誤。
+  //  另可配合webpack.config.js/resolve.alias避免路徑冗長。
+  @font-face {
+    font-family: "JetBrainsMono";
+    src: url("@src/assets/font/JetBrainsMono-Regular.ttf");
+  }
+*/
 
 *,
 html,
@@ -21,7 +20,6 @@ body {
 }
 
 html body {
-  // background-color: rgb(216, 62, 15);
   background-color: rgb(219, 159, 159);
 }
 
@@ -61,10 +59,17 @@ a.active,
   pointer-events: none;
 }
 
-// 避開因為使用「瀏覽器提供的便捷填寫表格功能」後，自動產生的樣式
-// https://stackoverflow.com/questions/61083813/how-to-avoid-internal-autofill-selected-style-to-be-applied
-// input:-webkit-autofill,
-// input:-webkit-autofill:focus
-// {
-//   transition: background-color 0s 600000s, color 0s 600000s !important;
-// }
+// w-<RWD>-<百分比> 參考:https://getbootstrap.com/docs/5.2/utilities/api/#enable-responsive
+$utilities: map-merge(
+  $utilities,
+  (
+    "width":
+      map-merge(
+        map-get($utilities, "width"),
+        (
+          responsive: true,
+        )
+      ),
+  )
+);
+@import "bootstrap/scss/utilities/api";
