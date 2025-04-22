@@ -2,6 +2,7 @@
 import BLOG from "./blog";
 
 const BLOG_STATUS_PUBLIC = BLOG.STATUS.PUBLIC;
+const BLOG_STATUS_PRIVATE = BLOG.STATUS.PRIVATE;
 
 export default {
   ERR_PAGE: {},
@@ -120,6 +121,7 @@ export default {
       },
       VALUE: {
         BLOG_STATUS_PUBLIC,
+        BLOG_STATUS_PRIVATE,
         REMOVE_BLOG_LIST: "list",
         REMOVE_BLOG_ITEM: "item",
         PREVIOUS_PAGE: "previous-page",

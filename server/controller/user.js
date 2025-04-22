@@ -313,7 +313,7 @@ async function _findInfoForUserPage(user_id) {
         public_resModel.data[COMMON.BLOG.STATUS.PUBLIC],
       [COMMON.BLOG.STATUS.PRIVATE]:
         private_resModel.data[COMMON.BLOG.STATUS.PRIVATE],
-      PAGINATION: PAGINATION.BLOG,
+      [COMMON.BLOG.STATUS.PAGINATION]: PAGINATION.BLOG,
     },
   };
   return new SuccModel({ data });

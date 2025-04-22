@@ -2,7 +2,9 @@
 <% let G_PAGE = SELECTOR.USER %>
 <% for(let _status in blogs){ %>
 <% let _isPublic = _status === G_PAGE.DATASET.VALUE.BLOG_STATUS_PUBLIC %>
-<% if(!isSelf && !_isPublic){ continue }%>
+<% let _isPrivate = _status === G_PAGE.DATASET.VALUE.BLOG_STATUS_PRIVATE %>
+
+<% if((!_isPublic && !_isPrivate) || (!_isPublic && !isSelf) ){ continue }%>
 <% let _blogs = blogs[_status] %>
 
 <div class="blogList card bg-light" <%= `data-${G_PAGE.DATASET.KEY.BLOG_STATUS}=${_status}` %>>

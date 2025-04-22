@@ -89,7 +89,6 @@ function onError(error) {
 
 function onListening() {
   let addr = server.address();
-  let bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-  console.log(`ENV IS ${ENV.MODE}`);
-  console.log(`LISTEN on ${bind}`);
+  let bind = typeof addr === "string" ? "pipe " + addr : "PORT: " + addr.port;
+  console.log(`NODE: ${process.version}, MODE: ${ENV.MODE}, ${bind}`);
 }

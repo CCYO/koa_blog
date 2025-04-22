@@ -6,9 +6,6 @@
 const webpackBaseConfig = require("./webpack.base.config");
 const { WEBPACK } = require("./config");
 
-/* NODEJS     ----------------------------------------------------------------------------- */
-const { resolve } = require("path");
-
 /* NPM        ----------------------------------------------------------------------------- */
 const webpack = require("webpack");
 const { merge } = require("webpack-merge");
@@ -38,16 +35,16 @@ module.exports = merge(webpackBaseConfig, {
             maxSize: 8 * 1024,
           },
         },
-        use: [
-          {
-            loader: "image-webpack-loader",
-            options: {
-              pngquant: {
-                quality: [0.3, 0.5],
-              },
-            },
-          },
-        ],
+        // use: [
+        //   {
+        //     loader: "image-webpack-loader",
+        //     options: {
+        //       pngquant: {
+        //         quality: [0.3, 0.5],
+        //       },
+        //     },
+        //   },
+        // ],
       },
       {
         test: /\.css$/,

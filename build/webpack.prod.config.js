@@ -18,6 +18,7 @@ const BundleAnalyzerPlugin =
   require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 /**
  * SpeedMeasurePlugin hack
+ * npm i -D speed-measure-webpack-plugin
  * const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
  */
 const TerserPlugin = require("terser-webpack-plugin");

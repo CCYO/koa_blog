@@ -1,7 +1,7 @@
 /* blog CSS */
 @import "./common/basic.scss";
-@import "@wangeditor/editor/dist/css/style.css";
-@import url("https://www.wangeditor.com/demo/css/view.css");
+@import "@wangeditor-next/editor/dist/css/style.css";
+@import "./component/wangeditor.scss";
 
 .card {
   background-color: rgb(250, 240, 240);

@@ -6,11 +6,12 @@
 const { WEBPACK } = require("../config");
 
 /* NODEJS     ----------------------------------------------------------------------------- */
-const glob = require("glob");
 const fs = require("fs");
 const { resolve } = require("path");
 
 /* NPM        ----------------------------------------------------------------------------- */
+// webpack
+const glob = require("glob");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 /* VAR        ----------------------------------------------------------------------------- */

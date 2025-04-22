@@ -4,5 +4,6 @@ export default {
   STATUS: {
     PUBLIC: "public",
     PRIVATE: "private",
+    PAGINATION: "PAGINATION",
   },
 };
