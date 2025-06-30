@@ -21,6 +21,7 @@ require("dotenv").config({
 });
 
 /* CUSTOM     ----------------------------------------------------------------------------- */
+const { log } = require("../utils/log");
 const app = require("../app");
 
 /**
@@ -90,5 +91,5 @@ function onError(error) {
 function onListening() {
   let addr = server.address();
   let bind = typeof addr === "string" ? "pipe " + addr : "PORT: " + addr.port;
-  console.log(`NODE: ${process.version}, MODE: ${ENV.MODE}, ${bind}`);
+  log(`NODE: ${process.version}, MODE: ${ENV.MODE}, ${bind}`);
 }

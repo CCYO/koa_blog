@@ -86,7 +86,8 @@ async function initMain() {
   //  整理圖片數據
   await initImgData();
   //  確認文章內容圖片皆讀取完畢（G.utils.checkImgLoad由init_editor內部生成）
-  await G.utils.checkImgLoad();
+  // await G.utils.checkImgLoad();
+  await G.utils.checkImgLoad().catch((msg) => console.warn(`@: ${msg}`));
   //  focus editor
   G.utils.editor.focus();
 
@@ -604,7 +605,7 @@ async function initMain() {
       let _res = reg.exec(img.name);
       let ext = _res ? _res.groups.ext : undefined;
       if (!ext) {
-        alert(`限${COMMON.AJV.IMG_EXT.join("或")}格式`);
+        alert(`限${COMMON.AJV.IMG.EXT.join("或")}格式`);
         return;
       }
       let validated_list = await G.utils.validate.blog_img({
@@ -648,7 +649,7 @@ async function initMain() {
       G.data.blog.map_imgs.set(id, alt_data);
       //  將圖片插入 editor
       // insertFn(`${alt_data.img.url}?alt_id=${id}`, `${alt_data.alt}`);
-      insertFn(`${alt_data.img.url}?alt_id=${id}`, "");
+      insertFn(`${alt_data.img.url}&alt_id=${id}`, "");
       setImgMode = 0;
       return;
       //  取得圖片的 hash

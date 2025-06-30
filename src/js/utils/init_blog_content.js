@@ -40,7 +40,19 @@ export default function parseHtmlStr_XImgToImg(G) {
             console.log(`blogImgAlt/${alt_id} ---> already complete`);
           return complete();
         }
-        img.onload = () => complete();
+        img.onload = () => {
+          console.log("進入onload");
+          return complete();
+        };
+        img.onerror = () => {
+          console.log("進入onerror");
+          return noComplete();
+        };
+        function noComplete() {
+          !process.env.isProd &&
+            console.log(`blogImgAlt/${alt_id} ---> onerror`);
+          return resolve();
+        }
         function complete() {
           !process.env.isProd &&
             console.log(`blogImgAlt/${alt_id} ---> onload finish`);

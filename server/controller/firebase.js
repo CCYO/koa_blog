@@ -48,7 +48,9 @@ async function addBlogImg(ctx) {
     }
     delete ctx._my;
   }
-  let data = { [SERVER.GFB.BLOG_REF]: ref.publicUrl() };
+  let publicUrl = `https://firebasestorage.googleapis.com/v0/b/${ref.bucket.id}/o/${ref.id}?alt=media`;
+  ref.fullPath;
+  let data = { [SERVER.GFB.BLOG_REF]: publicUrl };
   return new SuccModel({ data });
 }
 //  處理 user avatar
@@ -69,9 +71,10 @@ async function addUserAvatar(ctx) {
       throw new MyErr(ERR_RES.USER.UPDATE.AVATAR_FORMAT_ERR);
     }
     //  創建GFB的存放路徑
-    ref = storage
-      .bucket()
-      .file(`${SERVER.GFB.AVATAR_REF}/${avatar_hash}.${avatar_ext}`);
+    // ref = storage
+    //   .bucket()
+    let bucket = storage.bucket();
+    ref = bucket.file(`${SERVER.GFB.AVATAR_REF}/${avatar_hash}.${avatar_ext}`);
     //  確認是否已存
     let [exist] = await ref.exists();
     if (!exist) {
@@ -93,7 +96,8 @@ async function addUserAvatar(ctx) {
   }
   if (files.hasOwnProperty(SERVER.GFB.AVATAR_REF)) {
     delete ctx._my;
-    data[SERVER.GFB.AVATAR_REF] = ref.publicUrl();
+    let publicUrl = `https://firebasestorage.googleapis.com/v0/b/${ref.bucket.id}/o/${ref.id}?alt=media`;
+    data[SERVER.GFB.AVATAR_REF] = publicUrl;
   }
   data = { ...data, ...fields };
 

@@ -375,7 +375,11 @@ async function initMain() {
     } else if (active === "blog-preview") {
       _preview();
     }
-    G.utils.checkImgLoad && (await G.utils.checkImgLoad());
+    G.utils.checkImgLoad &&
+      (await G.utils.checkImgLoad().catch((msg) => {
+        console.log(123);
+        console.warn(`@: ${msg}`);
+      }));
 
     // 渲染文章預覽
     function _preview() {
