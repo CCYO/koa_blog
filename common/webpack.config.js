@@ -7,32 +7,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 /* EXPORT     ----------------------------------------------------------------------------- */
 module.exports = (env) => {
   const isProd = !Boolean(env.dev);
-  return {
-    mode: "none",
-    entry: {
-      "common.cjs": {
-        import: "./src/index.js",
-        library: {
-          type: "commonjs2",
-        },
-        filename: isProd ? "common.cjs.js" : "dev_common.cjs.js",
-      },
-      "common.esm": {
-        import: "./src/index.js",
-        library: {
-          type: "module",
-        },
-      },
-    },
-    output: {
-      path: resolve(__dirname, "dist"),
-      filename: "[name].js",
-      //  clean.keep 可以是regex，匹配的是「相對output.path的路徑」
-      clean: { keep: /common\.cjs/ },
-    },
-    experiments: {
-      outputModule: true,
-    },
+  const common_conf = {
     plugins: [
       new webpack.DefinePlugin({
         "process.env.isProd": JSON.stringify(isProd),
@@ -61,4 +36,30 @@ module.exports = (env) => {
     devtool: isProd ? "source-map" : "eval-source-map",
     mode: isProd ? "production" : "development",
   };
+  // clean.keep 可以是regex，匹配的是「相對output.path的路徑」
+  // output.clean: { keep: /common\.cjs/ }
+  return [
+    // CJS 配置
+    {
+      entry: resolve(__dirname, "./src/index.js"),
+      output: {
+        path: resolve(__dirname, "dist"),
+        library: { type: "commonjs2" },
+        filename: isProd ? "common.cjs.js" : "dev_common.cjs.js",
+      },
+      experiments: { outputModule: false },
+      ...common_conf,
+    },
+    // ESM 配置
+    {
+      entry: resolve(__dirname, "./src/index.js"),
+      output: {
+        path: resolve(__dirname, "dist"),
+        library: { type: "module" },
+        filename: "common.esm.js",
+      },
+      experiments: { outputModule: true },
+      ...common_conf,
+    },
+  ];
 };

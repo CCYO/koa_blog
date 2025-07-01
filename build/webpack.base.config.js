@@ -20,6 +20,7 @@ const done_hook = require("./utils/done_hook");
 
 /* EXPORT     ----------------------------------------------------------------------------- */
 module.exports = {
+  target: "web", // 告訴 Webpack 目標環境能力
   context: resolve(__dirname),
   entry,
   output: {

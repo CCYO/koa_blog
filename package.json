@@ -33,7 +33,7 @@
     "better-scroll": "^2.5.1",
     "bootstrap": "^5.3.3",
     "cls-hooked": "^4.2.2",
-    "core-js": "^3.37.1",
+    "core-js": "3.35",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.11",
     "dotenv": "^16.3.1",
